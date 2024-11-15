@@ -20,10 +20,9 @@ public interface IAffixBuilder<T extends IAffix> {
 
   /**
    * Set this affix has subscription, if true, will subscript to forge event.
-   * @param pHasSubscriptions affix has subscription
    * @return builder
    */
-  IAffixBuilder<T> setHasSubscriptions(boolean pHasSubscriptions);
+  IAffixBuilder<T> setHasSubscriptions();
 
   /**
    * Build affix with this builder

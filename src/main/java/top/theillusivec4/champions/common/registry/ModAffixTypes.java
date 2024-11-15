@@ -45,9 +45,9 @@ public class ModAffixTypes {
     MOLTEN = register("molten", () -> new BasicAffixBuilder<>(MoltenAffix::new).setCategory(AffixCategory.OFFENSE).build());
     PARALYZING = register("paralyzing", () -> new BasicAffixBuilder<>(ParalyzingAffix::new).setCategory(AffixCategory.CC).build());
     PLAGUED = register("plagued", () -> new BasicAffixBuilder<>(PlaguedAffix::new).setCategory(AffixCategory.OFFENSE).build());
-    REFLECTIVE = register("reflective", () -> new BasicAffixBuilder<>(ReflectiveAffix::new).setHasSubscriptions(true).setCategory(AffixCategory.OFFENSE).build());
+    REFLECTIVE = register("reflective", () -> new BasicAffixBuilder<>(ReflectiveAffix::new).setHasSubscriptions().setCategory(AffixCategory.OFFENSE).build());
     SHIELDING = register("shielding", () -> new BasicAffixBuilder<>(ShieldingAffix::new).setCategory(AffixCategory.DEFENSE).build());
-    WOUNDING = register("wounding", () -> new BasicAffixBuilder<>(WoundingAffix::new).setCategory(AffixCategory.OFFENSE).setHasSubscriptions(true).build());
+    WOUNDING = register("wounding", () -> new BasicAffixBuilder<>(WoundingAffix::new).setCategory(AffixCategory.OFFENSE).setHasSubscriptions().build());
   }
 
   private static <I extends IAffix> DeferredHolder<IAffix, I> register(String name, Supplier<I> supplier) {

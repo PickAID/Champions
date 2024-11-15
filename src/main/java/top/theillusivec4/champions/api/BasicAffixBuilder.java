@@ -1,7 +1,5 @@
 package top.theillusivec4.champions.api;
 
-import top.theillusivec4.champions.common.integration.kubejs.ChampionsEvents;
-
 import java.util.function.Supplier;
 
 /**
@@ -11,43 +9,43 @@ import java.util.function.Supplier;
  */
 public class BasicAffixBuilder<T extends IAffix> implements IAffixBuilder<T> {
 
-  private final Supplier<T> affixSupplier;
-  private AffixCategory category;
-  private String prefix;
-  private boolean hasSubscriptions;
+    private final Supplier<T> affixSupplier;
+    private AffixCategory category;
+    private String prefix;
+    private boolean hasSubscriptions;
 
-  public BasicAffixBuilder(Supplier<T> affixSupplier) {
-    this.affixSupplier = affixSupplier;
-  }
+    public BasicAffixBuilder(Supplier<T> affixSupplier) {
+        this.affixSupplier = affixSupplier;
+    }
 
-  @Override
-  public BasicAffixBuilder<T> setCategory(AffixCategory pCategory) {
-    this.category = pCategory;
-    return this;
-  }
+    @Override
+    public BasicAffixBuilder<T> setCategory(AffixCategory pCategory) {
+        this.category = pCategory;
+        return this;
+    }
 
-  @Override
-  public BasicAffixBuilder<T> setPrefix(String pPrefix) {
-    this.prefix = pPrefix;
-    return this;
-  }
+    @Override
+    public BasicAffixBuilder<T> setPrefix(String pPrefix) {
+        this.prefix = pPrefix;
+        return this;
+    }
 
-  @Override
-  public IAffixBuilder<T> setHasSubscriptions(boolean pHasSubscriptions) {
-    this.hasSubscriptions = pHasSubscriptions;
-    return this;
-  }
+    @Override
+    public IAffixBuilder<T> setHasSubscriptions() {
+        this.hasSubscriptions = true;
+        return this;
+    }
 
-  @Override
-  public T build() {
-    var affix = affixSupplier.get();
-    apply(affix);
-    return affix;
-  }
+    @Override
+    public T build() {
+        var affix = affixSupplier.get();
+        apply(affix);
+        return affix;
+    }
 
-  private void apply(T pAffix) {
-    pAffix.setSubscriptions(this.hasSubscriptions);
-    pAffix.setCategory(this.category);
-    pAffix.setPrefix(this.prefix);
-  }
+    private void apply(T pAffix) {
+        pAffix.setSubscriptions(this.hasSubscriptions);
+        pAffix.setCategory(this.category);
+        pAffix.setPrefix(this.prefix);
+    }
 }

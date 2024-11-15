@@ -6,6 +6,5 @@ public class TestCustomAffixHandler {
 
   public static void testOnCustomAffixBuild(CustomAffixEvent.OnBuild event) {
     Champions.LOGGER.info(event.getAffix());
-    Champions.LOGGER.info("testOnCustomAffixBuild");
   }
 }
