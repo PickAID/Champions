@@ -10,6 +10,7 @@ import top.theillusivec4.champions.api.IChampionsApi;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 public class ChampionsApiImpl implements IChampionsApi {
   private static final ConcurrentHashMap<AffixCategory, List<IAffix>> categories = new ConcurrentHashMap<>();
@@ -43,12 +44,16 @@ public class ChampionsApiImpl implements IChampionsApi {
 
   @Override
   public List<IAffix> getAffixes() {
-    return AffixRegistry.AFFIX_REGISTRY.stream().toList();
+    return getAffixStream().toList();
+  }
+
+  public Stream<IAffix> getAffixStream() {
+    return AffixRegistry.AFFIX_REGISTRY.stream();
   }
 
   @Override
-  public List<IAffix> getCategory(AffixCategory category) {
-    return getAffixes().stream().filter(affix -> affix.getCategory().equals(category)).toList();
+  public List<IAffix> getAffixes(AffixCategory category) {
+    return getAffixStream().filter(affix -> affix.sameCategory(category)).toList();
   }
 
   @Override

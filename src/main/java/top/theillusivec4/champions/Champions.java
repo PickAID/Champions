@@ -27,7 +27,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.block.DispenserBlock;
-import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.InterModComms;
 import net.neoforged.fml.ModContainer;
@@ -40,6 +39,8 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.fml.loading.FMLPaths;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -54,11 +55,9 @@ import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.IChampionsApi;
 import top.theillusivec4.champions.api.impl.ChampionsApiImpl;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
-import top.theillusivec4.champions.common.affix.core.AffixManager;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.datagen.*;
-import top.theillusivec4.champions.common.integration.kubejs.TestCustomAffixHandler;
 import top.theillusivec4.champions.common.integration.theoneprobe.TheOneProbePlugin;
 import top.theillusivec4.champions.common.item.ChampionEggItem;
 import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
@@ -94,7 +93,7 @@ public class Champions {
     modEventBus.addListener(this::registerNetwork);
     modEventBus.addListener(this::onGatherData);
     modEventBus.addListener(this::registerRegistries);
-    modEventBus.addListener(TestCustomAffixHandler::testOnCustomAffixBuild);
+//    modEventBus.addListener(TestCustomAffixHandler::testOnCustomAffixBuild);
     modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
     modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
     modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
@@ -110,6 +109,7 @@ public class Champions {
     NeoForge.EVENT_BUS.addListener(this::registerCommands);
     ChampionsRegistry.register(modEventBus);
     scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
+    modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
   }
 
   private static void createServerConfig(ModConfigSpec spec, String suffix) {
@@ -180,7 +180,7 @@ public class Champions {
           RankManager.buildRanks();
         } else if (spec == ChampionsConfig.AFFIXES_SPEC) {
           ChampionsConfig.transformAffixes(commentedConfig);
-          AffixManager.buildAffixSettings();
+//          AffixManager.buildAffixSettings();
         } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
           ChampionsConfig.transformEntities(commentedConfig);
           EntityManager.buildEntitySettings();

@@ -48,6 +48,7 @@ repositories {
       includeGroup "dev.latvian.apps"
     }
   }
+  maven { url 'https://jitpack.io' }
   mavenLocal()
 }
 
@@ -175,6 +176,7 @@ dependencies {
   implementation "dev.latvian.mods:rhino:${rhino_version}"
   implementation "dev.architectury:architectury-neoforge:${architectury_version}"
   implementation "dev.latvian.apps:tiny-java-server:${tiny_java_server_version}"
+  implementation "curse.maven:probejs-585406:5820894"
 
 }
 

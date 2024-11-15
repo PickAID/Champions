@@ -1,9 +1,14 @@
 package top.theillusivec4.champions.api;
 
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import top.theillusivec4.champions.common.config.ConfigEnums;
+
+import java.util.List;
 
 public interface IAffix {
   /**
@@ -22,9 +27,20 @@ public interface IAffix {
 
   /**
    * Set Affix's category
+   *
    * @param category Affix's category
    */
   void setCategory(AffixCategory category);
+
+  /**
+   * Is this category same with other category?
+   *
+   * @param other affix
+   * @return true if same category, else false
+   */
+  default boolean sameCategory(AffixCategory other) {
+    return other == getCategory();
+  }
 
   default String toLanguageKey() {
     return getPrefix() + getIdentifier().toLanguageKey();
@@ -32,24 +48,56 @@ public interface IAffix {
 
   /**
    * Get affix's prefix, usually used for translate key
+   *
    * @return Affix prefix
    */
   String getPrefix();
 
   /**
    * Set affix prefix
+   *
    * @param prefix new prefix to set.
    */
   void setPrefix(String prefix);
 
   /**
    * Dose affix has event
+   *
    * @return True if it has subs, else false.
    */
   boolean hasSubscriptions();
 
   /**
+   * Set this affix enable
+   * @param enabled True if enable this affix, else false
+   */
+  void setEnabled(boolean enabled);
+
+  boolean isEnabled();
+  /**
+   * Set mob list that will or not apply to this affix.
+   * @param mobList a mob type list
+   */
+  void setMobList(List<EntityType<?>> mobList);
+
+  /**
+   * Set mob Permission mode.
+   *
+   * @param mobPermission perform mob list how to work
+   * @see ConfigEnums.Permission
+   */
+  void setMobPermission(ConfigEnums.Permission mobPermission);
+
+  /**
+   * Set this can apples to what rank tier mob
+   *
+   * @param tier Range of champions rank tier that can apply this affix
+   */
+  void setTier(MinMaxBounds.Ints tier);
+
+  /**
    * Set this affix have or not have subs
+   *
    * @param hasSubscription new value of subscription, only useful when registering new affix.
    */
   void setSubscriptions(boolean hasSubscription);

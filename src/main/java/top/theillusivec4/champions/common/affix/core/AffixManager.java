@@ -1,3 +1,4 @@
+/*
 package top.theillusivec4.champions.common.affix.core;
 
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -5,7 +6,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.config.AffixesConfig.AffixConfig;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 
@@ -20,34 +20,33 @@ public class AffixManager {
     return Optional.ofNullable(SETTINGS.get(identifier));
   }
 
-  public static void buildAffixSettings() {
-    List<AffixConfig> configs = ChampionsConfig.affixes;
-    SETTINGS.clear();
+   public static void buildAffixSettings() {
+     List<AffixConfig> configs = ChampionsConfig.affixes;
+     SETTINGS.clear();
 
-    if (configs == null || configs.isEmpty()) {
-      return;
-    }
+     if (configs == null || configs.isEmpty()) {
+       return;
+     }
 
-    configs.forEach(affixConfig -> {
+     configs.forEach(affixConfig -> {
 
-      if (affixConfig.identifier == null) {
-        Champions.LOGGER.error("Missing identifier while building affix settings, skipping...");
-        return;
-      }
+       if (affixConfig.identifier == null) {
+         Champions.LOGGER.error("Missing identifier while building affix settings, skipping...");
+         return;
+       }
 
-      if (Champions.API.getAffix(affixConfig.identifier).isEmpty()) {
-        Champions.LOGGER.error("Invalid identifier while building affix settings, skipping...");
-        return;
-      }
-      AffixSettings settings = new AffixSettings(affixConfig.identifier, affixConfig.enabled,
-        affixConfig.minTier, affixConfig.maxTier, affixConfig.mobList, affixConfig.mobPermission);
-      SETTINGS.put(affixConfig.identifier, settings);
-    });
-  }
+       if (Champions.API.getAffix(affixConfig.identifier).isEmpty()) {
+         Champions.LOGGER.error("Invalid identifier while building affix settings, skipping...");
+         return;
+       }
+       AffixSettings settings = new AffixSettings(affixConfig.identifier, affixConfig.enabled,
+         affixConfig.minTier, affixConfig.maxTier, affixConfig.mobList, affixConfig.mobPermission);
+       SETTINGS.put(affixConfig.identifier, settings);
+     });
+   }
 
   public static class AffixSettings {
 
-    final String identifier;
     final boolean enabled;
     final int minTier;
     @Nullable
@@ -55,9 +54,8 @@ public class AffixManager {
     final List<EntityType<?>> mobList;
     final Permission mobPermission;
 
-    public AffixSettings(String identifier, Boolean enabled, Integer minTier,
+    public AffixSettings(Boolean enabled, Integer minTier,
                          @Nullable Integer maxTier, List<String> mobList, String mobPermission) {
-      this.identifier = identifier;
       this.enabled = enabled != null ? enabled : true;
       this.minTier = minTier != null ? minTier : 1;
       this.maxTier = maxTier;
@@ -93,3 +91,4 @@ public class AffixManager {
     }
   }
 }
+*/

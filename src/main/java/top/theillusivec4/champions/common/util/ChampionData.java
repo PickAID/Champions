@@ -10,7 +10,6 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixCategory;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.AffixManager;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 
@@ -104,14 +103,9 @@ public class ChampionData {
     for (AffixCategory category : Champions.API.getCategories()) {
       validAffixes.put(category, new ArrayList<>());
     }
-    allAffixes.forEach((k, v) -> validAffixes.get(k).addAll(v.stream().filter(affix -> {
-      Optional<AffixManager.AffixSettings> settings =
-        AffixManager.getSettings(affix.getIdentifier().toString());
-      return !affixes.contains(affix) && entitySettings
-        .map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true) && settings
-        .map(affixSettings -> affixSettings.canApply(champion)).orElse(true) && affix
-        .canApply(champion);
-    }).toList()));
+    allAffixes.forEach((k, v) -> validAffixes.get(k).addAll(v.stream().filter(affix -> !affixes.contains(affix)
+      && entitySettings.map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true)
+      && affix.canApply(champion)).toList()));
     ChampionBuilder.addAffixToList(total, affixes, validAffixes, RAND);
   }
 

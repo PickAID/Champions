@@ -1,7 +1,6 @@
 package top.theillusivec4.champions.common.integration.kubejs;
 
 import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.IModBusEvent;
 import top.theillusivec4.champions.api.IAffix;
 

@@ -22,7 +22,7 @@ public interface IChampionsApi {
    *
    * @return List of IAffix
    */
-  List<IAffix>  getAffixes();
+  List<IAffix> getAffixes();
 
   /**
    * Get List of IAffix by Affix Category
@@ -30,7 +30,7 @@ public interface IChampionsApi {
    * @param category Affix's Category
    * @return List of IAffix
    */
-  List<IAffix> getCategory(AffixCategory category);
+  List<IAffix> getAffixes(AffixCategory category);
 
   /**
    * Get all Categories list
