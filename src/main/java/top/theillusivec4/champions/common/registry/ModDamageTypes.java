@@ -16,7 +16,7 @@ public class ModDamageTypes {
   public static final ResourceKey<DamageType> ENKINDLING_BULLET = create("enkindling_bullet");
 
   public static DamageSource of(Level level, ResourceKey<DamageType> key) {
-    return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolder(key).orElseThrow());
+    return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(key));
   }
 
   public static DamageSource of(ResourceKey<DamageType> key, Entity directEntity) {

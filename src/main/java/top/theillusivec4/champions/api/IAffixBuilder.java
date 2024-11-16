@@ -1,5 +1,11 @@
 package top.theillusivec4.champions.api;
 
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.world.entity.EntityType;
+import top.theillusivec4.champions.common.config.ConfigEnums;
+
+import java.util.List;
+
 public interface IAffixBuilder<T extends IAffix> {
 
   /**
@@ -20,10 +26,17 @@ public interface IAffixBuilder<T extends IAffix> {
 
   /**
    * Set this affix has subscription, if true, will subscript to forge event.
-   * @param pHasSubscriptions affix has subscription
    * @return builder
    */
-  IAffixBuilder<T> setHasSubscriptions(boolean pHasSubscriptions);
+  IAffixBuilder<T> setHasSubscriptions();
+
+  IAffixBuilder<T> enabled(boolean enabled);
+
+  IAffixBuilder<T> setMobList(List<EntityType<?>> mobList);
+
+  IAffixBuilder<T> setTier(MinMaxBounds.Ints tier);
+
+  IAffixBuilder<T> setMobPermission(ConfigEnums.Permission mobPermission);
 
   /**
    * Build affix with this builder

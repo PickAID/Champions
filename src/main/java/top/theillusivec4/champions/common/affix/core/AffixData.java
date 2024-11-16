@@ -50,7 +50,7 @@ public abstract class AffixData {
       data = clazz.getDeclaredConstructor().newInstance();
       data.readData(champion, id);
     } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-      Champions.LOGGER.error("Error reading data from class " + clazz);
+      Champions.LOGGER.error("Error reading data from class {}", clazz);
     }
     return data;
   }

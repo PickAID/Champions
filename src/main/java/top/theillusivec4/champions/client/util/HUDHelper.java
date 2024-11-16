@@ -41,9 +41,9 @@ public class HUDHelper {
           int yOffset = ClientChampionsConfig.hudYOffset;
           int color = rank.getB();
 
-          float r = (float) FastColor.ARGB32.red(color) / 255F;
-          float g = (float) FastColor.ARGB32.green(color) / 255F;
-          float b = (float) FastColor.ARGB32.blue(color) / 255F;
+          float r = FastColor.ARGB32.red(color) / 255.0F;
+          float g = FastColor.ARGB32.green(color) / 255.0F;
+          float b = FastColor.ARGB32.blue(color) / 255.0F;
 
           RenderSystem.defaultBlendFunc();
           // set shader color for render element

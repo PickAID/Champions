@@ -7,10 +7,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.champions.Champions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigLoot {
 
@@ -73,9 +70,9 @@ public class ConfigLoot {
           continue;
         }
 
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(parsed[1]));
+        Optional<Item> item = BuiltInRegistries.ITEM.getOptional(ResourceLocation.parse(parsed[1]));
 
-        if (item == null) {
+        if (item.isEmpty()) {
           Champions.LOGGER.error("Item not found! {}", parsed[1]);
           continue;
         }
@@ -103,7 +100,7 @@ public class ConfigLoot {
             }
           }
         }
-        stack = new ItemStack(item, amount);
+        stack = new ItemStack(item.get(), amount);
         result.computeIfAbsent(tier, list -> new ArrayList<>())
           .add(new Data(stack, enchant, weight));
       }

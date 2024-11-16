@@ -12,8 +12,6 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixCategory;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.AffixManager;
-import top.theillusivec4.champions.common.affix.core.AffixManager.AffixSettings;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -33,6 +31,7 @@ public class ChampionBuilder {
   /**
    * Read champion data, or create affix by creating new rank levels.<br/>
    * only if new rank tier > 0, will set rank and new affixes to this champion
+   *
    * @param champion to read or construct new champion
    */
   public static void spawn(final IChampion champion) {
@@ -89,25 +88,24 @@ public class ChampionBuilder {
       validAffixes.put(category, new ArrayList<>());
     }
     allAffixes.forEach((k, v) -> validAffixes.get(k).addAll(v.stream().filter(affix -> {
-      Optional<AffixSettings> settings = AffixManager.getSettings(affix.getIdentifier().toString());
       /*
         return new affix list that can apply with entity and affix settings, and affix can apply to champion.
        */
       return !affixesToAdd.contains(affix) && entitySettings
-        .map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true) && settings
-        .map(affixSettings -> affixSettings.canApply(champion)).orElse(true) && affix
+         .map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true) && affix
         .canApply(champion);
     }).toList()));
     addAffixToList(size, affixesToAdd, validAffixes, RAND);
-    return affixesToAdd;
+     return affixesToAdd;
   }
 
   /**
    * Add random affix from random affixes list
-   * @param size How much random affix to add
-   * @param toModifier Affix list that will add random affix to it.
+   *
+   * @param size         How much random affix to add
+   * @param toModifier   Affix list that will add random affix to it.
    * @param validAffixes Affix list that can apply with entity and affix settings, and can apply to champion.
-   * @param rand mojang random source used get affix from random list.
+   * @param rand         mojang random source used get affix from random list.
    */
   public static void addAffixToList(int size, List<IAffix> toModifier, Map<AffixCategory, List<IAffix>> validAffixes, RandomSource rand) {
     List<IAffix> randomList = new ArrayList<>();
@@ -128,6 +126,7 @@ public class ChampionBuilder {
 
   /**
    * Create new rank for this LivingEntity.
+   *
    * @param livingEntity to create new rank with this entity settings
    * @return lowest rank if this living entity not potential, else living entity with new rank that applied entity settings.
    */

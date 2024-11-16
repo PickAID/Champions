@@ -34,7 +34,7 @@ public class InfestedAffix extends GoalAffix {
       isEnder ? ChampionsConfig.infestedEnderParasite : ChampionsConfig.infestedParasite;
 
     for (int i = 0; i < amount; i++) {
-      Entity entity = type
+      var entity = type
         .create(world, null, livingEntity.blockPosition(), MobSpawnType.MOB_SUMMONED,
           false, false);
 

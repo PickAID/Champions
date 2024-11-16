@@ -48,6 +48,7 @@ repositories {
       includeGroup "dev.latvian.apps"
     }
   }
+  maven { url 'https://jitpack.io' }
   mavenLocal()
 }
 
@@ -169,12 +170,13 @@ dependencies {
 //  compileOnly "curse.maven:scalinghealth-248027:${cf_scalinghealth}"
 //  compileOnly "net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}"
 //  compileOnly "net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:${bookshelf_version}"
-  implementation "curse.maven:TOP-245211:${cf_theoneprobe}"
-  implementation "curse.maven:jade-324717:${cf_jade}"
-  implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
-  implementation "dev.latvian.mods:rhino:${rhino_version}"
-  implementation "dev.architectury:architectury-neoforge:${architectury_version}"
-  implementation "dev.latvian.apps:tiny-java-server:${tiny_java_server_version}"
+  compileOnly "curse.maven:TOP-245211:${cf_theoneprobe}"
+  compileOnly "curse.maven:jade-324717:${cf_jade}"
+  compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+  compileOnly "dev.latvian.mods:rhino:${rhino_version}"
+  compileOnly "dev.architectury:architectury-neoforge:${architectury_version}"
+  compileOnly "dev.latvian.apps:tiny-java-server:${tiny_java_server_version}"
+  compileOnly "curse.maven:probejs-585406:5820894"
 
 }
 
@@ -192,7 +194,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     mod_license            : mod_license,
     mod_version            : mod_version,
     mod_authors            : mod_authors,
-    mod_description        : mod_description
+    mod_description        : mod_description,
+    kubejs_version_range   : kubejs_version_range
   ]
   inputs.properties replaceProperties
   expand replaceProperties
