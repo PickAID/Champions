@@ -86,6 +86,7 @@ public class Champions {
 
   public static boolean scalingHealthLoaded = false;
   public static boolean gameStagesLoaded = false;
+  public static boolean kubejsLoaded = false;
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
 
@@ -109,6 +110,7 @@ public class Champions {
     NeoForge.EVENT_BUS.addListener(this::registerCommands);
     ChampionsRegistry.register(modEventBus);
     scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
+    kubejsLoaded = ModList.get().isLoaded("kubejs");
     modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
   }
 
