@@ -20,7 +20,9 @@ public class AffixRegistry {
     .onAdd((registry, id, resourceKey, affix) -> {
       Champions.LOGGER.info("Affix added to registry: {}", resourceKey);
       ChampionHooks.onCustomAffixBuild(affix);
-      KubeJsEvents.ON_BUILD.post(new CustomAffixEventJS.OnBuild(affix));
+      if (Champions.kubejsLoaded) {
+        KubeJsEvents.ON_BUILD.post(new CustomAffixEventJS.OnBuild(affix));
+      }
     })
     .create();
 
