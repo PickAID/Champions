@@ -36,6 +36,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.fml.loading.FMLPaths;
@@ -87,13 +88,15 @@ public class Champions {
   public static boolean scalingHealthLoaded = false;
   public static boolean gameStagesLoaded = false;
   public static boolean kubejsLoaded = false;
+  public final ModContainer modContainer;
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
-
+    this.modContainer = modContainer;
     modEventBus.addListener(this::enqueueIMC);
     modEventBus.addListener(this::registerNetwork);
     modEventBus.addListener(this::onGatherData);
     modEventBus.addListener(this::registerRegistries);
+    modEventBus.addListener(this::onClientSetup);
 //    modEventBus.addListener(TestCustomAffixHandler::testOnCustomAffixBuild);
     modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
     modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
@@ -111,7 +114,6 @@ public class Champions {
     ChampionsRegistry.register(modEventBus);
     scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
     kubejsLoaded = ModList.get().isLoaded("kubejs");
-    modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
   }
 
   private static void createServerConfig(ModConfigSpec spec, String suffix) {
@@ -158,6 +160,10 @@ public class Champions {
       };
       DispenserBlock.registerBehavior(ModItems.CHAMPION_EGG_ITEM.get(), dispenseBehavior);
     });
+  }
+
+  private void onClientSetup(final FMLClientSetupEvent event) {
+    this.modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
   }
 
   private void registerCommands(final RegisterCommandsEvent evt) {
