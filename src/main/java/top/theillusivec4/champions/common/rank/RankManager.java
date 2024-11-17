@@ -34,14 +34,18 @@ public class RankManager {
     if (rank != null) {
       return rank;
     } else if (RANKS.isEmpty()) {
-      return EMPTY_RANK;
+      return getEmptyRank();
     } else {
       return RANKS.firstEntry().getValue();
     }
   }
 
   public static Rank getLowestRank() {
-    return RANKS.isEmpty() ? EMPTY_RANK : RANKS.firstEntry().getValue();
+    return RANKS.isEmpty() ? getEmptyRank() : RANKS.firstEntry().getValue();
+  }
+
+  public static Rank getEmptyRank() {
+    return EMPTY_RANK;
   }
 
   public static Rank getHighestRank() {
@@ -93,7 +97,7 @@ public class RankManager {
     } else {
       chance = rank.chance;
     }
-    int defaultColor = rank.defaultColor;
+    var defaultColor = rank.defaultColor;
 
     int growthFactor;
 

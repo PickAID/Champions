@@ -44,7 +44,7 @@ public class ChampionsCommand {
 
   public static final SuggestionProvider<CommandSourceStack> AFFIXES = SuggestionProviders
     .register(Champions.getLocation("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
-      AffixRegistry.AFFIX_REGISTRY.keySet(), builder));
+      AffixRegistry.AFFIX_REGISTRY.stream(), builder, IAffix::getIdentifier, affix -> Component.translatable(affix.toLanguageKey())));
 
   public static final SuggestionProvider<CommandSourceStack> MONSTER_ENTITIES = SuggestionProviders
     .register(Champions.getLocation("monster_entities"),
@@ -66,7 +66,7 @@ public class ChampionsCommand {
 
     championsCommand.then(Commands.literal("egg").then(
       Commands.argument("entity", ResourceLocationArgument.id()).suggests(MONSTER_ENTITIES)
-        .then(Commands.argument("tier", IntegerArgumentType.integer()).executes(
+        .then(Commands.argument("tier", IntegerArgumentType.integer(1)).executes(
           context -> createEgg(context.getSource(),
             ResourceLocationArgument.getId(context, "entity"),
             IntegerArgumentType.getInteger(context, "tier"), new ArrayList<>())).then(
@@ -78,7 +78,7 @@ public class ChampionsCommand {
 
     championsCommand.then(Commands.literal("summon").then(
       Commands.argument("entity", ResourceLocationArgument.id()).suggests(MONSTER_ENTITIES)
-        .then(Commands.argument("tier", IntegerArgumentType.integer()).executes(
+        .then(Commands.argument("tier", IntegerArgumentType.integer(1)).executes(
           context -> summon(context.getSource(),
             ResourceLocationArgument.getId(context, "entity"),
             IntegerArgumentType.getInteger(context, "tier"), new ArrayList<>())).then(
@@ -92,7 +92,7 @@ public class ChampionsCommand {
       Commands.argument("pos", BlockPosArgument.blockPos()).then(
         Commands.argument("entity", ResourceLocationArgument.id())
           .suggests(MONSTER_ENTITIES).then(
-            Commands.argument("tier", IntegerArgumentType.integer()).executes(
+            Commands.argument("tier", IntegerArgumentType.integer(1)).executes(
               context -> summon(context.getSource(),
                 BlockPosArgument.getSpawnablePos(context, "pos"),
                 ResourceLocationArgument.getId(context, "entity"),

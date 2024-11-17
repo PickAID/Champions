@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.common.rank;
 
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffect;
 import top.theillusivec4.champions.api.IAffix;
@@ -11,7 +12,7 @@ import java.util.List;
 public class Rank {
 
   private final int tier;
-  private final int defaultColor;
+  private final String defaultColor;
   private final int numAffixes;
   private final int growthFactor;
   private final float chance;
@@ -19,10 +20,10 @@ public class Rank {
   private final List<IAffix> presetAffixes;
 
   public Rank() {
-    this(0, 0, 0, 0, 0, new ArrayList<>(), new ArrayList<>());
+    this(0, 0, 0, 0, "#FF000000", new ArrayList<>(), new ArrayList<>());
   }
 
-  public Rank(int tier, int numAffixes, int growthFactor, float chance, int defaultColor,
+  public Rank(int tier, int numAffixes, int growthFactor, float chance, String defaultColor,
               List<Tuple<Holder<MobEffect>, Integer>> effects, List<IAffix> presetAffixes) {
     this.tier = tier;
     this.numAffixes = numAffixes;
@@ -33,12 +34,16 @@ public class Rank {
     this.presetAffixes = presetAffixes;
   }
 
+  public static int getColor(String color) {
+    return TextColor.parseColor(color).getOrThrow().getValue();
+  }
+
   public int getTier() {
     return tier;
   }
 
-  public int getDefaultColor() {
-    return defaultColor;
+  public TextColor getDefaultColor() {
+    return TextColor.parseColor(defaultColor).getOrThrow();
   }
 
   public int getNumAffixes() {

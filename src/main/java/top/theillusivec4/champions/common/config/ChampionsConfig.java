@@ -96,6 +96,7 @@ public class ChampionsConfig {
   public static List<? extends String> entityStages;
   public static List<? extends String> tierStages;
   public static List<? extends String> bossBarBlackList;
+  public static boolean championTrialSpawners;
 
   static {
     final Pair<ServerConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder()
@@ -154,6 +155,7 @@ public class ChampionsConfig {
   public static void bakeCommon() {
     beaconProtectionRange = COMMON.beaconProtectionRange.get();
     championSpawners = COMMON.championSpawners.get();
+    championTrialSpawners = COMMON.championTrialSpawners.get();
     deathMessageTier = COMMON.deathMessageTier.get();
     dimensionList = COMMON.dimensionList.get();
     dimensionPermission = COMMON.dimensionPermission.get();
@@ -304,6 +306,7 @@ public class ChampionsConfig {
     public final ModConfigSpec.BooleanValue showParticles;
     public final ModConfigSpec.BooleanValue enableTOPIntegration;
     public final ModConfigSpec.ConfigValue<List<? extends String>> bossBarBlackList;
+    public final ModConfigSpec.BooleanValue championTrialSpawners;
 
     public CommonConfig(ModConfigSpec.Builder builder) {
       builder.push("general");
@@ -313,8 +316,11 @@ public class ChampionsConfig {
         .translation(CONFIG_PREFIX + "beaconProtectionRange")
         .defineInRange("beaconProtectionRange", 64, 0, 1000);
 
-      championSpawners = builder.comment("Set to true to enable champions from mob spawners")
+      championSpawners = builder.comment("Set to true to enable champions from normal mob spawners")
         .translation(CONFIG_PREFIX + "championSpawners").define("championSpawners", false);
+
+      championTrialSpawners = builder.comment("Set to true to enable champions from trial spawners")
+        .translation(CONFIG_PREFIX + "championTrialSpawners").define("championTrialSpawners", false);
 
       deathMessageTier = builder.comment(
           "The minimum tier of champions that will have death messages sent out upon defeat (0 to disable)")

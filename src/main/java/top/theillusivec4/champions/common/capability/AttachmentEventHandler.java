@@ -1,8 +1,10 @@
 package top.theillusivec4.champions.common.capability;
 
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingConversionEvent;
@@ -31,11 +33,13 @@ public class AttachmentEventHandler {
       ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
         IChampion.Server serverChampion = champion.getServer();
 
-        if (ChampionHelper.isValidChampion(serverChampion)) {
+        if (serverChampion.getRank().isEmpty()) {
 
-          if (!ChampionsConfig.championSpawners && evt.getSpawner() != null) {
-            serverChampion.setRank(RankManager.getLowestRank());
-          } else {
+          if (ChampionsConfig.championSpawners && evt.getSpawnType() == MobSpawnType.SPAWNER) {
+            serverChampion.setRank(RankManager.getLowestRank()); // check basic spawner
+            ChampionBuilder.spawn(champion);
+          } else if (ChampionsConfig.championTrialSpawners && evt.getSpawnType() == MobSpawnType.TRIAL_SPAWNER) {
+            serverChampion.setRank(RankManager.getLowestRank()); // check trial spawner
             ChampionBuilder.spawn(champion);
           }
         }
@@ -59,7 +63,7 @@ public class AttachmentEventHandler {
                 PacketDistributor.sendToPlayersTrackingEntity(outcome,
                   new SPacketSyncChampion(outcome.getId(),
                     serverChampion.getRank().map(Rank::getTier).orElse(0),
-                    serverChampion.getRank().map(Rank::getDefaultColor).orElse(0),
+                    serverChampion.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
                     serverChampion.getAffixes().stream().map(IAffix::getIdentifier).collect(Collectors.toSet())));
               });
           }
@@ -79,7 +83,7 @@ public class AttachmentEventHandler {
           PacketDistributor.sendToPlayer(serverPlayer,
             new SPacketSyncChampion(entity.getId(),
               serverChampion.getRank().map(Rank::getTier).orElse(0),
-              serverChampion.getRank().map(Rank::getDefaultColor).orElse(0),
+              serverChampion.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
               serverChampion.getAffixes().stream().map(IAffix::getIdentifier).collect(Collectors.toSet()))
           );
         }

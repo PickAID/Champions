@@ -63,11 +63,11 @@ public class ModLanguageProvider extends LanguageProvider {
     this.addAffix(SHIELDING.get(), "保护");
     this.addAffix(WOUNDING.get(), "创伤");
     // 头衔
-    this.addRank(0, "普通");
-    this.addRank(1, "稀有");
-    this.addRank(2, "精英");
-    this.addRank(3, "传奇");
-    this.addRank(4, "终极");
+    this.addRank(1, "普通");
+    this.addRank(2, "稀有");
+    this.addRank(3, "精英");
+    this.addRank(4, "传奇");
+    this.addRank(5, "终极");
     // 物品
     add(CHAMPION_EGG_ITEM.get(), "强敌蛋");
     // 物品说明
@@ -118,11 +118,11 @@ public class ModLanguageProvider extends LanguageProvider {
     this.addAffix(SHIELDING.get(), "Shielding");
     this.addAffix(WOUNDING.get(), "Wounding");
     // Rank
-    this.addRank(0, "Common");
-    this.addRank(1, "Skilled");
-    this.addRank(2, "Elite");
-    this.addRank(3, "Legendary");
-    this.addRank(4, "Ultimate");
+    this.addRank(1, "Common");
+    this.addRank(2, "Skilled");
+    this.addRank(3, "Elite");
+    this.addRank(4, "Legendary");
+    this.addRank(5, "Ultimate");
     // Item
     add(CHAMPION_EGG_ITEM.get(), "Champion Egg");
     // Item Tooltip

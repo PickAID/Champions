@@ -22,7 +22,7 @@ public class ChampionData {
 
   /**
    * <p>Read tag data from this champion Persistent Data,<br>
-   * if this champion rank > 0, will construct new affixes to champion. </p>
+   * if this champion rank < 0, will construct new affixes to champion. </p>
    *
    * @param champion to construct data.
    * @return True, if this champion has proper data, else false.
@@ -48,7 +48,8 @@ public class ChampionData {
             rank = createRank(livingEntity, min, max);
           }
         }
-        if (rank == RankManager.getLowestRank()) {
+        if (rank.getTier() < 1) {
+          Champions.LOGGER.error("Rank cannot be empty");
           return false;
         }
         champion.getServer().setRank(rank);
@@ -112,14 +113,14 @@ public class ChampionData {
   private static Rank createRank(final LivingEntity livingEntity, Integer min, Integer max) {
 
     if (ChampionHelper.notPotential(livingEntity)) {
-      return RankManager.getLowestRank();
+      return RankManager.getEmptyRank();
     }
     ImmutableSortedMap<Integer, Rank> ranks = RankManager.getRanks();
 
     if (ranks.isEmpty()) {
       Champions.LOGGER.error(
         "No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
-      return RankManager.getLowestRank();
+      return RankManager.getEmptyRank();
     }
     Integer[] tierRange = new Integer[]{min, max};
     Integer firstTier = tierRange[0] != null ? tierRange[0] : ranks.firstKey();
@@ -130,7 +131,7 @@ public class ChampionData {
     if (result == null) {
       Champions.LOGGER.error("Tier {} cannot be found in {}! Assigning lowest available rank to {}",
         firstTier, ranks, livingEntity);
-      return RankManager.getLowestRank();
+      return RankManager.getEmptyRank();
     }
 
     while (iter.hasNext() && (result.getTier() < maxTier || maxTier == -1)) {

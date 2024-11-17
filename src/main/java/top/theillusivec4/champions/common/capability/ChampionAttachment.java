@@ -114,15 +114,15 @@ public class ChampionAttachment {
       private final List<IAffix> affixes = new ArrayList<>();
       private final Map<ResourceLocation, IAffix> idToAffix = new HashMap<>();
       private final Map<ResourceLocation, CompoundTag> data = new HashMap<>();
-      private Tuple<Integer, Integer> rank = null;
+      private Tuple<Integer, String> rank = null;
 
       @Override
-      public Optional<Tuple<Integer, Integer>> getRank() {
+      public Optional<Tuple<Integer, String>> getRank() {
         return Optional.ofNullable(rank);
       }
 
       @Override
-      public void setRank(Tuple<Integer, Integer> rank) {
+      public void setRank(Tuple<Integer, String> rank) {
         this.rank = rank;
       }
 

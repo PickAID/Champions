@@ -34,10 +34,10 @@ public class TheOneProbePlugin implements IProbeInfoEntityProvider {
           if (rank.getTier() == 0) {
             return;
           }
-          int color = rank.getDefaultColor();
-          int r = FastColor.ARGB32.red(color);
-          int g = FastColor.ARGB32.green(color);
-          int b = FastColor.ARGB32.blue(color);
+          var color = rank.getDefaultColor();
+          int r = FastColor.ARGB32.red(color.getValue());
+          int g = FastColor.ARGB32.green(color.getValue());
+          int b = FastColor.ARGB32.blue(color.getValue());
 
           Color rankColor = new Color(r, g, b);
           IProbeInfo horizontal;

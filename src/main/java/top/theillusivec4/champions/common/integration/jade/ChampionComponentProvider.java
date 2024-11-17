@@ -11,12 +11,13 @@ import snownee.jade.api.config.IPluginConfig;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.rank.Rank;
 
 public enum ChampionComponentProvider implements IEntityComponentProvider {
   INSTANCE;
 
-  private static Component getChampionName(Tuple<Integer, Integer> rank, IChampion champion) {
-    return Component.translatable("rank.champions.title." + rank.getA()).append(" " + champion.getLivingEntity().getName().getString()).withColor(rank.getB());
+  private static Component getChampionName(Tuple<Integer, String> rank, IChampion champion) {
+    return Component.translatable("rank.champions.title." + rank.getA()).append(" " + champion.getLivingEntity().getName().getString()).withColor(Rank.getColor(rank.getB()));
   }
 
   @Override

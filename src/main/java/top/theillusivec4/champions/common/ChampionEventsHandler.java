@@ -98,8 +98,9 @@ public class ChampionEventsHandler {
           if (ChampionHelper.isValidChampion(clientChampion)) {
             clientChampion.getAffixes().forEach(affix -> affix.onClientUpdate(champion));
             clientChampion.getRank().ifPresent(rank -> {
-              if (ChampionsConfig.showParticles && rank.getA() > 0) {
-                int color = rank.getB();
+              if (ChampionsConfig.showParticles && rank.getA() >= 1) {
+                String colorCode = rank.getB();
+                int color = Rank.getColor(colorCode);
                 float r = (float) FastColor.ARGB32.red(color) / 255;
                 float g = (float) FastColor.ARGB32.green(color) / 255;
                 float b = (float) FastColor.ARGB32.blue(color) / 255;

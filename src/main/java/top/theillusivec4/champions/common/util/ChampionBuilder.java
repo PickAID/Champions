@@ -30,7 +30,7 @@ public class ChampionBuilder {
 
   /**
    * Read champion data, or create affix by creating new rank levels.<br/>
-   * only if new rank tier > 0, will set rank and new affixes to this champion
+   * only if new rank tier >= 1, will set rank and new affixes to this champion
    *
    * @param champion to read or construct new champion
    */
@@ -41,14 +41,13 @@ public class ChampionBuilder {
     }
     LivingEntity entity = champion.getLivingEntity();
     Rank newRank = ChampionBuilder.createRank(entity);
-    if (newRank.getTier() <= 0) {
-      return;
+    if (newRank != null && newRank.getTier() >= 1) {
+      champion.getServer().setRank(newRank);
+      ChampionBuilder.applyGrowth(entity, newRank.getGrowthFactor());
+      List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
+      champion.getServer().setAffixes(newAffixes);
+      newAffixes.forEach(affix -> affix.onInitialSpawn(champion));
     }
-    champion.getServer().setRank(newRank);
-    ChampionBuilder.applyGrowth(entity, newRank.getGrowthFactor());
-    List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
-    champion.getServer().setAffixes(newAffixes);
-    newAffixes.forEach(affix -> affix.onInitialSpawn(champion));
   }
 
   public static void spawnPreset(final IChampion champion, int tier, List<IAffix> affixes) {
@@ -92,11 +91,11 @@ public class ChampionBuilder {
         return new affix list that can apply with entity and affix settings, and affix can apply to champion.
        */
       return !affixesToAdd.contains(affix) && entitySettings
-         .map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true) && affix
+        .map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true) && affix
         .canApply(champion);
     }).toList()));
     addAffixToList(size, affixesToAdd, validAffixes, RAND);
-     return affixesToAdd;
+    return affixesToAdd;
   }
 
   /**
@@ -133,14 +132,14 @@ public class ChampionBuilder {
   public static Rank createRank(final LivingEntity livingEntity) {
 
     if (ChampionHelper.notPotential(livingEntity)) {
-      return RankManager.getLowestRank();
+      return RankManager.getEmptyRank();
     }
     ImmutableSortedMap<Integer, Rank> ranks = RankManager.getRanks();
 
     if (ranks.isEmpty()) {
       Champions.LOGGER.error(
         "No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
-      return RankManager.getLowestRank();
+      return RankManager.getEmptyRank();
     }
     Integer[] tierRange = new Integer[]{null, null};
     EntityManager.getSettings(livingEntity.getType()).ifPresent(entitySettings -> {
@@ -155,7 +154,7 @@ public class ChampionBuilder {
     if (result == null) {
       Champions.LOGGER.error("Tier {} cannot be found in {}! Assigning lowest available rank to {}",
         firstTier, ranks, livingEntity);
-      return RankManager.getLowestRank();
+      return RankManager.getEmptyRank();
     }
 
     while (iter.hasNext() && (result.getTier() < maxTier || maxTier == -1)) {
@@ -200,7 +199,7 @@ public class ChampionBuilder {
   public static void copy(IChampion oldChampion, IChampion newChampion) {
     IChampion.Server oldServer = oldChampion.getServer();
     IChampion.Server newServer = newChampion.getServer();
-    Rank rank = oldServer.getRank().orElse(RankManager.getLowestRank());
+    Rank rank = oldServer.getRank().orElse(RankManager.getEmptyRank());
     newServer.setRank(rank);
     ChampionBuilder.applyGrowth(newChampion.getLivingEntity(), rank.getGrowthFactor());
     List<IAffix> oldAffixes = oldChampion.getServer().getAffixes();

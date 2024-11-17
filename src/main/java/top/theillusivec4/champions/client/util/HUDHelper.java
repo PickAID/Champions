@@ -13,6 +13,7 @@ import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.ChampionsOverlay;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.util.ChampionHelper;
 
 import java.util.Set;
@@ -31,7 +32,7 @@ public class HUDHelper {
         Set<String> affixSet = clientChampion.getAffixes().stream().map(IAffix::toLanguageKey)
           .collect(Collectors.toSet());
 
-        if (championLevel > 0 || !affixSet.isEmpty()) {
+        if (championLevel >= 1 || !affixSet.isEmpty()) {
           Minecraft client = Minecraft.getInstance();
           // calculate render position
           int i = client.getWindow().getGuiScaledWidth();
@@ -39,7 +40,8 @@ public class HUDHelper {
           int j = 21;
           int xOffset = ClientChampionsConfig.hudXOffset;
           int yOffset = ClientChampionsConfig.hudYOffset;
-          int color = rank.getB();
+          String colorCode = rank.getB();
+          int color = Rank.getColor(colorCode);
 
           float r = FastColor.ARGB32.red(color) / 255.0F;
           float g = FastColor.ARGB32.green(color) / 255.0F;

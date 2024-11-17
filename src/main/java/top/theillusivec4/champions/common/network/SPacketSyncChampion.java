@@ -18,7 +18,7 @@ import top.theillusivec4.champions.common.capability.ChampionAttachment;
 
 import java.util.Set;
 
-public record SPacketSyncChampion(int entityId, int tier, int defaultColor,
+public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
                                   Set<ResourceLocation> affixes) implements CustomPacketPayload {
 
   public static final Type<SPacketSyncChampion> TYPE = new Type<>(Champions.getLocation("sync_champion"));
@@ -28,7 +28,7 @@ public record SPacketSyncChampion(int entityId, int tier, int defaultColor,
     SPacketSyncChampion::entityId,
     ByteBufCodecs.INT,
     SPacketSyncChampion::tier,
-    ByteBufCodecs.INT,
+    ByteBufCodecs.STRING_UTF8,
     SPacketSyncChampion::defaultColor,
     ByteBufCodecs.fromCodec(NeoForgeExtraCodecs.setOf(ResourceLocation.CODEC)), SPacketSyncChampion::affixes, SPacketSyncChampion::new
   );
