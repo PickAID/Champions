@@ -7,7 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.entity.ArcticBulletEntity;
@@ -37,7 +37,7 @@ public class ArcticAffix extends GoalAffix {
       LivingEntity livingentity = this.mobEntity.getTarget();
 
       if (livingentity != null && livingentity.isAlive()) {
-        return BasicAffix.canTarget(this.mobEntity, livingentity, true)
+        return AbstractBasicAffix.canTarget(this.mobEntity, livingentity, true)
           && this.mobEntity.level().getDifficulty() != Difficulty.PEACEFUL;
       } else {
         return false;

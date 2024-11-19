@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.BasicAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
@@ -45,7 +46,7 @@ public class PlaguedAffix extends BasicAffix {
     if (livingEntity.tickCount % 10 == 0) {
       List<Entity> list = livingEntity.level().getEntities(livingEntity,
         livingEntity.getBoundingBox().inflate(ChampionsConfig.plaguedRange),
-        entity -> entity instanceof LivingEntity && BasicAffix
+        entity -> entity instanceof LivingEntity && AbstractBasicAffix
           .canTarget(livingEntity, (LivingEntity) entity, true));
       list.forEach(entity -> {
 

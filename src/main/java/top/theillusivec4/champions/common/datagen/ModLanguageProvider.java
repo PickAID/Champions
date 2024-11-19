@@ -11,10 +11,11 @@ import top.theillusivec4.champions.common.registry.ModDamageTypes;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import static top.theillusivec4.champions.common.registry.ModAffixTypes.*;
-import static top.theillusivec4.champions.common.registry.ModDamageTypes.*;
-import static top.theillusivec4.champions.common.registry.ModEntityTypes.*;
-import static top.theillusivec4.champions.common.registry.ModItems.*;
-import static top.theillusivec4.champions.common.registry.ModMobEffects.*;
+import static top.theillusivec4.champions.common.registry.ModDamageTypes.REFLECTION_DAMAGE;
+import static top.theillusivec4.champions.common.registry.ModEntityTypes.ARCTIC_BULLET;
+import static top.theillusivec4.champions.common.registry.ModItems.CHAMPION_EGG_ITEM;
+import static top.theillusivec4.champions.common.registry.ModMobEffects.PARALYSIS_EFFECT_TYPE;
+import static top.theillusivec4.champions.common.registry.ModMobEffects.WOUND_EFFECT_TYPE;
 
 public class ModLanguageProvider extends LanguageProvider {
   final private String locale;
@@ -23,6 +24,7 @@ public class ModLanguageProvider extends LanguageProvider {
     super(output, Champions.MODID, locale);
     this.locale = locale;
   }
+
   public ModLanguageProvider(PackOutput output) {
     super(output, Champions.MODID, "en_us");
     this.locale = "en_us";
@@ -31,9 +33,21 @@ public class ModLanguageProvider extends LanguageProvider {
 
   @Override
   protected void addTranslations() {
-    switch (this.locale){
+    switch (this.locale) {
       case "zh_cn":
         this.addChineseTranslations();
+        break;
+      case "ko_kr":
+        this.addKoreaTranslations();
+        break;
+      case "ru_ru":
+        this.addRussianTranslations();
+        break;
+      case "tr_tr":
+        this.addTurkishTranslations();
+        break;
+      case "uk_ua":
+        this.addUkrainianTranslations();
         break;
       case "en_us":
       default:
@@ -42,9 +56,64 @@ public class ModLanguageProvider extends LanguageProvider {
   }
 
   /**
+   * uk_ua
+   */
+  private void addUkrainianTranslations() {
+    // Affix
+    this.addAffix(ADAPTABLE.get(), "Адаптований");
+    this.addAffix(ARCTIC.get(), "Арктика");
+    this.addAffix(DAMPENING.get(), "Зволоження");
+    this.addAffix(DESECRATING.get(), "Desecrating");
+    this.addAffix(ENKINDLING.get(), "Осквернення");
+    this.addAffix(HASTY.get(), "Поспішно");
+    this.addAffix(INFESTED.get(), "Заражений");
+    this.addAffix(KNOCKING.get(), "Стукіт");
+    this.addAffix(LIVELY.get(), "Жвавий");
+    this.addAffix(MAGNETIC.get(), "Магнітний");
+    this.addAffix(MOLTEN.get(), "Розплавлений");
+    this.addAffix(PARALYZING.get(), "Паралізуючий");
+    this.addAffix(PLAGUED.get(), "Заражений");
+    this.addAffix(REFLECTIVE.get(), "Світловідбиваючі");
+    this.addAffix(SHIELDING.get(), "Екранізація");
+    this.addAffix(WOUNDING.get(), "Пораненний");
+    // Rank
+    this.addRank(1, "Звичайний");
+    this.addRank(2, "Кваліфікований");
+    this.addRank(3, "Еліта");
+    this.addRank(4, "Легендарний");
+    this.addRank(5, "Кінцевий");
+    // Item
+    add(CHAMPION_EGG_ITEM.get(), "Чемпіонське яйце");
+    // Item Tooltip
+    add("item.champions.egg.tooltip", "Випадкові афікси");
+    // Entity Type
+    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(ARCTIC_BULLET.get(), "Arctic bullet");
+    // Effect
+    add(PARALYSIS_EFFECT_TYPE.get(), "Параліч");
+    add(WOUND_EFFECT_TYPE.get(), "Поранення");
+    // Damage Type
+    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s був охоплений полум'ям", "%1$s був охоплений полум'ям під час бою %2$s");
+    addDamageType(REFLECTION_DAMAGE, "%1$s відчули смак власних ліків", "");
+    // Dynamic Command Exception Type
+    add("argument.champions.affix.unknown", "Невідомий афікс %s");
+    // Command
+    add("commands.champions.summon.success", "Викликається новий %s");
+    add("commands.champions.egg.success", "Створено новий %s");
+    add("command.champions.egg.unknown_entity", "Невідомий суб'єкт");
+    // Config
+    add("config.jade.plugin_champions.enable_affix_compact", "Enable Jade affix compact");
+    // Advancement
+    add("advancements.champions.kill_a_champion.title", "Чемпіонський мисливець");
+    add("advancements.champions.kill_a_champion.description", "Убийте потужного ворожого монстра");
+    // Stats
+    add("stat.champions.champion_mobs_killed", "Чемпіонські натовпи вбито");
+  }
+
+  /**
    * zh_cn
    */
-  protected void addChineseTranslations(){
+  protected void addChineseTranslations() {
     // 词缀
     this.addAffix(ADAPTABLE.get(), "适应");
     this.addAffix(ARCTIC.get(), "极寒");
@@ -96,10 +165,11 @@ public class ModLanguageProvider extends LanguageProvider {
     add("stat.champions.champion_mobs_killed", "冠军怪物击杀数");
 
   }
+
   /**
    * en_us
    */
-  protected void addEnglishTranslations(){
+  protected void addEnglishTranslations() {
     // Affix
     this.addAffix(ADAPTABLE.get(), "Adaptable");
     this.addAffix(ARCTIC.get(), "Arctic");
@@ -150,48 +220,223 @@ public class ModLanguageProvider extends LanguageProvider {
     // Stats
     add("stat.champions.champion_mobs_killed", "Champion Mobs Killed");
   }
+
+  /**
+   * tr_tr
+   */
+  protected void addTurkishTranslations() {
+    // Affix
+    this.addAffix(ADAPTABLE.get(), "Adaptif");
+    this.addAffix(ARCTIC.get(), "Buz-gibi");
+    this.addAffix(DAMPENING.get(), "Soğurucu");
+    this.addAffix(DESECRATING.get(), "Saygısız");
+    this.addAffix(ENKINDLING.get(), "Tutuşturucu");
+    this.addAffix(HASTY.get(), "Aceleci");
+    this.addAffix(INFESTED.get(), "Böcekli");
+    this.addAffix(KNOCKING.get(), "Tepici");
+    this.addAffix(LIVELY.get(), "Yaşam-dolu");
+    this.addAffix(MAGNETIC.get(), "Manyetik");
+    this.addAffix(MOLTEN.get(), "Erimiş");
+    this.addAffix(PARALYZING.get(), "Felç-edici");
+    this.addAffix(PLAGUED.get(), "Hastalıklı");
+    this.addAffix(REFLECTIVE.get(), "Yansıtıcı");
+    this.addAffix(SHIELDING.get(), "Korumalı");
+    this.addAffix(WOUNDING.get(), "Yaralayıcı");
+    // Rank
+    this.addRank(1, "Yaygın");
+    this.addRank(2, "Yetenekli");
+    this.addRank(3, "Elit");
+    this.addRank(4, "Efsanevi");
+    this.addRank(5, "Nihai");
+    // Item
+    add(CHAMPION_EGG_ITEM.get(), "Şampiyon Yumurtası");
+    // Item Tooltip
+    add("item.champions.egg.tooltip", "Rasgele Özellikli");
+    // Entity Type
+    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(ARCTIC_BULLET.get(), "Arctic bullet");
+    // Effect
+    add(PARALYSIS_EFFECT_TYPE.get(), "Felç");
+    add(WOUND_EFFECT_TYPE.get(), "Yaralanma");
+    // Damage Type
+    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s yandı", "%1$s ,  %2$s ile savaşırken yandı.");
+    addDamageType(REFLECTION_DAMAGE, "%1$s kendi ilacının tadına baktı", "");
+    // Dynamic Command Exception Type
+    add("argument.champions.affix.unknown", "%s - Bilinmeyen özellik");
+    // Command
+    add("commands.champions.summon.success", "Yeni %s çağrıldı");
+    add("commands.champions.egg.success", "Yeni %s oluşturuldu");
+    add("command.champions.egg.unknown_entity", "Bilinmeyen Yaratık");
+    // Config
+    add("config.jade.plugin_champions.enable_affix_compact", "Enable Jade affix compact");
+    // Advancement
+    add("advancements.champions.kill_a_champion.title", "Şampiyon Avcısı");
+    add("advancements.champions.kill_a_champion.description", "Güçlü bir düşman öldür");
+    // Stats
+    add("stat.champions.champion_mobs_killed", "Öldürülen Şampiyon Sayısı");
+  }
+
+  /**
+   * ru_ru
+   */
+  protected void addRussianTranslations() {
+    // Affix
+    this.addAffix(ADAPTABLE.get(), "Адаптируемый");
+    this.addAffix(ARCTIC.get(), "Снежный");
+    this.addAffix(DAMPENING.get(), "Водянистый");
+    this.addAffix(DESECRATING.get(), "Оскверненный");
+    this.addAffix(ENKINDLING.get(), "Раскалённый");
+    this.addAffix(HASTY.get(), "Ловкий");
+    this.addAffix(INFESTED.get(), "Зараженный");
+    this.addAffix(KNOCKING.get(), "Отбивающий");
+    this.addAffix(LIVELY.get(), "Живучий");
+    this.addAffix(MAGNETIC.get(), "Магнитный");
+    this.addAffix(MOLTEN.get(), "Расплавленный");
+    this.addAffix(PARALYZING.get(), "Парализующий");
+    this.addAffix(PLAGUED.get(), "Чумной");
+    this.addAffix(REFLECTIVE.get(), "Рефлекторный");
+    this.addAffix(SHIELDING.get(), "Укрепленный");
+    this.addAffix(WOUNDING.get(), "Убойный");
+    // Rank
+    this.addRank(1, "Обыкновенный");
+    this.addRank(2, "Умелый");
+    this.addRank(3, "Элитный");
+    this.addRank(4, "Легендарный");
+    this.addRank(5, "Ультимативный");
+    // Item
+    add(CHAMPION_EGG_ITEM.get(), "Яйцо Чемпионского Моба");
+    // Item Tooltip
+    add("item.champions.egg.tooltip", "Моб с случайными усиливающими особенностями");
+    // Entity Type
+    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(ARCTIC_BULLET.get(), "Arctic bullet");
+    // Effect
+    add(PARALYSIS_EFFECT_TYPE.get(), "Паралич");
+    add(WOUND_EFFECT_TYPE.get(), "Ранение");
+    // Damage Type
+    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s was struck by flames", "%1$s was struck by flames whilst fighting %2$s");
+    addDamageType(REFLECTION_DAMAGE, "%1$s попробовал на вкус собственное лекарство", "");
+    // Dynamic Command Exception Type
+    add("argument.champions.affix.unknown", "Unknown affix %s");
+    // Command
+    add("commands.champions.summon.success", "Призван новый %s");
+    add("commands.champions.egg.success", "Рожден новый %s");
+    add("command.champions.egg.unknown_entity", "Unknown entity");
+    // Config
+    add("config.jade.plugin_champions.enable_affix_compact", "Enable Jade affix compact");
+    // Advancement
+    add("advancements.champions.kill_a_champion.title", "Охотник на Чемпионов");
+    add("advancements.champions.kill_a_champion.description", "Убейте чемпионского моба");
+    // Stats
+    add("stat.champions.champion_mobs_killed", "Убито чемпионских мобов");
+  }
+
+  /**
+   * ko_kr
+   */
+  protected void addKoreaTranslations() {
+    // Affix
+    this.addAffix(ADAPTABLE.get(), "적응");
+    this.addAffix(ARCTIC.get(), "극점");
+    this.addAffix(DAMPENING.get(), "감쇠");
+    this.addAffix(DESECRATING.get(), "모독");
+    this.addAffix(ENKINDLING.get(), "맹화");
+    this.addAffix(HASTY.get(), "신속");
+    this.addAffix(INFESTED.get(), "감염");
+    this.addAffix(KNOCKING.get(), "넉백");
+    this.addAffix(LIVELY.get(), "활력");
+    this.addAffix(MAGNETIC.get(), "자력");
+    this.addAffix(MOLTEN.get(), "융해");
+    this.addAffix(PARALYZING.get(), "마비");
+    this.addAffix(PLAGUED.get(), "질병");
+    this.addAffix(REFLECTIVE.get(), "반사");
+    this.addAffix(SHIELDING.get(), "방패");
+    this.addAffix(WOUNDING.get(), "상처");
+    // Rank
+    this.addRank(1, "평범한");
+    this.addRank(2, "숙련된");
+    this.addRank(3, "엘리트");
+    this.addRank(4, "전설적인");
+    this.addRank(5, "궁극의");
+    // Item
+    add(CHAMPION_EGG_ITEM.get(), "챔피언 생성 알");
+    // Item Tooltip
+    add("item.champions.egg.tooltip", "무작위 수식어");
+    // Entity Type
+    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(ARCTIC_BULLET.get(), "Arctic bullet");
+    // Effect
+    add(PARALYSIS_EFFECT_TYPE.get(), "마비");
+    add(WOUND_EFFECT_TYPE.get(), "상처");
+    // Damage Type
+    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s은(는) 불타올랐습니다", "%1$s은(는) %2$s과(와) 싸우다가 불타올랐습니다");
+    addDamageType(REFLECTION_DAMAGE, "%1$s은(는) 자기 꾀에 자기가 넘어갔습니다", "");
+    // Dynamic Command Exception Type
+    add("argument.champions.affix.unknown", "알 수 없는 수식어 %s");
+    // Command
+    add("commands.champions.summon.success", "새로운 %s을(를) 소환");
+    add("commands.champions.egg.success", "새로운 %s을(를) 생성");
+    add("command.champions.egg.unknown_entity", "Unknown entity");
+    // Config
+    add("config.jade.plugin_champions.enable_affix_compact", "Enable Jade affix compact");
+    // Advancement
+    add("advancements.champions.kill_a_champion.title", "챔피언 사냥꾼");
+    add("advancements.champions.kill_a_champion.description", "강력한 적대적 몬스터를 죽이세요");
+    // Stats
+    add("stat.champions.champion_mobs_killed", "챔피언 처치");
+  }
+
   /**
    * 添加伤害死亡消息翻译 Add damage type death message translation
-   * @param damageType damage type Object
-   * @param translate death message translation
+   *
+   * @param damageType        damage type Object
+   * @param translate         death message translation
    * @param byPlayerTranslate player killed by the player death message translation
    */
-  protected void addDamageType(ResourceKey<DamageType> damageType, String translate, String byPlayerTranslate){
+  protected void addDamageType(ResourceKey<DamageType> damageType, String translate, String byPlayerTranslate) {
     add("death.attack." + damageType.location().getPath(), translate);
     add("death.attack." + damageType.location().getPath() + ".player", byPlayerTranslate);
   }
+
   /**
    * 添加Rank翻译 Add rank translation
-   * @param level level of number
+   *
+   * @param level     level of number
    * @param translate translation
    */
-  protected void addRank(int level, String translate){
+  protected void addRank(int level, String translate) {
     add("rank.champions.title." + level, translate);
   }
+
   /**
    * 添加词缀翻译 Add affix translation
-   * @param affix 词缀 affix
+   *
+   * @param affix     词缀 affix
    * @param translate 翻译 translation
    */
-  protected void addAffix(IAffix affix, String translate){
+  protected void addAffix(IAffix affix, String translate) {
     this.add("affix", affix.getIdentifier(), translate);
   }
+
   /**
    * 通用翻译 Universal translation
-   * @param pre 前缀 形似block
-   * @param post 注册名 形似minecraft.block
+   *
+   * @param pre       前缀 形似block
+   * @param post      注册名 形似minecraft.block
    * @param translate 翻译 block.minecraft.block -> 石头
    */
-  protected void add(String pre, String post, String translate){
+  protected void add(String pre, String post, String translate) {
     add(pre + ":" + post, translate);
   }
+
   /**
    * 通用翻译 Universal translation
-   * @param pre 前缀 形似block
-   * @param post 注册名 形似minecraft.block
+   *
+   * @param pre       前缀 形似block
+   * @param post      注册名 形似minecraft.block
    * @param translate 翻译 block.minecraft.block -> 石头
    */
-  protected void add(String pre, ResourceLocation post, String translate){
+  protected void add(String pre, ResourceLocation post, String translate) {
     add(post.toLanguageKey(pre), translate);
   }
 }

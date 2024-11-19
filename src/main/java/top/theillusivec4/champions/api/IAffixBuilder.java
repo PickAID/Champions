@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.api;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.resources.ResourceLocation;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 
 import java.util.List;
@@ -26,13 +26,14 @@ public interface IAffixBuilder<T extends IAffix> {
 
   /**
    * Set this affix has subscription, if true, will subscript to forge event.
+   *
    * @return builder
    */
   IAffixBuilder<T> setHasSubscriptions();
 
   IAffixBuilder<T> enabled(boolean enabled);
 
-  IAffixBuilder<T> setMobList(List<EntityType<?>> mobList);
+  IAffixBuilder<T> setMobList(List<ResourceLocation> mobList);
 
   IAffixBuilder<T> setTier(MinMaxBounds.Ints tier);
 

@@ -52,7 +52,6 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.IChampionsApi;
 import top.theillusivec4.champions.api.impl.ChampionsApiImpl;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
@@ -78,6 +77,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static top.theillusivec4.champions.api.AffixRegistry.AFFIX_REGISTRY;
+
 @Mod(Champions.MODID)
 public class Champions {
 
@@ -102,7 +103,6 @@ public class Champions {
     modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
     modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
     createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
-    createServerConfig(ChampionsConfig.AFFIXES_SPEC, "affixes");
     createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
 
     if (gameStagesLoaded) {
@@ -135,7 +135,7 @@ public class Champions {
   }
 
   private void registerRegistries(NewRegistryEvent event) {
-    event.register(AffixRegistry.AFFIX_REGISTRY);
+    event.register(AFFIX_REGISTRY);
   }
 
   private void setup(final FMLCommonSetupEvent evt) {
@@ -186,9 +186,6 @@ public class Champions {
         if (spec == ChampionsConfig.RANKS_SPEC) {
           ChampionsConfig.transformRanks(commentedConfig);
           RankManager.buildRanks();
-        } else if (spec == ChampionsConfig.AFFIXES_SPEC) {
-          ChampionsConfig.transformAffixes(commentedConfig);
-//          AffixManager.buildAffixSettings();
         } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
           ChampionsConfig.transformEntities(commentedConfig);
           EntityManager.buildEntitySettings();
@@ -232,5 +229,10 @@ public class Champions {
     // translate
     generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "en_us"));
     generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "zh_cn"));
+    // add more translate to data generation
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ko_kr"));
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ru_ru"));
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "tr_tr"));
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "uk_ua"));
   }
 }

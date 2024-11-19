@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
@@ -68,7 +68,7 @@ public class DesecratingAffix extends GoalAffix {
 
     @Override
     public boolean canUse() {
-      return BasicAffix.canTarget(this.mobEntity, this.mobEntity.getTarget(), true);
+      return AbstractBasicAffix.canTarget(this.mobEntity, this.mobEntity.getTarget(), true);
     }
   }
 }

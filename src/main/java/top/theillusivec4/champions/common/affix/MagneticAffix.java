@@ -7,7 +7,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.api.*;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
@@ -44,7 +44,7 @@ public class MagneticAffix extends GoalAffix {
 
     @Override
     public boolean canUse() {
-      return mobEntity.getTarget() != null && BasicAffix
+      return mobEntity.getTarget() != null && AbstractBasicAffix
           .canTarget(mobEntity, mobEntity.getTarget(), true)
           && mobEntity.tickCount % 40 == 0 && mobEntity.getRandom().nextDouble() < 0.4D;
     }

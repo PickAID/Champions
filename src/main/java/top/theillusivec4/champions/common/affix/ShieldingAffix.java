@@ -8,7 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
-import top.theillusivec4.champions.api.*;
+import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.affix.core.AffixData;
 import top.theillusivec4.champions.common.affix.core.BasicAffix;
 
@@ -22,7 +22,7 @@ public class ShieldingAffix extends BasicAffix {
     RandomSource random = livingEntity.getRandom();
 
     if (shielding.mode) {
-      livingEntity.level().addParticle(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT,1),
+      livingEntity.level().addParticle(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, 1),
         livingEntity.position().x + (random.nextFloat() - 0.5D) * livingEntity.getBbWidth(),
         livingEntity.position().y + random.nextFloat() * livingEntity.getBbHeight(),
         livingEntity.position().z + (random.nextFloat() - 0.5D) * livingEntity.getBbWidth(),
