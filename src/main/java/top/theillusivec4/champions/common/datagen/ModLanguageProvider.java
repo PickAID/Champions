@@ -21,13 +21,16 @@ public class ModLanguageProvider extends LanguageProvider {
   final private String locale;
 
   public ModLanguageProvider(PackOutput output, String locale) {
-    super(output, Champions.MODID, locale);
-    this.locale = locale;
+    this(output, Champions.MODID, locale);
   }
 
   public ModLanguageProvider(PackOutput output) {
-    super(output, Champions.MODID, "en_us");
-    this.locale = "en_us";
+    this(output, "en_us");
+  }
+
+  public ModLanguageProvider(PackOutput output, String modid, String locale) {
+    super(output, modid, locale);
+    this.locale = locale;
   }
 
 

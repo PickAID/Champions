@@ -240,7 +240,7 @@ public class Champions {
     generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));
     generator.addProvider(event.includeServer(), new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
     // translate
-    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "en_us"));
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput));
     generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "zh_cn"));
     // add more translate to data generation
     generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ko_kr"));

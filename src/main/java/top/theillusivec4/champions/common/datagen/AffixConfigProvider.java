@@ -35,7 +35,7 @@ public class AffixConfigProvider implements DataProvider {
       ));
     });
 
-    return CompletableFuture.allOf(futures.toArray(new CompletableFuture<?>[0]));
+    return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
   }
 
   @Override
