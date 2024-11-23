@@ -10,8 +10,8 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.*;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -23,32 +23,10 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public abstract class AbstractBasicAffix implements IAffix {
-  private boolean enabled;
-  private MinMaxBounds.Ints tier;
-  private List<ResourceLocation> mobList;
-  private ConfigEnums.Permission mobPermission;
-  private AffixCategory category;
-  private String prefix;
-  private boolean hasSubscriptions;
+  public static final String DEFAULT_PREFIX = "affix.";
+  public AffixSetting affixSetting = AffixSetting.empty();
 
-  public AbstractBasicAffix() {
-
-    if (hasSubscriptions()) {
-      NeoForge.EVENT_BUS.register(this);
-    }
-  }
-
-  public AbstractBasicAffix(boolean enabled, MinMaxBounds.Ints tier, ConfigEnums.Permission mobPermission, AffixCategory category, String prefix, Boolean hasSub) {
-    this.enabled = enabled;
-    this.tier = tier;
-    this.mobPermission = mobPermission;
-    this.category = category;
-    this.prefix = prefix;
-    this.hasSubscriptions = hasSub;
-  }
-
-
-  public static boolean canTarget(LivingEntity livingEntity, LivingEntity target, boolean sightCheck) {
+  public static boolean canTarget(LivingEntity livingEntity, @Nullable LivingEntity target, boolean sightCheck) {
 
     if (target == null || !target.isAlive() || target instanceof ArmorStand || (sightCheck && !hasLineOfSight(livingEntity, target))) {
       return false;
@@ -68,19 +46,18 @@ public abstract class AbstractBasicAffix implements IAffix {
     }
   }
 
-  @Override
-  public void setSubscriptions(boolean hasSubscriptions) {
-    this.hasSubscriptions = hasSubscriptions;
-  }
-
-  @Override
-  public boolean hasSubscriptions() {
-    return hasSubscriptions;
+  public static <T extends IAffix, B extends BasicAffixBuilder<T>> Codec<T> codec(Supplier<B> affixType) {
+    return BasicAffixBuilder.of(affixType);
   }
 
   @Override
   public ResourceLocation getIdentifier() {
-    return AffixRegistry.AFFIX_REGISTRY.getKey(this);
+    return Champions.API.getAffixId(this).orElseThrow();
+  }
+
+  @Override
+  public boolean hasSubscriptions() {
+    return affixSetting.hasSub().orElse(false);
   }
 
   @Override
@@ -90,42 +67,21 @@ public abstract class AbstractBasicAffix implements IAffix {
 
   @Override
   public AffixCategory getCategory() {
-    return this.category;
-  }
-
-  @Override
-  public void setCategory(AffixCategory category) {
-    this.category = category;
-    Champions.API.addCategory(this.getCategory(), this);
+    return affixSetting.category();
   }
 
   @Override
   public boolean isEnabled() {
-    return enabled;
-  }
-
-  @Override
-  public void setEnabled(boolean enabled) {
-    this.enabled = enabled;
+    return affixSetting.enabled();
   }
 
   public ConfigEnums.Permission getMobPermission() {
-    return mobPermission == null ? ConfigEnums.Permission.BLACKLIST : mobPermission;
-  }
-
-  @Override
-  public void setMobPermission(ConfigEnums.Permission mobPermission) {
-    this.mobPermission = mobPermission;
+    return affixSetting.mobPermission().orElse(ConfigEnums.Permission.BLACKLIST);
   }
 
   @Override
   public String getPrefix() {
-    return this.prefix == null ? "affix." : this.prefix;
-  }
-
-  @Override
-  public void setPrefix(String prefix) {
-    this.prefix = prefix;
+    return affixSetting.prefix().orElse(DEFAULT_PREFIX);
   }
 
   @Override
@@ -138,34 +94,35 @@ public abstract class AbstractBasicAffix implements IAffix {
   public boolean canApply(IChampion champion) {
     boolean isValidEntity;
     var entityKey = BuiltInRegistries.ENTITY_TYPE.getKey(champion.getLivingEntity().getType());
-    if (getMobPermission() == ConfigEnums.Permission.BLACKLIST) {
-      isValidEntity = getMobList().map(e -> !e.contains(entityKey)).orElse(true);
+    if (isBlackList()) {
+      isValidEntity = getMobList().map(mobList -> !mobList.contains(entityKey)).orElse(true);
     } else {
-      isValidEntity = getMobList().map(e -> e.contains(entityKey)).orElse(false);
+      isValidEntity = getMobList().map(mobList -> mobList.contains(entityKey)).orElse(false);
     }
-    return this.enabled && isValidEntity && champion.getServer().getRank().map(rank -> getTier().matches(rank.getTier())).orElse(false);
+    return isEnabled() && isValidEntity && champion.getServer().getRank().map(rank -> getTier().matches(rank.getTier())).orElse(false);
   }
 
   @Override
   public MinMaxBounds.Ints getTier() {
-    return tier == null ? MinMaxBounds.Ints.atLeast(1) : tier;
+    return affixSetting.tier().orElse(MinMaxBounds.Ints.atLeast(1));
   }
 
   @Override
-  public void setTier(MinMaxBounds.Ints tier) {
-    this.tier = tier;
-  }
-
   public Optional<List<ResourceLocation>> getMobList() {
-    return Optional.ofNullable(mobList);
+    return affixSetting.mobList();
   }
 
   @Override
-  public void setMobList(List<ResourceLocation> mobList) {
-    this.mobList = mobList;
+  public void applySetting(AffixSetting affixSetting) {
+    this.affixSetting = affixSetting;
   }
 
-  public static  <T extends IAffix, B extends BasicAffixBuilder<T>> Codec<T> codec(Supplier<B> affixType) {
-    return BasicAffixBuilder.of(affixType);
+  public boolean isBlackList() {
+    return getMobPermission() == ConfigEnums.Permission.BLACKLIST;
+  }
+
+  @Override
+  public AffixSetting getSetting() {
+    return affixSetting;
   }
 }

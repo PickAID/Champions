@@ -1,7 +1,5 @@
 package top.theillusivec4.champions.common.network;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -35,10 +33,10 @@ public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
 
   public static void handle(final SPacketSyncChampion data, final IPayloadContext cxt) {
     cxt.enqueueWork(() -> {
-      ClientLevel world = Minecraft.getInstance().level;
-
-      if (world != null) {
-        Entity entity = world.getEntity(data.entityId);
+      if (cxt.flow().isClientbound()) {
+        var level = cxt.player().level();
+        Entity entity = level.getEntity(data.entityId);
+        assert entity != null;
         ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
           IChampion.Client clientChampion = champion.getClient();
           clientChampion.setRank(new Tuple<>(data.tier, data.defaultColor));

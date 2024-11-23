@@ -7,6 +7,12 @@ import top.theillusivec4.champions.common.config.ConfigEnums;
 import java.util.List;
 
 public interface IAffixBuilder<T extends IAffix> {
+  /**
+   * Set type for data generation
+   * @param type for data apply target
+   * @return builder
+   */
+  BasicAffixBuilder<T> setType(ResourceLocation type);
 
   /**
    * Set affix category
@@ -29,9 +35,9 @@ public interface IAffixBuilder<T extends IAffix> {
    *
    * @return builder
    */
-  IAffixBuilder<T> setHasSubscriptions();
+  IAffixBuilder<T> setHasSub();
 
-  IAffixBuilder<T> enabled(boolean enabled);
+  IAffixBuilder<T> setEnable(boolean enabled);
 
   IAffixBuilder<T> setMobList(List<ResourceLocation> mobList);
 

@@ -10,7 +10,7 @@ import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.common.registry.ModDamageTypes;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
-import static top.theillusivec4.champions.common.registry.ModAffixTypes.*;
+import static top.theillusivec4.champions.common.registry.AffixTypes.*;
 import static top.theillusivec4.champions.common.registry.ModDamageTypes.REFLECTION_DAMAGE;
 import static top.theillusivec4.champions.common.registry.ModEntityTypes.ARCTIC_BULLET;
 import static top.theillusivec4.champions.common.registry.ModItems.CHAMPION_EGG_ITEM;

@@ -6,7 +6,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.common.registry.ModDamageTypes;
 
 import java.util.Set;
@@ -17,13 +16,7 @@ public class ModDatapackProvider extends DatapackBuiltinEntriesProvider {
 
   public ModDatapackProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
     super(output, registries, BUILDER, Set.of(Champions.MODID));
-
-    addAffixType();
     addDamageType();
-  }
-
-  private void addAffixType() {
-    BUILDER.add(AffixRegistry.Keys.AFFIX_TYPE, AffixRegistry.Keys::bootstrap);
   }
 
   private void addDamageType() {

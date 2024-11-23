@@ -26,13 +26,6 @@ public interface IAffix {
   AffixCategory getCategory();
 
   /**
-   * Set Affix's category
-   *
-   * @param category Affix's category
-   */
-  void setCategory(AffixCategory category);
-
-  /**
    * Is this category same with other category?
    *
    * @param other affix
@@ -54,13 +47,6 @@ public interface IAffix {
   String getPrefix();
 
   /**
-   * Set affix prefix
-   *
-   * @param prefix new prefix to set.
-   */
-  void setPrefix(String prefix);
-
-  /**
    * Dose affix has event
    *
    * @return True if it has subs, else false.
@@ -69,28 +55,7 @@ public interface IAffix {
 
   boolean isEnabled();
 
-  /**
-   * Set this affix enable
-   *
-   * @param enabled True if enable this affix, else false
-   */
-  void setEnabled(boolean enabled);
-
   MinMaxBounds.Ints getTier();
-
-  /**
-   * Set this can apples to what rank tier mob
-   *
-   * @param tier Range of champions rank tier that can apply this affix
-   */
-  void setTier(MinMaxBounds.Ints tier);
-
-  /**
-   * Set this affix have or not have subs
-   *
-   * @param hasSubscription new value of subscription, only useful when registering new affix.
-   */
-  void setSubscriptions(boolean hasSubscription);
 
   /**
    * Initial Spawn IChampion mob
@@ -252,20 +217,9 @@ public interface IAffix {
 
   ConfigEnums.Permission getMobPermission();
 
-  /**
-   * Set mob Permission mode.
-   *
-   * @param mobPermission perform mob list how to work
-   * @see ConfigEnums.Permission
-   */
-  void setMobPermission(ConfigEnums.Permission mobPermission);
-
   Optional<List<ResourceLocation>> getMobList();
 
-  /**
-   * Set mob list that will or not apply to this affix.
-   *
-   * @param mobList a mob type list
-   */
-  void setMobList(List<ResourceLocation> mobList);
+  void applySetting(AffixSetting affixSetting);
+
+  AffixSetting getSetting();
 }
