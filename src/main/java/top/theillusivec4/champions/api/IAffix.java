@@ -4,11 +4,11 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface IAffix {
   /**
@@ -24,13 +24,6 @@ public interface IAffix {
    * @return AffixCategory
    */
   AffixCategory getCategory();
-
-  /**
-   * Set Affix's category
-   *
-   * @param category Affix's category
-   */
-  void setCategory(AffixCategory category);
 
   /**
    * Is this category same with other category?
@@ -54,53 +47,15 @@ public interface IAffix {
   String getPrefix();
 
   /**
-   * Set affix prefix
-   *
-   * @param prefix new prefix to set.
-   */
-  void setPrefix(String prefix);
-
-  /**
    * Dose affix has event
    *
    * @return True if it has subs, else false.
    */
   boolean hasSubscriptions();
 
-  /**
-   * Set this affix enable
-   * @param enabled True if enable this affix, else false
-   */
-  void setEnabled(boolean enabled);
-
   boolean isEnabled();
-  /**
-   * Set mob list that will or not apply to this affix.
-   * @param mobList a mob type list
-   */
-  void setMobList(List<EntityType<?>> mobList);
 
-  /**
-   * Set mob Permission mode.
-   *
-   * @param mobPermission perform mob list how to work
-   * @see ConfigEnums.Permission
-   */
-  void setMobPermission(ConfigEnums.Permission mobPermission);
-
-  /**
-   * Set this can apples to what rank tier mob
-   *
-   * @param tier Range of champions rank tier that can apply this affix
-   */
-  void setTier(MinMaxBounds.Ints tier);
-
-  /**
-   * Set this affix have or not have subs
-   *
-   * @param hasSubscription new value of subscription, only useful when registering new affix.
-   */
-  void setSubscriptions(boolean hasSubscription);
+  MinMaxBounds.Ints getTier();
 
   /**
    * Initial Spawn IChampion mob
@@ -259,4 +214,12 @@ public interface IAffix {
   default CompoundTag writeSyncTag(IChampion champion) {
     return new CompoundTag();
   }
+
+  ConfigEnums.Permission getMobPermission();
+
+  Optional<List<ResourceLocation>> getMobList();
+
+  void applySetting(AffixSetting affixSetting);
+
+  AffixSetting getSetting();
 }

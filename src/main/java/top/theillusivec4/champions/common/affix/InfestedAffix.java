@@ -13,7 +13,7 @@ import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.level.Level;
 import top.theillusivec4.champions.api.*;
 import top.theillusivec4.champions.common.affix.core.AffixData;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -139,7 +139,7 @@ public class InfestedAffix extends GoalAffix {
 
     @Override
     public boolean canUse() {
-      return BasicAffix.canTarget(this.mobEntity, this.mobEntity.getTarget(), true);
+      return AbstractBasicAffix.canTarget(this.mobEntity, this.mobEntity.getTarget(), true);
     }
   }
 }

@@ -17,7 +17,7 @@ public class ChampionsRegistry {
     ModAttachments.register(bus);
     ModDataComponents.register(bus);
     ModEntitySubProviders.register(bus);
-    ModAffixTypes.register(bus);
+    AffixTypes.register(bus);
   }
 
 }

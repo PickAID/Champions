@@ -13,7 +13,6 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.common.config.AffixesConfig.AffixConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums.LootSource;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.config.EntitiesConfig.EntityConfig;
@@ -33,13 +32,10 @@ public class ChampionsConfig {
   public static final StageConfig STAGE;
   public static final ModConfigSpec RANKS_SPEC;
   public static final Ranks RANKS;
-  public static final ModConfigSpec AFFIXES_SPEC;
-  public static final Affixes AFFIXES;
   public static final ModConfigSpec ENTITIES_SPEC;
   public static final Entities ENTITIES;
   private static final String CONFIG_PREFIX = "gui." + Champions.MODID + ".config.";
   public static List<RankConfig> ranks;
-  public static List<AffixConfig> affixes;
   public static List<EntityConfig> entities;
   public static int beaconProtectionRange;
   public static boolean championSpawners;
@@ -124,13 +120,6 @@ public class ChampionsConfig {
   }
 
   static {
-    final Pair<Affixes, ModConfigSpec> specPair = new ModConfigSpec.Builder()
-      .configure(Affixes::new);
-    AFFIXES_SPEC = specPair.getRight();
-    AFFIXES = specPair.getLeft();
-  }
-
-  static {
     final Pair<Entities, ModConfigSpec> specPair = new ModConfigSpec.Builder()
       .configure(Entities::new);
     ENTITIES_SPEC = specPair.getRight();
@@ -140,11 +129,6 @@ public class ChampionsConfig {
   public static void transformRanks(CommentedConfig configData) {
     RANKS.ranks = ObjectDeserializer.standard().deserializeFields(configData, RanksConfig::new);
     ranks = RANKS.ranks.ranks;
-  }
-
-  public static void transformAffixes(CommentedConfig configData) {
-    AFFIXES.affixes = ObjectDeserializer.standard().deserializeFields(configData, AffixesConfig::new);
-    affixes = AFFIXES.affixes.affixes;
   }
 
   public static void transformEntities(CommentedConfig configData) {
@@ -283,7 +267,7 @@ public class ChampionsConfig {
           A list of entity stages in the format: "stage;modid:entity" or "stage;modid:entity;modid:dimension"
           Example: "test_stage;minecraft:zombie" or "test_stage;minecraft:spider;minecraft:the_nether\"""")
         .translation(CONFIG_PREFIX + "entityStages")
-        .defineListAllowEmpty("entityStages", new ArrayList<>(),()->null, s -> s instanceof String);
+        .defineListAllowEmpty("entityStages", new ArrayList<>(), () -> null, s -> s instanceof String);
 
       tierStages = builder
         .comment("""
@@ -706,16 +690,6 @@ public class ChampionsConfig {
 
     public Ranks(ModConfigSpec.Builder builder) {
       builder.comment("List of ranks").define("ranks", new ArrayList<>());
-      builder.build();
-    }
-  }
-
-  public static class Affixes {
-
-    public AffixesConfig affixes;
-
-    public Affixes(ModConfigSpec.Builder builder) {
-      builder.comment("List of affix configurations").define("affixes", new ArrayList<>());
       builder.build();
     }
   }

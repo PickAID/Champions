@@ -45,16 +45,18 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.api.AffixRegistry;
+import top.theillusivec4.champions.api.AffixDataLoader;
+import top.theillusivec4.champions.api.ChampionsApiImpl;
 import top.theillusivec4.champions.api.IChampionsApi;
-import top.theillusivec4.champions.api.impl.ChampionsApiImpl;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -63,6 +65,7 @@ import top.theillusivec4.champions.common.integration.theoneprobe.TheOneProbePlu
 import top.theillusivec4.champions.common.item.ChampionEggItem;
 import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
 import top.theillusivec4.champions.common.network.SPacketSyncChampion;
+import top.theillusivec4.champions.common.network.SyncAffixSettingPacket;
 import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.registry.ChampionsRegistry;
 import top.theillusivec4.champions.common.registry.ModItems;
@@ -78,12 +81,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static top.theillusivec4.champions.api.AffixRegistry.AFFIX_REGISTRY;
+
 @Mod(Champions.MODID)
 public class Champions {
 
   public static final String MODID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
+  private static final AffixDataLoader dataLoader = new AffixDataLoader();
 
   public static boolean scalingHealthLoaded = false;
   public static boolean gameStagesLoaded = false;
@@ -102,7 +108,6 @@ public class Champions {
     modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
     modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
     createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
-    createServerConfig(ChampionsConfig.AFFIXES_SPEC, "affixes");
     createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
 
     if (gameStagesLoaded) {
@@ -110,6 +115,7 @@ public class Champions {
     }
     modEventBus.addListener(this::config);
     modEventBus.addListener(this::setup);
+    NeoForge.EVENT_BUS.addListener(this::onDatapackSync);
     NeoForge.EVENT_BUS.addListener(this::registerCommands);
     ChampionsRegistry.register(modEventBus);
     scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
@@ -125,7 +131,7 @@ public class Champions {
       try {
         FileUtils.copyInputStreamToFile(Objects.requireNonNull(Champions.class.getClassLoader().getResourceAsStream(fileName)), defaults);
       } catch (IOException e) {
-        LOGGER.error("Error creating default config for " + fileName);
+        LOGGER.error("Error creating default config for {}", fileName);
       }
     }
   }
@@ -134,8 +140,12 @@ public class Champions {
     return ResourceLocation.fromNamespaceAndPath(MODID, path);
   }
 
+  public static AffixDataLoader getDataLoader() {
+    return dataLoader;
+  }
+
   private void registerRegistries(NewRegistryEvent event) {
-    event.register(AffixRegistry.AFFIX_REGISTRY);
+    event.register(AFFIX_REGISTRY);
   }
 
   private void setup(final FMLCommonSetupEvent evt) {
@@ -148,6 +158,7 @@ public class Champions {
         Optional<EntityType<?>> entityType = ChampionEggItem.getType(stack);
         entityType.ifPresent(type -> {
           Entity entity = type.create(source.level(), (s) -> stack.getTags(), source.pos().relative(direction), MobSpawnType.DISPENSER, true, direction != Direction.UP);
+          assert entity != null;
           ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
             if (ChampionHelper.isValidChampion(champion.getServer())) {
               ChampionEggItem.read(champion, stack);
@@ -186,9 +197,6 @@ public class Champions {
         if (spec == ChampionsConfig.RANKS_SPEC) {
           ChampionsConfig.transformRanks(commentedConfig);
           RankManager.buildRanks();
-        } else if (spec == ChampionsConfig.AFFIXES_SPEC) {
-          ChampionsConfig.transformAffixes(commentedConfig);
-//          AffixManager.buildAffixSettings();
         } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
           ChampionsConfig.transformEntities(commentedConfig);
           EntityManager.buildEntitySettings();
@@ -216,6 +224,7 @@ public class Champions {
     final PayloadRegistrar registrar = event.registrar("champions");
     registrar.playToClient(SPacketSyncAffixData.TYPE, SPacketSyncAffixData.STREAM_CODEC, SPacketSyncAffixData::handle);
     registrar.playToClient(SPacketSyncChampion.TYPE, SPacketSyncChampion.STREAM_CODEC, SPacketSyncChampion::handle);
+    registrar.playToClient(SyncAffixSettingPacket.TYPE, SyncAffixSettingPacket.STREAM_CODEC, SyncAffixSettingPacket::handle);
   }
 
   private void onGatherData(GatherDataEvent event) {
@@ -229,8 +238,22 @@ public class Champions {
     generator.addProvider(event.includeServer(), new ModGlobalLootModifierProvider(packOutput, lookupProvider));
     generator.addProvider(event.includeServer(), new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper, List.of(new ModAdvancementProvider.Generator())));
     generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));
+    generator.addProvider(event.includeServer(), new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
     // translate
-    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "en_us"));
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput));
     generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "zh_cn"));
+    // add more translate to data generation
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ko_kr"));
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ru_ru"));
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "tr_tr"));
+    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "uk_ua"));
+  }
+
+  private void onDatapackSync(OnDatapackSyncEvent event) {
+    // sync datapack to client
+    var syncAffixSetting = new SyncAffixSettingPacket(getDataLoader().getLoadedData());
+    if (!syncAffixSetting.affixSettingMap().isEmpty()) {
+      PacketDistributor.sendToPlayer(Objects.requireNonNull(event.getPlayer()), syncAffixSetting);
+    }
   }
 }

@@ -1,12 +1,8 @@
-package top.theillusivec4.champions.api.impl;
+package top.theillusivec4.champions.api;
 
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.api.AffixCategory;
-import top.theillusivec4.champions.api.AffixRegistry;
-import top.theillusivec4.champions.api.IAffix;
-import top.theillusivec4.champions.api.IChampionsApi;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -40,6 +36,11 @@ public class ChampionsApiImpl implements IChampionsApi {
   @Override
   public Optional<IAffix> getAffix(ResourceLocation id) {
     return AffixRegistry.AFFIX_REGISTRY.getOptional(id);
+  }
+
+  @Override
+  public Optional<ResourceLocation> getAffixId(IAffix affix) {
+    return Optional.ofNullable(AffixRegistry.AFFIX_REGISTRY.getKey(affix));
   }
 
   @Override

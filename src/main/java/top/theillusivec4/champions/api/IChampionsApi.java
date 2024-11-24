@@ -16,6 +16,7 @@ public interface IChampionsApi {
   Optional<IAffix> getAffix(String id);
 
   Optional<IAffix> getAffix(ResourceLocation id);
+  Optional<ResourceLocation> getAffixId(IAffix affix);
 
   /**
    * Get all registered affixes copies

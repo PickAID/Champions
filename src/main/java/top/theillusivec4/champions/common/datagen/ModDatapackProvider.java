@@ -12,11 +12,15 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class ModDatapackProvider extends DatapackBuiltinEntriesProvider {
-  private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap);
+  private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder();
 
   public ModDatapackProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
     super(output, registries, BUILDER, Set.of(Champions.MODID));
+    addDamageType();
   }
 
+  private void addDamageType() {
+    BUILDER.add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap);
+  }
 
 }
