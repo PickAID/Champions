@@ -1,7 +1,10 @@
 package top.theillusivec4.champions.common.affix;
 
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
+import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -67,8 +70,8 @@ public class MoltenAffix extends BasicAffix {
       livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 40, 0, true, false));
 
       if (!ChampionsConfig.moltenWaterResistance && livingEntity.isInWaterOrRain()) {
-        DamageSource drown = new DamageSources(livingEntity.level().registryAccess()).drown();
-        livingEntity.hurt(drown, 1.0F);
+        Holder.Reference<DamageType> drown = livingEntity.level().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.DROWN);
+        livingEntity.hurt(new DamageSource(drown), 1.0F);
       }
     }
   }
@@ -76,9 +79,11 @@ public class MoltenAffix extends BasicAffix {
   @Override
   public boolean onAttack(IChampion champion, LivingEntity target, DamageSource source,
                           float amount) {
-    target.setRemainingFireTicks(10);
-    DamageSource inFire = new DamageSources(target.level().registryAccess()).inFire();
-    target.hurt(inFire, amount);
+    // 200 tick = 10 sec
+    target.setRemainingFireTicks(10 * 20);
+    Holder.Reference<DamageType> inFireType = target.level().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.IN_FIRE);
+    DamageSource damageSource = new DamageSource(inFireType);
+    target.hurt(damageSource, amount);
     return true;
   }
 }
