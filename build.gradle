@@ -3,7 +3,7 @@ plugins {
   id 'eclipse'
   id 'idea'
   id 'maven-publish'
-  id 'net.neoforged.moddev' version '1.0.20'
+  id 'net.neoforged.moddev' version '1.0.21'
 }
 
 tasks.named('wrapper', Wrapper).configure {
@@ -49,6 +49,10 @@ repositories {
     }
   }
   maven { url 'https://jitpack.io' }
+  maven {
+    url 'https://mvnrepository.com/artifact'
+  }
+  mavenCentral()
   mavenLocal()
 }
 
