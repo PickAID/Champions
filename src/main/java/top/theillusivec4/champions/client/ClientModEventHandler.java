@@ -37,9 +37,9 @@ public class ClientModEventHandler {
   @SubscribeEvent
   public static void rendererRegistering(final EntityRenderersEvent.RegisterRenderers evt) {
     evt.registerEntityRenderer(ModEntityTypes.ARCTIC_BULLET.get(),
-      (renderManager) -> new ColorizedBulletRenderer(renderManager, 0x42F5E3));
+      (renderManager) -> new ColorizedBulletRenderer<>(renderManager, 0x42F5E3));
     evt.registerEntityRenderer(ModEntityTypes.ENKINDLING_BULLET.get(),
-      (renderManager) -> new ColorizedBulletRenderer(renderManager, 0xFC5A03));
+      (renderManager) -> new ColorizedBulletRenderer<>(renderManager, 0xFC5A03));
   }
 
 }

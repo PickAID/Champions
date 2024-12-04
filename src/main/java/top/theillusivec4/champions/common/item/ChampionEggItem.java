@@ -4,23 +4,24 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
@@ -50,13 +51,13 @@ public class ChampionEggItem extends EggItem {
   private static final String CHAMPION_TAG = "Champion";
 
   public ChampionEggItem() {
-    super(new Item.Properties());
+    super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Champions.getLocation("champion_egg"))));
   }
 
   public static int getColor(ItemStack stack, int tintIndex) {
     SpawnEggItem eggItem =
       SpawnEggItem.byId(getType(stack).orElse(EntityType.ZOMBIE));
-    return eggItem != null ? FastColor.ARGB32.opaque(eggItem.getColor(tintIndex)) : 0;
+    return eggItem != null ? ARGB.opaque(eggItem.getColor(tintIndex)) : 0;
   }
 
   public static Optional<EntityType<?>> getType(ItemStack stack) {
@@ -126,7 +127,7 @@ public class ChampionEggItem extends EggItem {
     root.append(" ");
     root.append(type.map(EntityType::getDescription).orElse(EntityType.ZOMBIE.getDescription()));
     root.append(" ");
-    root.append(this.getDescription());
+    root.append(this.getName());
     return root;
   }
 
@@ -182,7 +183,7 @@ public class ChampionEggItem extends EggItem {
       entityType.ifPresent(type -> {
         var entity = type
           .create((ServerLevel) world, null, blockpos1,
-            MobSpawnType.SPAWN_EGG, true,
+            EntitySpawnReason.SPAWN_ITEM_USE, true,
             !Objects.equals(blockpos, blockpos1) && direction == Direction.UP);
 
         if (entity instanceof LivingEntity livingEntity) {
@@ -199,30 +200,30 @@ public class ChampionEggItem extends EggItem {
 
   @Nonnull
   @Override
-  public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn,
-                                                @Nonnull InteractionHand handIn) {
+  public InteractionResult use(Level worldIn, Player playerIn,
+                               @Nonnull InteractionHand handIn) {
     ItemStack itemstack = playerIn.getItemInHand(handIn);
 
     if (worldIn.isClientSide()) {
-      return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+      return InteractionResult.PASS;
     } else if (worldIn instanceof ServerLevel) {
       BlockHitResult povHitResult = getPlayerPOVHitResult(worldIn, playerIn,
         ClipContext.Fluid.SOURCE_ONLY);
 
       if (povHitResult.getType() != HitResult.Type.BLOCK) {
-        return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+        return InteractionResult.PASS;
       } else {
         BlockPos blockpos = povHitResult.getBlockPos();
 
         if (!(worldIn.getFluidState(blockpos).getType() instanceof FlowingFluid)) {
-          return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+          return InteractionResult.PASS;
         } else if (worldIn.mayInteract(playerIn, blockpos) && playerIn
           .mayUseItemAt(blockpos, povHitResult.getDirection(), itemstack)) {
           Optional<EntityType<?>> entityType = getType(itemstack);
           return entityType.map(type -> {
             Entity entity = type
               .create((ServerLevel) worldIn, null, blockpos,
-                MobSpawnType.SPAWN_EGG, false, false);
+                EntitySpawnReason.SPAWN_ITEM_USE, false, false);
 
             if (entity instanceof LivingEntity) {
               ChampionAttachment.getAttachment(entity).ifPresent(iChampion -> read(iChampion, itemstack));
@@ -232,16 +233,16 @@ public class ChampionEggItem extends EggItem {
                 itemstack.shrink(1);
               }
               playerIn.awardStat(Stats.ITEM_USED.get(this));
-              return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+              return InteractionResult.SUCCESS.heldItemTransformedTo(itemstack);
             } else {
-              return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+              return InteractionResult.PASS;
             }
-          }).orElse(new InteractionResultHolder<>(InteractionResult.PASS, itemstack));
+          }).orElse(InteractionResult.PASS);
         } else {
-          return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
+          return InteractionResult.FAIL;
         }
       }
     }
-    return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
+    return InteractionResult.FAIL;
   }
 }

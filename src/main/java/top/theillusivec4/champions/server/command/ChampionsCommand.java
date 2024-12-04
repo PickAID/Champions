@@ -20,9 +20,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
@@ -119,7 +119,7 @@ public class ChampionsCommand {
     var sourceEntity = source.getPlayerOrException();
 
     Entity entity = entityType.create((ServerLevel) sourceEntity.level(), null,
-      pos != null ? pos : new BlockPos(sourceEntity.blockPosition()), MobSpawnType.COMMAND,
+      pos != null ? pos : new BlockPos(sourceEntity.blockPosition()), EntitySpawnReason.COMMAND,
       false, false);
 
     ChampionAttachment.getAttachment(entity).ifPresent(champion -> {

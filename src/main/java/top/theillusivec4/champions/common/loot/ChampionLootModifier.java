@@ -45,18 +45,18 @@ public class ChampionLootModifier extends LootModifier {
 
     IS_PROCESSING.set(true);
     try {
-      Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+      Entity entity = context.getOptionalParameter(LootContextParams.THIS_ENTITY);
 
       if (entity == null) {
         return generatedLoot;
       }
-      DamageSource damageSource = context.getParamOrNull(LootContextParams.DAMAGE_SOURCE);
+      DamageSource damageSource = context.getOptionalParameter(LootContextParams.DAMAGE_SOURCE);
 
       if (damageSource == null) {
         return generatedLoot;
       }
-
-      if (!entity.level().getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT) ||
+      var server = entity.getServer();
+      if (server != null && !server.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT) ||
         (!ChampionsConfig.fakeLoot && damageSource.getDirectEntity() instanceof FakePlayer)) {
         return generatedLoot;
       }

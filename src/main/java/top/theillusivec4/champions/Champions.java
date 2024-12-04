@@ -24,8 +24,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.InterModComms;
@@ -157,7 +157,7 @@ public class Champions {
         Direction direction = source.state().getValue(DispenserBlock.FACING);
         Optional<EntityType<?>> entityType = ChampionEggItem.getType(stack);
         entityType.ifPresent(type -> {
-          Entity entity = type.create(source.level(), (s) -> stack.getTags(), source.pos().relative(direction), MobSpawnType.DISPENSER, true, direction != Direction.UP);
+          Entity entity = type.create(source.level(), (s) -> stack.getTags(), source.pos().relative(direction), EntitySpawnReason.DISPENSER, true, direction != Direction.UP);
           assert entity != null;
           ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
             if (ChampionHelper.isValidChampion(champion.getServer())) {

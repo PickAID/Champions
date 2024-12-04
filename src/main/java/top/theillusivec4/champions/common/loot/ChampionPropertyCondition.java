@@ -7,9 +7,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
@@ -40,13 +40,13 @@ public record ChampionPropertyCondition(LootContext.EntityTarget target,
 
   @Nonnull
   @Override
-  public Set<LootContextParam<?>> getReferencedContextParams() {
+  public Set<ContextKey<?>> getReferencedContextParams() {
     return ImmutableSet.of(this.target.getParam());
   }
 
   @Override
   public boolean test(LootContext context) {
-    var entity = context.getParamOrNull(this.target.getParam());
+    var entity = context.getOptionalParameter(this.target.getParam());
     return entity != null && isChampionAndMatches(entity);
   }
 

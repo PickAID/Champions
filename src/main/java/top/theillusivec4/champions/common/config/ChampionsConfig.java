@@ -217,7 +217,7 @@ public class ChampionsConfig {
       if (s.length < 1) {
         throw new IllegalArgumentException();
       }
-      Optional<Holder.Reference<MobEffect>> effect = BuiltInRegistries.MOB_EFFECT.getHolder(ResourceLocation.parse(s[0]));
+      Optional<Holder.Reference<MobEffect>> effect = BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(s[0]));
 
       if (effect.isEmpty()) {
         throw new IllegalArgumentException();

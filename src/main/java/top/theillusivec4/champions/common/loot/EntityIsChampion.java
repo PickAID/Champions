@@ -6,9 +6,9 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.EntitySubPredicate;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
@@ -30,13 +30,13 @@ public record EntityIsChampion(Optional<Integer> minTier, Optional<Integer> maxT
   ).apply(instance, EntityIsChampion::new));
 
   @Override
-  public Set<LootContextParam<?>> getReferencedContextParams() {
+  public Set<ContextKey<?>> getReferencedContextParams() {
     return ImmutableSet.of(target.getParam());
   }
 
   @Override
   public boolean test(LootContext context) {
-    Entity entity = context.getParamOrNull(target.getParam());
+    Entity entity = context.getOptionalParameter(target.getParam());
     return entity != null && isChampion(entity);
   }
 

@@ -247,7 +247,7 @@ public abstract class BaseBulletEntity extends Projectile {
         this.onHit(hitresult);
       }
     }
-    this.checkInsideBlocks();
+    this.recordMovementThroughBlocks(getKnownMovement(), getDeltaMovement());
     Vec3 vec31 = this.getDeltaMovement();
     this.setPos(this.getX() + vec31.x, this.getY() + vec31.y, this.getZ() + vec31.z);
     ProjectileUtil.rotateTowardsMovement(this, 0.5F);
@@ -329,14 +329,12 @@ public abstract class BaseBulletEntity extends Projectile {
     return true;
   }
 
-  public boolean hurt(@Nonnull DamageSource pSource, float pAmount) {
-
-    if (this.level() instanceof ServerLevel serverLevel) {
-      this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
-      serverLevel.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(),
-        this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
-      this.discard();
-    }
+  @Override
+  public boolean hurtServer(ServerLevel level, DamageSource pSource, float pAmount) {
+    this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
+    level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(),
+      this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
+    this.discard();
     return true;
   }
 

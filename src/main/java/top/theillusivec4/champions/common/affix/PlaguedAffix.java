@@ -2,7 +2,7 @@ package top.theillusivec4.champions.common.affix;
 
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -33,7 +33,7 @@ public class PlaguedAffix extends BasicAffix {
       int green = l1 >> 8 & 255;
       int blue = l1 & 255;
       livingEntity.level()
-        .addParticle(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, FastColor.ARGB32.color(125, red, green, blue)), livingEntity.position().x + (double) f8,
+        .addParticle(ColorParticleOption.create(ParticleTypes.ENTITY_EFFECT, ARGB.color(125, red, green, blue)), livingEntity.position().x + (double) f8,
           livingEntity.position().y, livingEntity.position().z + (double) f9,
           (double) red / 255, (double) green / 255, (double) blue / 255);
     }

@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.client.util;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -23,7 +24,7 @@ public class MouseHelper {
     if (entity instanceof LivingEntity) {
 
       if (mc.level != null) {
-        mc.getProfiler().push("mouse_champion");
+        Profiler.get().push("mouse_champion");
         double d0 = ClientChampionsConfig.hudRange;
         HitResult rayTraceResult = entity.pick(d0, partialTicks, false);
         Vec3 vec3d = entity.getEyePosition(partialTicks);
@@ -42,7 +43,7 @@ public class MouseHelper {
           if (champion.isPresent() && ChampionHelper.isValidChampion(champion.get().getClient()))
             return champion.map(IChampion::getLivingEntity);
         }
-        mc.getProfiler().pop();
+        Profiler.get().pop();
       }
     }
     return Optional.empty();

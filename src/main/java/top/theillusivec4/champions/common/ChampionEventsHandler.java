@@ -4,12 +4,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ServerExplosion;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.EventPriority;
@@ -61,7 +61,7 @@ public class ChampionEventsHandler {
 
   @SubscribeEvent
   public void onExplosion(ExplosionEvent.Start evt) {
-    Explosion explosion = evt.getExplosion();
+    ServerExplosion explosion = evt.getExplosion();
     Entity entity = explosion.getDirectSourceEntity();
 
     if (entity != null && !entity.level().isClientSide()) {
@@ -69,7 +69,7 @@ public class ChampionEventsHandler {
         int growth = rank.getGrowthFactor();
 
         if (growth > 0) {
-          explosion.radius += ChampionsConfig.explosionGrowth * growth;
+//          explosion.radius += ChampionsConfig.explosionGrowth * growth;
         }
       });
     }
@@ -109,9 +109,9 @@ public class ChampionEventsHandler {
               if (ChampionsConfig.showParticles && rank.getA() >= 1) {
                 String colorCode = rank.getB();
                 int color = Rank.getColor(colorCode);
-                float r = (float) FastColor.ARGB32.red(color) / 255;
-                float g = (float) FastColor.ARGB32.green(color) / 255;
-                float b = (float) FastColor.ARGB32.blue(color) / 255;
+                float r = (float) ARGB.red(color) / 255;
+                float g = (float) ARGB.green(color) / 255;
+                float b = (float) ARGB.blue(color) / 255;
 
                 livingEntity.level().addParticle(ModParticleTypes.RANK_PARTICLE_TYPE.get(),
                   livingEntity.position().x + (livingEntity.getRandom().nextDouble() - 0.5D) *

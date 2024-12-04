@@ -3,7 +3,7 @@ package top.theillusivec4.champions.common.integration.theoneprobe;
 import mcjty.theoneprobe.api.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -35,9 +35,9 @@ public class TheOneProbePlugin implements IProbeInfoEntityProvider {
             return;
           }
           var color = rank.getDefaultColor();
-          int r = FastColor.ARGB32.red(color.getValue());
-          int g = FastColor.ARGB32.green(color.getValue());
-          int b = FastColor.ARGB32.blue(color.getValue());
+          int r = ARGB.red(color.getValue());
+          int g = ARGB.green(color.getValue());
+          int b = ARGB.blue(color.getValue());
 
           Color rankColor = new Color(r, g, b);
           IProbeInfo horizontal;

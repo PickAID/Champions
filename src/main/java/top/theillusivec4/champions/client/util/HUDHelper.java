@@ -3,9 +3,10 @@ package top.theillusivec4.champions.client.util;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IAffix;
@@ -43,9 +44,9 @@ public class HUDHelper {
           String colorCode = rank.getB();
           int color = Rank.getColor(colorCode);
 
-          float r = FastColor.ARGB32.red(color) / 255.0F;
-          float g = FastColor.ARGB32.green(color) / 255.0F;
-          float b = FastColor.ARGB32.blue(color) / 255.0F;
+          float r = ARGB.red(color) / 255.0F;
+          float g = ARGB.green(color) / 255.0F;
+          float b = ARGB.blue(color) / 255.0F;
 
           RenderSystem.defaultBlendFunc();
           // set shader color for render element
@@ -54,12 +55,12 @@ public class HUDHelper {
           ChampionsOverlay.startX = xOffset + k;
           ChampionsOverlay.startY = yOffset + 1;
 
-          guiGraphics.blit(GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256);
+          guiGraphics.blit(resourceLocation -> RenderType.guiTextured(GUI_BAR_TEXTURES), GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256);
           int healthOffset =
             (int) ((livingEntity.getHealth() / livingEntity.getMaxHealth()) * 183.0F);
 
           if (healthOffset > 0) {
-            guiGraphics.blit(GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
+            guiGraphics.blit(resourceLocation -> RenderType.guiTextured(GUI_BAR_TEXTURES), GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
               256);
           }
 
@@ -67,13 +68,13 @@ public class HUDHelper {
             int startStarsX = xOffset + i / 2 - 5 - 5 * (championLevel - 1);
 
             for (int tier = 0; tier < championLevel; tier++) {
-              guiGraphics.blit(GUI_STAR, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9);
+              guiGraphics.blit(resourceLocation -> RenderType.guiTextured(GUI_STAR), GUI_STAR, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9);
               startStarsX += 10;
             }
           } else {
             int startStarsX = xOffset + i / 2 - 5;
             String count = "x" + championLevel;
-            guiGraphics.blit(GUI_STAR, startStarsX - client.font.width(count) / 2,
+            guiGraphics.blit(resourceLocation -> RenderType.guiTextured(GUI_STAR), GUI_STAR, startStarsX - client.font.width(count) / 2,
               yOffset + 1, 0, 0, 9, 9, 9, 9);
             guiGraphics.drawString(client.font, count,
               startStarsX + 10 - client.font.width(count) / 2.0F, yOffset + 2,

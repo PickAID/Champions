@@ -3,8 +3,8 @@ package top.theillusivec4.champions.common.capability;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingConversionEvent;
@@ -35,10 +35,10 @@ public class AttachmentEventHandler {
 
         if (serverChampion.getRank().isEmpty()) {
 
-          if (ChampionsConfig.championSpawners && evt.getSpawnType() == MobSpawnType.SPAWNER) {
+          if (ChampionsConfig.championSpawners && evt.getSpawnType() == EntitySpawnReason.SPAWNER) {
             serverChampion.setRank(RankManager.getLowestRank()); // check basic spawner
             ChampionBuilder.spawn(champion);
-          } else if (ChampionsConfig.championTrialSpawners && evt.getSpawnType() == MobSpawnType.TRIAL_SPAWNER) {
+          } else if (ChampionsConfig.championTrialSpawners && evt.getSpawnType() == EntitySpawnReason.TRIAL_SPAWNER) {
             serverChampion.setRank(RankManager.getLowestRank()); // check trial spawner
             ChampionBuilder.spawn(champion);
           }
