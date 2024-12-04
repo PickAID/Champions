@@ -250,10 +250,14 @@ public class Champions {
   }
 
   private void onDatapackSync(OnDatapackSyncEvent event) {
+    var player = event.getPlayer();
     // sync datapack to client
     var syncAffixSetting = new SyncAffixSettingPacket(getDataLoader().getLoadedData());
-    if (!syncAffixSetting.affixSettingMap().isEmpty()) {
-      PacketDistributor.sendToPlayer(Objects.requireNonNull(event.getPlayer()), syncAffixSetting);
+    // trigger by player(client)
+    if (player != null) {
+      if (!syncAffixSetting.affixSettingMap().isEmpty()) {
+        PacketDistributor.sendToPlayer(player, syncAffixSetting);
+      }
     }
   }
 }
