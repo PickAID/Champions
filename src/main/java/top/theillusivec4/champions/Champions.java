@@ -100,7 +100,8 @@ public class Champions {
     this.modContainer = modContainer;
     modEventBus.addListener(this::enqueueIMC);
     modEventBus.addListener(this::registerNetwork);
-    modEventBus.addListener(this::onGatherData);
+    modEventBus.addListener(this::onGatherServerData);
+    modEventBus.addListener(this::onGatherClientData);
     modEventBus.addListener(this::registerRegistries);
     modEventBus.addListener(this::onClientSetup);
 //    modEventBus.addListener(TestCustomAffixHandler::testOnCustomAffixBuild);
@@ -227,26 +228,32 @@ public class Champions {
     registrar.playToClient(SyncAffixSettingPacket.TYPE, SyncAffixSettingPacket.STREAM_CODEC, SyncAffixSettingPacket::handle);
   }
 
-  private void onGatherData(GatherDataEvent event) {
+  private void onGatherServerData(GatherDataEvent.Server event) {
     var generator = event.getGenerator();
     var packOutput = generator.getPackOutput();
     var lookupProvider = event.getLookupProvider();
     var existingFileHelper = event.getExistingFileHelper();
     // datapack provider for lookup datapack entries(RegistrySetBuilder).
-    var datapackProvider = generator.addProvider(event.includeServer(), new ModDatapackProvider(packOutput, lookupProvider));
+    var datapackProvider = event.addProvider(new ModDatapackProvider(packOutput, lookupProvider));
 
-    generator.addProvider(event.includeServer(), new ModGlobalLootModifierProvider(packOutput, lookupProvider));
-    generator.addProvider(event.includeServer(), new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper, List.of(new ModAdvancementProvider.Generator())));
-    generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));
-    generator.addProvider(event.includeServer(), new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
+    event.addProvider(new ModGlobalLootModifierProvider(packOutput, lookupProvider));
+    event.addProvider(new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper, List.of(new ModAdvancementProvider.Generator())));
+    event.addProvider(new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));
+    event.addProvider(new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
+  }
+
+  private void onGatherClientData(GatherDataEvent.Client event) {
+    var generator = event.getGenerator();
+    var packOutput = generator.getPackOutput();
+//    var lookupProvider = event.getLookupProvider();
     // translate
-    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput));
-    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "zh_cn"));
+    event.addProvider(new ModLanguageProvider(packOutput));
+    event.addProvider(new ModLanguageProvider(packOutput, "zh_cn"));
     // add more translate to data generation
-    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ko_kr"));
-    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ru_ru"));
-    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "tr_tr"));
-    generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "uk_ua"));
+    event.addProvider(new ModLanguageProvider(packOutput, "ko_kr"));
+    event.addProvider(new ModLanguageProvider(packOutput, "ru_ru"));
+    event.addProvider(new ModLanguageProvider(packOutput, "tr_tr"));
+    event.addProvider(new ModLanguageProvider(packOutput, "uk_ua"));
   }
 
   private void onDatapackSync(OnDatapackSyncEvent event) {

@@ -15,7 +15,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +22,10 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.EggItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -54,11 +56,11 @@ public class ChampionEggItem extends EggItem {
     super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Champions.getLocation("champion_egg"))));
   }
 
-  public static int getColor(ItemStack stack, int tintIndex) {
-    SpawnEggItem eggItem =
-      SpawnEggItem.byId(getType(stack).orElse(EntityType.ZOMBIE));
-    return eggItem != null ? ARGB.opaque(eggItem.getColor(tintIndex)) : 0;
-  }
+//  public static int getColor(ItemStack stack, int tintIndex) {
+//    SpawnEggItem eggItem =
+//      SpawnEggItem.byId(getType(stack).orElse(EntityType.ZOMBIE));
+//    return eggItem != null ? ARGB.opaque(eggItem.getColor(tintIndex)) : 0;
+//  }
 
   public static Optional<EntityType<?>> getType(ItemStack stack) {
 

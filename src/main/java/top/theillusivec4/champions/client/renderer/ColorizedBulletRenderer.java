@@ -72,6 +72,7 @@ public class ColorizedBulletRenderer<T extends BaseBulletEntity, S extends Bulle
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public S createRenderState() {
     return (S) new BulletRenderState(color, 0f, 0f);
   }

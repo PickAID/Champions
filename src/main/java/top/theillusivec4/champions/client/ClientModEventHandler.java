@@ -10,18 +10,17 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.client.renderer.ColorizedBulletRenderer;
-import top.theillusivec4.champions.common.item.ChampionEggItem;
+import top.theillusivec4.champions.client.util.EggColorSource;
 import top.theillusivec4.champions.common.particle.RankParticle;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
-import top.theillusivec4.champions.common.registry.ModItems;
 import top.theillusivec4.champions.common.registry.ModParticleTypes;
 
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD, modid = Champions.MODID)
 public class ClientModEventHandler {
 
   @SubscribeEvent
-  public static void onRegisterColor(final RegisterColorHandlersEvent.Item event) {
-    event.register(ChampionEggItem::getColor, ModItems.CHAMPION_EGG_ITEM.get());
+  public static void onRegisterColor(final RegisterColorHandlersEvent.ItemTintSources event) {
+    event.register(Champions.getLocation("champion_egg"), EggColorSource.MAP_CODEC);
   }
 
   @SubscribeEvent
