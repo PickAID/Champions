@@ -69,7 +69,7 @@ public class ChampionEventsHandler {
         int growth = rank.getGrowthFactor();
 
         if (growth > 0) {
-//          explosion.radius += ChampionsConfig.explosionGrowth * growth;
+          explosion.radius += ChampionsConfig.explosionGrowth * growth;
         }
       });
     }
