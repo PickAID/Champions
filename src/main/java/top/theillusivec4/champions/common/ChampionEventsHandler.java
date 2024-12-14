@@ -1,11 +1,9 @@
 package top.theillusivec4.champions.common;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FastColor;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,7 +13,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -34,7 +31,6 @@ import top.theillusivec4.champions.common.registry.ModParticleTypes;
 import top.theillusivec4.champions.common.registry.ModStats;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
 import top.theillusivec4.champions.common.util.ChampionHelper;
-import top.theillusivec4.champions.server.command.ChampionsCommand;
 
 import java.util.Optional;
 
@@ -269,20 +265,5 @@ public class ChampionEventsHandler {
   @OnlyIn(Dist.CLIENT)
   public void onBossBarEvent(final CustomizeGuiOverlayEvent.BossEventProgress event) {
     event.setCanceled(ChampionsOverlay.isRendering);
-  }
-
-  @SubscribeEvent(priority = EventPriority.LOWEST)
-  @OnlyIn(Dist.CLIENT)
-  public void onPressPickEgg(final InputEvent.InteractionKeyMappingTriggered event) {
-    if (event.isPickBlock()) {
-      var pickedEntity = Minecraft.getInstance().crosshairPickEntity;
-      var player = Minecraft.getInstance().player;
-      ChampionAttachment.getAttachment(pickedEntity).ifPresent(champion -> {
-        IChampion.Client clientChampion = champion.getClient();
-        if (player != null && player.isCreative() && ChampionHelper.isValidChampion(clientChampion)) {
-          ChampionsCommand.createEgg(player, champion.getLivingEntity().getType(), clientChampion.getRank().map(Tuple::getA).orElseThrow(), clientChampion.getAffixes());
-        }
-      });
-    }
   }
 }

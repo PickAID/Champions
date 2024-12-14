@@ -23,7 +23,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import top.theillusivec4.champions.Champions;
@@ -38,7 +37,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 
 public class ChampionsCommand {
 
@@ -139,21 +137,19 @@ public class ChampionsCommand {
     var entityType = getTypeOrThrow(resourceLocation);
     var player = source.getPlayerOrException();
 
-    ItemStack egg = new ItemStack(ModItems.CHAMPION_EGG_ITEM.get());
-    ChampionEggItem.write(egg, getEntityKey(entityType), tier, affixes);
+    ItemStack egg = createEgg(entityType, tier, affixes);
     ItemHandlerHelper.giveItemToPlayer(player, egg, 1);
     source.sendSuccess(() -> Component.translatable("commands.champions.egg.success", egg.getDisplayName()), false);
 
     return Command.SINGLE_SUCCESS;
   }
 
-  public static void createEgg(Player player, EntityType<?> entityType,
-                               int tier,
-                               Collection<IAffix> affixes) {
+  public static ItemStack createEgg(EntityType<?> entityType,
+                                    int tier,
+                                    Collection<IAffix> affixes) {
     ItemStack egg = new ItemStack(ModItems.CHAMPION_EGG_ITEM.get());
-    if (player.getInventory().hasAnyOf(Set.of(egg.getItem()))) return;
     ChampionEggItem.write(egg, getEntityKey(entityType), tier, affixes);
-    ItemHandlerHelper.giveItemToPlayer(player, egg);
+    return egg;
   }
 
   private static ResourceLocation getEntityKey(EntityType<?> entityType) {
