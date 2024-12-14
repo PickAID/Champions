@@ -140,7 +140,7 @@ public class ChampionData {
       if (rank == null) {
         return result;
       }
-      float chance = rank.getChance();
+      float chance = rank.getWeight();
 
       if (RAND.nextFloat() < chance) {
         result = rank;

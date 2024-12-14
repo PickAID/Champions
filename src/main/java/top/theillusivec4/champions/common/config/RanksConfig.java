@@ -11,7 +11,7 @@ public class RanksConfig {
     public Integer numAffixes;
     public Integer growthFactor;
     public String defaultColor;
-    public Double chance;
+    public Integer weight;
     public List<String> effects;
     public List<String> presetAffixes;
   }

@@ -71,7 +71,7 @@ public class RankManager {
   }
 
   private static Rank getRankFromConfig(RankConfig rank) throws IllegalArgumentException {
-    if (rank.tier == null || rank.numAffixes == null || rank.chance == null
+    if (rank.tier == null || rank.numAffixes == null || rank.weight == null
       || rank.defaultColor == null || rank.growthFactor == null || rank.effects == null
       || rank.presetAffixes == null) {
       throw new IllegalArgumentException("Missing rank attribute");
@@ -90,12 +90,12 @@ public class RankManager {
     } else {
       numAffixes = rank.numAffixes;
     }
-    double chance;
+    int weight;
 
-    if (rank.chance < 0) {
+    if (rank.weight < 0) {
       throw new IllegalArgumentException("Non-positive chance");
     } else {
-      chance = rank.chance;
+      weight = rank.weight;
     }
     var defaultColor = rank.defaultColor;
 
@@ -130,7 +130,7 @@ public class RankManager {
     List<IAffix> presetAffixes = new ArrayList<>();
     rank.presetAffixes
       .forEach(affix -> Champions.API.getAffix(affix).ifPresent(presetAffixes::add));
-    return new Rank(tier, numAffixes, growthFactor, (float) chance, defaultColor, effects,
+    return new Rank(tier, numAffixes, growthFactor, weight, defaultColor, effects,
       presetAffixes);
   }
 }
