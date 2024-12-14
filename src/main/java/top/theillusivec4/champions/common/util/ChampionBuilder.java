@@ -142,37 +142,52 @@ public class ChampionBuilder {
       return RankManager.getEmptyRank();
     }
     Integer[] tierRange = new Integer[]{null, null};
+
     EntityManager.getSettings(livingEntity.getType()).ifPresent(entitySettings -> {
       tierRange[0] = entitySettings.minTier;
       tierRange[1] = entitySettings.maxTier;
     });
+
     Integer firstTier = tierRange[0] != null ? tierRange[0] : ranks.firstKey();
     int maxTier = tierRange[1] != null ? tierRange[1] : -1;
-    Iterator<Integer> iter = ranks.navigableKeySet().tailSet(firstTier, false).iterator();
-    Rank result = ranks.get(firstTier);
 
-    if (result == null) {
-      Champions.LOGGER.error("Tier {} cannot be found in {}! Assigning lowest available rank to {}",
-        firstTier, ranks, livingEntity);
+    ImmutableSortedMap<Integer, Rank> filteredRanks;
+
+    if (maxTier == -1) {
+      /* 如果 maxTier 未设置，则仅过滤 firstTier 以上的 Rank */
+      filteredRanks = ranks.tailMap(firstTier, true);
+    } else {
+      /* 如果 maxTier 设置了，过滤 firstTier 和 maxTier 范围内的 Rank */
+      filteredRanks = ranks.tailMap(firstTier, true).headMap(maxTier + 1, true);
+    }
+
+    // 如果没有符合条件的 Rank，返回 EmptyRank
+    if (filteredRanks.isEmpty()) {
+      Champions.LOGGER.warn(
+        "No valid ranks found in the specified range! Assigning EmptyRank to {}", livingEntity);
       return RankManager.getEmptyRank();
     }
+    int totalWeight = filteredRanks.values().stream()
+      .mapToInt(Rank::getWeight)
+      .sum();
 
-    while (iter.hasNext() && (result.getTier() < maxTier || maxTier == -1)) {
-      Rank rank = ranks.get(iter.next());
+    // 如果所有权重为 0，返回 EmptyRank
+    if (totalWeight <= 0) {
+      Champions.LOGGER.warn(
+        "All ranks have zero weight! Assigning EmptyRank to {}", livingEntity);
+      return RankManager.getEmptyRank();
+    }
+    int randomValue = RAND.nextInt(totalWeight);
+    int cumulativeWeight = 0;
 
-      if (rank == null) {
-        return result;
-      }
-      float chance = rank.getChance();
-
-
-      if (RAND.nextFloat() < chance) {
-        result = rank;
-      } else {
-        return result;
+    for (Rank rank : filteredRanks.values()) {
+      cumulativeWeight += rank.getWeight();
+      if (randomValue < cumulativeWeight) {
+        return rank;
       }
     }
-    return result;
+
+    return RankManager.getEmptyRank();
   }
 
   public static void applyGrowth(final LivingEntity livingEntity, float growthFactor) {
