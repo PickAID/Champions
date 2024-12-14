@@ -6,7 +6,6 @@ import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.util.ChampionHelper;
 import top.theillusivec4.champions.server.command.ChampionsCommand;
@@ -22,14 +21,14 @@ public class MinecraftMixin {
     var pickedEntity = Minecraft.getInstance().crosshairPickEntity;
     var player = Minecraft.getInstance().player;
     var gameMode = Minecraft.getInstance().gameMode;
-    if (pickedEntity != null) {
+    if (pickedEntity != null && player != null && gameMode != null) {
       var championOptional = ChampionAttachment.getAttachment(pickedEntity);
       if (championOptional.isPresent()) {
         var champion = championOptional.get();
-        var type = champion.getLivingEntity().getType();
+        var clientChampion = champion.getClient();
 
-        IChampion.Client clientChampion = champion.getClient();
-        if (player != null && gameMode != null && ChampionHelper.isValidChampion(clientChampion)) {
+        if (ChampionHelper.isValidChampion(clientChampion)) {
+          var type = champion.getLivingEntity().getType();
           var tier = clientChampion.getRank().map(Tuple::getA).orElseThrow();
           var affixes = clientChampion.getAffixes();
           return ChampionsCommand.createEgg(type, tier, affixes);
