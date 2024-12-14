@@ -88,6 +88,8 @@ public class ChampionsConfig {
   public static int reflectiveMax;
   public static boolean reflectiveLethal;
   public static double woundingChance;
+  public static boolean mobInherit;
+  public static int rankReduce;
   //  public static List<? extends String> scalingHealthSpawnModifiers;
   public static List<? extends String> entityStages;
   public static List<? extends String> tierStages;
@@ -242,6 +244,8 @@ public class ChampionsConfig {
     reflectiveMinPercent = SERVER.reflectiveMinPercent.get();
 
     woundingChance = SERVER.woundingChance.get();
+    mobInherit = SERVER.mobInherit.get();
+    rankReduce = SERVER.rankReduce.get();
 
   }
 
@@ -414,9 +418,17 @@ public class ChampionsConfig {
     public final ModConfigSpec.DoubleValue woundingChance;
 
     public final ModConfigSpec.ConfigValue<List<? extends String>> scalingHealthSpawnModifiers;
+    public final ModConfigSpec.BooleanValue mobInherit;
+    public final ModConfigSpec.IntValue rankReduce;
 
     public ServerConfig(ModConfigSpec.Builder builder) {
 
+      builder.push("mobSplitSetting");
+      mobInherit = builder.comment("Set to true to allow slime like mob when splitting, inherit this parentMob's affix and ranks.")
+        .translation(CONFIG_PREFIX + "mobInherit").define("mobInherit", true);
+      rankReduce = builder.comment("Set the children mob reduce rank when split, 0 means disable")
+        .translation(CONFIG_PREFIX + "rankReduce").defineInRange("rankReduce", 1, 0, Integer.MAX_VALUE);
+      builder.pop();
 
       builder.push("loot");
 

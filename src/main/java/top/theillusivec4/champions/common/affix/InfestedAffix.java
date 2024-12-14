@@ -3,7 +3,10 @@ package top.theillusivec4.champions.common.affix;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -11,15 +14,16 @@ import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.level.Level;
-import top.theillusivec4.champions.api.*;
-import top.theillusivec4.champions.common.affix.core.AffixData;
+import net.neoforged.neoforge.event.EventHooks;
+import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
+import top.theillusivec4.champions.common.affix.core.AffixData;
 import top.theillusivec4.champions.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
-import top.theillusivec4.champions.common.rank.RankManager;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,24 +36,26 @@ public class InfestedAffix extends GoalAffix {
         || livingEntity instanceof Endermite || livingEntity instanceof EnderDragon;
     EntityType<?> type =
       isEnder ? ChampionsConfig.infestedEnderParasite : ChampionsConfig.infestedParasite;
+    List<Mob> children = new ArrayList<>();
 
     for (int i = 0; i < amount; i++) {
       var entity = type
         .create(world, null, livingEntity.blockPosition(), MobSpawnType.MOB_SUMMONED,
           false, false);
-
-      if (entity instanceof LivingEntity) {
-        ChampionAttachment.getAttachment(entity)
-          .ifPresent(champion -> champion.getServer().setRank(RankManager.getLowestRank()));
-        livingEntity.level().addFreshEntity(entity);
-
-        if (entity instanceof Mob) {
-          ((Monster) entity).spawnAnim();
-          ((Monster) entity).setLastHurtByMob(target);
-          ((Monster) entity).setTarget(target);
-        }
+      if (entity instanceof Monster monster) {
+        children.add(monster);
       }
     }
+
+    if (!EventHooks.onMobSplit((Mob) livingEntity, children).isCanceled()) {
+      children.forEach(child -> {
+        world.addFreshEntity(child);
+        child.spawnAnim();
+        child.setLastHurtByMob(target);
+        child.setTarget(target);
+      });
+    }
+
   }
 
   @Override

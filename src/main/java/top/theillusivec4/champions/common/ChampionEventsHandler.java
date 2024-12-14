@@ -27,6 +27,7 @@ import top.theillusivec4.champions.client.ChampionsOverlay;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.registry.ModParticleTypes;
 import top.theillusivec4.champions.common.registry.ModStats;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
@@ -67,6 +68,22 @@ public class ChampionEventsHandler {
         if (growth > 0) {
           explosion.radius += ChampionsConfig.explosionGrowth * growth;
         }
+      });
+    }
+  }
+
+  @SubscribeEvent
+  public void onMobSpilt(MobSplitEvent event) {
+    if (ChampionsConfig.mobInherit) {
+      var parentMob = event.getParent();
+      var children = event.getChildren();
+      ChampionAttachment.getAttachment(parentMob).ifPresent(champion -> {
+        var serverChampion = champion.getServer();
+        serverChampion.getRank().ifPresent(rank -> children.forEach(child -> ChampionAttachment.getAttachment(child).ifPresent(championChild -> {
+            championChild.getServer().setRank(RankManager.getRank(rank.getTier() - ChampionsConfig.rankReduce));
+            championChild.getServer().setAffixes(serverChampion.getAffixes());
+          }))
+        );
       });
     }
   }
