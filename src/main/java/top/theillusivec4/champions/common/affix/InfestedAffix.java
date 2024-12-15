@@ -8,11 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.EventHooks;
 import top.theillusivec4.champions.api.IChampion;
@@ -21,6 +17,7 @@ import top.theillusivec4.champions.common.affix.core.AffixData;
 import top.theillusivec4.champions.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -31,9 +28,7 @@ public class InfestedAffix extends GoalAffix {
 
   private static void spawnParasites(LivingEntity livingEntity, int amount,
                                      @Nullable LivingEntity target, ServerLevel world) {
-    boolean isEnder =
-      livingEntity instanceof EnderMan || livingEntity instanceof Shulker
-        || livingEntity instanceof Endermite || livingEntity instanceof EnderDragon;
+    boolean isEnder = livingEntity.getType().is(ModEntityTypes.Tags.IS_ENDER);
     EntityType<?> type =
       isEnder ? ChampionsConfig.infestedEnderParasite : ChampionsConfig.infestedParasite;
     List<Mob> children = new ArrayList<>();
@@ -90,8 +85,8 @@ public class InfestedAffix extends GoalAffix {
     }
     Level world = champion.getLivingEntity().level();
 
-    if (world instanceof ServerLevel) {
-      spawnParasites(champion.getLivingEntity(), buffer.num, target, (ServerLevel) world);
+    if (world instanceof ServerLevel serverLevel) {
+      spawnParasites(champion.getLivingEntity(), buffer.num, target, serverLevel);
     }
     return true;
   }
