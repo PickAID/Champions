@@ -59,8 +59,8 @@ public class ChampionHelper {
    * @return True if this is not potential champion, else false.
    */
   public static boolean notPotential(final LivingEntity livingEntity) {
-    return !isValidEntity(livingEntity) &&
-      !isValidDimension(livingEntity.level().dimension().location()) &&
+    return !isValidEntity(livingEntity) ||
+      !isValidDimension(livingEntity.level().dimension().location()) ||
       nearActiveBeacon(livingEntity);
   }
 
@@ -124,7 +124,7 @@ public class ChampionHelper {
 
       if (blockEntity instanceof BeaconBlockEntity beaconBlockEntity && !blockEntity.isRemoved()) {
 
-        if (Math.sqrt(livingEntity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ())) <= range) {
+        if (livingEntity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) <= range * range) {
 
           if (beaconBlockEntity.levels > 0) {
             return true;

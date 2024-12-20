@@ -79,11 +79,13 @@ public class ChampionEventsHandler {
       var children = event.getChildren();
       ChampionAttachment.getAttachment(parentMob).ifPresent(champion -> {
         var serverChampion = champion.getServer();
-        serverChampion.getRank().ifPresent(rank -> children.forEach(child -> ChampionAttachment.getAttachment(child).ifPresent(championChild -> {
-            championChild.getServer().setRank(RankManager.getRank(rank.getTier() - ChampionsConfig.rankReduce));
-            championChild.getServer().setAffixes(serverChampion.getAffixes());
-          }))
-        );
+        if (ChampionHelper.isValidChampion(serverChampion)) {
+          serverChampion.getRank().ifPresent(rank -> children.forEach(child -> ChampionAttachment.getAttachment(child).ifPresent(championChild -> {
+              championChild.getServer().setRank(RankManager.getRank(rank.getTier() - ChampionsConfig.rankReduce));
+              championChild.getServer().setAffixes(serverChampion.getAffixes());
+            }))
+          );
+        }
       });
     }
   }
