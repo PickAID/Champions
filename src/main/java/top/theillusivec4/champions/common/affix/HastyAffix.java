@@ -26,7 +26,8 @@ public class HastyAffix extends BasicAffix {
 
   @Override
   public boolean canApply(IChampion champion) {
-    return champion.getLivingEntity().getAttribute(Attributes.MOVEMENT_SPEED) != null;
+    return champion.getLivingEntity().getAttribute(Attributes.MOVEMENT_SPEED) != null
+      && super.canApply(champion);
   }
 
   @Override
