@@ -13,7 +13,7 @@ import top.theillusivec4.champions.common.loot.EntityIsChampion;
 public class ModEntitySubProviders {
   public static final DeferredRegister<MapCodec<? extends EntitySubPredicate>> ENTITY_SUB_PREDICATE_TYPES = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Champions.MODID);
 
-  public static final DeferredHolder<MapCodec<? extends EntitySubPredicate>, MapCodec<ChampionPropertyCondition>> CHAMPION_PROPERTIES = ENTITY_SUB_PREDICATE_TYPES.register("champion_properties", () -> ChampionPropertyCondition.CODEC);
+  public static final DeferredHolder<MapCodec<? extends EntitySubPredicate>, MapCodec<ChampionPropertyCondition>> CHAMPION_PROPERTIES = ENTITY_SUB_PREDICATE_TYPES.register("champion_properties", () -> ChampionPropertyCondition.MAP_CODEC);
   public static final DeferredHolder<MapCodec<? extends EntitySubPredicate>, MapCodec<EntityIsChampion>> ENTITY_IS_CHAMPION = ENTITY_SUB_PREDICATE_TYPES.register("entity_is_champion", () -> EntityIsChampion.CODEC);
 
   public static void register(IEventBus bus) {

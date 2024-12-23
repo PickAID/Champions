@@ -1,7 +1,9 @@
 package top.theillusivec4.champions.common.util;
 
 import com.google.common.collect.ImmutableSortedMap;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -12,7 +14,6 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixCategory;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
@@ -20,13 +21,6 @@ import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
 import java.util.*;
 
 public class ChampionBuilder {
-
-  private static final RandomSource RAND = RandomSource.createNewThreadLocalInstance();
-  private static final ResourceLocation MAX_HEALTH_MODIFIER = Champions.getLocation("max_health_modifier");
-  private static final ResourceLocation ATTACK_DAMAGE_MODIFIER = Champions.getLocation("attack_damage_modifier");
-  private static final ResourceLocation ARMOR_MODIFIER = Champions.getLocation("armor_modifier");
-  private static final ResourceLocation ARMOR_TOUGHNESS_MODIFIER = Champions.getLocation("armor_toughness_modifier");
-  private static final ResourceLocation KNOCKBACK_RESISTANCE_MODIFIER = Champions.getLocation("knock_back_resistance_modifier");
 
   /**
    * Read champion data, or create affix by creating new rank levels.<br/>
@@ -94,7 +88,7 @@ public class ChampionBuilder {
         .map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true) && affix
         .canApply(champion);
     }).toList()));
-    addAffixToList(size, affixesToAdd, validAffixes, RAND);
+    addAffixToList(size, affixesToAdd, validAffixes, champion.getLivingEntity().getRandom());
     return affixesToAdd;
   }
 
@@ -177,7 +171,7 @@ public class ChampionBuilder {
         "All ranks have zero weight! Assigning EmptyRank to {}", livingEntity);
       return RankManager.getEmptyRank();
     }
-    int randomValue = RAND.nextInt(totalWeight);
+    int randomValue = livingEntity.getRandom().nextInt(totalWeight);
     int cumulativeWeight = 0;
 
     for (Rank rank : filteredRanks.values()) {
@@ -191,14 +185,19 @@ public class ChampionBuilder {
   }
 
   public static void applyGrowth(final LivingEntity livingEntity, float growthFactor) {
-
     if (growthFactor != 0) {
-      applyAttributeModifier(livingEntity, Attributes.MAX_HEALTH, MAX_HEALTH_MODIFIER, ChampionsConfig.healthGrowth * growthFactor, ChampionsConfig.maxHealthModifierOperation);
-      applyAttributeModifier(livingEntity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER, ChampionsConfig.attackGrowth * growthFactor, ChampionsConfig.attackModifierOperation);
-      applyAttributeModifier(livingEntity, Attributes.ARMOR, ARMOR_MODIFIER, ChampionsConfig.armorGrowth * growthFactor, ChampionsConfig.armorModifierOperation);
-      applyAttributeModifier(livingEntity, Attributes.ARMOR_TOUGHNESS, ARMOR_TOUGHNESS_MODIFIER, ChampionsConfig.toughnessGrowth * growthFactor, ChampionsConfig.armorToughnessModifierOperation);
-      applyAttributeModifier(livingEntity, Attributes.KNOCKBACK_RESISTANCE, KNOCKBACK_RESISTANCE_MODIFIER, ChampionsConfig.knockbackResistanceGrowth * growthFactor, ChampionsConfig.knockbackResistanceModifierOperation);
+      Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
+        if (value.enable()) {
+          var attribute = BuiltInRegistries.ATTRIBUTE.getHolder(value.attributeType());
+          var setting = value.setting();
+          attribute.ifPresent(attributeValue -> applyAttributeModifier(livingEntity, attributeValue, identifier, setting, growthFactor));
+        }
+      });
     }
+  }
+
+  private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, ResourceLocation modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
+    applyAttributeModifier(livingEntity, attributeValue, Champions.getLocation(modifierId.getNamespace() + "_" + modifierId.getPath() + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
   }
 
   public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, ResourceLocation modifierId, double amount, AttributeModifier.Operation operation) {

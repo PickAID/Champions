@@ -29,7 +29,7 @@ public record SyncAffixSettingPacket(
     cxt.enqueueWork(() -> {
       if (cxt.flow().isClientbound()) {
         // client cached data from server
-        Champions.getDataLoader().cache(data.affixSettingMap);
+        Champions.API.getAffixDataLoader().cache(data.affixSettingMap);
       }
     });
     cxt.enqueueWork(SyncAffixSettingPacket::handelSettingMainThread);
@@ -39,7 +39,7 @@ public record SyncAffixSettingPacket(
    * Apply setting and category map from datapack
    */
   public static void handelSettingMainThread() {
-    Champions.getDataLoader().getLoadedData().forEach((resourceLocation, affixSetting) ->
+    Champions.API.getAffixDataLoader().getLoadedData().forEach((resourceLocation, affixSetting) ->
       Champions.API.getAffix(affixSetting.type()).ifPresent(affix -> {
         affix.applySetting(affixSetting);
         Champions.API.addCategory(affix.getCategory(), affix);

@@ -5,6 +5,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.AffixDataLoader;
 import top.theillusivec4.champions.api.AffixSetting;
 
 import java.nio.file.Path;
@@ -29,7 +30,7 @@ public class AffixConfigProvider implements DataProvider {
       var affixId = affix.getIdentifier();
 
       Path outputPath = packOutput.getOutputFolder()
-        .resolve("data/" + affixId.getNamespace() + "/affix_setting/" + affixId.getPath() + ".json");
+        .resolve("data").resolve(affixId.getNamespace()).resolve(AffixDataLoader.getFolder()).resolve(affixId.getPath() + ".json");
       futures.add(lookupProvider.thenCompose(provider ->
         DataProvider.saveStable(cachedOutput, provider, AffixSetting.CODEC, affix.getSetting(), outputPath)
       ));

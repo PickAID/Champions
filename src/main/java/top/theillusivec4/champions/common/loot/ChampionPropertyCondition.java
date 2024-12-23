@@ -32,7 +32,13 @@ public record ChampionPropertyCondition(LootContext.EntityTarget target,
                                         Optional<MinMaxBounds.Ints> tier, Optional<AffixesPredicate> affixes)
   implements LootItemCondition, EntitySubPredicate {
 
-  public static final MapCodec<ChampionPropertyCondition> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+  public static final MapCodec<ChampionPropertyCondition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    LootContext.EntityTarget.CODEC.fieldOf("entity").forGetter(ChampionPropertyCondition::target),
+    MinMaxBounds.Ints.CODEC.optionalFieldOf("tier").forGetter(ChampionPropertyCondition::tier),
+    AffixesPredicate.CODEC.optionalFieldOf("affixes").forGetter(ChampionPropertyCondition::affixes)
+  ).apply(instance, ChampionPropertyCondition::new));
+
+  public static final Codec<ChampionPropertyCondition> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     LootContext.EntityTarget.CODEC.fieldOf("entity").forGetter(ChampionPropertyCondition::target),
     MinMaxBounds.Ints.CODEC.optionalFieldOf("tier").forGetter(ChampionPropertyCondition::tier),
     AffixesPredicate.CODEC.optionalFieldOf("affixes").forGetter(ChampionPropertyCondition::affixes)
@@ -57,7 +63,7 @@ public record ChampionPropertyCondition(LootContext.EntityTarget target,
 
   @Override
   public @NotNull MapCodec<? extends EntitySubPredicate> codec() {
-    return CODEC;
+    return MAP_CODEC;
   }
 
   @Override

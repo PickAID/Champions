@@ -54,7 +54,6 @@ import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.api.AffixDataLoader;
 import top.theillusivec4.champions.api.ChampionsApiImpl;
 import top.theillusivec4.champions.api.IChampionsApi;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
@@ -89,7 +88,6 @@ public class Champions {
   public static final String MODID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
-  private static final AffixDataLoader dataLoader = new AffixDataLoader();
 
   public static boolean scalingHealthLoaded = false;
   public static boolean gameStagesLoaded = false;
@@ -138,10 +136,6 @@ public class Champions {
 
   public static ResourceLocation getLocation(final String path) {
     return ResourceLocation.fromNamespaceAndPath(MODID, path);
-  }
-
-  public static AffixDataLoader getDataLoader() {
-    return dataLoader;
   }
 
   private void registerRegistries(NewRegistryEvent event) {
@@ -239,6 +233,7 @@ public class Champions {
     generator.addProvider(event.includeServer(), new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper, List.of(new ModAdvancementProvider.Generator())));
     generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));
     generator.addProvider(event.includeServer(), new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
+    generator.addProvider(event.includeServer(), new AttributesModifierDataProvider(packOutput, datapackProvider.getRegistryProvider()));
     generator.addProvider(event.includeServer(), new ModEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
     // translate
     generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput));
@@ -254,7 +249,7 @@ public class Champions {
     // send to single player login or reload for all relevant players.
     var relevantPlayers = event.getRelevantPlayers();
 
-    var syncAffixSetting = new SyncAffixSettingPacket(getDataLoader().getLoadedData());
+    var syncAffixSetting = new SyncAffixSettingPacket(API.getAffixDataLoader().getLoadedData());
     // apply setting on server, and sync affix settings to client
     SyncAffixSettingPacket.handelSettingMainThread();
     relevantPlayers.forEach(player -> PacketDistributor.sendToPlayer(player, syncAffixSetting));
