@@ -179,6 +179,7 @@ dependencies {
   compileOnly "curse.maven:probejs-585406:5820894"
 
   implementation("curse.maven:jade-324717:${cf_jade}")
+  implementation "curse.maven:cobweb-968456:5991578"
 
 }
 

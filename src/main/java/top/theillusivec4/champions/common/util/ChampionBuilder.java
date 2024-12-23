@@ -193,11 +193,11 @@ public class ChampionBuilder {
   public static void applyGrowth(final LivingEntity livingEntity, float growthFactor) {
 
     if (growthFactor != 0) {
-      applyAttributeModifier(livingEntity, Attributes.MAX_HEALTH, MAX_HEALTH_MODIFIER, ChampionsConfig.healthGrowth * growthFactor, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-      applyAttributeModifier(livingEntity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER, ChampionsConfig.attackGrowth * growthFactor, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-      applyAttributeModifier(livingEntity, Attributes.ARMOR, ARMOR_MODIFIER, ChampionsConfig.armorGrowth * growthFactor, AttributeModifier.Operation.ADD_VALUE);
-      applyAttributeModifier(livingEntity, Attributes.ARMOR_TOUGHNESS, ARMOR_TOUGHNESS_MODIFIER, ChampionsConfig.toughnessGrowth * growthFactor, AttributeModifier.Operation.ADD_VALUE);
-      applyAttributeModifier(livingEntity, Attributes.KNOCKBACK_RESISTANCE, KNOCKBACK_RESISTANCE_MODIFIER, ChampionsConfig.knockbackResistanceGrowth * growthFactor, AttributeModifier.Operation.ADD_VALUE);
+      applyAttributeModifier(livingEntity, Attributes.MAX_HEALTH, MAX_HEALTH_MODIFIER, ChampionsConfig.healthGrowth * growthFactor, ChampionsConfig.maxHealthModifierOperation);
+      applyAttributeModifier(livingEntity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER, ChampionsConfig.attackGrowth * growthFactor, ChampionsConfig.attackModifierOperation);
+      applyAttributeModifier(livingEntity, Attributes.ARMOR, ARMOR_MODIFIER, ChampionsConfig.armorGrowth * growthFactor, ChampionsConfig.armorModifierOperation);
+      applyAttributeModifier(livingEntity, Attributes.ARMOR_TOUGHNESS, ARMOR_TOUGHNESS_MODIFIER, ChampionsConfig.toughnessGrowth * growthFactor, ChampionsConfig.armorToughnessModifierOperation);
+      applyAttributeModifier(livingEntity, Attributes.KNOCKBACK_RESISTANCE, KNOCKBACK_RESISTANCE_MODIFIER, ChampionsConfig.knockbackResistanceGrowth * growthFactor, ChampionsConfig.knockbackResistanceModifierOperation);
     }
   }
 
