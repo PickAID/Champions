@@ -85,7 +85,7 @@ public class ChampionData {
         if (toAdd > 0) {
           createAffixes(affixes, champion, totalAffixes);
         }
-        ChampionBuilder.applyGrowth(livingEntity, rank.getGrowthFactor());
+        ChampionBuilder.applyGrowth(champion, rank.getGrowthFactor());
         champion.getServer().setAffixes(affixes);
         affixes.forEach(affix -> affix.onInitialSpawn(champion));
         return true;

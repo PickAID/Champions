@@ -7,12 +7,14 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.level.storage.loot.LootContext;
 import top.theillusivec4.champions.api.AttributesModifierDataLoader;
+import top.theillusivec4.champions.api.ChampionModifierCondition;
 import top.theillusivec4.champions.api.ModifierSetting;
-import top.theillusivec4.champions.common.loot.ChampionPropertyCondition;
+import top.theillusivec4.champions.common.config.ConfigEnums;
+import top.theillusivec4.champions.common.loot.AffixesPredicate;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -46,7 +48,7 @@ public class AttributesModifierDataProvider implements DataProvider {
 
       Path outputPath = packOutput.getOutputFolder()
         .resolve("data").resolve(attributeId.getNamespace()).resolve(AttributesModifierDataLoader.getFolder()).resolve(attributeId.getPath() + ".json");
-      // apply default setting
+      // apples default setting
       if (attribute == Attributes.MAX_HEALTH) {
         ref.baseValue = 0.35D;
         ref.enable = true;
@@ -70,7 +72,13 @@ public class AttributesModifierDataProvider implements DataProvider {
         ref.operation = AttributeModifier.Operation.ADD_VALUE;
       }
       futures.add(lookupProvider.thenCompose(provider ->
-        DataProvider.saveStable(cachedOutput, provider, ModifierSetting.CODEC, new ModifierSetting(attributeId, ref.enable, Pair.of(ref.baseValue, ref.operation), Optional.of(new ChampionPropertyCondition(LootContext.EntityTarget.THIS, Optional.of(MinMaxBounds.Ints.ANY), Optional.of(new ChampionPropertyCondition.AffixesPredicate(Set.of(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY))))), outputPath)
+        DataProvider.saveStable(cachedOutput, provider, ModifierSetting.MAP_CODEC.codec(),
+          new ModifierSetting(attributeId,
+            ref.enable, Pair.of(ref.baseValue, ref.operation),
+            Optional.of(new ChampionModifierCondition(Optional.of(Set.of(ResourceLocation.parse("minecraft:creeper"))),
+              Optional.of(MinMaxBounds.Ints.ANY),
+              Optional.of(new AffixesPredicate(Set.of(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY)), ConfigEnums.Permission.BLACKLIST)))
+          , outputPath)
       ));
     });
 

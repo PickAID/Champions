@@ -37,7 +37,7 @@ public class AttributesModifierDataLoader extends SimplePreparableReloadListener
     for (Map.Entry<ResourceLocation, Resource> resource : pResourceManager.listResources(FOLDER, p -> p.getPath().endsWith(".json")).entrySet()) {
       try (Reader reader = resource.getValue().openAsReader()) {
         JsonElement element = JsonParser.parseReader(reader);
-        ModifierSetting.CODEC.parse(JsonOps.INSTANCE, element)
+        ModifierSetting.MAP_CODEC.codec().parse(JsonOps.INSTANCE, element)
           .resultOrPartial(error -> Champions.LOGGER.debug("Failed to parse Attributes Modifier setting {}", error))
           .ifPresent(itemValues -> loadedData.put(resource.getKey(), itemValues));
       } catch (Exception e) {
