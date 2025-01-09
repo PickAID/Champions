@@ -2,17 +2,17 @@ package top.theillusivec4.champions.api;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import top.theillusivec4.champions.common.loot.ChampionPropertyCondition;
 
 import java.util.Optional;
 
 public record ModifierSetting(ResourceLocation attributeType, boolean enable,
                               Pair<Double, AttributeModifier.Operation> setting,
-                              Optional<ChampionPropertyCondition> championPropertyCondition) {
-  public static final Codec<ModifierSetting> CODEC = RecordCodecBuilder.create(instance ->
+                              Optional<ChampionModifierCondition> modifierCondition) {
+  public static final MapCodec<ModifierSetting> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
     instance.group(
       ResourceLocation.CODEC.fieldOf("attributeType").forGetter(ModifierSetting::attributeType),
       Codec.BOOL.fieldOf("enable").forGetter(ModifierSetting::enable),
@@ -22,6 +22,6 @@ public record ModifierSetting(ResourceLocation attributeType, boolean enable,
           AttributeModifier.Operation.CODEC.fieldOf("operation").forGetter(Pair::getSecond)
         ).apply(inst, Pair::new)
       ).fieldOf("modifier").forGetter(ModifierSetting::setting),
-      ChampionPropertyCondition.CODEC.optionalFieldOf("conditions").forGetter(ModifierSetting::championPropertyCondition)
+      ChampionModifierCondition.MAP_CODEC.codec().optionalFieldOf("conditions").forGetter(ModifierSetting::modifierCondition)
     ).apply(instance, ModifierSetting::new));
 }

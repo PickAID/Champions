@@ -76,9 +76,7 @@ import top.theillusivec4.champions.server.command.ChampionsCommand;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static top.theillusivec4.champions.api.AffixRegistry.AFFIX_REGISTRY;
 
@@ -136,6 +134,13 @@ public class Champions {
 
   public static ResourceLocation getLocation(final String path) {
     return ResourceLocation.fromNamespaceAndPath(MODID, path);
+  }
+  public static Set<ResourceLocation> getLocationSet(final String... path) {
+    Set<ResourceLocation> locations = new HashSet<>();
+    for (String s : path) {
+      locations.add(getLocation(s));
+    }
+    return locations;
   }
 
   private void registerRegistries(NewRegistryEvent event) {
