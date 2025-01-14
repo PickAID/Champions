@@ -1,6 +1,5 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,11 +41,6 @@ public class ReflectiveAffix extends BasicAffix {
         newSource = ModDamageTypes.of(ModDamageTypes.REFLECTION_DAMAGE, source.getDirectEntity(), champion.getLivingEntity());
       }
       float min = (float) ChampionsConfig.reflectiveMinPercent;
-
-      if (source.is(DamageTypeTags.IS_FIRE) || source.is(DamageTypeTags.IS_PROJECTILE) || source.is(DamageTypeTags.IS_EXPLOSION) || source.is(DamageTypeTags.DAMAGES_HELMET) || source.is(DamageTypes.MAGIC) || source.is(DamageTypeTags.BYPASSES_ARMOR) || source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-        newSource = new DamageSource(source.typeHolder(), sourceEntity, champion.getLivingEntity());
-      }
-
       float damage = (float) Math.min(amount * (sourceEntity.getRandom().nextFloat() * (ChampionsConfig.reflectiveMaxPercent - min) + min), ChampionsConfig.reflectiveMax);
 
       sourceEntity.hurt(newSource, damage);
