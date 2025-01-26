@@ -203,7 +203,7 @@ public class Champions {
             ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
           }
         } catch (Exception e) {
-          LOGGER.error("Error loading config, please remove this file or check the format is correct: {}", evt.getConfig().getFullPath(), e);
+          LOGGER.error("Error loading config, please remove this file or check the format is correct: {}", FMLPaths.GAMEDIR.get().resolve(evt.getConfig().getFullPath()), e);
         }
       }
     } else if (evt.getConfig().getType() == ModConfig.Type.CLIENT) {
