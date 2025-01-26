@@ -4,6 +4,8 @@
   "package": "top.theillusivec4.champions.common.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "WitherBossMixin",
+    "WitherSkullBlockMixin"
   ],
   "client": [
     "MinecraftMixin"

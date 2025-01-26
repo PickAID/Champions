@@ -186,14 +186,17 @@ public class ChampionBuilder {
   public static void applyGrowth(final IChampion champion, float growthFactor) {
     if (growthFactor != 0) {
       Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
-        if (value.enable()) {
-          var attribute = BuiltInRegistries.ATTRIBUTE.getHolder(value.attributeType());
-          var setting = value.setting();
-          var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
-          if (matches) {
-            attribute.ifPresent(attributeValue -> applyAttributeModifier(champion.getLivingEntity(), attributeValue, identifier, setting, growthFactor));
-          }
+        if (!value.enable()) {
+          return;
         }
+
+        var attribute = BuiltInRegistries.ATTRIBUTE.getHolder(value.attributeType());
+        var setting = value.setting();
+        var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
+        if (matches) {
+          attribute.ifPresent(attributeValue -> applyAttributeModifier(champion.getLivingEntity(), attributeValue, identifier, setting, growthFactor));
+        }
+
       });
     }
   }
