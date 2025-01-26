@@ -89,7 +89,6 @@ public class Champions {
 
   public static boolean scalingHealthLoaded = false;
   public static boolean gameStagesLoaded = false;
-  public static boolean kubejsLoaded = false;
   public final ModContainer modContainer;
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
@@ -99,7 +98,6 @@ public class Champions {
     modEventBus.addListener(this::onGatherData);
     modEventBus.addListener(this::registerRegistries);
     modEventBus.addListener(this::onClientSetup);
-//    modEventBus.addListener(TestCustomAffixHandler::testOnCustomAffixBuild);
     modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
     modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
     modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
@@ -115,7 +113,6 @@ public class Champions {
     NeoForge.EVENT_BUS.addListener(this::registerCommands);
     ChampionsRegistry.register(modEventBus);
     scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
-    kubejsLoaded = ModList.get().isLoaded("kubejs");
   }
 
   private static void createServerConfig(ModConfigSpec spec, String suffix) {
@@ -135,6 +132,7 @@ public class Champions {
   public static ResourceLocation getLocation(final String path) {
     return ResourceLocation.fromNamespaceAndPath(MODID, path);
   }
+
   public static Set<ResourceLocation> getLocationSet(final String... path) {
     Set<ResourceLocation> locations = new HashSet<>();
     for (String s : path) {
@@ -193,15 +191,19 @@ public class Champions {
         CommentedConfig commentedConfig = evt.getConfig().getLoadedConfig().config();
         ChampionsConfig.bake();
         // 重建管理器
-        if (spec == ChampionsConfig.RANKS_SPEC) {
-          ChampionsConfig.transformRanks(commentedConfig);
-          RankManager.buildRanks();
-        } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
-          ChampionsConfig.transformEntities(commentedConfig);
-          EntityManager.buildEntitySettings();
-        } else if (spec == ChampionsConfig.STAGE_SPEC && Champions.gameStagesLoaded) {
-          ChampionsConfig.entityStages = ChampionsConfig.STAGE.entityStages.get();
-          ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
+        try {
+          if (spec == ChampionsConfig.RANKS_SPEC) {
+            ChampionsConfig.transformRanks(commentedConfig);
+            RankManager.buildRanks();
+          } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
+            ChampionsConfig.transformEntities(commentedConfig);
+            EntityManager.buildEntitySettings();
+          } else if (spec == ChampionsConfig.STAGE_SPEC && Champions.gameStagesLoaded) {
+            ChampionsConfig.entityStages = ChampionsConfig.STAGE.entityStages.get();
+            ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
+          }
+        } catch (Exception e) {
+          LOGGER.error("Error loading config, please remove this file or check the format is correct: {}", evt.getConfig().getFullPath(), e);
         }
       }
     } else if (evt.getConfig().getType() == ModConfig.Type.CLIENT) {
