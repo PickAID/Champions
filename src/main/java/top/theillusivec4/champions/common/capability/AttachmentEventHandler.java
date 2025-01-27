@@ -35,12 +35,10 @@ public class AttachmentEventHandler {
 
         if (serverChampion.getRank().isEmpty()) {
 
-          if (ChampionsConfig.championSpawners && evt.getSpawnType() == MobSpawnType.SPAWNER) {
+          if (!ChampionsConfig.championSpawners && evt.getSpawnType() == MobSpawnType.SPAWNER) {
             serverChampion.setRank(RankManager.getLowestRank()); // check basic spawner
-            ChampionBuilder.spawn(champion);
-          } else if (ChampionsConfig.championTrialSpawners && evt.getSpawnType() == MobSpawnType.TRIAL_SPAWNER) {
+          } else if (!ChampionsConfig.championTrialSpawners && evt.getSpawnType() == MobSpawnType.TRIAL_SPAWNER) {
             serverChampion.setRank(RankManager.getLowestRank()); // check trial spawner
-            ChampionBuilder.spawn(champion);
           }
         }
       });
