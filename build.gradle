@@ -3,12 +3,14 @@ buildscript {
     maven { url = 'https://files.minecraftforge.net/maven' }
     maven { url = 'https://plugins.gradle.org/m2/' }
     maven { url = 'https://maven.parchmentmc.org' }
+    maven { url = 'https://repo.spongepowered.org/repository/maven-public' }
     maven {
       url "https://plugins.gradle.org/m2/"
     }
   }
   dependencies {
     classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+    classpath group: "org.spongepowered", name: "mixingradle", version: "${mixingradle_version}"
     classpath group: 'gradle.plugin.com.matthewprenger', name: 'CurseGradle', version: '1.4.0'
     classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
   }
@@ -18,6 +20,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'eclipse'
+apply plugin: 'org.spongepowered.mixin'
 
 version = "${mod_version}"
 group = "top.theillusivec4.champions"
@@ -94,6 +97,17 @@ dependencies {
 
 //  implementation fg.deobf("net.darkhax.gamestages:GameStages-Forge-1.18.2:${gamestages_version}")
 
+  compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
+  if (rootMod.toBoolean()) {
+    implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
+      transitive = false
+      jarJar.ranged(it, "[${mixin_extras_version},)")
+    }
+  } else {
+    implementation("io.github.llamalad7.mixinextras:mixinextras-forge:${mixin_extras_version}")
+  }
+
+  annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 
   compileOnly fg.deobf("curse.maven:silent-lib-242998:${cf_silentlib}")
   compileOnly fg.deobf("curse.maven:scalinghealth-248027:${cf_scalinghealth}")
@@ -113,6 +127,10 @@ sourceSets {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+mixin {
+  add sourceSets.main, "${mod_id}.refmap.json"
+  config "${mod_id}.mixins.json"
+}
 
 jar {
   manifest {
