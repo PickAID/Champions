@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "priority": 1000,
+  "package": "top.theillusivec4.champions.common.mixin",
+  "refmap": "champions.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+    "MinecraftMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  },
+  "minVersion": "0.8"
+}

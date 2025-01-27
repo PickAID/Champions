@@ -1,61 +1,85 @@
 package top.theillusivec4.champions.common.rank;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffect;
 import top.theillusivec4.champions.api.IAffix;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 public class Rank {
 
-  private final int tier;
-  private final int defaultColor;
-  private final int numAffixes;
-  private final int growthFactor;
-  private final float chance;
-  private final List<Tuple<MobEffect, Integer>> effects;
-  private final List<IAffix> presetAffixes;
+    private final int tier;
+    private final String defaultColor;
+    private final int numAffixes;
+    private final int growthFactor;
+    private final int weight;
+    private final List<Tuple<Holder<MobEffect>, Integer>> effects;
+    private final List<IAffix> presetAffixes;
 
-  public Rank() {
-    this(0, 0, 0, 0, 0, new ArrayList<>(), new ArrayList<>());
-  }
+    public Rank() {
+        this(0, 0, 0, 0, "#FF000000", new ArrayList<>(), new ArrayList<>());
+    }
 
-  public Rank(int tier, int numAffixes, int growthFactor, float chance, int defaultColor,
-              List<Tuple<MobEffect, Integer>> effects, List<IAffix> presetAffixes) {
-    this.tier = tier;
-    this.numAffixes = numAffixes;
-    this.growthFactor = growthFactor;
-    this.chance = chance;
-    this.defaultColor = defaultColor;
-    this.effects = effects;
-    this.presetAffixes = presetAffixes;
-  }
+    public Rank(int tier, int numAffixes, int growthFactor, int weight, String defaultColor,
+                List<Tuple<Holder<MobEffect>, Integer>> effects, List<IAffix> presetAffixes) {
+        this.tier = tier;
+        this.numAffixes = numAffixes;
+        this.growthFactor = growthFactor;
+        this.weight = weight;
+        this.defaultColor = defaultColor;
+        this.effects = effects;
+        this.presetAffixes = presetAffixes;
+    }
 
-  public int getTier() {
-    return tier;
-  }
+    public static int getColor(String color) {
+        return Objects.requireNonNull(TextColor.parseColor(color)).getValue();
+    }
 
-  public int getDefaultColor() {
-    return defaultColor;
-  }
+    public int getTier() {
+        return tier;
+    }
 
-  public int getNumAffixes() {
-    return numAffixes;
-  }
+    public TextColor getDefaultColor() {
+        return Objects.requireNonNull(TextColor.parseColor(defaultColor));
+    }
 
-  public int getGrowthFactor() {
-    return growthFactor;
-  }
+    public int getNumAffixes() {
+        return numAffixes;
+    }
 
-  public float getChance() {
-    return chance;
-  }
+    public int getGrowthFactor() {
+        return growthFactor;
+    }
 
-  public List<Tuple<MobEffect, Integer>> getEffects() {
-    return effects;
-  }
+    public int getWeight() {
+        return weight;
+    }
 
-  public List<IAffix> getPresetAffixes() {
-    return presetAffixes;
-  }
+    public List<Tuple<Holder<MobEffect>, Integer>> getEffects() {
+        return effects;
+    }
+
+    public List<IAffix> getPresetAffixes() {
+        return presetAffixes;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj == this || obj != null && obj.getClass() == this.getClass();
+    }
+
+    @Override
+    public int hashCode() {
+        return 1;
+    }
+
+    @Override
+    public String toString() {
+        return "Rank[]";
+    }
+
 }

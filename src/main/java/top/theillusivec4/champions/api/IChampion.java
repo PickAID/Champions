@@ -1,52 +1,52 @@
 package top.theillusivec4.champions.api;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nonnull;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.common.rank.Rank;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 public interface IChampion {
 
-  interface Client {
+    Client getClient();
 
-    Optional<Tuple<Integer, Integer>> getRank();
+    Server getServer();
 
-    void setRank(Tuple<Integer, Integer> rank);
+    LivingEntity getLivingEntity();
 
-    Optional<IAffix> getAffix(String id);
+    interface Client {
 
-    List<IAffix> getAffixes();
+        Optional<Tuple<Integer, String>> getRank();
 
-    void setAffixes(Set<String> affixIds);
+        void setRank(Tuple<Integer, String> rank);
 
-    CompoundTag getData(String identifier);
+        List<IAffix> getAffixes();
 
-    void setData(String identifier, CompoundTag data);
-  }
+        void setAffixes(Set<ResourceLocation> affixIds);
 
-  interface Server {
+        Optional<IAffix> getAffix(String id);
 
-    Optional<Rank> getRank();
+        void setData(String identifier, CompoundTag data);
 
-    void setRank(Rank rank);
+        CompoundTag getData(String identifier);
+    }
 
-    List<IAffix> getAffixes();
+    interface Server {
 
-    void setAffixes(List<IAffix> affixes);
+        Optional<Rank> getRank();
 
-    CompoundTag getData(String identifier);
+        void setRank(Rank rank);
 
-    void setData(String identifier, CompoundTag data);
-  }
+        List<IAffix> getAffixes();
 
-  Client getClient();
+        void setAffixes(List<IAffix> affixes);
 
-  Server getServer();
+        CompoundTag getData(String identifier);
 
-  @Nonnull
-  LivingEntity getLivingEntity();
+        void setData(String identifier, CompoundTag data);
+    }
 }

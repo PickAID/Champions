@@ -9,7 +9,7 @@ modId="champions"
 version="${version}"
 displayName="Champions"
 displayURL="https://github.com/TheIllusiveC4/Champions/"
-authors="C4, kumoe"
+authors="CrychicTeam, TheIllusiveC4"
 description='''
 Creates elite mobs of different rarities, with enhanced stats and extra abilities.
 '''

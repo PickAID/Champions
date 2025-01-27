@@ -1,8 +1,10 @@
 package top.theillusivec4.champions.common.capability;
 
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
@@ -22,79 +24,87 @@ import top.theillusivec4.champions.common.util.ChampionHelper;
 
 import java.util.stream.Collectors;
 
-@SuppressWarnings("unused")
 public class CapabilityEventHandler {
 
-  @SubscribeEvent
-  public void attachCapabilities(final AttachCapabilitiesEvent<Entity> evt) {
-    Entity entity = evt.getObject();
+    @SubscribeEvent
+    public void attachCapabilities(final AttachCapabilitiesEvent<Entity> evt) {
+        Entity entity = evt.getObject();
 
-    if (ChampionHelper.isValidChampion(entity)) {
-      evt.addCapability(ChampionCapability.ID,
-        ChampionCapability.createProvider((LivingEntity) entity));
-    }
-  }
-
-  @SubscribeEvent
-  public void onSpecialSpawn(LivingSpawnEvent.SpecialSpawn evt) {
-    LivingEntity entity = evt.getEntity();
-
-    if (!entity.level.isClientSide()) {
-      ChampionCapability.getCapability(entity).ifPresent(champion -> {
-        IChampion.Server serverChampion = champion.getServer();
-
-        if (serverChampion.getRank().isEmpty()) {
-
-          if (!ChampionsConfig.championSpawners && evt.getSpawner() != null) {
-            serverChampion.setRank(RankManager.getLowestRank());
-          } else {
-            ChampionBuilder.spawn(champion);
-          }
+        if (ChampionHelper.isValidChampionEntity(entity)) {
+            evt.addCapability(ChampionCapability.ID,
+                    ChampionCapability.createProvider((LivingEntity) entity));
         }
-      });
     }
-  }
 
-  @SubscribeEvent
-  public void onLivingConvert(LivingConversionEvent.Post evt) {
-    LivingEntity entity = evt.getEntity();
+    /**
+     * Preset of special spawn ranks
+     *
+     * @param evt the finalizeSpawn event
+     */
+    @SubscribeEvent
+    public void onSpecialSpawn(LivingSpawnEvent.SpecialSpawn evt) {
+        LivingEntity entity = evt.getEntity();
 
-    if (!entity.level.isClientSide()) {
-      entity.reviveCaps();
-      LivingEntity outcome = evt.getOutcome();
-      ChampionCapability.getCapability(entity).ifPresent(
-        oldChampion -> ChampionCapability.getCapability(outcome)
-          .ifPresent(newChampion -> {
-            ChampionBuilder.copy(oldChampion, newChampion);
-            IChampion.Server serverChampion = newChampion.getServer();
-            NetworkHandler.INSTANCE
-              .send(PacketDistributor.TRACKING_ENTITY.with(() -> outcome),
-                new SPacketSyncChampion(outcome.getId(),
-                  serverChampion.getRank().map(Rank::getTier).orElse(0),
-                  serverChampion.getRank().map(Rank::getDefaultColor).orElse(0),
-                  serverChampion.getAffixes().stream().map(IAffix::getIdentifier)
-                    .collect(Collectors.toSet())));
-          }));
-      entity.invalidateCaps();
+        if (!entity.level.isClientSide()) {
+            ChampionCapability.getCapability(entity).ifPresent(champion -> {
+                IChampion.Server serverChampion = champion.getServer();
+
+                if (serverChampion.getRank().isEmpty()) {
+                    // Todo: Custom entity spawn rank base on mob spawn type
+                    if (!ChampionsConfig.championSpawners && evt.getSpawnReason() == MobSpawnType.SPAWNER) {
+                        serverChampion.setRank(RankManager.getLowestRank());
+                    }
+                }
+            });
+        }
     }
-  }
 
-  @SubscribeEvent
-  public void startTracking(PlayerEvent.StartTracking evt) {
-    Entity entity = evt.getTarget();
-    Player playerEntity = evt.getEntity();
+    @SubscribeEvent
+    public void onLivingConvert(LivingConversionEvent.Post evt) {
+        LivingEntity entity = evt.getEntity();
 
-    if (playerEntity instanceof ServerPlayer) {
-      ChampionCapability.getCapability(entity).ifPresent(champion -> {
-        IChampion.Server serverChampion = champion.getServer();
-        NetworkHandler.INSTANCE
-          .send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEntity),
-            new SPacketSyncChampion(entity.getId(),
-              serverChampion.getRank().map(Rank::getTier).orElse(0),
-              serverChampion.getRank().map(Rank::getDefaultColor).orElse(0),
-              serverChampion.getAffixes().stream().map(IAffix::getIdentifier)
-                .collect(Collectors.toSet())));
-      });
+        if (!entity.level.isClientSide()) {
+            entity.reviveCaps();
+            LivingEntity outcome = evt.getOutcome();
+            ChampionCapability.getCapability(entity).ifPresent(
+                    oldChampion -> {
+                        if (ChampionHelper.isValidChampion(oldChampion.getServer())) {
+                            ChampionCapability.getCapability(outcome)
+                                    .ifPresent(newChampion -> {
+                                        ChampionBuilder.copy(oldChampion, newChampion);
+                                        IChampion.Server serverChampion = newChampion.getServer();
+                                        NetworkHandler.INSTANCE
+                                                .send(PacketDistributor.TRACKING_ENTITY.with(() -> outcome),
+                                                        new SPacketSyncChampion(outcome.getId(),
+                                                                serverChampion.getRank().map(Rank::getTier).orElse(0),
+                                                                serverChampion.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
+                                                                serverChampion.getAffixes().stream().map(IAffix::getIdentifier)
+                                                                        .collect(Collectors.toSet())));
+                                    });
+                        }
+                    });
+            entity.invalidateCaps();
+        }
     }
-  }
+
+    @SubscribeEvent
+    public void startTracking(PlayerEvent.StartTracking evt) {
+        Entity entity = evt.getTarget();
+        Player playerEntity = evt.getEntity();
+
+        if (playerEntity instanceof ServerPlayer) {
+            ChampionCapability.getCapability(entity).ifPresent(champion -> {
+                IChampion.Server serverChampion = champion.getServer();
+                if (ChampionHelper.isValidChampion(serverChampion)) {
+                    NetworkHandler.INSTANCE
+                            .send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerEntity),
+                                    new SPacketSyncChampion(entity.getId(),
+                                            serverChampion.getRank().map(Rank::getTier).orElse(0),
+                                            serverChampion.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
+                                            serverChampion.getAffixes().stream().map(IAffix::getIdentifier)
+                                                    .collect(Collectors.toSet())));
+                }
+            });
+        }
+    }
 }

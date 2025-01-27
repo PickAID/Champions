@@ -4,14 +4,14 @@ import java.util.List;
 
 public class EntitiesConfig {
 
-  public List<EntityConfig> entities;
+    public List<EntityConfig> entities;
 
-  public static class EntityConfig {
-    public String entity;
-    public Integer minTier;
-    public Integer maxTier;
-    public List<String> presetAffixes;
-    public List<String> affixList;
-    public String affixPermission;
-  }
+    public static class EntityConfig {
+        public String entity;
+        public Integer minTier;
+        public Integer maxTier;
+        public List<String> presetAffixes;
+        public List<String> affixList;
+        public String affixPermission;
+    }
 }

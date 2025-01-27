@@ -9,7 +9,6 @@ public class AffixArgumentInfo implements ArgumentTypeInfo<AffixArgumentType, Af
 
     @Override
     public void serializeToNetwork(Template template, FriendlyByteBuf buffer) {
-        // 通常为空，除非你需要发送额外数据
     }
 
     @Override
@@ -19,7 +18,6 @@ public class AffixArgumentInfo implements ArgumentTypeInfo<AffixArgumentType, Af
 
     @Override
     public void serializeToJson(Template template, JsonObject json) {
-        // 通常为空，除非你需要序列化额外数据
     }
 
     @Override
