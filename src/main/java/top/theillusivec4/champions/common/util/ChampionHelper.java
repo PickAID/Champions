@@ -30,7 +30,7 @@ public class ChampionHelper {
   /**
    * check entity is LivingEntity & Enemy
    */
-  public static boolean isValidChampion(final Entity entity) {
+  public static boolean isValidChampionEntity(final Entity entity) {
     return entity instanceof LivingEntity && entity instanceof Enemy;
   }
 

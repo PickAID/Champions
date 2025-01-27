@@ -39,7 +39,7 @@ public class ChampionAttachment {
   }
 
   public static Optional<IChampion> getAttachment(final Entity entity) {
-    if (!ChampionHelper.isValidChampion(entity)) {
+    if (!ChampionHelper.isValidChampionEntity(entity)) {
       return Optional.empty();
     }
     return Optional.ofNullable(entity.getData(ModAttachments.CHAMPION_ATTACHMENT).champion);
