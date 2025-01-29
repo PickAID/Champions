@@ -111,4 +111,8 @@ public class HUDHelper {
       }).orElse(false);
     }).orElse(false);
   }
+
+  public static ResourceLocation getGuiStar() {
+    return GUI_STAR;
+  }
 }
