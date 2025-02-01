@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.affix.core.AffixData;
 import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.common.config.ChampionsConfig;
 
 public class ShieldingAffix extends BasicAffix {
 
@@ -34,7 +35,7 @@ public class ShieldingAffix extends BasicAffix {
   public void onServerUpdate(IChampion champion) {
     LivingEntity livingEntity = champion.getLivingEntity();
 
-    if (livingEntity.tickCount % 40 == 0 && livingEntity.getRandom().nextFloat() < 0.5F) {
+    if (livingEntity.tickCount % 40 == 0 && livingEntity.getRandom().nextDouble() < ChampionsConfig.shieldingChance) {
       AffixData.BooleanData shielding =
         AffixData.getData(champion, this.toString(), AffixData.BooleanData.class);
       shielding.mode = !shielding.mode;

@@ -83,6 +83,7 @@ public class ChampionsConfig {
   public static int reflectiveMax;
   public static boolean reflectiveLethal;
   public static double woundingChance;
+  public static double shieldingChance;
   public static boolean mobInherit;
   public static int rankReduce;
   public static List<? extends String> entityStages;
@@ -239,6 +240,7 @@ public class ChampionsConfig {
     reflectiveMinPercent = SERVER.reflectiveMinPercent.get();
 
     woundingChance = SERVER.woundingChance.get();
+    shieldingChance = SERVER.shieldingChance.get();
     mobInherit = SERVER.mobInherit.get();
     rankReduce = SERVER.rankReduce.get();
 
@@ -417,6 +419,7 @@ public class ChampionsConfig {
     public final ModConfigSpec.BooleanValue reflectiveLethal;
 
     public final ModConfigSpec.DoubleValue woundingChance;
+    public final ModConfigSpec.DoubleValue shieldingChance;
 
     public final ModConfigSpec.ConfigValue<List<? extends String>> scalingHealthSpawnModifiers;
     public final ModConfigSpec.BooleanValue mobInherit;
@@ -656,6 +659,14 @@ public class ChampionsConfig {
       woundingChance = builder.comment("The percent chance that an attack will wound targets")
         .translation(CONFIG_PREFIX + "woundingChance")
         .defineInRange("woundingChance", 0.4D, 0.0D, 1.0D);
+
+      builder.pop();
+
+      builder.push("shielding");
+
+      shieldingChance = builder.comment("The percent chance that an attack will wound targets")
+        .translation(CONFIG_PREFIX + "shieldingChance")
+        .defineInRange("shieldingChance", 0.5D, 0.0D, 1.0D);
 
       builder.pop();
 
