@@ -1,5 +1,6 @@
 package top.theillusivec4.champions.common.datagen;
 
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -29,7 +30,11 @@ public class ModEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
     tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "enderman"));
     tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "shulker"));
     // add champion allow list
-    lookUpMonster(provider).listElements().forEach(entityType -> tag(ModEntityTypes.Tags.ALLOW_CHAMPIONS).add(entityType.key()));
+    lookUpMonster(provider).listElements().forEach(this::addEntity);
+  }
+
+  void addEntity(Holder.Reference<EntityType<?>> entityType) {
+    tag(ModEntityTypes.Tags.ALLOW_CHAMPIONS).add(entityType.key());
   }
 
   private HolderLookup.RegistryLookup<EntityType<?>> lookUpMonster(@NotNull HolderLookup.Provider provider) {
