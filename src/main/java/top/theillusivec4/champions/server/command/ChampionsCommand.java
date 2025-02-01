@@ -29,9 +29,11 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.item.ChampionEggItem;
 import top.theillusivec4.champions.common.registry.ModItems;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
+import top.theillusivec4.champions.common.util.ChampionHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -48,7 +50,12 @@ public class ChampionsCommand {
     .register(Champions.getLocation("monster_entities"),
       (context, builder) -> SharedSuggestionProvider.suggestResource(
         BuiltInRegistries.ENTITY_TYPE.stream()
-          .filter(type -> type.getCategory() == MobCategory.MONSTER),
+          .filter(type -> {
+            if (ChampionsConfig.allowChampionsList) {
+              return ChampionHelper.isValidChampionEntityType(type);
+            }
+            return type.getCategory() == MobCategory.MONSTER;
+          }),
         builder, EntityType::getKey,
         (type) -> Component.translatable(
           Util.makeDescriptionId("entity", EntityType.getKey(type)))));
