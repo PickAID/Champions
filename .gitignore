@@ -27,3 +27,4 @@ eclipse
 run
 /runs/
 /src/generated/resources/
+/run-data/

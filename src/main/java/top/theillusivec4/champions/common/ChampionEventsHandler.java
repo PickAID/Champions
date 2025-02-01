@@ -17,6 +17,7 @@ import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
@@ -153,6 +154,17 @@ public class ChampionEventsHandler {
             });
           }
         });
+      }
+    }
+  }
+  @SubscribeEvent
+  public void onPlayerRightClick(PlayerInteractEvent.EntityInteract event) {
+    if (ChampionsConfig.enableDebug) {
+      var player = event.getEntity();
+      var target = event.getTarget();
+      if (!target.level().isClientSide() && ChampionHelper.isChampionEntity(target)) {
+        ChampionAttachment.getAttachment(target).ifPresent(ChampionBuilder::resetAndUpdate);
+        player.sendSystemMessage(Component.literal("[Debug] Removed %s rank, affixes and attribute modifiers".formatted(target.getName().getString())));
       }
     }
   }

@@ -1,20 +1,26 @@
 package top.theillusivec4.champions.common.network;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.rank.Rank;
 
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
                                   Set<ResourceLocation> affixes) implements CustomPacketPayload {
@@ -50,5 +56,13 @@ public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
   @NotNull
   public Type<? extends CustomPacketPayload> type() {
     return TYPE;
+  }
+
+  public static void syncChampionDataToPlayerTrackingEntity(IChampion.Server championData, LivingEntity targetEntity) {
+    PacketDistributor.sendToPlayersTrackingEntity(targetEntity,
+      new SPacketSyncChampion(targetEntity.getId(),
+        championData.getRank().map(Rank::getTier).orElse(0),
+        championData.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
+        championData.getAffixes().stream().map(IAffix::getIdentifier).collect(Collectors.toSet())));
   }
 }

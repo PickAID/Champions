@@ -89,6 +89,7 @@ public class ChampionsConfig {
   public static List<? extends String> tierStages;
   public static List<? extends String> bossBarBlackList;
   public static boolean championTrialSpawners;
+  public static boolean enableDebug;
 
   static {
     final Pair<ServerConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder()
@@ -145,6 +146,7 @@ public class ChampionsConfig {
     showParticles = COMMON.showParticles.get();
     enableTOPIntegration = COMMON.enableTOPIntegration.get();
     bossBarBlackList = COMMON.bossBarBlackList.get();
+    enableDebug = COMMON.enableDebug.get();
   }
 
   public static void bake() {
@@ -284,10 +286,14 @@ public class ChampionsConfig {
     public final ModConfigSpec.BooleanValue enableTOPIntegration;
     public final ModConfigSpec.ConfigValue<List<? extends String>> bossBarBlackList;
     public final ModConfigSpec.BooleanValue championTrialSpawners;
+    public ModConfigSpec.BooleanValue enableDebug;
 
     public CommonConfig(ModConfigSpec.Builder builder) {
       builder.push("general");
 
+      enableDebug = builder.comment("Enable debug for game testing")
+        .translation(CONFIG_PREFIX + "enableDebug")
+        .define("enableDebug", false);
       beaconProtectionRange = builder
         .comment("The range from an active beacon where no champions will spawn (0 to disable)")
         .translation(CONFIG_PREFIX + "beaconProtectionRange")

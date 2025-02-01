@@ -35,7 +35,9 @@ public class Rank {
   }
 
   public static int getColor(String color) {
-    return TextColor.parseColor(color).getOrThrow().getValue();
+    return TextColor.parseColor(color)
+      .result()
+      .orElse(TextColor.fromRgb(0)).getValue();
   }
 
   public int getTier() {
@@ -43,7 +45,9 @@ public class Rank {
   }
 
   public TextColor getDefaultColor() {
-    return TextColor.parseColor(defaultColor).getOrThrow();
+    return TextColor.parseColor(defaultColor)
+      .result()
+      .orElse(TextColor.fromRgb(0));
   }
 
   public int getNumAffixes() {

@@ -13,6 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.rank.Rank;
@@ -50,6 +51,14 @@ public class ChampionHelper {
   public static boolean isValidChampion(IChampion.Server server) {
     var rank = server.getRank();
     return rank.isPresent() && rank.map(Rank::getTier).orElse(-1) > 0 && !server.getAffixes().isEmpty();
+  }
+  /**
+   * Check entity is champion (have affixes and rank)
+   * @param entity the entity to check
+   * @return true if entity is champion, false not champion
+   */
+  public static boolean isChampionEntity(Entity entity) {
+    return ChampionAttachment.getAttachment(entity).map(champion -> ChampionHelper.isValidChampion(champion.getServer())).orElse(false);
   }
 
   /**
