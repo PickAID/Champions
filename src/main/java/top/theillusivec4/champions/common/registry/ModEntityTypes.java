@@ -25,6 +25,7 @@ public class ModEntityTypes {
 
   public static class Tags {
     public static final TagKey<EntityType<?>> IS_ENDER = create("is_ender");
+    public static final TagKey<EntityType<?>> ALLOW_CHAMPIONS = create("allow_champions");
 
     private static TagKey<EntityType<?>> create(String name) {
       return TagKey.create(Registries.ENTITY_TYPE, Champions.getLocation(name));

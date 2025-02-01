@@ -7,6 +7,7 @@ import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.Champions;
@@ -27,6 +28,12 @@ public class ModEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
     tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "endermite"));
     tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "enderman"));
     tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "shulker"));
+    // add champion allow list
+    lookUpMonster(provider).listElements().forEach(entityType -> tag(ModEntityTypes.Tags.ALLOW_CHAMPIONS).add(entityType.key()));
+  }
+
+  private HolderLookup.RegistryLookup<EntityType<?>> lookUpMonster(@NotNull HolderLookup.Provider provider) {
+    return provider.lookupOrThrow(Registries.ENTITY_TYPE).filterElements(entityType -> entityType.getCategory() == MobCategory.MONSTER);
   }
 
   private ResourceKey<EntityType<?>> create(String name) {

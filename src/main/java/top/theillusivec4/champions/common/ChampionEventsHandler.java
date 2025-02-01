@@ -97,20 +97,22 @@ public class ChampionEventsHandler {
     Entity entity = evt.getEntity();
 
     if (!entity.level().isClientSide()) {
-      ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
-        IChampion.Server serverChampion = champion.getServer();
-        Optional<Rank> maybeRank = serverChampion.getRank();
+      if (ChampionHelper.isValidChampionEntity(entity)){
+        ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
+          IChampion.Server serverChampion = champion.getServer();
+          Optional<Rank> maybeRank = serverChampion.getRank();
 
-        if (maybeRank.isEmpty()) {
-          ChampionBuilder.spawn(champion);
-        }
-        serverChampion.getAffixes().forEach(affix -> affix.onSpawn(champion));
-        serverChampion.getRank().ifPresent(rank -> {
-          var effects = rank.getEffects();
-          effects.forEach(effectPair -> champion.getLivingEntity()
-            .addEffect(new MobEffectInstance(effectPair.getA(), 200, effectPair.getB())));
+          if (maybeRank.isEmpty()) {
+            ChampionBuilder.spawn(champion);
+          }
+          serverChampion.getAffixes().forEach(affix -> affix.onSpawn(champion));
+          serverChampion.getRank().ifPresent(rank -> {
+            var effects = rank.getEffects();
+            effects.forEach(effectPair -> champion.getLivingEntity()
+              .addEffect(new MobEffectInstance(effectPair.getA(), 200, effectPair.getB())));
+          });
         });
-      });
+      }
     }
   }
 
