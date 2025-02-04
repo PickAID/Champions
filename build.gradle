@@ -172,11 +172,11 @@ dependencies {
 //  compileOnly "net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:${bookshelf_version}"
   compileOnly "curse.maven:TOP-245211:${cf_theoneprobe}"
   compileOnly "curse.maven:jade-324717:${cf_jade}"
-//  compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
-//  compileOnly "dev.latvian.mods:rhino:${rhino_version}"
-//  compileOnly "dev.architectury:architectury-neoforge:${architectury_version}"
-//  compileOnly "dev.latvian.apps:tiny-java-server:${tiny_java_server_version}"
-//  compileOnly "curse.maven:probejs-585406:5820894"
+  implementation "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
+  implementation "dev.latvian.mods:rhino:${rhino_version}"
+  implementation "dev.architectury:architectury-neoforge:${architectury_version}"
+  compileOnly "dev.latvian.apps:tiny-java-server:${tiny_java_server_version}"
+  implementation "curse.maven:probejs-585406:5820894"
 
   implementation("curse.maven:jade-324717:${cf_jade}")
 //  implementation "curse.maven:cobweb-968456:5991578"
