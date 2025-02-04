@@ -93,19 +93,20 @@ public class Champions {
     public static boolean gameStagesLoaded = false;
 
     public Champions() {
-        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
-        ModLoadingContext.get().registerConfig(Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
-        ModLoadingContext.get().registerConfig(Type.SERVER, ChampionsConfig.SERVER_SPEC);
-        ModLoadingContext.get().registerConfig(Type.COMMON, ChampionsConfig.COMMON_SPEC);
-        createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
-        createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
+        var modContext = ModLoadingContext.get();
+        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        eventBus.addListener(this::enqueueIMC);
+        modContext.registerConfig(Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
+        modContext.registerConfig(Type.SERVER, ChampionsConfig.SERVER_SPEC);
+        modContext.registerConfig(Type.COMMON, ChampionsConfig.COMMON_SPEC);
+        createServerConfig(modContext,ChampionsConfig.RANKS_SPEC, "ranks");
+        createServerConfig(modContext, ChampionsConfig.ENTITIES_SPEC, "entities");
         gameStagesLoaded = ModList.get().isLoaded("gamestages");
 
         if (gameStagesLoaded) {
-            ModLoadingContext.get()
+            modContext
                     .registerConfig(Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
         }
-        IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
         eventBus.addListener(this::config);
         eventBus.addListener(this::setup);
         eventBus.addListener(this::registerCaps);
@@ -116,9 +117,9 @@ public class Champions {
         scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
     }
 
-    private static void createServerConfig(ForgeConfigSpec spec, String suffix) {
+    private static void createServerConfig(ModLoadingContext modContext, ForgeConfigSpec spec, String suffix) {
         String fileName = "champions-" + suffix + ".toml";
-        ModLoadingContext.get().registerConfig(Type.SERVER, spec, fileName);
+        modContext.registerConfig(Type.SERVER, spec, fileName);
         File defaults = FMLPaths.GAMEDIR.get().resolve("defaultconfigs").resolve(fileName).toFile();
 
         if (!defaults.exists()) {

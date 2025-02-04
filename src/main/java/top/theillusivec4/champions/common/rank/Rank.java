@@ -8,7 +8,7 @@ import top.theillusivec4.champions.api.IAffix;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 public class Rank {
 
@@ -36,7 +36,8 @@ public class Rank {
     }
 
     public static int getColor(String color) {
-        return Objects.requireNonNull(TextColor.parseColor(color)).getValue();
+        var parsedColor = Optional.ofNullable(TextColor.parseColor(color));
+        return parsedColor.orElse(TextColor.fromRgb(0)).getValue();
     }
 
     public int getTier() {
@@ -44,7 +45,7 @@ public class Rank {
     }
 
     public TextColor getDefaultColor() {
-        return Objects.requireNonNull(TextColor.parseColor(defaultColor));
+        return TextColor.parseColor(defaultColor);
     }
 
     public int getNumAffixes() {

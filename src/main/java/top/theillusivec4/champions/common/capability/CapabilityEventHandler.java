@@ -73,13 +73,7 @@ public class CapabilityEventHandler {
                                     .ifPresent(newChampion -> {
                                         ChampionBuilder.copy(oldChampion, newChampion);
                                         IChampion.Server serverChampion = newChampion.getServer();
-                                        NetworkHandler.INSTANCE
-                                                .send(PacketDistributor.TRACKING_ENTITY.with(() -> outcome),
-                                                        new SPacketSyncChampion(outcome.getId(),
-                                                                serverChampion.getRank().map(Rank::getTier).orElse(0),
-                                                                serverChampion.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
-                                                                serverChampion.getAffixes().stream().map(IAffix::getIdentifier)
-                                                                        .collect(Collectors.toSet())));
+                                        NetworkHandler.syncChampionDataToPlayerTrackingEntity(serverChampion, outcome);
                                     });
                         }
                     });

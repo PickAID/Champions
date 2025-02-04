@@ -3,6 +3,7 @@ package top.theillusivec4.champions.common.util;
 import com.google.common.collect.ImmutableSortedMap;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,6 +15,8 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixCategory;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.network.NetworkHandler;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
@@ -160,6 +163,87 @@ public class ChampionBuilder {
                     }
                 }
             });
+        }
+    }
+
+    /**
+     * Reset champion's attribute's modifier, only can use on server side.
+     *
+     * @param champion Need reset attribute target
+     */
+    public static void resetChampionModifiers(final IChampion champion) {
+        var livingEntity = champion.getLivingEntity();
+        var playerList = Objects.requireNonNull(livingEntity.getServer()).getPlayerList();
+        Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
+            if (value.enable()) {
+                var attribute = ForgeRegistries.ATTRIBUTES.getDelegate(value.attributeType());
+                var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
+                if (matches) {
+                    attribute.ifPresent(attributeValue -> {
+                        var attributeInstance = livingEntity.getAttributes().getInstance(attributeValue.get());
+                        if (attributeInstance != null) {
+                            attributeInstance.getModifiers().forEach(attributeModifier -> {
+                                var isChampionModifier = attributeModifier.getName().contains(Champions.MODID);
+                                if (isChampionModifier) {
+                                    attributeInstance.removePermanentModifier(attributeModifier.getId());
+                                    if (ChampionsConfig.enableDebug) {
+                                        var debugInfo = "Removed champion modifier: UUID: %s Name:%s Operation: %s".formatted(attributeModifier.getId(), attributeModifier.getName(), attributeModifier.getOperation());
+                                        Champions.LOGGER.debug(debugInfo);
+                                        playerList.getPlayers().stream().filter(p -> p.hasPermissions(2)).forEach(serverPlayer -> serverPlayer.sendSystemMessage(Component.literal(debugInfo)));
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
+            }
+        });
+    }
+    /**
+     * Resets the champion's growth, affixes, and rank, then updates the client.
+     * <p>
+     * This is a convenience method that resets all aspects of the champion.
+     *
+     * @param champion The champion whose attributes, rank, and affixes should be reset.
+     */
+    public static void resetAndUpdate(IChampion champion) {
+        resetAndUpdate(champion, true, true, true);
+    }
+    /**
+     * Resets specific aspects of the champion and optionally updates the client.
+     * <p>
+     * This method allows fine-grained control over which attributes to reset:
+     * - Growth modifiers (e.g., stat boosts)
+     * - Rank (e.g., champion tier)
+     * - Affixes (e.g., special abilities)
+     * <p>
+     * If either rank or affixes are reset, the update will be sent to the client.
+     *
+     * @param champion    The champion to reset.
+     * @param resetGrowth If true, resets the champion's growth modifiers.
+     * @param resetRank   If true, resets the champion's rank to an empty rank.
+     * @param resetAffix  If true, clears the champion's affixes.
+     */
+    public static void resetAndUpdate(final IChampion champion, final boolean resetGrowth, final boolean resetRank, final boolean resetAffix) {
+
+        var serverChampion = champion.getServer();
+        var targetEntity = champion.getLivingEntity();
+
+        if (resetGrowth) {
+            ChampionBuilder.resetChampionModifiers(champion);
+        }
+
+        if (resetRank) {
+            serverChampion.setRank(RankManager.getEmptyRank());
+        }
+
+        if (resetAffix) {
+            serverChampion.setAffixes(List.of());
+        }
+
+        // only manually sync to client because attributes will automatically sync by mojang
+        if (resetAffix || resetRank) {
+            NetworkHandler.syncChampionDataToPlayerTrackingEntity(serverChampion, targetEntity);
         }
     }
 

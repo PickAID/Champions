@@ -90,6 +90,23 @@ repositories {
     name = "GameStages"
     url = "https://maven.blamejared.com"
   }
+  maven {
+    // Shedaniel's maven (Architectury API)
+    url = "https://maven.architectury.dev"
+    content {
+      includeGroup "dev.architectury"
+    }
+  }
+
+  maven {
+    // saps.dev Maven (KubeJS and Rhino)
+    url = "https://maven.saps.dev/minecraft"
+    content {
+      includeGroup "dev.latvian.mods"
+    }
+  }
+  mavenLocal()
+  mavenCentral()
 }
 
 dependencies {
@@ -113,8 +130,13 @@ dependencies {
   compileOnly fg.deobf("curse.maven:scalinghealth-248027:${cf_scalinghealth}")
   compileOnly fg.deobf("curse.maven:TOP-245211:${cf_theoneprobe}")
   compileOnly fg.deobf("curse.maven:jade-324717:${cf_jade}")
+  runtimeOnly fg.deobf("curse.maven:jade-324717:${cf_jade}")
   compileOnly fg.deobf("net.darkhax.gamestages:GameStages-Forge-${mc_version}:${gamestages_version}")
   compileOnly fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-${mc_version}:${bookshelf_version}")
+
+  implementation fg.deobf("dev.latvian.mods:kubejs-forge:1902.6.2-build.74")
+  implementation fg.deobf("dev.latvian.mods:rhino-forge:1902.2.3-build.284")
+  implementation fg.deobf("dev.architectury:architectury-forge:6.6.92")
 }
 
 sourceSets {

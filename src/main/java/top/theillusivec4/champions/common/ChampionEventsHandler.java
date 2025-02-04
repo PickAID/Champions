@@ -14,13 +14,16 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -37,6 +40,12 @@ import java.util.Optional;
 public class ChampionEventsHandler {
 
     @SubscribeEvent
+    public void onAddReloadListener(AddReloadListenerEvent event) {
+        event.addListener(Champions.getDataLoader());
+        event.addListener(Champions.API.getAttributesModifierDataLoader());
+    }
+
+    @SubscribeEvent
     public void onLivingXpDrop(LivingExperienceDropEvent evt) {
         LivingEntity livingEntity = evt.getEntity();
         ChampionCapability.getCapability(livingEntity)
@@ -49,6 +58,18 @@ public class ChampionEventsHandler {
                                         evt.getDroppedExperience()));
                     }
                 }));
+    }
+
+    @SubscribeEvent
+    public void onPlayerRightClick(PlayerInteractEvent.EntityInteract event) {
+        if (ChampionsConfig.enableDebug) {
+            var player = event.getEntity();
+            var target = event.getTarget();
+            if (!target.level.isClientSide() && ChampionHelper.isChampionEntity(target)) {
+                ChampionCapability.getCapability(target).ifPresent(ChampionBuilder::resetAndUpdate);
+                player.sendSystemMessage(Component.literal("[Debug] Removed %s rank, affixes and attribute modifiers".formatted(target.getName().getString())));
+            }
+        }
     }
 
     @SubscribeEvent
@@ -73,20 +94,22 @@ public class ChampionEventsHandler {
         Entity entity = evt.getEntity();
 
         if (!entity.level.isClientSide()) {
-            ChampionCapability.getCapability(entity).ifPresent(champion -> {
-                IChampion.Server serverChampion = champion.getServer();
-                Optional<Rank> maybeRank = serverChampion.getRank();
+            if (ChampionHelper.isValidChampionEntity(entity)) {
+                ChampionCapability.getCapability(entity).ifPresent(champion -> {
+                    IChampion.Server serverChampion = champion.getServer();
+                    Optional<Rank> maybeRank = serverChampion.getRank();
 
-                if (maybeRank.isEmpty()) {
-                    ChampionBuilder.spawn(champion);
-                }
-                serverChampion.getAffixes().forEach(affix -> affix.onSpawn(champion));
-                serverChampion.getRank().ifPresent(rank -> {
-                    List<Tuple<Holder<MobEffect>, Integer>> effects = rank.getEffects();
-                    effects.forEach(effectPair -> champion.getLivingEntity()
-                            .addEffect(new MobEffectInstance(effectPair.getA().get(), 200, effectPair.getB())));
+                    if (maybeRank.isEmpty()) {
+                        ChampionBuilder.spawn(champion);
+                    }
+                    serverChampion.getAffixes().forEach(affix -> affix.onSpawn(champion));
+                    serverChampion.getRank().ifPresent(rank -> {
+                        List<Tuple<Holder<MobEffect>, Integer>> effects = rank.getEffects();
+                        effects.forEach(effectPair -> champion.getLivingEntity()
+                                .addEffect(new MobEffectInstance(effectPair.getA().get(), 200, effectPair.getB())));
+                    });
                 });
-            });
+            }
         }
     }
 

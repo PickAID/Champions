@@ -92,6 +92,9 @@ public class ChampionsConfig {
     public static List<? extends String> entityStages;
     public static List<? extends String> tierStages;
     public static List<? extends String> bossBarBlackList;
+    public static boolean enableDebug;
+    public static boolean allowChampionsList;
+    public static Permission allowChampionsPermission;
 
     static {
         final Pair<ServerConfig, ForgeConfigSpec> specPair = new Builder()
@@ -147,6 +150,9 @@ public class ChampionsConfig {
         showParticles = COMMON.showParticles.get();
         enableTOPIntegration = COMMON.enableTOPIntegration.get();
         bossBarBlackList = COMMON.bossBarBlackList.get();
+        enableDebug = COMMON.enableDebug.get();
+        allowChampionsList = COMMON.allowChampionsList.get();
+        allowChampionsPermission = COMMON.allowChampionsPermission.get();
     }
 
     public static void bake() {
@@ -292,10 +298,16 @@ public class ChampionsConfig {
         public final BooleanValue showParticles;
         public final BooleanValue enableTOPIntegration;
         public final ConfigValue<List<? extends String>> bossBarBlackList;
+        public final BooleanValue enableDebug;
+        public final BooleanValue allowChampionsList;
+        public final EnumValue<Permission> allowChampionsPermission;
 
         public CommonConfig(Builder builder) {
             builder.push("general");
 
+            enableDebug = builder.comment("Enable debug for game testing")
+                    .translation(CONFIG_PREFIX + "enableDebug")
+                    .define("enableDebug", false);
             beaconProtectionRange = builder
                     .comment("The range from an active beacon where no champions will spawn (0 to disable)")
                     .translation(CONFIG_PREFIX + "beaconProtectionRange")
@@ -344,7 +356,12 @@ public class ChampionsConfig {
             enableTOPIntegration =
                     builder.comment("Set to true to show champion tier and affixes in The One Probe overlay")
                             .translation(CONFIG_PREFIX + "enableTOPIntegration").define("enableTOPIntegration", true);
-
+            allowChampionsList =
+                    builder.comment("Set to true to enable champions entity allow list configuration by datapack")
+                            .translation(CONFIG_PREFIX + "allowChampionsList").define("allowChampionsList", true);
+            allowChampionsPermission =
+                    builder.comment("The permission of champions entity allow list datapack.")
+                            .translation(CONFIG_PREFIX + "allowChampionsPermission").defineEnum("allowChampionsPermission", Permission.WHITELIST, Permission.values());
             builder.pop();
         }
     }

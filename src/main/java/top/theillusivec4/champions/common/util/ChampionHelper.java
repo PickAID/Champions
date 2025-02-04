@@ -13,9 +13,11 @@ import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,7 +33,31 @@ public class ChampionHelper {
      * check entity is LivingEntity & Enemy
      */
     public static boolean isValidChampionEntity(final Entity entity) {
-        return entity instanceof LivingEntity && entity instanceof Enemy;
+        if (entity instanceof LivingEntity) {
+            if (ChampionsConfig.allowChampionsList) {
+                // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
+                if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
+                    return entity.getType().is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+                }
+                // If entitiesPermission is BLACKLIST, reject the entity
+                else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
+                    return !entity.getType().is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+                }
+            } else {
+                // If champions are not allowed, check if the entity is an enemy
+                return entity instanceof Enemy;
+            }
+        }
+        return false; // If entity is not a LivingEntity
+    }
+    /**
+     * Check entity is champion (have affixes and rank)
+     *
+     * @param entity the entity to check
+     * @return true if entity is champion, false not champion
+     */
+    public static boolean isChampionEntity(Entity entity) {
+        return ChampionCapability.getCapability(entity).map(champion -> ChampionHelper.isValidChampion(champion.getServer())).orElse(false);
     }
 
     /**

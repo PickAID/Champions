@@ -1,15 +1,22 @@
 package top.theillusivec4.champions.common.network;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.common.rank.Rank;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class NetworkHandler {
 
@@ -36,5 +43,14 @@ public class NetworkHandler {
                                      Function<FriendlyByteBuf, M> decoder,
                                      BiConsumer<M, Supplier<NetworkEvent.Context>> messageConsumer) {
         INSTANCE.registerMessage(id++, messageType, encoder, decoder, messageConsumer);
+    }
+
+    public static void syncChampionDataToPlayerTrackingEntity(IChampion.Server championData, LivingEntity targetEntity) {
+        INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> targetEntity),
+                new SPacketSyncChampion(targetEntity.getId(),
+                        championData.getRank().map(Rank::getTier).orElse(0),
+                        championData.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).serialize(),
+                        championData.getAffixes().stream().map(IAffix::getIdentifier)
+                                .collect(Collectors.toSet())));
     }
 }
