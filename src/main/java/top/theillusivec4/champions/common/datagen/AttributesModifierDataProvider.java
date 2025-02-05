@@ -10,9 +10,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import top.theillusivec4.champions.api.AttributesModifierDataLoader;
-import top.theillusivec4.champions.api.ChampionModifierCondition;
-import top.theillusivec4.champions.api.ModifierSetting;
+import top.theillusivec4.champions.api.data.AttributesModifierDataLoader;
+import top.theillusivec4.champions.api.data.ChampionModifierCondition;
+import top.theillusivec4.champions.api.data.ModifierSetting;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 import top.theillusivec4.champions.common.loot.AffixesPredicate;
 

@@ -5,8 +5,8 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.AffixDataLoader;
-import top.theillusivec4.champions.api.AffixSetting;
+import top.theillusivec4.champions.api.data.AffixDataLoader;
+import top.theillusivec4.champions.api.data.AffixSetting;
 
 import java.nio.file.Path;
 import java.util.ArrayList;

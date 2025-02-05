@@ -15,6 +15,7 @@ import top.theillusivec4.champions.common.particle.RankParticle;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
 import top.theillusivec4.champions.common.registry.ModItems;
 import top.theillusivec4.champions.common.registry.ModParticleTypes;
+import top.theillusivec4.champions.common.util.Utils;
 
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD, modid = Champions.MODID)
 public class ClientModEventHandler {
@@ -26,7 +27,7 @@ public class ClientModEventHandler {
 
   @SubscribeEvent
   public static void registerGuiOverlayEvent(final RegisterGuiLayersEvent evt) {
-    evt.registerBelow(VanillaGuiLayers.BOSS_OVERLAY, Champions.getLocation("health_overlay"), new ChampionsOverlay());
+    evt.registerBelow(VanillaGuiLayers.BOSS_OVERLAY, Utils.getLocation("health_overlay"), new ChampionsOverlay());
   }
 
   @SubscribeEvent

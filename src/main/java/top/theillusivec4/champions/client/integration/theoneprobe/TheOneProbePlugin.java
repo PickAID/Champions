@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.common.integration.theoneprobe;
+package top.theillusivec4.champions.client.integration.theoneprobe;
 
 import mcjty.theoneprobe.api.*;
 import net.minecraft.network.chat.Component;

@@ -25,7 +25,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
@@ -34,6 +33,7 @@ import top.theillusivec4.champions.common.item.ChampionEggItem;
 import top.theillusivec4.champions.common.registry.ModItems;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
 import top.theillusivec4.champions.common.util.ChampionHelper;
+import top.theillusivec4.champions.common.util.Utils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -43,11 +43,11 @@ import java.util.Objects;
 public class ChampionsCommand {
 
   public static final SuggestionProvider<CommandSourceStack> AFFIXES = SuggestionProviders
-    .register(Champions.getLocation("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
+    .register(Utils.getLocation("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
       AffixRegistry.AFFIX_REGISTRY.stream().filter(IAffix::isEnabled), builder, IAffix::getIdentifier, affix -> Component.translatable(affix.toLanguageKey())));
 
   public static final SuggestionProvider<CommandSourceStack> MONSTER_ENTITIES = SuggestionProviders
-    .register(Champions.getLocation("monster_entities"),
+    .register(Utils.getLocation("monster_entities"),
       (context, builder) -> SharedSuggestionProvider.suggestResource(
         BuiltInRegistries.ENTITY_TYPE.stream()
           .filter(type -> {

@@ -16,9 +16,9 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.loot.AffixesPredicate;
 import top.theillusivec4.champions.common.loot.ChampionPropertyCondition;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.List;
 import java.util.Optional;
@@ -56,10 +56,10 @@ public class ModAdvancementProvider extends AdvancementProvider {
         .addCriterion("kill_a_champion", KilledTrigger.TriggerInstance.playerKilledEntity(new EntityPredicate.Builder()
           .subPredicate(new ChampionPropertyCondition(LootContext.EntityTarget.THIS,
             Optional.of(MinMaxBounds.Ints.ANY),
-            Optional.of(new AffixesPredicate(Champions.getLocationSet("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
+            Optional.of(new AffixesPredicate(Utils.getLocationSet("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
           )))
         .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion")))
-        .save(saver, Champions.getLocation("kill_a_champion"), existingFileHelper).value();
+        .save(saver, Utils.getLocation("kill_a_champion"), existingFileHelper).value();
     }
   }
 }

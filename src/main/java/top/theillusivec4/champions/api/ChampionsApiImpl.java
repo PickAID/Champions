@@ -3,6 +3,9 @@ package top.theillusivec4.champions.api;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixDataLoader;
+import top.theillusivec4.champions.api.data.AttributesModifierDataLoader;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

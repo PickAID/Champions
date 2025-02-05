@@ -3,9 +3,9 @@ package top.theillusivec4.champions.common.integration.kubejs.eventjs;
 import dev.latvian.mods.kubejs.event.KubeEvent;
 import dev.latvian.mods.kubejs.typings.Info;
 import net.minecraft.resources.ResourceLocation;
-import top.theillusivec4.champions.api.AffixCategory;
 import top.theillusivec4.champions.api.BasicAffixBuilder;
 import top.theillusivec4.champions.api.IAffixBuilder;
+import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.integration.kubejs.affixjs.CustomAffix;
 
 import java.util.HashMap;

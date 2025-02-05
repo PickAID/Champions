@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.api;
+package top.theillusivec4.champions.api.data;
 
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;

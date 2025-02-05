@@ -1,12 +1,12 @@
-package top.theillusivec4.champions.api;
+package top.theillusivec4.champions.api.data;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
-import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.config.ConfigEnums;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +28,6 @@ public record AffixSetting(ResourceLocation type, boolean enabled, Optional<MinM
   ).apply(instance, AffixSetting::new));
 
   public static AffixSetting empty() {
-    return new AffixSetting(Champions.getLocation("empty"), false, Optional.empty(), Optional.empty(), Optional.empty(), AffixCategory.CC, Optional.empty(), Optional.empty());
+    return new AffixSetting(Utils.getLocation("empty"), false, Optional.empty(), Optional.empty(), Optional.empty(), AffixCategory.CC, Optional.empty(), Optional.empty());
   }
 }

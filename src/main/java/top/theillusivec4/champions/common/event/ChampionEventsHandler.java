@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.common;
+package top.theillusivec4.champions.common.event;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -15,6 +15,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -22,30 +24,33 @@ import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.ChampionsOverlay;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.network.SyncAffixSettingPacket;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.registry.ModParticleTypes;
 import top.theillusivec4.champions.common.registry.ModStats;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
 import top.theillusivec4.champions.common.util.ChampionHelper;
+import top.theillusivec4.champions.server.command.ChampionsCommand;
 
 import java.util.Optional;
 
 public class ChampionEventsHandler {
 
   @SubscribeEvent
-  public void onAddReloadListener(AddReloadListenerEvent event) {
+  private void onAddReloadListener(AddReloadListenerEvent event) {
     event.addListener(Champions.API.getAffixDataLoader());
     event.addListener(Champions.API.getAttributesModifierDataLoader());
   }
 
   @SubscribeEvent
-  public void onLivingXpDrop(LivingExperienceDropEvent evt) {
+  private void onLivingXpDrop(LivingExperienceDropEvent evt) {
     LivingEntity livingEntity = evt.getEntity();
     ChampionAttachment.getAttachment(livingEntity).flatMap(champion -> champion.getServer().getRank()).ifPresent(rank -> {
       int growth = rank.getGrowthFactor();
@@ -59,7 +64,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onExplosion(ExplosionEvent.Start evt) {
+  private void onExplosion(ExplosionEvent.Start evt) {
     Explosion explosion = evt.getExplosion();
     Entity entity = explosion.getDirectSourceEntity();
 
@@ -75,7 +80,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onMobSpilt(MobSplitEvent event) {
+  private void onMobSpilt(MobSplitEvent event) {
     if (ChampionsConfig.mobInherit) {
       var parentMob = event.getParent();
       var children = event.getChildren();
@@ -93,7 +98,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onLivingJoinWorld(EntityJoinLevelEvent evt) {
+  private void onLivingJoinWorld(EntityJoinLevelEvent evt) {
     Entity entity = evt.getEntity();
 
     if (!entity.level().isClientSide()) {
@@ -117,7 +122,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onLivingUpdate(EntityTickEvent.Pre evt) {
+  private void onLivingUpdate(EntityTickEvent.Pre evt) {
     if (evt.getEntity() instanceof LivingEntity livingEntity) {
       if (livingEntity.level().isClientSide()) {
         ChampionAttachment.getAttachment(livingEntity).ifPresent(champion -> {
@@ -160,7 +165,7 @@ public class ChampionEventsHandler {
     }
   }
   @SubscribeEvent
-  public void onPlayerRightClick(PlayerInteractEvent.EntityInteract event) {
+  private void onPlayerRightClick(PlayerInteractEvent.EntityInteract event) {
     if (ChampionsConfig.enableDebug) {
       var player = event.getEntity();
       var target = event.getTarget();
@@ -172,7 +177,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onLivingAttack(LivingIncomingDamageEvent evt) {
+  private void onLivingAttack(LivingIncomingDamageEvent evt) {
     LivingEntity livingEntity = evt.getEntity();
 
     if (!livingEntity.level().isClientSide()) {
@@ -207,7 +212,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onLivingDamage(LivingDamageEvent.Pre evt) {
+  private void onLivingDamage(LivingDamageEvent.Pre evt) {
     LivingEntity livingEntity = evt.getEntity();
 
     if (!livingEntity.level().isClientSide()) {
@@ -226,7 +231,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onLivingDeath(LivingDeathEvent evt) {
+  private void onLivingDeath(LivingDeathEvent evt) {
     LivingEntity livingEntity = evt.getEntity();
 
     if (livingEntity.level().isClientSide()) {
@@ -268,18 +273,18 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onServerStart(ServerAboutToStartEvent evt) {
+  private void onServerStart(ServerAboutToStartEvent evt) {
     ChampionHelper.setServer(evt.getServer());
   }
 
   @SubscribeEvent
-  public void onServerClose(ServerStoppedEvent evt) {
+  private void onServerClose(ServerStoppedEvent evt) {
     ChampionHelper.setServer(null);
     ChampionHelper.clearBeacons();
   }
 
   @SubscribeEvent
-  public void onLivingHeal(LivingHealEvent evt) {
+  private void onLivingHeal(LivingHealEvent evt) {
     LivingEntity livingEntity = evt.getEntity();
 
     if (!livingEntity.level().isClientSide()) {
@@ -297,7 +302,23 @@ public class ChampionEventsHandler {
 
   @SubscribeEvent(priority = EventPriority.LOWEST)
   @OnlyIn(Dist.CLIENT)
-  public void onBossBarEvent(final CustomizeGuiOverlayEvent.BossEventProgress event) {
+  private void onBossBarEvent(final CustomizeGuiOverlayEvent.BossEventProgress event) {
     event.setCanceled(ChampionsOverlay.isRendering);
   }
+
+  @SubscribeEvent
+  private void onDatapackSync(OnDatapackSyncEvent event) {
+    // send to single player login or reload for all relevant players.
+    var relevantPlayers = event.getRelevantPlayers();
+    var syncAffixSetting = new SyncAffixSettingPacket(Champions.API.getAffixDataLoader().getLoadedData());
+    // apply setting on server, and sync affix settings to client
+    SyncAffixSettingPacket.handelSettingMainThread();
+    relevantPlayers.forEach(player -> PacketDistributor.sendToPlayer(player, syncAffixSetting));
+  }
+
+  @SubscribeEvent
+  private void registerCommands(final RegisterCommandsEvent evt) {
+    ChampionsCommand.register(evt.getDispatcher());
+  }
+
 }
