@@ -60,6 +60,7 @@ import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.datagen.*;
+import top.theillusivec4.champions.common.integration.kubejs.eventjs.EventJSHandler;
 import top.theillusivec4.champions.common.integration.theoneprobe.TheOneProbePlugin;
 import top.theillusivec4.champions.common.item.ChampionEggItem;
 import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
@@ -89,6 +90,7 @@ public class Champions {
 
   public static boolean scalingHealthLoaded = false;
   public static boolean gameStagesLoaded = false;
+  public static boolean kubeJsLoaded = false;
   public final ModContainer modContainer;
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
@@ -113,6 +115,10 @@ public class Champions {
     NeoForge.EVENT_BUS.addListener(this::registerCommands);
     ChampionsRegistry.register(modEventBus);
     scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
+    kubeJsLoaded = ModList.get().isLoaded("kubejs");
+    if (kubeJsLoaded){
+      modEventBus.addListener(EventJSHandler::registerAffix);
+    }
   }
 
   private static void createServerConfig(ModConfigSpec spec, String suffix) {

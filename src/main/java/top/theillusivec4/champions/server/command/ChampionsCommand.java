@@ -44,7 +44,7 @@ public class ChampionsCommand {
 
   public static final SuggestionProvider<CommandSourceStack> AFFIXES = SuggestionProviders
     .register(Champions.getLocation("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
-      AffixRegistry.AFFIX_REGISTRY.stream(), builder, IAffix::getIdentifier, affix -> Component.translatable(affix.toLanguageKey())));
+      AffixRegistry.AFFIX_REGISTRY.stream().filter(IAffix::isEnabled), builder, IAffix::getIdentifier, affix -> Component.translatable(affix.toLanguageKey())));
 
   public static final SuggestionProvider<CommandSourceStack> MONSTER_ENTITIES = SuggestionProviders
     .register(Champions.getLocation("monster_entities"),
