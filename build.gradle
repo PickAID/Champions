@@ -181,8 +181,6 @@ dependencies {
   implementation("curse.maven:jade-324717:${cf_jade}")
 //  implementation "curse.maven:cobweb-968456:5991578"
 
-  implementation("curse.maven:jade-324717:${cf_jade}")
-
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
