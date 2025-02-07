@@ -17,6 +17,7 @@ import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.rank.Rank;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class ChampionHelper {
   /**
    * check entity is LivingEntity & Enemy
    */
-  public static boolean isValidChampion(final Entity entity) {
+  public static boolean isValidChampion(@Nullable final Entity entity) {
     return entity instanceof LivingEntity && entity instanceof Enemy;
   }
 

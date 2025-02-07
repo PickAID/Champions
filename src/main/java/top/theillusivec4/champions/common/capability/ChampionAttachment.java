@@ -20,6 +20,7 @@ import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.registry.ModAttachments;
 import top.theillusivec4.champions.common.util.ChampionHelper;
 
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class ChampionAttachment {
@@ -38,7 +39,7 @@ public class ChampionAttachment {
     return new Provider(livingEntity);
   }
 
-  public static Optional<IChampion> getAttachment(final Entity entity) {
+  public static Optional<IChampion> getAttachment(@Nullable final Entity entity) {
     if (!ChampionHelper.isValidChampion(entity)) {
       return Optional.empty();
     }
