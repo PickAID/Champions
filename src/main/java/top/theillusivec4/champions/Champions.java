@@ -232,13 +232,13 @@ public class Champions {
     var generator = event.getGenerator();
     var packOutput = generator.getPackOutput();
     var lookupProvider = event.getLookupProvider();
-    var existingFileHelper = event.getExistingFileHelper();
+    var dataGenerator = event.getGenerator();
     // datapack provider for lookup datapack entries(RegistrySetBuilder).
-    var datapackProvider = event.addProvider(new ModDatapackProvider(packOutput, lookupProvider));
+    var datapackProvider = dataGenerator.addProvider(true, new ModDatapackProvider(packOutput, lookupProvider));
 
     event.addProvider(new ModGlobalLootModifierProvider(packOutput, lookupProvider));
-    event.addProvider(new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper, List.of(new ModAdvancementProvider.Generator())));
-    event.addProvider(new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));
+    event.addProvider(new ModAdvancementProvider(packOutput, lookupProvider, List.of(new ModAdvancementProvider.Generator())));
+    event.addProvider(new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider()));
     event.addProvider(new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
   }
 

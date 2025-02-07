@@ -17,7 +17,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.util.FakePlayer;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
@@ -41,8 +41,8 @@ import java.util.Optional;
 public class ChampionEventsHandler {
 
   @SubscribeEvent
-  public void onAddReloadListener(AddReloadListenerEvent event) {
-    event.addListener(Champions.getDataLoader());
+  public void onAddReloadListener(AddServerReloadListenersEvent event) {
+    event.addListener(Champions.getLocation("affix_data"), Champions.getDataLoader());
   }
 
   @SubscribeEvent

@@ -6,7 +6,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.registry.ModDamageTypes;
@@ -16,8 +15,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class ModDamageTypeTagsProvider extends TagsProvider<DamageType> {
 
-  public ModDamageTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
-    super(output, Registries.DAMAGE_TYPE, future, Champions.MODID, helper);
+  public ModDamageTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future) {
+    super(output, Registries.DAMAGE_TYPE, future, Champions.MODID);
   }
 
   @Override
