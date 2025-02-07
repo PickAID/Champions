@@ -20,6 +20,7 @@ import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +37,7 @@ public class ChampionHelper {
    * @param entity The entity will be champions
    * @return true is valid champion entity type, else false
    */
-  public static boolean isValidChampionEntity(final Entity entity) {
+  public static boolean isValidChampionEntity(@Nullable final Entity entity) {
     if (entity instanceof LivingEntity) {
       if (ChampionsConfig.allowChampionsList) {
         // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
