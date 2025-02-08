@@ -19,10 +19,11 @@ import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.ChampionEventsHandler;
+import top.theillusivec4.champions.common.event.ChampionEventsHandler;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.util.ChampionHelper;
+import top.theillusivec4.champions.common.util.Utils;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -33,7 +34,7 @@ public class ChampionCapability {
             CapabilityManager.get(new CapabilityToken<>() {
             });
 
-    public static final ResourceLocation ID = Champions.getLocation("champion");
+    public static final ResourceLocation ID = Utils.getLocation("champion");
 
     private static final String AFFIX_TAG = "affixes";
     private static final String TIER_TAG = "tier";
@@ -53,7 +54,7 @@ public class ChampionCapability {
         return getCapability((Entity) entity);
     }
 
-    public static LazyOptional<IChampion> getCapability(final Entity entity) {
+    public static LazyOptional<IChampion> getCapability(@Nullable final Entity entity) {
 
         if (!ChampionHelper.isValidChampionEntity(entity)) {
             return LazyOptional.empty();

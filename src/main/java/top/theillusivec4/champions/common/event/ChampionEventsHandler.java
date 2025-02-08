@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.common;
+package top.theillusivec4.champions.common.event;
 
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -16,6 +16,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.OnDatapackSyncEvent;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -23,15 +25,19 @@ import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.network.PacketDistributor;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.network.NetworkHandler;
+import top.theillusivec4.champions.common.network.SPacketSyncAffixSetting;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.registry.ModParticleTypes;
 import top.theillusivec4.champions.common.stat.ChampionsStats;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
 import top.theillusivec4.champions.common.util.ChampionHelper;
+import top.theillusivec4.champions.server.command.ChampionsCommand;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +47,7 @@ public class ChampionEventsHandler {
 
     @SubscribeEvent
     public void onAddReloadListener(AddReloadListenerEvent event) {
-        event.addListener(Champions.getDataLoader());
+        event.addListener(Champions.API.getAffixDataLoader());
         event.addListener(Champions.API.getAttributesModifierDataLoader());
     }
 
@@ -292,5 +298,20 @@ public class ChampionEventsHandler {
             });
             evt.setAmount(amounts[1]);
         }
+    }
+
+    @SubscribeEvent
+    public void registerCommands(final RegisterCommandsEvent evt) {
+        ChampionsCommand.register(evt.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public void onDatapackSync(OnDatapackSyncEvent event) {
+        // send to single player login or reload for all relevant players.
+        var relevantPlayers = event.getPlayerList().getPlayers();
+        var syncAffixSetting = new SPacketSyncAffixSetting(Champions.API.getAffixDataLoader().getLoadedData());
+        // apply setting on server, and sync affix settings to client
+        SPacketSyncAffixSetting.handelSettingMainThread();
+        relevantPlayers.forEach(player -> NetworkHandler.INSTANCE.send(PacketDistributor.PLAYER.with(() -> player), syncAffixSetting));
     }
 }

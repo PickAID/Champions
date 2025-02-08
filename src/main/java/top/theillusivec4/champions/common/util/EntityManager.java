@@ -85,7 +85,7 @@ public class EntityManager {
             try {
                 permission = Permission.valueOf(affixPermission);
             } catch (IllegalArgumentException e) {
-                Champions.LOGGER.error("Invalid permission value " + affixPermission);
+                Champions.LOGGER.error("Invalid permission value {}", affixPermission);
             }
             this.affixPermission = permission;
         }

@@ -9,9 +9,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.GsonHelper;
-import top.theillusivec4.champions.api.AffixSetting;
-import top.theillusivec4.champions.api.ChampionModifierCondition;
 import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.data.ChampionModifierCondition;
+import top.theillusivec4.champions.api.data.IntCodec;
 
 import java.util.HashSet;
 import java.util.List;
@@ -30,8 +30,8 @@ public record AffixesPredicate(Set<ResourceLocation> values, MinMaxBounds.Ints m
             CODEC_INSTANCE = RecordCodecBuilder.create(instance ->
                     instance.group(
                             ChampionModifierCondition.setOf(ResourceLocation.CODEC).fieldOf("values").forGetter(AffixesPredicate::values),
-                            AffixSetting.INTS_CODEC.fieldOf("matches").forGetter(AffixesPredicate::matches),
-                            AffixSetting.INTS_CODEC.fieldOf("count").forGetter(AffixesPredicate::count)
+                            IntCodec.codec().fieldOf("matches").forGetter(AffixesPredicate::matches),
+                            IntCodec.codec().fieldOf("count").forGetter(AffixesPredicate::count)
                     ).apply(instance, AffixesPredicate::new));
         }
         return CODEC_INSTANCE;

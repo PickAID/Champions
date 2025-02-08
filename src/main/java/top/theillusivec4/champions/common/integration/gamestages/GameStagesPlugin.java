@@ -136,8 +136,8 @@ public class GameStagesPlugin {
 
     public static class StageInfo {
 
-        Map<String, Set<String>> dimensionalStages = new HashMap<>();
-        Set<String> globalStages = new HashSet<>();
+        final Map<String, Set<String>> dimensionalStages = new HashMap<>();
+        final Set<String> globalStages = new HashSet<>();
 
         StageInfo(String stage) {
             addStage(stage);

@@ -7,7 +7,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkEvent;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.AffixSetting;
+import top.theillusivec4.champions.api.data.AffixSetting;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,7 +26,7 @@ public record SPacketSyncAffixSetting(Map<ResourceLocation, AffixSetting> map) {
      * Apply setting and category map from datapack
      */
     public static void handelSettingMainThread() {
-        Champions.getDataLoader().getLoadedData().forEach((resourceLocation, affixSetting) ->
+        Champions.API.getAffixDataLoader().getLoadedData().forEach((resourceLocation, affixSetting) ->
                 Champions.API.getAffix(affixSetting.type()).ifPresent(affix -> {
                     affix.applySetting(affixSetting);
                     Champions.API.addCategory(affix.getCategory(), affix);
@@ -39,7 +39,7 @@ public record SPacketSyncAffixSetting(Map<ResourceLocation, AffixSetting> map) {
 
     public void handle(Supplier<NetworkEvent.Context> ctx) {
         if (ctx.get().getDirection().getReceptionSide().isClient()) {
-            ctx.get().enqueueWork(() -> Champions.getDataLoader().cache(this.map));
+            ctx.get().enqueueWork(() -> Champions.API.getAffixDataLoader().cache(this.map));
         }
         ctx.get().enqueueWork(SPacketSyncAffixSetting::handelSettingMainThread);
         ctx.get().setPacketHandled(true);

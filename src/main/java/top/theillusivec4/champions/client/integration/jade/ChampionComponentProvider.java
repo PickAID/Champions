@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.common.integration.jade;
+package top.theillusivec4.champions.client.integration.jade;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
@@ -10,13 +10,13 @@ import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElement;
 import snownee.jade.impl.ui.TextElement;
-import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.util.ChampionHelper;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.ArrayList;
 
@@ -64,6 +64,6 @@ public enum ChampionComponentProvider implements IEntityComponentProvider {
 
     @Override
     public ResourceLocation getUid() {
-        return Champions.getLocation("enable_affix_compact");
+        return Utils.getLocation("enable_affix_compact");
     }
 }

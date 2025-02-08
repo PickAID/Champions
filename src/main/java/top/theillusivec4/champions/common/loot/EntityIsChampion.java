@@ -20,7 +20,7 @@ import java.util.Set;
 
 public class EntityIsChampion implements LootItemCondition {
 
-    public static LootItemConditionType type =
+    public static final LootItemConditionType type =
             new LootItemConditionType(new EntityIsChampion.Serializer());
 
     @Nullable

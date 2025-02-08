@@ -6,6 +6,9 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.api.data.IntCodec;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 
 import java.util.List;
@@ -36,7 +39,7 @@ public class BasicAffixBuilder<T extends IAffix> implements IAffixBuilder<T> {
     public static <T extends IAffix, B extends BasicAffixBuilder<T>> Codec<T> of(Supplier<B> builderSupplier) {
         return RecordCodecBuilder.create(instance -> instance.group(
                 Codec.BOOL.fieldOf("setEnable").forGetter(IAffix::isEnabled),
-                AffixSetting.INTS_CODEC.fieldOf("tier").forGetter(IAffix::getTier),
+                IntCodec.codec().fieldOf("tier").forGetter(IAffix::getTier),
                 Codec.list(ResourceLocation.CODEC).optionalFieldOf("mobList").forGetter(IAffix::getMobList),
                 StringRepresentable.fromEnum(ConfigEnums.Permission::values).fieldOf("mobPermission").forGetter(IAffix::getMobPermission),
                 StringRepresentable.fromEnum(AffixCategory::values).fieldOf("category").forGetter(IAffix::getCategory),

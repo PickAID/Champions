@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.common.integration.jade;
+package top.theillusivec4.champions.client.integration.jade;
 
 import net.minecraft.world.entity.LivingEntity;
 import snownee.jade.api.IWailaClientRegistration;

@@ -2,6 +2,7 @@ package top.theillusivec4.champions.api;
 
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
+import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 
 import java.util.List;

@@ -17,7 +17,9 @@ import top.theillusivec4.champions.common.config.ConfigEnums.LootSource;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.config.EntitiesConfig.EntityConfig;
 import top.theillusivec4.champions.common.config.RanksConfig.RankConfig;
+import top.theillusivec4.champions.common.integration.gamestages.GameStagesPlugin;
 import top.theillusivec4.champions.common.integration.scalinghealth.ScalingHealthPlugin;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -247,9 +249,14 @@ public class ChampionsConfig {
 
         woundingChance = SERVER.woundingChance.get();
 
-        if (Champions.scalingHealthLoaded) {
+        if (Utils.isScalingHealthLoaded()) {
             scalingHealthSpawnModifiers = SERVER.scalingHealthSpawnModifiers.get();
             ScalingHealthPlugin.buildModifiers();
+        }
+        if (Utils.isGameStagesLoaded()) {
+            entityStages = STAGE.entityStages.get();
+            tierStages = STAGE.tierStages.get();
+            GameStagesPlugin.buildStages();
         }
     }
 

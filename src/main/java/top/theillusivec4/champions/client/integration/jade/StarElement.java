@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.common.integration.jade;
+package top.theillusivec4.champions.client.integration.jade;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;

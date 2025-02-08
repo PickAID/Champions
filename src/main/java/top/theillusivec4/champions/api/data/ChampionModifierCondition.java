@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.api;
+package top.theillusivec4.champions.api.data;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 import top.theillusivec4.champions.common.loot.AffixesPredicate;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -21,7 +22,7 @@ public record ChampionModifierCondition(Optional<Set<ResourceLocation>> mobList,
                                         Optional<AffixesPredicate> affixes, ConfigEnums.Permission permission) {
     public static final MapCodec<ChampionModifierCondition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             setOf(ResourceLocation.CODEC).optionalFieldOf("entity").forGetter(ChampionModifierCondition::mobList),
-            AffixSetting.INTS_CODEC.optionalFieldOf("tier").forGetter(ChampionModifierCondition::tier),
+            IntCodec.codec().optionalFieldOf("tier").forGetter(ChampionModifierCondition::tier),
             AffixesPredicate.codec().optionalFieldOf("affixes").forGetter(ChampionModifierCondition::affixes),
             StringRepresentable.fromEnum(ConfigEnums.Permission::values).fieldOf("permission").forGetter(ChampionModifierCondition::permission)
     ).apply(instance, ChampionModifierCondition::new));

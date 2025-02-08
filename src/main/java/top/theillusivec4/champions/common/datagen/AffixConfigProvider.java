@@ -6,7 +6,7 @@ import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.AffixSetting;
+import top.theillusivec4.champions.api.data.AffixSetting;
 
 import java.io.IOException;
 import java.nio.file.Path;

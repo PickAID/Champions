@@ -7,12 +7,13 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.function.Supplier;
 
 public class AffixRegistry {
-    public static final ResourceKey<Registry<IAffix>> AFFIXES_REGISTRY_KEY = ResourceKey.createRegistryKey(Champions.getLocation("affixes_registry_key"));
-    public static final ResourceLocation EMPTY = Champions.getLocation("empty");
+    public static final ResourceKey<Registry<IAffix>> AFFIXES_REGISTRY_KEY = ResourceKey.createRegistryKey(Utils.getLocation("affixes_registry_key"));
+    public static final ResourceLocation EMPTY = Utils.getLocation("empty");
 
     public static final DeferredRegister<IAffix> AFFIXES = DeferredRegister.create(AFFIXES_REGISTRY_KEY, Champions.MODID);
     private static final Supplier<IForgeRegistry<IAffix>> AFFIX_REGISTRY = AFFIXES.makeRegistry(() -> new RegistryBuilder<IAffix>()

@@ -7,6 +7,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
@@ -49,6 +50,21 @@ public class ChampionHelper {
             }
         }
         return false; // If entity is not a LivingEntity
+    }
+    public static boolean isValidChampionEntityType(final EntityType<?> entityType) {
+
+        if (ChampionsConfig.allowChampionsList) {
+            // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
+            if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
+                return entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+            }
+            // If entitiesPermission is BLACKLIST, reject the entity
+            else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
+                return !entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+            }
+        }
+
+        return entityType.getCategory() == MobCategory.MONSTER; // If entity is not a LivingEntity
     }
     /**
      * Check entity is champion (have affixes and rank)
