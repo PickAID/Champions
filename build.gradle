@@ -157,6 +157,11 @@ dependencies {
     //runtimeOnly fg.deobf("curse.maven:atomicstrykers-infernal-mobs-227875:6130372")
     implementation fg.deobf("curse.maven:citadel-331936:6002521")
     implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
+    implementation fg.deobf("curse.maven:apothic-attributes-898963:5634071")
+    implementation fg.deobf("curse.maven:gateways-to-eternity-417802:5703251")
+    implementation fg.deobf("curse.maven:placebo-283644:5414631")
+    implementation fg.deobf("curse.maven:apotheosis-313970:6147871")
+
 }
 
 

@@ -107,6 +107,7 @@ public class ModEventHandler {
         var datapackProvider = generator.addProvider(event.includeServer(), new ModDatapackProvider(packOutput, lookupProvider));
 
         // generator.addProvider(event.includeServer(),  new ModGlobalLootModifierProvider(generator));
+        generator.addProvider(event.includeServer(),new GatewaysConfigProvider(packOutput,datapackProvider.getRegistryProvider()));
         generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));
         generator.addProvider(event.includeServer(), new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
         generator.addProvider(event.includeServer(), new AttributesModifierDataProvider(packOutput, datapackProvider.getRegistryProvider()));

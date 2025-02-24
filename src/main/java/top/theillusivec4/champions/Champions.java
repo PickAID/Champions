@@ -19,6 +19,7 @@
 
 package top.theillusivec4.champions;
 
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -31,6 +32,7 @@ import top.theillusivec4.champions.api.IChampionsApi;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.event.ModEventHandler;
+import top.theillusivec4.champions.common.integration.gateways_to_eternity.GatewaysToEternityCompat;
 import top.theillusivec4.champions.common.integration.kubejs.eventjs.EventJSHandler;
 import top.theillusivec4.champions.common.registry.ChampionsRegistry;
 import top.theillusivec4.champions.common.util.Utils;
@@ -66,6 +68,9 @@ public class Champions {
             modEventBus.addListener(EventJSHandler::registerAffix);
         }
         // register item, particle, etc...
+        if (Utils.isGatewaysLoaded()){
+            MinecraftForge.EVENT_BUS.register(new GatewaysToEternityCompat());
+        }
         ChampionsRegistry.register(modEventBus);
     }
 

@@ -18,12 +18,20 @@ public class Utils {
     private static Boolean scalingHealthLoaded = null;
     private static Boolean gameStagesLoaded = null;
     private static Boolean kubeJsLoaded = null;
+    private static Boolean gateways = null;
 
     public static boolean isGameStagesLoaded() {
         if (gameStagesLoaded == null) {
             gameStagesLoaded = ModList.get().isLoaded("gamestages");
         }
         return gameStagesLoaded;
+    }
+
+    public static boolean isGatewaysLoaded() {
+        if (gateways == null) {
+            gateways = ModList.get().isLoaded("gateways");
+        }
+        return gateways;
     }
 
     public static boolean isScalingHealthLoaded() {
