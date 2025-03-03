@@ -18,39 +18,47 @@ import java.util.Optional;
 
 public class GatewaysConfigProvider implements DataProvider {
 
-    private final DataGenerator generator;
-    private final List<GatewaysSetting> gatewaysSettings = new ArrayList<>();
+	private final DataGenerator generator;
+	private final List<GatewaysSetting> gatewaysSettings = new ArrayList<>();
 
-    public GatewaysConfigProvider(DataGenerator generator) {
-        this.generator = generator;
-    }
+	public GatewaysConfigProvider(DataGenerator generator) {
+		this.generator = generator;
+	}
 
-    @Override
-    public void run(CachedOutput cachedOutput) {
-        gatewaysSettings.add(new GatewaysSetting(Utils.getLocation("test_1"), MinMaxBounds.Ints.atLeast(2), List.of(AffixTypes.HASTY.get().getIdentifier()), MinMaxBounds.Ints.between(0, 1), Optional.of(List.of(new ResourceLocation("minecraft:pig"), new ResourceLocation("minecraft:zombie")))));
-        gatewaysSettings.add(new GatewaysSetting(Utils.getLocation("test_2"), MinMaxBounds.Ints.atLeast(2), List.of(AffixTypes.MAGNETIC.get().getIdentifier(), AffixTypes.DAMPENING.get().getIdentifier(), AffixTypes.DESECRATING.get().getIdentifier()), MinMaxBounds.Ints.between(2, 4), Optional.of(List.of(new ResourceLocation("minecraft:pig"), new ResourceLocation("minecraft:zombie")))));
-        gatewaysSettings.forEach(gatewaysSetting -> {
+	@Override
+	public void run(CachedOutput cachedOutput) {
+		gatewaysSettings.add(new GatewaysSetting(Utils.getLocation("wave_0to1"),
+				MinMaxBounds.Ints.atLeast(1), List.of(AffixTypes.HASTY.get().getIdentifier()),
+				MinMaxBounds.Ints.between(0, 1),
+				Optional.of(List.of(new ResourceLocation("minecraft:pig"), new ResourceLocation("minecraft:zombie"))),
+				Optional.of(false)));
+		gatewaysSettings.add(new GatewaysSetting(Utils.getLocation("wave_2to5"),
+				MinMaxBounds.Ints.between(2, 5), List.of(AffixTypes.MAGNETIC.get().getIdentifier(), AffixTypes.DAMPENING.get().getIdentifier(), AffixTypes.DESECRATING.get().getIdentifier()),
+				MinMaxBounds.Ints.between(2, 4),
+				Optional.of(List.of(new ResourceLocation("minecraft:pig"), new ResourceLocation("minecraft:zombie"))),
+				Optional.of(false)));
+		gatewaysSettings.forEach(gatewaysSetting -> {
 
-            Path outputPath = generator.getOutputFolder().resolve("data/" + gatewaysSetting.id().getNamespace() + "/gateway_setting/" + gatewaysSetting.id().getPath() + ".json");
+			Path outputPath = generator.getOutputFolder().resolve("data/" + gatewaysSetting.id().getNamespace() + "/gateway_setting/" + gatewaysSetting.id().getPath() + ".json");
 
-            try {
-                DataProvider.saveStable(
-                        cachedOutput,
-                        GatewaysSetting.CODEC
-                                .encodeStart(JsonOps.INSTANCE, gatewaysSetting)
-                                .result()
-                                .orElseThrow(),
-                        outputPath
-                );
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+			try {
+				DataProvider.saveStable(
+						cachedOutput,
+						GatewaysSetting.CODEC
+								.encodeStart(JsonOps.INSTANCE, gatewaysSetting)
+								.result()
+								.orElseThrow(),
+						outputPath
+				);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
 
-    }
+	}
 
-    @Override
-    public String getName() {
-        return "Gateways_setting";
-    }
+	@Override
+	public String getName() {
+		return "Gateways_setting";
+	}
 }
