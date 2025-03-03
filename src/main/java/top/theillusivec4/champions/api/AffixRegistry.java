@@ -9,7 +9,7 @@ import top.theillusivec4.champions.common.registry.AffixTypes;
 import top.theillusivec4.champions.common.util.Utils;
 
 public class AffixRegistry {
-  public static final ResourceKey<Registry<IAffix>> AFFIX_REGISTRY_KEY = createKey("affix_registry_key");
+  public static final ResourceKey<Registry<IAffix>> AFFIX_REGISTRY_KEY = createKey("affix");
 
   public static final Registry<IAffix> AFFIX_REGISTRY = new RegistryBuilder<>(AFFIX_REGISTRY_KEY)
     .sync(true)
