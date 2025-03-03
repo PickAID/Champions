@@ -429,7 +429,7 @@ public class ChampionsConfig {
 
       builder.push("mobSplitSetting");
       mobInherit = builder.comment("Set to true to allow slime like mob when splitting, inherit this parentMob's affix and ranks.")
-        .translation(CONFIG_PREFIX + "mobInherit").define("mobInherit", true);
+        .translation(CONFIG_PREFIX + "mobInherit").define("mobInherit", false);
       rankReduce = builder.comment("Set the children mob reduce rank when split, 0 means disable")
         .translation(CONFIG_PREFIX + "rankReduce").defineInRange("rankReduce", 1, 0, Integer.MAX_VALUE);
       builder.pop();

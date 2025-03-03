@@ -23,6 +23,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.NeoForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.api.ChampionsApiImpl;
@@ -30,7 +31,7 @@ import top.theillusivec4.champions.api.IChampionsApi;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.event.ModEventHandler;
-import top.theillusivec4.champions.common.integration.kubejs.eventjs.EventJSHandler;
+import top.theillusivec4.champions.common.integration.gateways_to_eternity.GatewaysToEternityCompat;
 import top.theillusivec4.champions.common.registry.ChampionsRegistry;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -58,10 +59,10 @@ public class Champions {
       modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
     }
 
-    // register kubejs affix, if kubejs loaded
-    if (Utils.isKubeJsLoaded()) {
-      modEventBus.addListener(EventJSHandler::registerAffix);
+    if (Utils.isGatewaysLoaded()) {
+      NeoForge.EVENT_BUS.register(new GatewaysToEternityCompat());
     }
+
   }
 
   public static Champions getInstance() {

@@ -17,7 +17,7 @@ import java.util.Set;
 public class Utils {
   private static Boolean scalingHealthLoaded = null;
   private static Boolean gameStagesLoaded = null;
-  private static Boolean kubeJsLoaded = null;
+  private static Boolean gateways = null;
 
   public static boolean isGameStagesLoaded() {
     if (gameStagesLoaded == null) {
@@ -26,18 +26,19 @@ public class Utils {
     return gameStagesLoaded;
   }
 
+  public static boolean isGatewaysLoaded() {
+    if (gateways == null) {
+      gateways = ModList.get().isLoaded("gateways");
+    }
+    return gateways;
+  }
+
+
   public static boolean isScalingHealthLoaded() {
     if (scalingHealthLoaded == null) {
       scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
     }
     return scalingHealthLoaded;
-  }
-
-  public static boolean isKubeJsLoaded() {
-    if (kubeJsLoaded == null) {
-      kubeJsLoaded = ModList.get().isLoaded("kubejs");
-    }
-    return kubeJsLoaded;
   }
 
   public static void createServerConfig(ModConfigSpec spec, String suffix) {

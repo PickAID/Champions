@@ -79,7 +79,7 @@ public class ModEventHandler {
     var existingFileHelper = event.getExistingFileHelper();
     // datapack provider for lookup datapack entries(RegistrySetBuilder).
     var datapackProvider = generator.addProvider(event.includeServer(), new ModDatapackProvider(packOutput, lookupProvider));
-
+    generator.addProvider(event.includeServer(), new GatewaysConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
     generator.addProvider(event.includeServer(), new ModGlobalLootModifierProvider(packOutput, lookupProvider));
     generator.addProvider(event.includeServer(), new ModAdvancementProvider(packOutput, lookupProvider, existingFileHelper, List.of(new ModAdvancementProvider.Generator())));
     generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));

@@ -21,7 +21,7 @@ import java.util.function.Supplier;
  */
 public class BasicAffixBuilder<T extends IAffix> implements IAffixBuilder<T> {
 
-  private final Supplier<T> affixSupplier;
+  private Supplier<T> affixSupplier;
   private ResourceLocation type;
   private boolean isEnable;
   private MinMaxBounds.Ints tier;
@@ -32,6 +32,10 @@ public class BasicAffixBuilder<T extends IAffix> implements IAffixBuilder<T> {
   private boolean hasSubscriptions;
 
   public BasicAffixBuilder(Supplier<T> affixSupplier) {
+    this.affixSupplier = affixSupplier;
+  }
+
+  public void setAffixSupplier(Supplier<T> affixSupplier) {
     this.affixSupplier = affixSupplier;
   }
 

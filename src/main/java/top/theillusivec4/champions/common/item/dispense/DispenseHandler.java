@@ -19,7 +19,6 @@ public class DispenseHandler {
     Optional<EntityType<?>> entityType = ChampionEggItem.getType(stack);
     entityType.ifPresent(type -> {
       Entity entity = type.create(source.level(), (s) -> stack.getTags(), source.pos().relative(direction), MobSpawnType.DISPENSER, true, direction != Direction.UP);
-      assert entity != null;
       ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
         if (ChampionHelper.isValidChampion(champion.getServer())) {
           ChampionEggItem.read(champion, stack);
