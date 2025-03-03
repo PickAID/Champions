@@ -41,13 +41,6 @@ public class Utils {
         return scalingHealthLoaded;
     }
 
-    public static boolean isKubeJsLoaded() {
-        if (kubeJsLoaded == null) {
-            kubeJsLoaded = ModList.get().isLoaded("kubejs");
-        }
-        return kubeJsLoaded;
-    }
-
     public static void createServerConfig(ForgeConfigSpec spec, String suffix) {
         String fileName = "champions-" + suffix + ".toml";
         Champions.getInstance().modContext.registerConfig(ModConfig.Type.SERVER, spec, fileName);

@@ -33,7 +33,6 @@ import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.event.ModEventHandler;
 import top.theillusivec4.champions.common.integration.gateways_to_eternity.GatewaysToEternityCompat;
-import top.theillusivec4.champions.common.integration.kubejs.eventjs.EventJSHandler;
 import top.theillusivec4.champions.common.registry.ChampionsRegistry;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -41,40 +40,36 @@ import top.theillusivec4.champions.common.util.Utils;
 @SuppressWarnings("removal")
 public class Champions {
 
-    public static final String MODID = "champions";
-    public static final Logger LOGGER = LogManager.getLogger();
-    public static final IChampionsApi API = ChampionsApiImpl.getInstance();
-    // champion instance
-    private static Champions INSTANCE;
-    public final ModLoadingContext modContext;
+	public static final String MODID = "champions";
+	public static final Logger LOGGER = LogManager.getLogger();
+	public static final IChampionsApi API = ChampionsApiImpl.getInstance();
+	// champion instance
+	private static Champions INSTANCE;
+	public final ModLoadingContext modContext;
 
-    public Champions() {
-        INSTANCE = this;
-        this.modContext = ModLoadingContext.get();
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
-        modContext.registerConfig(Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
-        modContext.registerConfig(Type.SERVER, ChampionsConfig.SERVER_SPEC);
-        modContext.registerConfig(Type.COMMON, ChampionsConfig.COMMON_SPEC);
-        Utils.createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
-        Utils.createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
-        modEventBus.register(new ModEventHandler());
+	public Champions() {
+		INSTANCE = this;
+		this.modContext = ModLoadingContext.get();
+		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+		modContext.registerConfig(Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
+		modContext.registerConfig(Type.SERVER, ChampionsConfig.SERVER_SPEC);
+		modContext.registerConfig(Type.COMMON, ChampionsConfig.COMMON_SPEC);
+		Utils.createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
+		Utils.createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
+		modEventBus.register(new ModEventHandler());
 
-        if (Utils.isGameStagesLoaded()) {
-            modContext.registerConfig(Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
-        }
+		if (Utils.isGameStagesLoaded()) {
+			modContext.registerConfig(Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
+		}
 
-        // register kubejs affix, if kubejs loaded
-        if (Utils.isKubeJsLoaded()) {
-            modEventBus.addListener(EventJSHandler::registerAffix);
-        }
-        // register item, particle, etc...
-        if (Utils.isGatewaysLoaded()){
-            MinecraftForge.EVENT_BUS.register(new GatewaysToEternityCompat());
-        }
-        ChampionsRegistry.register(modEventBus);
-    }
+		// register item, particle, etc...
+		if (Utils.isGatewaysLoaded()) {
+			MinecraftForge.EVENT_BUS.register(new GatewaysToEternityCompat());
+		}
+		ChampionsRegistry.register(modEventBus);
+	}
 
-    public static Champions getInstance() {
-        return INSTANCE;
-    }
+	public static Champions getInstance() {
+		return INSTANCE;
+	}
 }
