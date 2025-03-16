@@ -37,7 +37,6 @@ import top.theillusivec4.champions.common.registry.ChampionsRegistry;
 import top.theillusivec4.champions.common.util.Utils;
 
 @Mod(Champions.MODID)
-@SuppressWarnings("removal")
 public class Champions {
 
 	public static final String MODID = "champions";
@@ -47,6 +46,8 @@ public class Champions {
 	private static Champions INSTANCE;
 	public final ModLoadingContext modContext;
 
+	@SuppressWarnings("removal")
+	@Deprecated(forRemoval = true, since = "1.21.1")
 	public Champions() {
 		INSTANCE = this;
 		this.modContext = ModLoadingContext.get();
@@ -57,7 +58,27 @@ public class Champions {
 		Utils.createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
 		Utils.createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
 		modEventBus.register(new ModEventHandler());
+		if (Utils.isGameStagesLoaded()) {
+			modContext.registerConfig(Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
+		}
 
+		// register item, particle, etc...
+		if (Utils.isGatewaysLoaded()) {
+			MinecraftForge.EVENT_BUS.register(new GatewaysToEternityCompat());
+		}
+		ChampionsRegistry.register(modEventBus);
+	}
+
+	public Champions(FMLJavaModLoadingContext context) {
+		INSTANCE = this;
+		this.modContext = context;
+		IEventBus modEventBus = context.getModEventBus();
+		modContext.registerConfig(Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
+		modContext.registerConfig(Type.SERVER, ChampionsConfig.SERVER_SPEC);
+		modContext.registerConfig(Type.COMMON, ChampionsConfig.COMMON_SPEC);
+		Utils.createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
+		Utils.createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
+		modEventBus.register(new ModEventHandler());
 		if (Utils.isGameStagesLoaded()) {
 			modContext.registerConfig(Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
 		}

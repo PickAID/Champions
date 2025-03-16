@@ -17,7 +17,6 @@ import java.util.Set;
 public class Utils {
     private static Boolean scalingHealthLoaded = null;
     private static Boolean gameStagesLoaded = null;
-    private static Boolean kubeJsLoaded = null;
     private static Boolean gateways = null;
 
     public static boolean isGameStagesLoaded() {
