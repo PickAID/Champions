@@ -19,69 +19,21 @@
 
 package top.theillusivec4.champions;
 
-import com.electronwill.nightconfig.core.CommentedConfig;
-import net.minecraft.core.Direction;
-import net.minecraft.core.dispenser.DispenseItemBehavior;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.InterModComms;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.data.event.GatherDataEvent;
-import net.neoforged.neoforge.event.OnDatapackSyncEvent;
-import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.registration.PayloadRegistrar;
-import net.neoforged.neoforge.registries.NewRegistryEvent;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.api.AffixDataLoader;
 import top.theillusivec4.champions.api.ChampionsApiImpl;
 import top.theillusivec4.champions.api.IChampionsApi;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
-import top.theillusivec4.champions.common.datagen.*;
-import top.theillusivec4.champions.common.integration.theoneprobe.TheOneProbePlugin;
-import top.theillusivec4.champions.common.item.ChampionEggItem;
-import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
-import top.theillusivec4.champions.common.network.SPacketSyncChampion;
-import top.theillusivec4.champions.common.network.SyncAffixSettingPacket;
-import top.theillusivec4.champions.common.rank.RankManager;
+import top.theillusivec4.champions.common.event.ModEventHandler;
+import top.theillusivec4.champions.common.integration.gateways_to_eternity.GatewaysToEternityCompat;
 import top.theillusivec4.champions.common.registry.ChampionsRegistry;
-import top.theillusivec4.champions.common.registry.ModItems;
-import top.theillusivec4.champions.common.registry.ModStats;
-import top.theillusivec4.champions.common.util.ChampionHelper;
-import top.theillusivec4.champions.common.util.EntityManager;
-import top.theillusivec4.champions.server.command.ChampionSelectorOptions;
-import top.theillusivec4.champions.server.command.ChampionsCommand;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import static top.theillusivec4.champions.api.AffixRegistry.AFFIX_REGISTRY;
+import top.theillusivec4.champions.common.util.Utils;
 
 @Mod(Champions.MODID)
 public class Champions {
@@ -89,177 +41,30 @@ public class Champions {
   public static final String MODID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
-  private static final AffixDataLoader dataLoader = new AffixDataLoader();
-
-  public static boolean scalingHealthLoaded = false;
-  public static boolean gameStagesLoaded = false;
-  public static boolean kubejsLoaded = false;
+  // champion instance
+  private static Champions INSTANCE;
   public final ModContainer modContainer;
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
     this.modContainer = modContainer;
-    modEventBus.addListener(this::enqueueIMC);
-    modEventBus.addListener(this::registerNetwork);
-    modEventBus.addListener(this::onGatherServerData);
-    modEventBus.addListener(this::onGatherClientData);
-    modEventBus.addListener(this::registerRegistries);
-    modEventBus.addListener(this::onClientSetup);
-//    modEventBus.addListener(TestCustomAffixHandler::testOnCustomAffixBuild);
+    INSTANCE = this;
+    modEventBus.register(new ModEventHandler());
+    ChampionsRegistry.register(modEventBus);
+    // register champions config
     modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
     modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
     modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
-    createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
-    createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
-
-    if (gameStagesLoaded) {
+    // register GameStages compat config, if gameStages loaded
+    if (Utils.isGameStagesLoaded()) {
       modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
     }
-    modEventBus.addListener(this::config);
-    modEventBus.addListener(this::setup);
-    NeoForge.EVENT_BUS.addListener(this::onDatapackSync);
-    NeoForge.EVENT_BUS.addListener(this::registerCommands);
-    ChampionsRegistry.register(modEventBus);
-    scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
-    kubejsLoaded = ModList.get().isLoaded("kubejs");
-  }
 
-  private static void createServerConfig(ModConfigSpec spec, String suffix) {
-    String fileName = "champions-" + suffix + ".toml";
-    ModLoadingContext.get().getActiveContainer().registerConfig(ModConfig.Type.SERVER, spec, fileName);
-    File defaults = FMLPaths.GAMEDIR.get().resolve("defaultconfigs").resolve(fileName).toFile();
-
-    if (!defaults.exists()) {
-      try {
-        FileUtils.copyInputStreamToFile(Objects.requireNonNull(Champions.class.getClassLoader().getResourceAsStream(fileName)), defaults);
-      } catch (IOException e) {
-        LOGGER.error("Error creating default config for {}", fileName);
-      }
+    if (Utils.isGatewaysLoaded()) {
+      NeoForge.EVENT_BUS.register(new GatewaysToEternityCompat());
     }
   }
 
-  public static ResourceLocation getLocation(final String path) {
-    return ResourceLocation.fromNamespaceAndPath(MODID, path);
-  }
-
-  public static AffixDataLoader getDataLoader() {
-    return dataLoader;
-  }
-
-  private void registerRegistries(NewRegistryEvent event) {
-    event.register(AFFIX_REGISTRY);
-  }
-
-  private void setup(final FMLCommonSetupEvent evt) {
-    ChampionAttachment.register();
-    evt.enqueueWork(() -> {
-      ModStats.registerFormatter();
-      ChampionSelectorOptions.setup();
-      DispenseItemBehavior dispenseBehavior = (source, stack) -> {
-        Direction direction = source.state().getValue(DispenserBlock.FACING);
-        Optional<EntityType<?>> entityType = ChampionEggItem.getType(stack);
-        entityType.ifPresent(type -> {
-          Entity entity = type.create(source.level(), (s) -> stack.getTags(), source.pos().relative(direction), EntitySpawnReason.DISPENSER, true, direction != Direction.UP);
-          ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
-            if (ChampionHelper.isValidChampion(champion.getServer())) {
-              ChampionEggItem.read(champion, stack);
-              source.level().addFreshEntity(champion.getLivingEntity());
-              stack.shrink(1);
-            }
-          });
-        });
-        return stack;
-      };
-      DispenserBlock.registerBehavior(ModItems.CHAMPION_EGG_ITEM.get(), dispenseBehavior);
-    });
-  }
-
-  private void onClientSetup(final FMLClientSetupEvent event) {
-    this.modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-  }
-
-  private void registerCommands(final RegisterCommandsEvent evt) {
-    ChampionsCommand.register(evt.getDispatcher());
-  }
-
-  private void config(final ModConfigEvent.Loading evt) {
-
-    if (!evt.getConfig().getModId().equals(MODID)) {
-      return;
-    }
-
-    if (evt.getConfig().getType() == ModConfig.Type.SERVER) {
-      synchronized (this) {
-
-        IConfigSpec spec = evt.getConfig().getSpec();
-        CommentedConfig commentedConfig = evt.getConfig().getLoadedConfig().config();
-        ChampionsConfig.bake();
-        // 重建管理器
-        if (spec == ChampionsConfig.RANKS_SPEC) {
-          ChampionsConfig.transformRanks(commentedConfig);
-          RankManager.buildRanks();
-        } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
-          ChampionsConfig.transformEntities(commentedConfig);
-          EntityManager.buildEntitySettings();
-        } else if (spec == ChampionsConfig.STAGE_SPEC && Champions.gameStagesLoaded) {
-          ChampionsConfig.entityStages = ChampionsConfig.STAGE.entityStages.get();
-          ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
-        }
-      }
-    } else if (evt.getConfig().getType() == ModConfig.Type.CLIENT) {
-      ClientChampionsConfig.bake();
-    } else if (evt.getConfig().getType() == ModConfig.Type.COMMON) {
-      ChampionsConfig.bakeCommon();
-    }
-  }
-
-  private void enqueueIMC(final InterModEnqueueEvent event) {
-    // register TheOneProbe integration
-    if (ModList.get().isLoaded("theoneprobe")) {
-      Champions.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
-      InterModComms.sendTo(MODID, "theoneprobe", "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
-    }
-  }
-
-  private void registerNetwork(final RegisterPayloadHandlersEvent event) {
-    final PayloadRegistrar registrar = event.registrar("champions");
-    registrar.playToClient(SPacketSyncAffixData.TYPE, SPacketSyncAffixData.STREAM_CODEC, SPacketSyncAffixData::handle);
-    registrar.playToClient(SPacketSyncChampion.TYPE, SPacketSyncChampion.STREAM_CODEC, SPacketSyncChampion::handle);
-    registrar.playToClient(SyncAffixSettingPacket.TYPE, SyncAffixSettingPacket.STREAM_CODEC, SyncAffixSettingPacket::handle);
-  }
-
-  private void onGatherServerData(GatherDataEvent.Server event) {
-    var generator = event.getGenerator();
-    var packOutput = generator.getPackOutput();
-    var lookupProvider = event.getLookupProvider();
-    var dataGenerator = event.getGenerator();
-    // datapack provider for lookup datapack entries(RegistrySetBuilder).
-    var datapackProvider = dataGenerator.addProvider(true, new ModDatapackProvider(packOutput, lookupProvider));
-
-    event.addProvider(new ModGlobalLootModifierProvider(packOutput, lookupProvider));
-    event.addProvider(new ModAdvancementProvider(packOutput, lookupProvider, List.of(new ModAdvancementProvider.Generator())));
-    event.addProvider(new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider()));
-    event.addProvider(new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
-  }
-
-  private void onGatherClientData(GatherDataEvent.Client event) {
-    var generator = event.getGenerator();
-    var packOutput = generator.getPackOutput();
-//    var lookupProvider = event.getLookupProvider();
-    // translate
-    event.addProvider(new ModLanguageProvider(packOutput));
-    event.addProvider(new ModLanguageProvider(packOutput, "zh_cn"));
-    // add more translate to data generation
-    event.addProvider(new ModLanguageProvider(packOutput, "ko_kr"));
-    event.addProvider(new ModLanguageProvider(packOutput, "ru_ru"));
-    event.addProvider(new ModLanguageProvider(packOutput, "tr_tr"));
-    event.addProvider(new ModLanguageProvider(packOutput, "uk_ua"));
-  }
-
-  private void onDatapackSync(OnDatapackSyncEvent event) {
-    // send to single player login or reload for all relevant players.
-    var relevantPlayers = event.getRelevantPlayers();
-    // sync datapack to client
-    var syncAffixSetting = new SyncAffixSettingPacket(getDataLoader().getLoadedData());
-    relevantPlayers.forEach(player -> PacketDistributor.sendToPlayer(player, syncAffixSetting));
+  public static Champions getInstance() {
+    return INSTANCE;
   }
 }

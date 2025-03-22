@@ -6,6 +6,8 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.function.Supplier;
  */
 public class BasicAffixBuilder<T extends IAffix> implements IAffixBuilder<T> {
 
-  private final Supplier<T> affixSupplier;
+  private Supplier<T> affixSupplier;
   private ResourceLocation type;
   private boolean isEnable;
   private MinMaxBounds.Ints tier;
@@ -30,6 +32,10 @@ public class BasicAffixBuilder<T extends IAffix> implements IAffixBuilder<T> {
   private boolean hasSubscriptions;
 
   public BasicAffixBuilder(Supplier<T> affixSupplier) {
+    this.affixSupplier = affixSupplier;
+  }
+
+  public void setAffixSupplier(Supplier<T> affixSupplier) {
     this.affixSupplier = affixSupplier;
   }
 

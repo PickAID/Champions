@@ -1,7 +1,10 @@
 package top.theillusivec4.champions.common.util;
 
 import com.google.common.collect.ImmutableSortedMap;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -9,10 +12,11 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.AffixCategory;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.network.SPacketSyncChampion;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
@@ -20,13 +24,6 @@ import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
 import java.util.*;
 
 public class ChampionBuilder {
-
-  private static final RandomSource RAND = RandomSource.createNewThreadLocalInstance();
-  private static final ResourceLocation MAX_HEALTH_MODIFIER = Champions.getLocation("max_health_modifier");
-  private static final ResourceLocation ATTACK_DAMAGE_MODIFIER = Champions.getLocation("attack_damage_modifier");
-  private static final ResourceLocation ARMOR_MODIFIER = Champions.getLocation("armor_modifier");
-  private static final ResourceLocation ARMOR_TOUGHNESS_MODIFIER = Champions.getLocation("armor_toughness_modifier");
-  private static final ResourceLocation KNOCKBACK_RESISTANCE_MODIFIER = Champions.getLocation("knock_back_resistance_modifier");
 
   /**
    * Read champion data, or create affix by creating new rank levels.<br/>
@@ -43,7 +40,7 @@ public class ChampionBuilder {
     Rank newRank = ChampionBuilder.createRank(entity);
     if (newRank != null && newRank.getTier() >= 1) {
       champion.getServer().setRank(newRank);
-      ChampionBuilder.applyGrowth(entity, newRank.getGrowthFactor());
+      ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
       List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
       champion.getServer().setAffixes(newAffixes);
       newAffixes.forEach(affix -> affix.onInitialSpawn(champion));
@@ -51,10 +48,9 @@ public class ChampionBuilder {
   }
 
   public static void spawnPreset(final IChampion champion, int tier, List<IAffix> affixes) {
-    LivingEntity entity = champion.getLivingEntity();
     Rank newRank = RankManager.getRank(tier);
     champion.getServer().setRank(newRank);
-    ChampionBuilder.applyGrowth(entity, newRank.getGrowthFactor());
+    ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
     affixes = affixes.isEmpty() ? ChampionBuilder.createAffixes(newRank, champion) : affixes;
     champion.getServer().setAffixes(affixes);
     affixes.forEach(affix -> affix.onInitialSpawn(champion));
@@ -94,7 +90,7 @@ public class ChampionBuilder {
         .map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true) && affix
         .canApply(champion);
     }).toList()));
-    addAffixToList(size, affixesToAdd, validAffixes, RAND);
+    addAffixToList(size, affixesToAdd, validAffixes, champion.getLivingEntity().getRandom());
     return affixesToAdd;
   }
 
@@ -130,60 +126,171 @@ public class ChampionBuilder {
    * @return lowest rank if this living entity not potential, else living entity with new rank that applied entity settings.
    */
   public static Rank createRank(final LivingEntity livingEntity) {
-
+    // 检查实体是否可以成为精英怪
     if (ChampionHelper.notPotential(livingEntity)) {
       return RankManager.getEmptyRank();
     }
+
+    // 获取所有等级配置
     ImmutableSortedMap<Integer, Rank> ranks = RankManager.getRanks();
-
     if (ranks.isEmpty()) {
-      Champions.LOGGER.error(
-        "No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
+      Champions.LOGGER.error("No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
       return RankManager.getEmptyRank();
     }
-    Integer[] tierRange = new Integer[]{null, null};
+
+    // 使用数组存储等级范围
+    final int[] tierRange = new int[]{ranks.firstKey(), ranks.lastKey()};
+
+    // 如果实体有特定设置，获取实体的等级范围设置
     EntityManager.getSettings(livingEntity.getType()).ifPresent(entitySettings -> {
-      tierRange[0] = entitySettings.minTier;
-      tierRange[1] = entitySettings.maxTier;
+      if (entitySettings.minTier != null) {
+        tierRange[0] = entitySettings.minTier;
+      }
+      if (entitySettings.maxTier != null) {
+        tierRange[1] = entitySettings.maxTier;
+      }
     });
-    Integer firstTier = tierRange[0] != null ? tierRange[0] : ranks.firstKey();
-    int maxTier = tierRange[1] != null ? tierRange[1] : -1;
-    Iterator<Integer> iter = ranks.navigableKeySet().tailSet(firstTier, false).iterator();
-    Rank result = ranks.get(firstTier);
 
-    if (result == null) {
-      Champions.LOGGER.error("Tier {} cannot be found in {}! Assigning lowest available rank to {}",
-        firstTier, ranks, livingEntity);
+    int minTier = tierRange[0];
+    int maxTier = tierRange[1];
+
+    // 过滤出符合等级范围的Rank
+    ImmutableSortedMap<Integer, Rank> filteredRanks = ranks.subMap(minTier, true, maxTier, true);
+
+    // 检查是否有符合条件的Rank
+    if (filteredRanks.isEmpty()) {
+      Champions.LOGGER.warn("No valid ranks found in the specified range! Assigning EmptyRank to {}", livingEntity);
       return RankManager.getEmptyRank();
     }
 
-    while (iter.hasNext() && (result.getTier() < maxTier || maxTier == -1)) {
-      Rank rank = ranks.get(iter.next());
+    // 计算总权重
+    int totalWeight = filteredRanks.values().stream()
+      .mapToInt(Rank::getWeight)
+      .sum();
 
-      if (rank == null) {
-        return result;
-      }
-      float chance = rank.getChance();
+    // 如果所有权重为0，返回EmptyRank
+    if (totalWeight <= 0) {
+      Champions.LOGGER.warn("All ranks have zero weight! Assigning EmptyRank to {}", livingEntity);
+      return RankManager.getEmptyRank();
+    }
 
+    // 根据权重随机选择一个Rank
+    int randomValue = livingEntity.getRandom().nextInt(totalWeight);
+    int cumulativeWeight = 0;
 
-      if (RAND.nextFloat() < chance) {
-        result = rank;
-      } else {
-        return result;
+    for (Rank rank : filteredRanks.values()) {
+      cumulativeWeight += rank.getWeight();
+      if (randomValue < cumulativeWeight) {
+        return rank;
       }
     }
-    return result;
+
+    return RankManager.getEmptyRank();
   }
 
-  public static void applyGrowth(final LivingEntity livingEntity, float growthFactor) {
-
+  public static void applyGrowth(final IChampion champion, float growthFactor) {
     if (growthFactor != 0) {
-      applyAttributeModifier(livingEntity, Attributes.MAX_HEALTH, MAX_HEALTH_MODIFIER, ChampionsConfig.healthGrowth * growthFactor, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-      applyAttributeModifier(livingEntity, Attributes.ATTACK_DAMAGE, ATTACK_DAMAGE_MODIFIER, ChampionsConfig.attackGrowth * growthFactor, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-      applyAttributeModifier(livingEntity, Attributes.ARMOR, ARMOR_MODIFIER, ChampionsConfig.armorGrowth * growthFactor, AttributeModifier.Operation.ADD_VALUE);
-      applyAttributeModifier(livingEntity, Attributes.ARMOR_TOUGHNESS, ARMOR_TOUGHNESS_MODIFIER, ChampionsConfig.toughnessGrowth * growthFactor, AttributeModifier.Operation.ADD_VALUE);
-      applyAttributeModifier(livingEntity, Attributes.KNOCKBACK_RESISTANCE, KNOCKBACK_RESISTANCE_MODIFIER, ChampionsConfig.knockbackResistanceGrowth * growthFactor, AttributeModifier.Operation.ADD_VALUE);
+      Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
+        if (!value.enable()) {
+          return;
+        }
+
+        var attribute = BuiltInRegistries.ATTRIBUTE.get(value.attributeType());
+        var setting = value.setting();
+        var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
+        if (matches) {
+          attribute.ifPresent(attributeValue -> applyAttributeModifier(champion.getLivingEntity(), attributeValue, identifier, setting, growthFactor));
+        }
+
+      });
     }
+  }
+
+  /**
+   * Reset champion's attribute's modifier, only can use on server side.
+   *
+   * @param champion Need reset attribute target
+   */
+  public static void resetChampionModifiers(final IChampion champion) {
+    var livingEntity = champion.getLivingEntity();
+    var playerList = Objects.requireNonNull(livingEntity.getServer()).getPlayerList();
+    Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
+      if (value.enable()) {
+        var attribute = BuiltInRegistries.ATTRIBUTE.get(value.attributeType());
+        var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
+        if (matches) {
+          attribute.ifPresent(attributeValue -> {
+            var attributeInstance = livingEntity.getAttributes().getInstance(attributeValue);
+            if (attributeInstance != null) {
+              attributeInstance.getModifiers().forEach(attributeModifier -> {
+                var isChampionModifier = attributeModifier.id().getNamespace().equals(Champions.MODID);
+                if (isChampionModifier) {
+                  attributeInstance.removeModifier(attributeModifier);
+                  if (ChampionsConfig.enableDebug) {
+                    var debugInfo = "Removed champion modifier: Name:%s Operation: %s Amount: %s".formatted(attributeModifier.id(), attributeModifier.operation(), attributeModifier.amount());
+                    Champions.LOGGER.debug(debugInfo);
+                    playerList.getPlayers().stream().filter(p -> p.hasPermissions(2)).forEach(serverPlayer -> serverPlayer.sendSystemMessage(Component.literal(debugInfo)));
+                  }
+                }
+              });
+            }
+          });
+        }
+      }
+    });
+  }
+
+  /**
+   * Resets the champion's growth, affixes, and rank, then updates the client.
+   * <p>
+   * This is a convenience method that resets all aspects of the champion.
+   *
+   * @param champion The champion whose attributes, rank, and affixes should be reset.
+   */
+  public static void resetAndUpdate(IChampion champion) {
+    resetAndUpdate(champion, true, true, true);
+  }
+
+  /**
+   * Resets specific aspects of the champion and optionally updates the client.
+   * <p>
+   * This method allows fine-grained control over which attributes to reset:
+   * - Growth modifiers (e.g., stat boosts)
+   * - Rank (e.g., champion tier)
+   * - Affixes (e.g., special abilities)
+   * <p>
+   * If either rank or affixes are reset, the update will be sent to the client.
+   *
+   * @param champion    The champion to reset.
+   * @param resetGrowth If true, resets the champion's growth modifiers.
+   * @param resetRank   If true, resets the champion's rank to an empty rank.
+   * @param resetAffix  If true, clears the champion's affixes.
+   */
+  public static void resetAndUpdate(final IChampion champion, final boolean resetGrowth, final boolean resetRank, final boolean resetAffix) {
+
+    var serverChampion = champion.getServer();
+    var targetEntity = champion.getLivingEntity();
+
+    if (resetGrowth) {
+      ChampionBuilder.resetChampionModifiers(champion);
+    }
+
+    if (resetRank) {
+      serverChampion.setRank(RankManager.getEmptyRank());
+    }
+
+    if (resetAffix) {
+      serverChampion.setAffixes(List.of());
+    }
+
+    // only manually sync to client because attributes will automatically sync by mojang
+    if (resetAffix || resetRank) {
+      SPacketSyncChampion.syncChampionDataToPlayerTrackingEntity(serverChampion, targetEntity);
+    }
+  }
+
+  private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, ResourceLocation modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
+    applyAttributeModifier(livingEntity, attributeValue, Utils.getLocation(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
   }
 
   public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, ResourceLocation modifierId, double amount, AttributeModifier.Operation operation) {
@@ -201,7 +308,7 @@ public class ChampionBuilder {
     IChampion.Server newServer = newChampion.getServer();
     Rank rank = oldServer.getRank().orElse(RankManager.getEmptyRank());
     newServer.setRank(rank);
-    ChampionBuilder.applyGrowth(newChampion.getLivingEntity(), rank.getGrowthFactor());
+    ChampionBuilder.applyGrowth(newChampion, rank.getGrowthFactor());
     List<IAffix> oldAffixes = oldChampion.getServer().getAffixes();
     newServer.setAffixes(oldAffixes);
     newServer.getAffixes().forEach(affix -> {

@@ -8,14 +8,17 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
@@ -29,10 +32,49 @@ public class ChampionHelper {
   private static MinecraftServer server = null;
 
   /**
-   * check entity is LivingEntity & Enemy
+   * check entity is LivingEntity & Enemy, if allowChampionsList enabled, check entityType is in champions list,
+   * based on allow allowChampionsPermission
+   * @param entity The entity will be champions
+   * @return true is valid champion entity type, else false
    */
-  public static boolean isValidChampion(@Nullable final Entity entity) {
-    return entity instanceof LivingEntity && entity instanceof Enemy;
+  public static boolean isValidChampionEntity(@Nullable final Entity entity) {
+    if (entity instanceof LivingEntity) {
+      if (ChampionsConfig.allowChampionsList) {
+        // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
+        if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
+          return entity.getType().is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+        }
+        // If entitiesPermission is BLACKLIST, reject the entity
+        else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
+          return !entity.getType().is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+        }
+      } else {
+        // If champions are not allowed, check if the entity is an enemy
+        return entity instanceof Enemy;
+      }
+    }
+    return false; // If entity is not a LivingEntity
+  }
+  /**
+   * check entityType is Monster, if allowChampionsList enabled, check entityType is in champions list,
+   * based on allow allowChampionsPermission
+   * @param entityType The entity type will be champions
+   * @return true is valid champion entity type, else false
+   */
+  public static boolean isValidChampionEntityType(final EntityType<?> entityType) {
+
+    if (ChampionsConfig.allowChampionsList) {
+      // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
+      if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
+        return entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+      }
+      // If entitiesPermission is BLACKLIST, reject the entity
+      else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
+        return !entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+      }
+    }
+
+    return entityType.getCategory() == MobCategory.MONSTER; // If entity is not a LivingEntity
   }
 
   /**
@@ -54,14 +96,24 @@ public class ChampionHelper {
   }
 
   /**
+   * Check entity is champion (have affixes and rank)
+   *
+   * @param entity the entity to check
+   * @return true if entity is champion, false not champion
+   */
+  public static boolean isChampionEntity(Entity entity) {
+    return ChampionAttachment.getAttachment(entity).map(champion -> ChampionHelper.isValidChampion(champion.getServer())).orElse(false);
+  }
+
+  /**
    * Check LivingEntity is potential champion entity.(can have data and spawn etc...)
    *
    * @param livingEntity that will check for.
    * @return True if this is not potential champion, else false.
    */
   public static boolean notPotential(final LivingEntity livingEntity) {
-    return !isValidEntity(livingEntity) &&
-      !isValidDimension(livingEntity.level().dimension().location()) &&
+    return !isValidEntity(livingEntity) ||
+      !isValidDimension(livingEntity.level().dimension().location()) ||
       nearActiveBeacon(livingEntity);
   }
 
@@ -125,7 +177,7 @@ public class ChampionHelper {
 
       if (blockEntity instanceof BeaconBlockEntity beaconBlockEntity && !blockEntity.isRemoved()) {
 
-        if (Math.sqrt(livingEntity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ())) <= range) {
+        if (livingEntity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) <= range * range) {
 
           if (beaconBlockEntity.levels > 0) {
             return true;

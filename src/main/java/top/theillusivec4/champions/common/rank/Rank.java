@@ -15,7 +15,7 @@ public class Rank {
   private final String defaultColor;
   private final int numAffixes;
   private final int growthFactor;
-  private final float chance;
+  private final int weight;
   private final List<Tuple<Holder<MobEffect>, Integer>> effects;
   private final List<IAffix> presetAffixes;
 
@@ -23,19 +23,21 @@ public class Rank {
     this(0, 0, 0, 0, "#FF000000", new ArrayList<>(), new ArrayList<>());
   }
 
-  public Rank(int tier, int numAffixes, int growthFactor, float chance, String defaultColor,
+  public Rank(int tier, int numAffixes, int growthFactor, int weight, String defaultColor,
               List<Tuple<Holder<MobEffect>, Integer>> effects, List<IAffix> presetAffixes) {
     this.tier = tier;
     this.numAffixes = numAffixes;
     this.growthFactor = growthFactor;
-    this.chance = chance;
+    this.weight = weight;
     this.defaultColor = defaultColor;
     this.effects = effects;
     this.presetAffixes = presetAffixes;
   }
 
   public static int getColor(String color) {
-    return TextColor.parseColor(color).getOrThrow().getValue();
+    return TextColor.parseColor(color)
+      .result()
+      .orElse(TextColor.fromRgb(0)).getValue();
   }
 
   public int getTier() {
@@ -43,7 +45,9 @@ public class Rank {
   }
 
   public TextColor getDefaultColor() {
-    return TextColor.parseColor(defaultColor).getOrThrow();
+    return TextColor.parseColor(defaultColor)
+      .result()
+      .orElse(TextColor.fromRgb(0));
   }
 
   public int getNumAffixes() {
@@ -54,8 +58,8 @@ public class Rank {
     return growthFactor;
   }
 
-  public float getChance() {
-    return chance;
+  public int getWeight() {
+    return weight;
   }
 
   public List<Tuple<Holder<MobEffect>, Integer>> getEffects() {

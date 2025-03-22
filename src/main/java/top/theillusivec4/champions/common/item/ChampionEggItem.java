@@ -39,6 +39,7 @@ import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.registry.ModDataComponents;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
+import top.theillusivec4.champions.common.util.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -53,7 +54,7 @@ public class ChampionEggItem extends EggItem {
   private static final String CHAMPION_TAG = "Champion";
 
   public ChampionEggItem() {
-    super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Champions.getLocation("champion_egg"))));
+    super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Utils.getLocation("champion_egg"))));
   }
 
 //  public static int getColor(ItemStack stack, int tintIndex) {

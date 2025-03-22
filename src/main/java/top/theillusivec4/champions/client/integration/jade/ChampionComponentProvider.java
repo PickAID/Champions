@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.common.integration.jade;
+package top.theillusivec4.champions.client.integration.jade;
 
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -8,10 +8,12 @@ import snownee.jade.api.IEntityComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.JadeIds;
 import snownee.jade.api.config.IPluginConfig;
-import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.util.ChampionHelper;
+import top.theillusivec4.champions.common.util.Utils;
 
 public enum ChampionComponentProvider implements IEntityComponentProvider {
   INSTANCE;
@@ -24,15 +26,24 @@ public enum ChampionComponentProvider implements IEntityComponentProvider {
   public void appendTooltip(ITooltip iTooltip, EntityAccessor entityAccessor, IPluginConfig iPluginConfig) {
     ChampionAttachment.getAttachment(entityAccessor.getEntity()).ifPresent(
       champion -> {
-        champion.getClient().getRank().ifPresent(rank -> iTooltip.replace(JadeIds.CORE_OBJECT_NAME, getChampionName(rank, champion)));
-        champion.getClient().getAffixes().forEach(
-          affix -> iTooltip.add(Component.translatable(affix.toLanguageKey()))
-        );
+        var clientChampion = champion.getClient();
+        if (ChampionHelper.isValidChampion(clientChampion)) {
+          champion.getClient().getRank().ifPresent(rank -> {
+            iTooltip.replace(JadeIds.CORE_OBJECT_NAME, getChampionName(rank, champion));
+            // add star to jade, based on rank
+            var starElement = StarElement.of(rank.getA(), rank.getB(), ClientChampionsConfig.jadeStarSpacing);
+            // add new line for star element(bellow name, at heart info top)
+            iTooltip.add(1, starElement);
+          });
+          champion.getClient().getAffixes().forEach(
+            affix -> iTooltip.add(Component.translatable(affix.toLanguageKey()))
+          );
+        }
       });
   }
 
   @Override
   public ResourceLocation getUid() {
-    return Champions.getLocation("enable_affix_compact");
+    return Utils.getLocation("enable_affix_compact");
   }
 }

@@ -23,34 +23,39 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.item.ChampionEggItem;
 import top.theillusivec4.champions.common.registry.ModItems;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
+import top.theillusivec4.champions.common.util.ChampionHelper;
+import top.theillusivec4.champions.common.util.Utils;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
-import java.util.Set;
 
 public class ChampionsCommand {
 
   public static final SuggestionProvider<CommandSourceStack> AFFIXES = SuggestionProviders
-    .register(Champions.getLocation("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
-      AffixRegistry.AFFIX_REGISTRY.stream(), builder, IAffix::getIdentifier, affix -> Component.translatable(affix.toLanguageKey())));
+    .register(Utils.getLocation("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
+      AffixRegistry.AFFIX_REGISTRY.stream().filter(IAffix::isEnabled), builder, IAffix::getIdentifier, affix -> Component.translatable(affix.toLanguageKey())));
 
   public static final SuggestionProvider<CommandSourceStack> MONSTER_ENTITIES = SuggestionProviders
-    .register(Champions.getLocation("monster_entities"),
+    .register(Utils.getLocation("monster_entities"),
       (context, builder) -> SharedSuggestionProvider.suggestResource(
         BuiltInRegistries.ENTITY_TYPE.stream()
-          .filter(type -> type.getCategory() == MobCategory.MONSTER),
+          .filter(type -> {
+            if (ChampionsConfig.allowChampionsList) {
+              return ChampionHelper.isValidChampionEntityType(type);
+            }
+            return type.getCategory() == MobCategory.MONSTER;
+          }),
         builder, EntityType::getKey,
         (type) -> Component.translatable(
           Util.makeDescriptionId("entity", EntityType.getKey(type)))));
@@ -139,21 +144,19 @@ public class ChampionsCommand {
     var entityType = getTypeOrThrow(resourceLocation);
     var player = source.getPlayerOrException();
 
-    ItemStack egg = new ItemStack(ModItems.CHAMPION_EGG_ITEM.get());
-    ChampionEggItem.write(egg, getEntityKey(entityType), tier, affixes);
+    ItemStack egg = createEgg(entityType, tier, affixes);
     ItemHandlerHelper.giveItemToPlayer(player, egg, 1);
     source.sendSuccess(() -> Component.translatable("commands.champions.egg.success", egg.getDisplayName()), false);
 
     return Command.SINGLE_SUCCESS;
   }
 
-  public static void createEgg(Player player, EntityType<?> entityType,
-                               int tier,
-                               Collection<IAffix> affixes) {
+  public static ItemStack createEgg(EntityType<?> entityType,
+                                    int tier,
+                                    Collection<IAffix> affixes) {
     ItemStack egg = new ItemStack(ModItems.CHAMPION_EGG_ITEM.get());
-    if (player.getInventory().hasAnyOf(Set.of(egg.getItem()))) return;
     ChampionEggItem.write(egg, getEntityKey(entityType), tier, affixes);
-    ItemHandlerHelper.giveItemToPlayer(player, egg);
+    return egg;
   }
 
   private static ResourceLocation getEntityKey(EntityType<?> entityType) {

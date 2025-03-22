@@ -4,8 +4,10 @@
   "package": "top.theillusivec4.champions.common.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ServerGamePacketListenerImplMixin"
   ],
   "client": [
+    "BlockModelWrapperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

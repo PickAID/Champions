@@ -14,7 +14,7 @@ import org.jetbrains.annotations.UnknownNullability;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.ChampionEventsHandler;
+import top.theillusivec4.champions.common.event.ChampionEventsHandler;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.registry.ModAttachments;
@@ -40,7 +40,7 @@ public class ChampionAttachment {
   }
 
   public static Optional<IChampion> getAttachment(@Nullable final Entity entity) {
-    if (!ChampionHelper.isValidChampion(entity)) {
+    if (!ChampionHelper.isValidChampionEntity(entity)) {
       return Optional.empty();
     }
     return Optional.ofNullable(entity.getData(ModAttachments.CHAMPION_ATTACHMENT).champion);

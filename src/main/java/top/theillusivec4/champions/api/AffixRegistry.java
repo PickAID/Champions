@@ -3,12 +3,10 @@ package top.theillusivec4.champions.api;
 import net.minecraft.core.Registry;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.common.integration.kubejs.ChampionHooks;
-import top.theillusivec4.champions.common.integration.kubejs.KubeJSHooks;
 import top.theillusivec4.champions.common.registry.AffixTypes;
+import top.theillusivec4.champions.common.util.Utils;
 
 public class AffixRegistry {
   public static final ResourceKey<Registry<IAffix>> AFFIX_REGISTRY_KEY = createKey("affix_registry_key");
@@ -19,17 +17,15 @@ public class AffixRegistry {
     .defaultKey(Keys.ADAPTABLE)
     .onAdd((registry, id, resourceKey, affix) -> {
       Champions.LOGGER.info("Affix added to registry: {}", resourceKey);
-      ChampionHooks.onCustomAffixBuild(affix);
-      if (ModList.get().isLoaded("kubejs")) KubeJSHooks.onKubeJSAffixBuild(affix);
     })
     .create();
 
   public static ResourceKey<IAffix> create(String path) {
-    return ResourceKey.create(Keys.AFFIX_TYPE, Champions.getLocation(path));
+    return ResourceKey.create(Keys.AFFIX_TYPE, Utils.getLocation(path));
   }
 
   private static ResourceKey<Registry<IAffix>> createKey(String path) {
-    return ResourceKey.createRegistryKey(Champions.getLocation(path));
+    return ResourceKey.createRegistryKey(Utils.getLocation(path));
   }
 
   public static class Keys {

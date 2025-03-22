@@ -24,6 +24,8 @@ public class ClientChampionsConfig {
     public final ModConfigSpec.IntValue hudYOffset;
     public final ModConfigSpec.IntValue hudRange;
     public final ModConfigSpec.BooleanValue enableWailaIntegration;
+    public final ModConfigSpec.IntValue jadeStarSpacing;
+    public final ModConfigSpec.IntValue jadeStarBottomPadding;
 
     public Client(ModConfigSpec.Builder builder) {
       builder.push("hud");
@@ -41,11 +43,14 @@ public class ClientChampionsConfig {
         builder.comment("Set to true to move the WAILA overlay underneath the champion HUD")
           .translation(CONFIG_PREFIX + "enableWailaIntegration")
           .define("enableWailaIntegration", true);
-
+      jadeStarSpacing = builder.comment("The Jade Star spacing, when rendering star.").defineInRange("jadeStarSpacing", 2, 0, 25);
+      jadeStarBottomPadding = builder.comment("The Jade Star bottom padding, when rendering star.").defineInRange("jadeStarBottomPadding", 0, 0, 100);
       builder.pop();
     }
   }
 
+  public static int jadeStarSpacing;
+  public static int jadeStarBottomPadding;
   public static int hudXOffset;
   public static int hudYOffset;
   public static int hudRange;
@@ -54,6 +59,8 @@ public class ClientChampionsConfig {
   public static void bake() {
     hudXOffset = CLIENT.hudXOffset.get();
     hudYOffset = CLIENT.hudYOffset.get();
+    jadeStarSpacing = CLIENT.jadeStarSpacing.get();
+    jadeStarBottomPadding = CLIENT.jadeStarBottomPadding.get();
     hudRange = CLIENT.hudRange.get();
     enableWailaIntegration = CLIENT.enableWailaIntegration.get();
   }

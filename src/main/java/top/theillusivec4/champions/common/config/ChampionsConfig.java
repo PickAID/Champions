@@ -88,11 +88,17 @@ public class ChampionsConfig {
   public static int reflectiveMax;
   public static boolean reflectiveLethal;
   public static double woundingChance;
-  //  public static List<? extends String> scalingHealthSpawnModifiers;
+  public static double shieldingChance;
+  public static boolean mobInherit;
+  public static int rankReduce;
+  public static boolean canHaveInfestedAffix;
   public static List<? extends String> entityStages;
   public static List<? extends String> tierStages;
   public static List<? extends String> bossBarBlackList;
   public static boolean championTrialSpawners;
+  public static boolean enableDebug;
+  public static boolean allowChampionsList;
+  public static Permission allowChampionsPermission;
 
   static {
     final Pair<ServerConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder()
@@ -149,6 +155,9 @@ public class ChampionsConfig {
     showParticles = COMMON.showParticles.get();
     enableTOPIntegration = COMMON.enableTOPIntegration.get();
     bossBarBlackList = COMMON.bossBarBlackList.get();
+    enableDebug = COMMON.enableDebug.get();
+    allowChampionsList = COMMON.allowChampionsList.get();
+    allowChampionsPermission = COMMON.allowChampionsPermission.get();
   }
 
   public static void bake() {
@@ -242,7 +251,10 @@ public class ChampionsConfig {
     reflectiveMinPercent = SERVER.reflectiveMinPercent.get();
 
     woundingChance = SERVER.woundingChance.get();
-
+    shieldingChance = SERVER.shieldingChance.get();
+    mobInherit = SERVER.mobInherit.get();
+    rankReduce = SERVER.rankReduce.get();
+    canHaveInfestedAffix = SERVER.canHaveInfestedAffix.get();
   }
 
   private static boolean validateEntityName(final Object obj) {
@@ -291,9 +303,16 @@ public class ChampionsConfig {
     public final ModConfigSpec.BooleanValue enableTOPIntegration;
     public final ModConfigSpec.ConfigValue<List<? extends String>> bossBarBlackList;
     public final ModConfigSpec.BooleanValue championTrialSpawners;
+    public ModConfigSpec.BooleanValue enableDebug;
+    public ModConfigSpec.BooleanValue allowChampionsList;
+    public ModConfigSpec.EnumValue<Permission> allowChampionsPermission;
 
     public CommonConfig(ModConfigSpec.Builder builder) {
       builder.push("general");
+
+      enableDebug = builder.comment("Enable debug for game testing")
+        .translation(CONFIG_PREFIX + "enableDebug")
+        .define("enableDebug", false);
 
       beaconProtectionRange = builder
         .comment("The range from an active beacon where no champions will spawn (0 to disable)")
@@ -346,6 +365,14 @@ public class ChampionsConfig {
       enableTOPIntegration =
         builder.comment("Set to true to show champion tier and affixes in The One Probe overlay")
           .translation(CONFIG_PREFIX + "enableTOPIntegration").define("enableTOPIntegration", true);
+
+      allowChampionsList =
+        builder.comment("Set to true to enable champions entity allow list configuration by datapack")
+          .translation(CONFIG_PREFIX + "allowChampionsList").define("allowChampionsList", true);
+
+      allowChampionsPermission =
+        builder.comment("The permission of champions entity allow list datapack.")
+          .translation(CONFIG_PREFIX + "allowChampionsPermission").defineEnum("allowChampionsPermission", Permission.WHITELIST, Permission.values());
 
       builder.pop();
     }
@@ -412,11 +439,23 @@ public class ChampionsConfig {
     public final ModConfigSpec.BooleanValue reflectiveLethal;
 
     public final ModConfigSpec.DoubleValue woundingChance;
+    public final ModConfigSpec.DoubleValue shieldingChance;
 
     public final ModConfigSpec.ConfigValue<List<? extends String>> scalingHealthSpawnModifiers;
+    public final ModConfigSpec.BooleanValue mobInherit;
+    public final ModConfigSpec.IntValue rankReduce;
+    public final ModConfigSpec.BooleanValue canHaveInfestedAffix;
 
     public ServerConfig(ModConfigSpec.Builder builder) {
 
+      builder.push("mobSplitSetting");
+      mobInherit = builder.comment("Set to true to allow slime like mob when splitting, inherit this parentMob's affix and ranks.")
+        .translation(CONFIG_PREFIX + "mobInherit").define("mobInherit", false);
+      rankReduce = builder.comment("Set the children mob reduce rank when split, 0 means disable")
+        .translation(CONFIG_PREFIX + "rankReduce").defineInRange("rankReduce", 1, 0, Integer.MAX_VALUE);
+      canHaveInfestedAffix = builder.comment("Set the children mob can have Infested Affix, avoid the server splited too much entity").
+        translation(CONFIG_PREFIX + "canHaveInfestedAffix").define("canHaveInfestedAffix", false);
+      builder.pop();
 
       builder.push("loot");
 
@@ -668,6 +707,14 @@ public class ChampionsConfig {
       woundingChance = builder.comment("The percent chance that an attack will wound targets")
         .translation(CONFIG_PREFIX + "woundingChance")
         .defineInRange("woundingChance", 0.4D, 0.0D, 1.0D);
+
+      builder.pop();
+
+      builder.push("shielding");
+
+      shieldingChance = builder.comment("The percent chance that an attack will wound targets")
+        .translation(CONFIG_PREFIX + "shieldingChance")
+        .defineInRange("shieldingChance", 0.5D, 0.0D, 1.0D);
 
       builder.pop();
 

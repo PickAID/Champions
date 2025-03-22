@@ -1,11 +1,9 @@
-package top.theillusivec4.champions.common;
+package top.theillusivec4.champions.common.event;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ARGB;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -15,34 +13,43 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.common.util.FakePlayer;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
+import net.neoforged.neoforge.event.OnDatapackSyncEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.ChampionsOverlay;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.network.SyncAffixSettingPacket;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.rank.RankManager;
+import top.theillusivec4.champions.common.registry.AffixTypes;
 import top.theillusivec4.champions.common.registry.ModParticleTypes;
 import top.theillusivec4.champions.common.registry.ModStats;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
 import top.theillusivec4.champions.common.util.ChampionHelper;
+import top.theillusivec4.champions.common.util.Utils;
 import top.theillusivec4.champions.server.command.ChampionsCommand;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 public class ChampionEventsHandler {
 
   @SubscribeEvent
   public void onAddReloadListener(AddServerReloadListenersEvent event) {
-    event.addListener(Champions.getLocation("affix_data"), Champions.getDataLoader());
+    event.addListener(Utils.getLocation("affix_data"), Champions.API.getAffixDataLoader());
+    event.addListener(Utils.getLocation("attributes_modifier_data"), Champions.API.getAttributesModifierDataLoader());
   }
 
   @SubscribeEvent
@@ -177,6 +184,31 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
+  private void onMobSpilt(MobSplitEvent event) {
+    if (ChampionsConfig.mobInherit) {
+      var parentMob = event.getParent();
+      var children = event.getChildren();
+      ChampionAttachment.getAttachment(parentMob).ifPresent(champion -> {
+        var serverChampion = champion.getServer();
+        if (ChampionHelper.isValidChampion(serverChampion)) {
+          serverChampion.getRank().ifPresent(rank -> children.forEach(child -> ChampionAttachment.getAttachment(child).ifPresent(championChild -> {
+              ArrayList<IAffix> parentAffixes = new ArrayList<>(serverChampion.getAffixes());
+              if (!ChampionsConfig.canHaveInfestedAffix) {
+                parentAffixes.remove(AffixTypes.INFESTED.get());
+              }
+              championChild.getServer().setRank(RankManager.getRank(rank.getTier() - ChampionsConfig.rankReduce));
+              if (!parentAffixes.isEmpty()) {
+                championChild.getServer().setAffixes(parentAffixes);
+              }
+              ChampionBuilder.applyGrowth(championChild, championChild.getServer().getRank().orElse(RankManager.getEmptyRank()).getGrowthFactor());
+            }))
+          );
+        }
+      });
+    }
+  }
+
+  @SubscribeEvent
   public void onLivingDamage(LivingDamageEvent.Pre evt) {
     LivingEntity livingEntity = evt.getEntity();
 
@@ -267,22 +299,24 @@ public class ChampionEventsHandler {
 
   @SubscribeEvent(priority = EventPriority.LOWEST)
   @OnlyIn(Dist.CLIENT)
-  public void onBossBarEvent(final CustomizeGuiOverlayEvent.BossEventProgress event) {
+  private void onBossBarEvent(final CustomizeGuiOverlayEvent.BossEventProgress event) {
     event.setCanceled(ChampionsOverlay.isRendering);
   }
 
-  @SubscribeEvent(priority = EventPriority.LOWEST)
-  @OnlyIn(Dist.CLIENT)
-  public void onPressPickEgg(final InputEvent.InteractionKeyMappingTriggered event) {
-    if (event.isPickBlock()) {
-      var pickedEntity = Minecraft.getInstance().crosshairPickEntity;
-      var player = Minecraft.getInstance().player;
-      ChampionAttachment.getAttachment(pickedEntity).ifPresent(champion -> {
-        IChampion.Client clientChampion = champion.getClient();
-        if (player != null && player.isCreative() && ChampionHelper.isValidChampion(clientChampion)) {
-          ChampionsCommand.createEgg(player, champion.getLivingEntity().getType(), clientChampion.getRank().map(Tuple::getA).orElseThrow(), clientChampion.getAffixes());
-        }
-      });
-    }
+  @SubscribeEvent
+  private void onDatapackSync(OnDatapackSyncEvent event) {
+    // send to single player login or reload for all relevant players.
+    var relevantPlayers = event.getRelevantPlayers();
+    var syncAffixSetting = new SyncAffixSettingPacket(Champions.API.getAffixDataLoader().getLoadedData());
+    // apply setting on server, and sync affix settings to client
+    SyncAffixSettingPacket.handelSettingMainThread();
+    relevantPlayers.forEach(player -> PacketDistributor.sendToPlayer(player, syncAffixSetting));
   }
+
+  @SubscribeEvent
+  private void registerCommands(final RegisterCommandsEvent evt) {
+    ChampionsCommand.register(evt.getDispatcher());
+  }
+
+
 }

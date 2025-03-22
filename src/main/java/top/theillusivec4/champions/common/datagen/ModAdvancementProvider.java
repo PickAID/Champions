@@ -15,12 +15,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.common.loot.AffixesPredicate;
 import top.theillusivec4.champions.common.loot.ChampionPropertyCondition;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
@@ -30,9 +30,9 @@ public class ModAdvancementProvider extends AdvancementProvider {
    * Constructs an advancement provider using the generators to write the
    * advancements to a file.
    *
-   * @param output             the target directory of the data generator
-   * @param registries         a future of a lookup for registries and their objects
-   * @param subProviders       the generators used to create the advancements
+   * @param output       the target directory of the data generator
+   * @param registries   a future of a lookup for registries and their objects
+   * @param subProviders the generators used to create the advancements
    */
   public ModAdvancementProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, List<AdvancementSubProvider> subProviders) {
     super(output, registries, subProviders);
@@ -55,9 +55,9 @@ public class ModAdvancementProvider extends AdvancementProvider {
         .addCriterion("kill_a_champion", KilledTrigger.TriggerInstance.playerKilledEntity(new EntityPredicate.Builder()
           .subPredicate(new ChampionPropertyCondition(LootContext.EntityTarget.THIS,
             Optional.of(MinMaxBounds.Ints.ANY),
-            Optional.of(new ChampionPropertyCondition.AffixesPredicate(Set.of("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
+            Optional.of(new AffixesPredicate(Utils.getLocationSet("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
           )))
-        .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion"))).save(saver, Champions.getLocation("kill_a_champion"))
+        .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion"))).save(saver, Utils.getLocation("kill_a_champion"))
         .value();
     }
   }
