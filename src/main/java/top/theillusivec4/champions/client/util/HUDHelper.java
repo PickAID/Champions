@@ -1,6 +1,5 @@
 package top.theillusivec4.champions.client.util;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
@@ -42,40 +41,32 @@ public class HUDHelper {
           int xOffset = ClientChampionsConfig.hudXOffset;
           int yOffset = ClientChampionsConfig.hudYOffset;
           String colorCode = rank.getB();
-          int color = Rank.getColor(colorCode);
+          int color = ARGB.opaque(Rank.getColor(colorCode));
 
-          float r = ARGB.red(color) / 255.0F;
-          float g = ARGB.green(color) / 255.0F;
-          float b = ARGB.blue(color) / 255.0F;
-
-          RenderSystem.defaultBlendFunc();
-          // set shader color for render element
-          RenderSystem.setShaderColor(r, g, b, 1.0F);
-          RenderSystem.enableBlend();
           ChampionsOverlay.startX = xOffset + k;
           ChampionsOverlay.startY = yOffset + 1;
 
-          guiGraphics.blit(resourceLocation -> RenderType.guiTextured(GUI_BAR_TEXTURES), GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256);
+          guiGraphics.blit(RenderType::guiTextured, GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256, color);
           int healthOffset =
             (int) ((livingEntity.getHealth() / livingEntity.getMaxHealth()) * 183.0F);
 
           if (healthOffset > 0) {
-            guiGraphics.blit(resourceLocation -> RenderType.guiTextured(GUI_BAR_TEXTURES), GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
-              256);
+            guiGraphics.blit(RenderType::guiTextured, GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
+              256, color);
           }
 
           if (championLevel <= 18) {
             int startStarsX = xOffset + i / 2 - 5 - 5 * (championLevel - 1);
 
             for (int tier = 0; tier < championLevel; tier++) {
-              guiGraphics.blit(resourceLocation -> RenderType.guiTextured(GUI_STAR), GUI_STAR, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9);
+              guiGraphics.blit(RenderType::guiTextured, GUI_STAR, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9, color);
               startStarsX += 10;
             }
           } else {
             int startStarsX = xOffset + i / 2 - 5;
             String count = "x" + championLevel;
-            guiGraphics.blit(resourceLocation -> RenderType.guiTextured(GUI_STAR), GUI_STAR, startStarsX - client.font.width(count) / 2,
-              yOffset + 1, 0, 0, 9, 9, 9, 9);
+            guiGraphics.blit(RenderType::guiTextured, GUI_STAR, startStarsX - client.font.width(count) / 2,
+              yOffset + 1, 0, 0, 9, 9, 9, 9, color);
             guiGraphics.drawString(client.font, count,
               startStarsX + 10 - client.font.width(count) / 2.0F, yOffset + 2,
               16777215, true);
@@ -92,8 +83,6 @@ public class HUDHelper {
           guiGraphics.drawString(client.font, name,
             xOffset + (float) (i / 2 - client.font.width(name) / 2),
             yOffset + (float) (j - 9), color, true);
-          // reset shader color
-          RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
           StringBuilder builder = new StringBuilder();
 
           for (var affix : affixSet) {
@@ -105,7 +94,6 @@ public class HUDHelper {
           guiGraphics.drawString(client.font, affixes,
             xOffset + (float) (i / 2 - client.font.width(affixes) / 2),
             yOffset + (float) (j + 6), 16777215, true);
-          RenderSystem.disableBlend();
           return true;
         }
         return false;

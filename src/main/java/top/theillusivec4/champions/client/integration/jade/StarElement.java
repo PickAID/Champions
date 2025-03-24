@@ -1,6 +1,5 @@
 package top.theillusivec4.champions.client.integration.jade;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.network.chat.TextColor;
@@ -14,16 +13,12 @@ import top.theillusivec4.champions.client.util.HUDHelper;
 public class StarElement extends Element {
   private final int starCount;  // 记录星星的数量
   private final int spacing;    // 间距
-  private final float r, g, b;  // 颜色
+  private final int color;  // 颜色
 
   StarElement(int starCount, final String colorCode, int spacing) {
-    int color = TextColor.parseColor(colorCode).getOrThrow().getValue();
+    this.color = ARGB.opaque(TextColor.parseColor(colorCode).getOrThrow().getValue());
     this.starCount = starCount;
     this.spacing = spacing;
-
-    r = ARGB.red(color) / 255.0F;
-    g = ARGB.green(color) / 255.0F;
-    b = ARGB.blue(color) / 255.0F;
   }
 
   public static StarElement of(int starCount, final String colorCode, int spacing) {
@@ -42,20 +37,17 @@ public class StarElement extends Element {
 
   @Override
   public void render(GuiGraphics guiGraphics, float x, float y, float maxX, float maxY) {
-    // todo find why this shader color setting not effecting
     // set render element color
-    RenderSystem.setShaderColor(r, g, b, 1.0F);
+    guiGraphics.pose().pushPose();
     for (int i = 0; i < starCount; i++) {
-      guiGraphics.blit(resourceLocation -> RenderType.guiTextured(getTexture()),
+      guiGraphics.blit(RenderType::guiTextured,
         getTexture(),
         (int) (x + i * (9 + spacing)), // 计算 X 偏移量
         (int) y, // Y 坐标不变
         0, 0,
-        9, 9, 9, 9
+        9, 9, 9, 9, color
       );
     }
-    // reset color
-    RenderSystem.setShaderColor(1F, 1F, 1F, 1.0F);
-
+    guiGraphics.pose().popPose();
   }
 }
