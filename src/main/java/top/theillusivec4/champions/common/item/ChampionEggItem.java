@@ -26,6 +26,7 @@ import net.minecraft.world.item.EggItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -44,6 +45,7 @@ import top.theillusivec4.champions.common.util.Utils;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class ChampionEggItem extends EggItem {
 
@@ -57,20 +59,14 @@ public class ChampionEggItem extends EggItem {
     super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Utils.getLocation("champion_egg"))));
   }
 
-//  public static int getColor(ItemStack stack, int tintIndex) {
-//    SpawnEggItem eggItem =
-//      SpawnEggItem.byId(getType(stack).orElse(EntityType.ZOMBIE));
-//    return eggItem != null ? ARGB.opaque(eggItem.getColor(tintIndex)) : 0;
-//  }
-
   public static Optional<EntityType<?>> getType(ItemStack stack) {
 
     Optional<CompoundTag> entityTag = getTagOrEmpty(stack, ENTITY_TAG);
     if (entityTag.isPresent()) {
-      String id = entityTag.get().getString(ID_TAG);
+      var id = entityTag.get().getString(ID_TAG);
 
-      if (!id.isEmpty()) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id));
+      if (id.isPresent()) {
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id.get()));
       }
     }
     return Optional.empty();
@@ -80,7 +76,7 @@ public class ChampionEggItem extends EggItem {
     if (stack.has(ModDataComponents.ENTITY_TAG_COMPONENT)) {
       CompoundTag entityTag = stack.get(ModDataComponents.ENTITY_TAG_COMPONENT);
       if (entityTag != null) {
-        return Optional.of(entityTag.getCompound(tagKey));
+        return entityTag.getCompound(tagKey);
       }
     }
     return Optional.empty();
@@ -90,10 +86,10 @@ public class ChampionEggItem extends EggItem {
     Optional<CompoundTag> tag = getTagOrEmpty(stack, CHAMPION_TAG);
 
     tag.ifPresent(entityTag -> {
-      int tier = entityTag.getInt(TIER_TAG);
-      ListTag affixTag = entityTag.getList(AFFIX_TAG, CompoundTag.TAG_STRING);
+      int tier = entityTag.getIntOr(TIER_TAG, -1);
+      ListTag affixTag = entityTag.getListOrEmpty(AFFIX_TAG);
       List<IAffix> affixes = new ArrayList<>();
-      affixTag.forEach(affix -> Champions.API.getAffix(affix.getAsString()).ifPresent(affixes::add));
+      affixTag.forEach(affix -> Champions.API.getAffix(affix.asString().orElseThrow()).ifPresent(affixes::add));
       ChampionBuilder.spawnPreset(champion, tier, affixes);
     });
   }
@@ -123,7 +119,7 @@ public class ChampionEggItem extends EggItem {
     Optional<EntityType<?>> type = getType(stack);
     Optional<CompoundTag> entityTag = getTagOrEmpty(stack, CHAMPION_TAG);
     if (entityTag.isPresent()) {
-      tier = entityTag.get().getInt(TIER_TAG);
+      tier = entityTag.get().getIntOr(TIER_TAG, -1);
     }
 
     MutableComponent root = Component.translatable("rank.champions.title." + tier);
@@ -136,24 +132,24 @@ public class ChampionEggItem extends EggItem {
 
   @Override
   @ParametersAreNonnullByDefault
-  public void appendHoverText(ItemStack stack, TooltipContext pContext,
-                              List<Component> tooltip, TooltipFlag flagIn) {
+  @SuppressWarnings("deprecation")
+  public void appendHoverText(ItemStack stack, TooltipContext pContext, TooltipDisplay tooltipDisplay, Consumer<Component> componentConsumer, TooltipFlag flagIn) {
     boolean hasAffix = false;
     Optional<CompoundTag> entityTag = getTagOrEmpty(stack, CHAMPION_TAG);
     if (entityTag.isPresent()) {
 
-      ListTag affixTag = entityTag.get().getList(AFFIX_TAG, CompoundTag.TAG_STRING);
+      ListTag affixTag = entityTag.get().getListOrEmpty(AFFIX_TAG);
 
       if (!affixTag.isEmpty()) {
         hasAffix = true;
       }
 
-      affixTag.forEach(affix -> Champions.API.getAffix(affix.getAsString()).ifPresent(
+      affixTag.forEach(affix -> Champions.API.getAffix(affix.asString().orElse("")).ifPresent(
         affix1 -> {
           final MutableComponent component =
             Component.translatable(affix1.toLanguageKey());
           component.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
-          tooltip.add(component);
+          componentConsumer.accept(component);
         }));
 
     }
@@ -161,7 +157,7 @@ public class ChampionEggItem extends EggItem {
     if (!hasAffix) {
       final MutableComponent component = Component.translatable("item.champions.egg.tooltip");
       component.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
-      tooltip.add(component);
+      componentConsumer.accept(component);
     }
   }
 

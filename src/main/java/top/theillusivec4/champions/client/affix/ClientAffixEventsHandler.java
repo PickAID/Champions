@@ -2,6 +2,7 @@ package top.theillusivec4.champions.client.affix;
 
 import net.minecraft.client.player.ClientInput;
 import net.minecraft.world.entity.player.Input;
+import net.minecraft.world.phys.Vec2;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -17,9 +18,8 @@ public class ClientAffixEventsHandler {
     var player = event.getEntity();
     if (player.hasEffect(ModMobEffects.PARALYSIS_EFFECT_TYPE)) {
       ClientInput input = event.getInput();
-      input.forwardImpulse = 0;
-      input.leftImpulse = 0;
-      input.keyPresses = new Input(false, false, false, false, false, false, false);
+      event.getInput().moveVector = Vec2.ZERO;
+      input.keyPresses = Input.EMPTY;
     }
   }
 }

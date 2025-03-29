@@ -4,9 +4,11 @@ import com.google.common.collect.Lists;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
+import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagTypes;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -58,7 +60,7 @@ public abstract class BaseBulletEntity extends Projectile {
     double d0 = (double) blockpos.getX() + 0.5D;
     double d1 = (double) blockpos.getY() + 0.5D;
     double d2 = (double) blockpos.getZ() + 0.5D;
-    this.moveTo(d0, d1, d2, this.getYRot(), this.getXRot());
+    this.snapTo(d0, d1, d2, this.getYRot(), this.getXRot());
     this.finalTarget = entity;
     this.currentMoveDirection = Direction.UP;
     this.selectNextMoveDirection(axis);
@@ -73,7 +75,7 @@ public abstract class BaseBulletEntity extends Projectile {
     super.addAdditionalSaveData(pCompound);
 
     if (this.finalTarget != null) {
-      pCompound.putUUID("Target", this.finalTarget.getUUID());
+      pCompound.store("Target", UUIDUtil.CODEC, this.finalTarget.getUUID());
     }
 
     if (this.currentMoveDirection != null) {
@@ -87,17 +89,17 @@ public abstract class BaseBulletEntity extends Projectile {
 
   protected void readAdditionalSaveData(@Nonnull CompoundTag pCompound) {
     super.readAdditionalSaveData(pCompound);
-    this.flightSteps = pCompound.getInt("Steps");
-    this.targetDeltaX = pCompound.getDouble("TXD");
-    this.targetDeltaY = pCompound.getDouble("TYD");
-    this.targetDeltaZ = pCompound.getDouble("TZD");
+    this.flightSteps = pCompound.getIntOr("Steps", 0);
+    this.targetDeltaX = pCompound.getDoubleOr("TXD", 0);
+    this.targetDeltaY = pCompound.getDoubleOr("TYD", 0);
+    this.targetDeltaZ = pCompound.getDoubleOr("TZD", 0);
 
-    if (pCompound.contains("Dir", 99)) {
-      this.currentMoveDirection = Direction.from3DDataValue(pCompound.getInt("Dir"));
+    if (pCompound.contains("Dir") && pCompound.getType() == TagTypes.getType(3)) {
+      this.currentMoveDirection = Direction.from3DDataValue(pCompound.getInt("Dir").orElse(0));
     }
 
-    if (pCompound.hasUUID("Target")) {
-      this.targetId = pCompound.getUUID("Target");
+    if (pCompound.contains("Target")) {
+      this.targetId = pCompound.read("Target", UUIDUtil.CODEC).orElse(null);
     }
   }
 
@@ -217,7 +219,7 @@ public abstract class BaseBulletEntity extends Projectile {
     if (!this.level().isClientSide) {
 
       if (this.finalTarget == null && this.targetId != null) {
-        this.finalTarget = ((ServerLevel) this.level()).getEntity(this.targetId);
+        this.finalTarget = this.level().getEntity(this.targetId);
 
         if (this.finalTarget == null) {
           this.targetId = null;
@@ -247,7 +249,7 @@ public abstract class BaseBulletEntity extends Projectile {
         this.onHit(hitresult);
       }
     }
-    this.recordMovementThroughBlocks(getKnownMovement(), getDeltaMovement());
+
     Vec3 vec31 = this.getDeltaMovement();
     this.setPos(this.getX() + vec31.x, this.getY() + vec31.y, this.getZ() + vec31.z);
     ProjectileUtil.rotateTowardsMovement(this, 0.5F);

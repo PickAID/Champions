@@ -7,7 +7,6 @@ import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.commands.arguments.selector.options.EntitySelectorOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,6 +15,7 @@ import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.rank.RankManager;
 
 import java.util.HashSet;
 import java.util.List;
@@ -33,23 +33,23 @@ public class ChampionSelectorOptions {
   private static void championsArgument(EntitySelectorParser parser) throws CommandSyntaxException {
     StringReader reader = parser.getReader();
     boolean invert = parser.shouldInvertValue();
-    CompoundTag compoundtag = (new TagParser(reader)).readStruct();
+    CompoundTag compoundtag = TagParser.parseCompoundAsArgument(reader);
     Set<String> affixes = new HashSet<>();
     MinMaxBounds.Ints matches = MinMaxBounds.Ints.atLeast(1);
     MinMaxBounds.Ints count = MinMaxBounds.Ints.ANY;
 
-    if (compoundtag.contains("affixes", Tag.TAG_LIST)) {
-      ListTag listTag = compoundtag.getList("affixes", Tag.TAG_STRING);
+    if (compoundtag.contains("affixes")) {
+      ListTag listTag = compoundtag.getListOrEmpty("affixes");
 
       for (int i = 0; i < listTag.size(); i++) {
-        affixes.add(listTag.getString(i));
+        affixes.add(listTag.getString(i).orElse(""));
       }
-    } else if (compoundtag.contains("affixes", Tag.TAG_COMPOUND)) {
-      CompoundTag tag = compoundtag.getCompound("affixes");
-      ListTag listTag = tag.getList("values", Tag.TAG_STRING);
+    } else if (compoundtag.contains("affixes")) {
+      CompoundTag tag = compoundtag.getCompoundOrEmpty("affixes");
+      ListTag listTag = tag.getListOrEmpty("values");
 
       for (int i = 0; i < listTag.size(); i++) {
-        affixes.add(listTag.getString(i));
+        affixes.add(listTag.getString(i).orElse(""));
       }
       count = fromTag(tag, "count", count);
       matches = fromTag(tag, "matches", matches);
@@ -66,20 +66,20 @@ public class ChampionSelectorOptions {
   private static MinMaxBounds.Ints fromTag(CompoundTag origin, String key,
                                            MinMaxBounds.Ints defaultValue) {
 
-    if (origin.contains(key, Tag.TAG_INT)) {
-      int tier = origin.getInt(key);
+    if (origin.contains(key)) {
+      int tier = origin.getInt(key).orElse(RankManager.getEmptyRank().getTier());
       return MinMaxBounds.Ints.exactly(tier);
-    } else if (origin.contains(key, Tag.TAG_COMPOUND)) {
-      CompoundTag tag = origin.getCompound(key);
+    } else if (origin.contains(key)) {
+      CompoundTag tag = origin.getCompoundOrEmpty(key);
       Integer min = null;
       Integer max = null;
 
-      if (tag.contains("min", Tag.TAG_INT)) {
-        min = tag.getInt("min");
+      if (tag.contains("min")) {
+        min = tag.getInt("min").orElse(null);
       }
 
-      if (tag.contains("max", Tag.TAG_INT)) {
-        max = tag.getInt("max");
+      if (tag.contains("max")) {
+        max = tag.getInt("max").orElse(null);
       }
 
       if (min == null && max == null) {

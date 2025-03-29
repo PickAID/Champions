@@ -61,7 +61,7 @@ public abstract class AffixData {
 
     @Override
     public void readFromNBT(CompoundTag tag) {
-      mode = tag.getBoolean("mode");
+      mode = tag.getBooleanOr("mode",false);
     }
 
     @Override
@@ -78,7 +78,7 @@ public abstract class AffixData {
 
     @Override
     public void readFromNBT(CompoundTag tag) {
-      num = tag.getInt("num");
+      num = tag.getInt("num").orElse(-1);
     }
 
     @Override

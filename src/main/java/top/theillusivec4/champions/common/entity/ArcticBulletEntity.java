@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import javax.annotation.Nonnull;
@@ -26,8 +27,8 @@ public class ArcticBulletEntity extends BaseBulletEntity {
 
   @Override
   protected void bulletEffect(LivingEntity target) {
-    target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 2));
-    target.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 100, 2));
+    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 2));
+    target.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 100, 2));
   }
 
   @Override
@@ -36,7 +37,7 @@ public class ArcticBulletEntity extends BaseBulletEntity {
   }
 
   @Override
-  protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+  protected void defineSynchedData(SynchedEntityData.@NotNull Builder pBuilder) {
 
   }
 }

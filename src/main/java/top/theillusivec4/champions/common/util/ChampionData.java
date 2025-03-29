@@ -3,7 +3,7 @@ package top.theillusivec4.champions.common.util;
 import com.google.common.collect.ImmutableSortedMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagTypes;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.Champions;
@@ -32,19 +32,19 @@ public class ChampionData {
     CompoundTag tag = livingEntity.getPersistentData();
 
     if (!tag.isEmpty()) {
-      CompoundTag championTag = tag.getCompound(CHAMPION_KEY);
+      CompoundTag championTag = tag.getCompoundOrEmpty(CHAMPION_KEY);
 
       if (!championTag.isEmpty()) {
         Rank rank = RankManager.getLowestRank();
 
         if (championTag.contains("tier")) {
 
-          if (championTag.contains("tier", Tag.TAG_INT)) {
-            rank = RankManager.getRank(championTag.getInt("tier"));
-          } else if (championTag.contains("tier", Tag.TAG_COMPOUND)) {
-            CompoundTag valueTag = championTag.getCompound("tier");
-            Integer min = valueTag.contains("min") ? valueTag.getInt("min") : null;
-            Integer max = valueTag.contains("max") ? valueTag.getInt("max") : null;
+          if (championTag.contains("tier") && championTag.getType() == TagTypes.getType(3)) {
+            rank = RankManager.getRank(championTag.getInt("tier").orElse(RankManager.getEmptyRank().getTier()));
+          } else if (championTag.contains("tier") && championTag.getType() == TagTypes.getType(10)) {
+            CompoundTag valueTag = championTag.getCompoundOrEmpty("tier");
+            Integer min = valueTag.getInt("min").orElse(null);
+            Integer max = valueTag.getInt("max").orElse(null);
             rank = createRank(livingEntity, min, max);
           }
         }
@@ -59,19 +59,21 @@ public class ChampionData {
 
         if (championTag.contains("affixes")) {
 
-          if (championTag.contains("affixes", Tag.TAG_LIST)) {
-            ListTag listTag = championTag.getList("affixes", Tag.TAG_STRING);
+          if (championTag.contains("affixes") && championTag.getType() == TagTypes.getType(9)) {
+            ListTag listTag = championTag.getListOrEmpty("affixes");
 
             for (int i = 0; i < listTag.size(); i++) {
-              ids.add(listTag.getString(i));
+              ids.add(listTag.getStringOr(i, ""));
             }
-          } else if (championTag.contains("affixes", Tag.TAG_COMPOUND)) {
-            CompoundTag affixesTag = championTag.getCompound("affixes");
-            count = affixesTag.contains("count", Tag.TAG_INT) ? affixesTag.getInt("count") : null;
-            ListTag listTag = affixesTag.getList("values", Tag.TAG_STRING);
+          } else if (championTag.contains("affixes") && championTag.getType() == TagTypes.getType(10)) {
+            CompoundTag affixesTag = championTag.getCompoundOrEmpty("affixes");
+            count = affixesTag.getInt("count").orElse(null);
+            var listTag = affixesTag.getList("values");
 
-            for (int i = 0; i < listTag.size(); i++) {
-              ids.add(listTag.getString(i));
+            if (listTag.isPresent()) {
+              for (int i = 0; i < listTag.get().size(); i++) {
+                ids.add(listTag.get().getStringOr(i, ""));
+              }
             }
           }
         }

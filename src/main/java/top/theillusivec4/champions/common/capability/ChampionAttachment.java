@@ -192,22 +192,22 @@ public class ChampionAttachment {
       IChampion.Server champion = this.champion.getServer();
 
       if (nbt.contains(TIER_TAG)) {
-        int tier = nbt.getInt(TIER_TAG);
+        int tier = nbt.getIntOr(TIER_TAG,-1);
         champion.setRank(RankManager.getRank(tier));
       }
 
       if (nbt.contains(AFFIX_TAG)) {
-        ListTag list = nbt.getList(AFFIX_TAG, CompoundTag.TAG_COMPOUND);
+        ListTag list = nbt.getListOrEmpty(AFFIX_TAG);
         List<IAffix> affixes = new ArrayList<>();
 
         for (int i = 0; i < list.size(); i++) {
-          CompoundTag tag = list.getCompound(i);
-          String id = tag.getString(ID_TAG);
+          CompoundTag tag = list.getCompoundOrEmpty(i);
+          String id = tag.getStringOr(ID_TAG,"");
           Champions.API.getAffix(id).ifPresent(affix -> {
             affixes.add(affix);
 
             if (tag.contains(DATA_TAG)) {
-              champion.setData(id, tag.getCompound(DATA_TAG));
+              champion.setData(id, tag.getCompound(DATA_TAG).orElseThrow());
             }
           });
         }

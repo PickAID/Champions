@@ -31,8 +31,8 @@ public class AdaptableAffix extends BasicAffix {
 
     @Override
     public void readFromNBT(CompoundTag tag) {
-      name = tag.getString("name");
-      count = tag.getInt("count");
+      name = tag.getString("name").orElseThrow();
+      count = tag.getInt("count").orElseThrow();
     }
 
     @Override
