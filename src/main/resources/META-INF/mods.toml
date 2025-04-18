@@ -1,31 +1,30 @@
 modLoader="javafml"
-loaderVersion="${loader_version}"
-license="LGPL-3.0-or-later"
-issueTrackerURL="https://github.com/TheIllusiveC4/Champions/issues"
+loaderVersion="${loader_version_range}"
+license="${mod_license}"
+issueTrackerURL="https://github.com/CrychicTeam/Champions/issues"
 logoFile="champions_icon.png"
 logoBlur=false
 [[mods]]
-modId="champions"
-version="${version}"
-displayName="Champions"
-displayURL="https://github.com/TheIllusiveC4/Champions/"
-authors="CrychicTeam, TheIllusiveC4"
-description='''
-Creates elite mobs of different rarities, with enhanced stats and extra abilities.
-'''
-[[dependencies.champions]]
+modId="${mod_id}"
+version="${mod_version}" #mandatory
+# A display name for the mod
+displayName="${mod_name}" #mandatory
+displayURL="https://github.com/CrychicTeam/Champions"
+authors="${mod_authors}"
+description='''${mod_description}'''
+[[dependencies.${mod_id}]]
   modId="forge"
   mandatory=true
   versionRange="${forge_version_range}"
   ordering="NONE"
   side="BOTH"
-[[dependencies.champions]]
+[[dependencies.${mod_id}]]
   modId="minecraft"
   mandatory=true
-  versionRange="${mc_version_range}"
+  versionRange="${minecraft_version_range}"
   ordering="NONE"
   side="BOTH"
-[[dependencies.champions]]
+[[dependencies.${mod_id}]]
   modId="scalinghealth"
   mandatory=false
-  versionRange="[6.3.0,)"
+  versionRange="${scalinghealth_version_range}"
