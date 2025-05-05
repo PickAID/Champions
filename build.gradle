@@ -20,6 +20,7 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
+    id("org.moddedmc.wiki.toolkit") version "0.2.7"
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -34,6 +35,17 @@ base {
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+wiki {
+    docs {
+        // The name of the object (examplemod) should match the registered wiki project ID (if it exists).
+        champions {
+            // The path to the folder containing the documentation metadata file (sinytra-wiki.json)
+            root = file('docs/champions')
+            exportedAssetNamespaces = ['championns']
+        }
+    }
+}
 
 minecraft {
     mappings channel: mapping_channel, version: mapping_version

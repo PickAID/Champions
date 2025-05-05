@@ -1,0 +1,10 @@
+{
+  "id": "champions-unofficial",
+  "platforms": {
+    "curseforge": "1074990"
+  },
+  "versions": {
+    "1.21.1": "1.21.1",
+    "1.20.1": "1-20-1"
+  }
+}
