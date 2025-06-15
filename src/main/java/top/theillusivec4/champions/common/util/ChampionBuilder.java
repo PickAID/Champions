@@ -23,6 +23,8 @@ import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
 
 import java.util.*;
 
+import static top.theillusivec4.champions.common.integration.gamestages.GameStagesPlugin.hasTierStage;
+
 public class ChampionBuilder {
 	private static final RandomSource RAND = RandomSource.createNewThreadLocalInstance();
 
@@ -119,7 +121,13 @@ public class ChampionBuilder {
 		int maxTier = tierRange[1];
 
 		// 过滤出符合等级范围的Rank
-		ImmutableSortedMap<Integer, Rank> filteredRanks = ranks.subMap(minTier, true, maxTier, true);
+		ImmutableSortedMap<Integer, Rank> filteredRanks = ranks.subMap(minTier, true, maxTier, true).entrySet().stream()
+				.filter(entry -> !Utils.isGameStagesLoaded() || hasTierStage(entry.getKey(), livingEntity))
+				.collect(ImmutableSortedMap.toImmutableSortedMap(
+						Comparator.naturalOrder(),
+						Map.Entry::getKey,
+						Map.Entry::getValue
+				));
 
 		// 检查是否有符合条件的Rank
 		if (filteredRanks.isEmpty()) {

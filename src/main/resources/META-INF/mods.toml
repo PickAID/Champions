@@ -35,5 +35,11 @@ description='''${mod_description}'''
   side="BOTH"
 [[dependencies.${mod_id}]]
   modId="scalinghealth"
+  ordering="AFTER"
   mandatory=false
   versionRange="${scalinghealth_version_range}"
+[[dependencies.${mod_id}]]
+  modId="gamestages"
+  mandatory=false
+  ordering="AFTER"
+  versionRange="${gamestages_version_range}"

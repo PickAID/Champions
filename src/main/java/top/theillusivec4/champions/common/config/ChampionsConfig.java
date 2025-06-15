@@ -164,7 +164,7 @@ public class ChampionsConfig {
         allowChampionsPermission = COMMON.allowChampionsPermission.get();
     }
 
-    public static void bake() {
+    public static void buildServer() {
 
         fakeLoot = SERVER.fakeLoot.get();
         lootSource = SERVER.lootSource.get();
@@ -266,6 +266,9 @@ public class ChampionsConfig {
             scalingHealthSpawnModifiers = SERVER.scalingHealthSpawnModifiers.get();
             ScalingHealthPlugin.buildModifiers();
         }
+    }
+
+    public static void buildStageConfig(){
         if (Utils.isGameStagesLoaded()) {
             entityStages = STAGE.entityStages.get();
             tierStages = STAGE.tierStages.get();
