@@ -208,11 +208,11 @@ public class ChampionsConfig {
         infestedInterval = SERVER.infestedInterval.get();
 
         EntityType<?> type = ForgeRegistries.ENTITY_TYPES
-                .getValue(new ResourceLocation(SERVER.infestedParasite.get()));
+                .getValue(ResourceLocation.parse(SERVER.infestedParasite.get()));
         infestedParasite = type != null ? type : EntityType.SILVERFISH;
 
         type = ForgeRegistries.ENTITY_TYPES
-                .getValue(new ResourceLocation(SERVER.infestedEnderParasite.get()));
+                .getValue(ResourceLocation.parse(SERVER.infestedEnderParasite.get()));
         infestedEnderParasite = type != null ? type : EntityType.ENDERMITE;
 
         paralyzingChance = SERVER.paralyzingChance.get();
@@ -235,7 +235,7 @@ public class ChampionsConfig {
             if (s.length < 1) {
                 throw new IllegalArgumentException();
             }
-            MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(new ResourceLocation(s[0]));
+            MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.parse(s[0]));
 
             if (effect == null) {
                 throw new IllegalArgumentException();
@@ -277,7 +277,7 @@ public class ChampionsConfig {
         boolean valid = false;
         if (obj instanceof List<?> entityNameList) {
             for (var entityName : entityNameList) {
-                ResourceLocation location = new ResourceLocation((String) entityName);
+                ResourceLocation location = ResourceLocation.parse((String) entityName);
                 valid = ForgeRegistries.ENTITY_TYPES.containsKey(location);
             }
         }

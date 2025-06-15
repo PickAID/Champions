@@ -39,7 +39,7 @@ public class AffixTypes {
                 .setType(Utils.getLocation("adaptable"))
                 .setCategory(AffixCategory.DEFENSE)
                 .setHasSub(false)
-                .setMobList(List.of(new ResourceLocation("minecraft:pig"), new ResourceLocation("minecraft:creeper")))
+                .setMobList(List.of(ResourceLocation.withDefaultNamespace("pig"), ResourceLocation.withDefaultNamespace("creeper")))
                 .setMobPermission(ConfigEnums.Permission.BLACKLIST).setEnable(true)
                 .setTier(MinMaxBounds.Ints.between(1, 100))
                 .build());

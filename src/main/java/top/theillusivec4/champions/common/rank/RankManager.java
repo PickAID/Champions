@@ -110,7 +110,7 @@ public class RankManager {
 
         rank.effects.forEach(effect -> {
             String[] parsed = effect.split(";");
-            Optional<Holder<MobEffect>> found = ForgeRegistries.MOB_EFFECTS.getHolder(new ResourceLocation(parsed[0]));
+            Optional<Holder<MobEffect>> found = ForgeRegistries.MOB_EFFECTS.getHolder(ResourceLocation.parse(parsed[0]));
 
             if (found.isPresent()) {
                 int amplifier = 0;

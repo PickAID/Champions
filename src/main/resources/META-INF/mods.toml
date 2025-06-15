@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="${loader_version_range}"
 license="${mod_license}"
-issueTrackerURL="https://github.com/TheIllusiveC4/Champions/issues"
+issueTrackerURL="https://github.com/CrychicTeam/Champions/issues"
 logoFile="champions_icon.png"
 logoBlur=false
 [[mods]]

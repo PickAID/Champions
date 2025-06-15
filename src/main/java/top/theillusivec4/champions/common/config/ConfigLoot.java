@@ -74,7 +74,7 @@ public class ConfigLoot {
                     continue;
                 }
 
-                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(parsed[1]));
+                Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(parsed[1]));
 
                 if (item == null) {
                     Champions.LOGGER.error("Item not found! {}", parsed[1]);

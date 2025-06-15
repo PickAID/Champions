@@ -1,8 +1,6 @@
 package top.theillusivec4.champions.api;
 
 import net.minecraft.resources.ResourceLocation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixDataLoader;
 import top.theillusivec4.champions.api.data.AttributesModifierDataLoader;
@@ -15,7 +13,6 @@ public class ChampionsApiImpl implements IChampionsApi {
     private static final ConcurrentHashMap<AffixCategory, List<IAffix>> categories = new ConcurrentHashMap<>();
     private static final AffixDataLoader AFFIX_DATA_LOADER = new AffixDataLoader();
     private static final AttributesModifierDataLoader ATTRIBUTES_MODIFIER_DATA_LOADER = new AttributesModifierDataLoader();
-    private static final Logger LOGGER = LogManager.getLogger();
     private static ChampionsApiImpl instance = null;
 
     private ChampionsApiImpl() {
@@ -35,7 +32,7 @@ public class ChampionsApiImpl implements IChampionsApi {
 
     @Override
     public Optional<IAffix> getAffix(String id) {
-        return getAffix(new ResourceLocation(id));
+        return getAffix(ResourceLocation.parse(id));
     }
 
     @Override

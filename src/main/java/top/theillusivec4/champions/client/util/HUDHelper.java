@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class HUDHelper {
 
-    private static final ResourceLocation GUI_BAR_TEXTURES = new ResourceLocation("textures/gui/bars.png");
+    private static final ResourceLocation GUI_BAR_TEXTURES = ResourceLocation.withDefaultNamespace("textures/gui/bars.png");
     private static final ResourceLocation GUI_STAR = Utils.getLocation("textures/gui/staricon.png");
 
     public static boolean renderHealthBar(GuiGraphics guiGraphics, final LivingEntity livingEntity) {

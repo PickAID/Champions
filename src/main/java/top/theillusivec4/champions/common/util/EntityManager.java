@@ -35,7 +35,7 @@ public class EntityManager {
                 return;
             }
             EntityType<?> type = ForgeRegistries.ENTITY_TYPES
-                    .getValue(new ResourceLocation(entityConfig.entity));
+                    .getValue(ResourceLocation.parse(entityConfig.entity));
 
             if (type == null) {
                 Champions.LOGGER.error("Invalid identifier while building entity settings, skipping...");

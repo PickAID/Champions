@@ -38,6 +38,7 @@ import top.theillusivec4.champions.common.util.ChampionBuilder;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNullableByDefault;
 import java.util.*;
 
 public class ChampionEggItem extends EggItem {
@@ -65,7 +66,7 @@ public class ChampionEggItem extends EggItem {
             String id = entityTag.get().getString(ID_TAG);
 
             if (!id.isEmpty()) {
-                return Optional.ofNullable(ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(id)));
+                return Optional.ofNullable(ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id)));
             }
         }
         return Optional.empty();
@@ -131,8 +132,9 @@ public class ChampionEggItem extends EggItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level worldIn,
-                                @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
+    @ParametersAreNullableByDefault
+    public void appendHoverText(ItemStack stack, Level worldIn,
+                                 List<Component> tooltip, TooltipFlag flagIn) {
         boolean hasAffix = false;
         Optional<CompoundTag> entityTag = getTagOrEmpty(stack, CHAMPION_TAG);
         if (entityTag.isPresent()) {

@@ -21,7 +21,7 @@ public class JadePlugin implements IWailaPlugin {
         registration.registerEntityComponent(ChampionComponentProvider.INSTANCE, LivingEntity.class);
         registration.addBeforeRenderCallback(((iBoxElement, tooltipRect, guiGraphics, accessor, colorSetting) -> {
             if (ChampionsOverlay.isRendering) {
-                tooltipRect.setY(ChampionsOverlay.startY + 38);
+                tooltipRect.setY(tooltipRect.getY() + ChampionsOverlay.startY + 38);
             }
             return false;
         }));

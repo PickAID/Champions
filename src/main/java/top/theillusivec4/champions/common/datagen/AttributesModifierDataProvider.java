@@ -79,7 +79,7 @@ public class AttributesModifierDataProvider implements DataProvider {
                 futures.add(lookupProvider.thenCompose(provider ->
                         DataProvider.saveStable(cachedOutput, ModifierSetting.MAP_CODEC.codec().encodeStart(JsonOps.INSTANCE, new ModifierSetting(attributeId,
                                         ref.enable, Pair.of(ref.baseValue, ref.operation),
-                                        Optional.of(new ChampionModifierCondition(Optional.of(Set.of(new ResourceLocation("minecraft:creeper"))),
+                                        Optional.of(new ChampionModifierCondition(Optional.of(Set.of(ResourceLocation.withDefaultNamespace("creeper"))),
                                                 Optional.of(MinMaxBounds.Ints.ANY),
                                                 Optional.of(new AffixesPredicate(Set.of(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY)), ConfigEnums.Permission.BLACKLIST)))).result().orElseThrow()
                                 , outputPath)

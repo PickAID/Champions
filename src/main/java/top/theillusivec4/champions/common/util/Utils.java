@@ -55,7 +55,7 @@ public class Utils {
     }
 
     public static ResourceLocation getLocation(final String path) {
-        return new ResourceLocation(Champions.MODID, path);
+        return ResourceLocation.fromNamespaceAndPath(Champions.MODID, path);
     }
 
     public static Set<ResourceLocation> getLocationSet(final String... path) {

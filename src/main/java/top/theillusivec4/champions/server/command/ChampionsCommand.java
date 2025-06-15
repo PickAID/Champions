@@ -25,7 +25,6 @@ import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
-import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.item.ChampionEggItem;
 import top.theillusivec4.champions.common.registry.ModItems;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
@@ -47,12 +46,7 @@ public class ChampionsCommand {
             .register(Utils.getLocation("monster_entities"),
                     (context, builder) -> SharedSuggestionProvider.suggestResource(
                             ForgeRegistries.ENTITY_TYPES.getValues().stream()
-                                    .filter(type -> {
-                                        if (ChampionsConfig.allowChampionsList) {
-                                            return ChampionHelper.isValidChampionEntityType(type);
-                                        }
-                                        return type.getCategory() == MobCategory.MONSTER;
-                                    }),
+                                    .filter(ChampionHelper::isValidChampionEntityType),
                             builder, EntityType::getKey,
                             (type) -> Component.translatable(
                                     Util.makeDescriptionId("entity", EntityType.getKey(type)))));
@@ -170,6 +164,6 @@ public class ChampionsCommand {
     }
 
     private static ResourceLocation getEntityKey(EntityType<?> entityType) {
-        return Optional.ofNullable(ForgeRegistries.ENTITY_TYPES.getKey(entityType)).orElse(new ResourceLocation("minecraft:pig"));
+        return Optional.ofNullable(ForgeRegistries.ENTITY_TYPES.getKey(entityType)).orElse(ResourceLocation.withDefaultNamespace("pig"));
     }
 }

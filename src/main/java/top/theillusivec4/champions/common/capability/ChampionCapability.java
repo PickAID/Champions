@@ -50,11 +50,11 @@ public class ChampionCapability {
         return new Provider(livingEntity);
     }
 
-    public static LazyOptional<IChampion> getCapability(final LivingEntity entity) {
+    public static LazyOptional<IChampion> getCapability(@Nullable final LivingEntity entity) {
         return getCapability((Entity) entity);
     }
 
-    public static LazyOptional<IChampion> getCapability(final Entity entity) {
+    public static LazyOptional<IChampion> getCapability(@Nullable final Entity entity) {
 
         if (!ChampionHelper.isValidChampionEntity(entity)) {
             return LazyOptional.empty();

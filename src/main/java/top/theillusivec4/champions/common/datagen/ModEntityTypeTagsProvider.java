@@ -42,7 +42,7 @@ public class ModEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
     }
 
     private ResourceKey<EntityType<?>> create(String name) {
-        return ResourceKey.create(Registries.ENTITY_TYPE, new ResourceLocation(name));
+        return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.parse(name));
     }
 
     private ResourceKey<EntityType<?>> lookup(HolderLookup.Provider provider, String name) {

@@ -35,12 +35,12 @@ public class GatewaysConfigProvider implements DataProvider {
 		gatewaysSettings.add(new GatewaysSetting(Utils.getLocation("wave_0to1"),
 				MinMaxBounds.Ints.atLeast(1), List.of(AffixTypes.HASTY.get().getIdentifier()),
 				MinMaxBounds.Ints.between(0, 1), Gateways.NORMAL,
-				Optional.of(List.of(new ResourceLocation("minecraft:pig"), new ResourceLocation("minecraft:zombie"))),
+				Optional.of(List.of(ResourceLocation.withDefaultNamespace("pig"), ResourceLocation.withDefaultNamespace("zombie"))),
 				Optional.of(false)));
 		gatewaysSettings.add(new GatewaysSetting(Utils.getLocation("wave_2to5"),
 				MinMaxBounds.Ints.between(2, 5), List.of(AffixTypes.MAGNETIC.get().getIdentifier(), AffixTypes.DAMPENING.get().getIdentifier(), AffixTypes.DESECRATING.get().getIdentifier()),
 				MinMaxBounds.Ints.between(2, 4), Gateways.NORMAL,
-				Optional.of(List.of(new ResourceLocation("minecraft:pig"), new ResourceLocation("minecraft:zombie"))),
+				Optional.of(List.of(ResourceLocation.withDefaultNamespace("pig"), ResourceLocation.withDefaultNamespace("zombie"))),
 				Optional.of(false)));
 		gatewaysSettings.forEach(gatewaysSetting -> {
 
