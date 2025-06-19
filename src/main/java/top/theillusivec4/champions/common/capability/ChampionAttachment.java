@@ -1,16 +1,15 @@
 package top.theillusivec4.champions.common.capability;
 
-import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.ValueIOSerializable;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnknownNullability;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
@@ -161,7 +160,7 @@ public class ChampionAttachment {
     }
   }
 
-  public static class Provider implements INBTSerializable<CompoundTag> {
+  public static class Provider implements ValueIOSerializable {
 
     private final IChampion champion;
 
@@ -170,49 +169,43 @@ public class ChampionAttachment {
     }
 
     @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
-      CompoundTag compoundNBT = new CompoundTag();
+    public void serialize(ValueOutput output) {
       IChampion.Server champion = this.champion.getServer();
-      champion.getRank().ifPresent(rank -> compoundNBT.putInt(TIER_TAG, rank.getTier()));
+      champion.getRank().ifPresent(rank -> output.putInt(TIER_TAG, rank.getTier()));
       List<IAffix> affixes = champion.getAffixes();
-      ListTag list = new ListTag();
+      ValueOutput.TypedOutputList<CompoundTag> affixList = output.list(AFFIX_TAG, CompoundTag.CODEC);
       affixes.forEach(affix -> {
         CompoundTag tag = new CompoundTag();
         String id = affix.getIdentifier().toString();
         tag.putString(ID_TAG, id);
         tag.put(DATA_TAG, champion.getData(id));
-        list.add(tag);
+        affixList.add(tag);
       });
-      compoundNBT.put(AFFIX_TAG, list);
-      return compoundNBT;
+
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
+    public void deserialize(ValueInput input) {
       IChampion.Server champion = this.champion.getServer();
 
-      if (nbt.contains(TIER_TAG)) {
-        int tier = nbt.getIntOr(TIER_TAG,-1);
-        champion.setRank(RankManager.getRank(tier));
-      }
-
-      if (nbt.contains(AFFIX_TAG)) {
-        ListTag list = nbt.getListOrEmpty(AFFIX_TAG);
+      input.getInt(TIER_TAG).ifPresent(valueInput -> champion.setRank(RankManager.getRank(valueInput)));
+      // 读取 affixes
+      input.list(AFFIX_TAG, CompoundTag.CODEC).ifPresent(affixList -> {
         List<IAffix> affixes = new ArrayList<>();
 
-        for (int i = 0; i < list.size(); i++) {
-          CompoundTag tag = list.getCompoundOrEmpty(i);
-          String id = tag.getStringOr(ID_TAG,"");
+        // 遍历 TypedInputList<CompoundTag>
+        for (CompoundTag tag : affixList) {
+          String id = tag.getStringOr(ID_TAG, "");
           Champions.API.getAffix(id).ifPresent(affix -> {
             affixes.add(affix);
-
             if (tag.contains(DATA_TAG)) {
               champion.setData(id, tag.getCompound(DATA_TAG).orElseThrow());
             }
           });
         }
+
         champion.setAffixes(affixes);
-      }
+      });
     }
   }
 }

@@ -3,9 +3,9 @@ package top.theillusivec4.champions.client;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.LivingEntity;
+import net.neoforged.neoforge.client.gui.GuiLayer;
 import top.theillusivec4.champions.client.util.HUDHelper;
 import top.theillusivec4.champions.client.util.MouseHelper;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -14,7 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ChampionsOverlay implements LayeredDraw.Layer {
+public class ChampionsOverlay implements GuiLayer {
 
   public static boolean isRendering = false;
   public static int startX = 0;

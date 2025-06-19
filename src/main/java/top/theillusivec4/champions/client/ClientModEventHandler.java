@@ -14,7 +14,7 @@ import top.theillusivec4.champions.common.registry.ModEntityTypes;
 import top.theillusivec4.champions.common.registry.ModParticleTypes;
 import top.theillusivec4.champions.common.util.Utils;
 
-@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD, modid = Champions.MODID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Champions.MODID)
 public class ClientModEventHandler {
 
   @SubscribeEvent

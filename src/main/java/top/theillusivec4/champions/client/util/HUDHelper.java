@@ -2,7 +2,7 @@ package top.theillusivec4.champions.client.util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
@@ -46,12 +46,12 @@ public class HUDHelper {
           ChampionsOverlay.startX = xOffset + k;
           ChampionsOverlay.startY = yOffset + 1;
 
-          guiGraphics.blit(RenderType::guiTextured, GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256, color);
+          guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256, color);
           int healthOffset =
             (int) ((livingEntity.getHealth() / livingEntity.getMaxHealth()) * 183.0F);
 
           if (healthOffset > 0) {
-            guiGraphics.blit(RenderType::guiTextured, GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
               256, color);
           }
 
@@ -59,16 +59,16 @@ public class HUDHelper {
             int startStarsX = xOffset + i / 2 - 5 - 5 * (championLevel - 1);
 
             for (int tier = 0; tier < championLevel; tier++) {
-              guiGraphics.blit(RenderType::guiTextured, GUI_STAR, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9, color);
+              guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI_STAR, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9, color);
               startStarsX += 10;
             }
           } else {
             int startStarsX = xOffset + i / 2 - 5;
             String count = "x" + championLevel;
-            guiGraphics.blit(RenderType::guiTextured, GUI_STAR, startStarsX - client.font.width(count) / 2,
+            guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI_STAR, startStarsX - client.font.width(count) / 2,
               yOffset + 1, 0, 0, 9, 9, 9, 9, color);
             guiGraphics.drawString(client.font, count,
-              startStarsX + 10 - client.font.width(count) / 2.0F, yOffset + 2,
+              (int) (startStarsX + 10 - client.font.width(count) / 2.0F), yOffset + 2,
               16777215, true);
           }
           Component customName = livingEntity.getCustomName();
@@ -81,8 +81,8 @@ public class HUDHelper {
             name = customName.getString();
           }
           guiGraphics.drawString(client.font, name,
-            xOffset + (float) (i / 2 - client.font.width(name) / 2),
-            yOffset + (float) (j - 9), color, true);
+            (int) (xOffset + (float) (i / 2 - client.font.width(name) / 2)),
+            (int) (yOffset + (float) (j - 9)), color, true);
           StringBuilder builder = new StringBuilder();
 
           for (var affix : affixSet) {
@@ -92,8 +92,8 @@ public class HUDHelper {
           }
           String affixes = builder.toString().trim();
           guiGraphics.drawString(client.font, affixes,
-            xOffset + (float) (i / 2 - client.font.width(affixes) / 2),
-            yOffset + (float) (j + 6), 16777215, true);
+            (int) (xOffset + (float) (i / 2 - client.font.width(affixes) / 2)),
+            (int) (yOffset + (float) (j + 6)), 16777215, true);
           return true;
         }
         return false;

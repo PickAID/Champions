@@ -4,7 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -16,10 +16,10 @@ import top.theillusivec4.champions.common.registry.ModEntityTypes;
 import java.util.concurrent.CompletableFuture;
 
 
-public class ModEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
+public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
   public ModEntityTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future) {
-    super(output, Registries.ENTITY_TYPE, future, Champions.MODID);
+    super(output, future, Champions.MODID);
   }
 
   @Override
@@ -33,7 +33,7 @@ public class ModEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
   }
 
   void addEntity(Holder.Reference<EntityType<?>> entityType) {
-    tag(ModEntityTypes.Tags.ALLOW_CHAMPIONS).add(entityType.key());
+    tag(ModEntityTypes.Tags.ALLOW_CHAMPIONS).add(entityType.value());
   }
 
   private HolderLookup.RegistryLookup<EntityType<?>> lookUpMonster(@NotNull HolderLookup.Provider provider) {
@@ -44,7 +44,7 @@ public class ModEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
     return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.parse(name));
   }
 
-  private ResourceKey<EntityType<?>> lookup(HolderLookup.Provider provider, String name) {
-    return provider.lookupOrThrow(Registries.ENTITY_TYPE).getOrThrow(create(name)).key();
+  private EntityType<?> lookup(HolderLookup.Provider provider, String name) {
+    return provider.lookupOrThrow(Registries.ENTITY_TYPE).getOrThrow(create(name)).value();
   }
 }

@@ -10,7 +10,7 @@ import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.registry.ModMobEffects;
 
-@EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME, modid = Champions.MODID)
+@EventBusSubscriber(value = Dist.CLIENT, modid = Champions.MODID)
 public class ClientAffixEventsHandler {
 
   @SubscribeEvent

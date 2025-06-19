@@ -7,8 +7,6 @@ import net.minecraft.core.Position;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.TagTypes;
 import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -23,6 +21,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -71,35 +71,36 @@ public abstract class BaseBulletEntity extends Projectile {
     return SoundSource.HOSTILE;
   }
 
-  protected void addAdditionalSaveData(@Nonnull CompoundTag pCompound) {
-    super.addAdditionalSaveData(pCompound);
+  protected void addAdditionalSaveData(@Nonnull ValueOutput valueOutput) {
+    super.addAdditionalSaveData(valueOutput);
 
     if (this.finalTarget != null) {
-      pCompound.store("Target", UUIDUtil.CODEC, this.finalTarget.getUUID());
+      valueOutput.store("Target", UUIDUtil.CODEC, this.finalTarget.getUUID());
     }
 
     if (this.currentMoveDirection != null) {
-      pCompound.putInt("Dir", this.currentMoveDirection.get3DDataValue());
+      valueOutput.putInt("Dir", this.currentMoveDirection.get3DDataValue());
     }
-    pCompound.putInt("Steps", this.flightSteps);
-    pCompound.putDouble("TXD", this.targetDeltaX);
-    pCompound.putDouble("TYD", this.targetDeltaY);
-    pCompound.putDouble("TZD", this.targetDeltaZ);
+    valueOutput.putInt("Steps", this.flightSteps);
+    valueOutput.putDouble("TXD", this.targetDeltaX);
+    valueOutput.putDouble("TYD", this.targetDeltaY);
+    valueOutput.putDouble("TZD", this.targetDeltaZ);
   }
 
-  protected void readAdditionalSaveData(@Nonnull CompoundTag pCompound) {
-    super.readAdditionalSaveData(pCompound);
-    this.flightSteps = pCompound.getIntOr("Steps", 0);
-    this.targetDeltaX = pCompound.getDoubleOr("TXD", 0);
-    this.targetDeltaY = pCompound.getDoubleOr("TYD", 0);
-    this.targetDeltaZ = pCompound.getDoubleOr("TZD", 0);
+  @Override
+  protected void readAdditionalSaveData(@Nonnull ValueInput valueOutput) {
+    super.readAdditionalSaveData(valueOutput);
+    this.flightSteps = valueOutput.getIntOr("Steps", 0);
+    this.targetDeltaX = valueOutput.getDoubleOr("TXD", 0);
+    this.targetDeltaY = valueOutput.getDoubleOr("TYD", 0);
+    this.targetDeltaZ = valueOutput.getDoubleOr("TZD", 0);
 
-    if (pCompound.contains("Dir") && pCompound.getType() == TagTypes.getType(3)) {
-      this.currentMoveDirection = Direction.from3DDataValue(pCompound.getInt("Dir").orElse(0));
+    if (valueOutput.child("Dir").isPresent()) {
+      this.currentMoveDirection = Direction.from3DDataValue(valueOutput.getInt("Dir").orElse(0));
     }
 
-    if (pCompound.contains("Target")) {
-      this.targetId = pCompound.read("Target", UUIDUtil.CODEC).orElse(null);
+    if (valueOutput.child("Target").isPresent()) {
+      this.targetId = valueOutput.read("Target", UUIDUtil.CODEC).orElse(null);
     }
   }
 

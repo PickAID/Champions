@@ -1,12 +1,14 @@
 package top.theillusivec4.champions.client.integration.jade;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
-import net.minecraft.world.phys.Vec2;
+import org.jetbrains.annotations.Nullable;
 import snownee.jade.api.ui.Element;
+import snownee.jade.api.ui.ResizeableElement;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.client.util.HUDHelper;
 
@@ -19,6 +21,8 @@ public class StarElement extends Element {
     this.color = ARGB.opaque(TextColor.parseColor(colorCode).getOrThrow().getValue());
     this.starCount = starCount;
     this.spacing = spacing;
+    this.width = starCount * 9 + (starCount - 1) * spacing;
+    this.height = 9 + ClientChampionsConfig.jadeStarBottomPadding;
   }
 
   public static StarElement of(int starCount, final String colorCode, int spacing) {
@@ -30,24 +34,28 @@ public class StarElement extends Element {
   }
 
   @Override
-  public Vec2 getSize() {
-    // 宽度 = (9px * 星星数) + (间距 * (星星数 - 1))
-    return new Vec2(starCount * 9 + (starCount - 1) * spacing, 9 + ClientChampionsConfig.jadeStarBottomPadding);
+  public ResizeableElement size(int width, int height) {
+    return super.size(width, height);
   }
 
   @Override
-  public void render(GuiGraphics guiGraphics, float x, float y, float maxX, float maxY) {
+  public @Nullable Component getNarration() {
+    return null;
+  }
+
+  @Override
+  public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
     // set render element color
-    guiGraphics.pose().pushPose();
+    guiGraphics.pose().pushMatrix();
     for (int i = 0; i < starCount; i++) {
-      guiGraphics.blit(RenderType::guiTextured,
+      guiGraphics.blit(RenderPipelines.GUI_TEXTURED,
         getTexture(),
-        (int) (x + i * (9 + spacing)), // 计算 X 偏移量
-        (int) y, // Y 坐标不变
+        this.getX() + mouseX + i * (9 + spacing), // 计算 X 偏移量
+        this.getY() + mouseY, // Y 坐标不变
         0, 0,
         9, 9, 9, 9, color
       );
     }
-    guiGraphics.pose().popPose();
+    guiGraphics.pose().pushMatrix();
   }
 }
