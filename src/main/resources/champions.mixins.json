@@ -7,7 +7,6 @@
     "ServerGamePacketListenerImplMixin"
   ],
   "client": [
-    "BlockModelWrapperMixin"
   ],
   "injectors": {
     "defaultRequire": 1

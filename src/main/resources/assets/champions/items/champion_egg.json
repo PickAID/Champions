@@ -4,8 +4,12 @@
     "model": "minecraft:item/template_spawn_egg",
     "tints": [
       {
-        "type": "champions:champion_egg",
-        "default": 65280
+        "type": "minecraft:constant",
+        "value": -16732241
+      },
+      {
+        "type": "minecraft:constant",
+        "value": -8807323
       }
     ]
   }
