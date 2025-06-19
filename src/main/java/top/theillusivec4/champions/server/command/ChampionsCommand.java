@@ -15,6 +15,7 @@ import net.minecraft.commands.arguments.ResourceLocationArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.IAffix;
@@ -131,7 +133,7 @@ public class ChampionsCommand {
       ChampionBuilder.spawnPreset(champion, tier, new ArrayList<>(affixes));
       source.getLevel().addFreshEntity(champion.getLivingEntity());
       source.sendSuccess(() -> Component.translatable("commands.champions.summon.success",
-        Component.translatable("rank.champions.title." + tier).getString() + " " + Objects.requireNonNull(entity
+        Component.translatable("rank.champions.title." + tier).getString() + " " + Objects.requireNonNull(champion.getLivingEntity()
           .getDisplayName()).getString()), false);
     });
 
@@ -155,8 +157,32 @@ public class ChampionsCommand {
                                     int tier,
                                     Collection<IAffix> affixes) {
     ItemStack egg = new ItemStack(ModItems.CHAMPION_EGG_ITEM.get());
+
+    // Get entity's egg model data
+    // then applies to champions egg
+    applyItemModelOrFallback(egg, entityType);
+
     ChampionEggItem.write(egg, getEntityKey(entityType), tier, affixes);
     return egg;
+  }
+
+  /**
+   * Apply itemModel from an entity type<br/>
+   * if entity hasn't itemModel, then fallback to Zombie ItemModel
+   *
+   * @param championEgg  the champion egg used to summon champion, will copy model data from entity type
+   * @param hasItemModel the entity type that we will look up SpawnEggItem model data
+   */
+  private static void applyItemModelOrFallback(ItemStack championEgg, EntityType<?> hasItemModel) {
+    var entityNormalSpawnEgg = SpawnEggItem.byId(hasItemModel);
+    if (entityNormalSpawnEgg != null) {
+      ItemStack entityEggStack = new ItemStack(entityNormalSpawnEgg);
+      ResourceLocation itemModelLocation = entityEggStack.get(DataComponents.ITEM_MODEL);
+      if (itemModelLocation == null) {
+        itemModelLocation = Objects.requireNonNull(SpawnEggItem.byId(EntityType.ZOMBIE)).getDefaultInstance().get(DataComponents.ITEM_MODEL);
+      }
+      championEgg.set(DataComponents.ITEM_MODEL, itemModelLocation);
+    }
   }
 
   private static ResourceLocation getEntityKey(EntityType<?> entityType) {
