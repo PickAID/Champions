@@ -7,12 +7,15 @@
         {
           "type": "item",
           "name": "minecraft:book",
-          "weight": 1,
+          "weight": 10,
           "conditions": [
             {
               "condition": "champions:champion_properties",
               "entity": "this",
-              "tier": 1
+              "tier": {
+                "min": 1,
+                "max": 1
+              }
             },
             {
               "condition": "killed_by_player"
@@ -21,6 +24,53 @@
           "functions": [
             {
               "function": "enchant_randomly"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:iron_ingot",
+          "weight": 40,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "condition": "killed_by_player"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2,
+                "min": 1
+              },
+              "function": "minecraft:set_count"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 50,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 1,
+                "max": 1
+              }
+            },
+            {
+              "condition": "killed_by_player"
             }
           ]
         }
@@ -33,12 +83,15 @@
         {
           "type": "item",
           "name": "minecraft:book",
-          "weight": 1,
+          "weight": 15,
           "conditions": [
             {
               "condition": "champions:champion_properties",
               "entity": "this",
-              "tier": 2
+              "tier": {
+                "min": 2,
+                "max": 2
+              }
             },
             {
               "condition": "killed_by_player"
@@ -47,6 +100,53 @@
           "functions": [
             {
               "function": "enchant_randomly"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:iron_ingot",
+          "weight": 50,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 2,
+                "max": 2
+              }
+            },
+            {
+              "condition": "killed_by_player"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3,
+                "min": 2
+              },
+              "function": "minecraft:set_count"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 35,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 2,
+                "max": 2
+              }
+            },
+            {
+              "condition": "killed_by_player"
             }
           ]
         }
@@ -59,12 +159,15 @@
         {
           "type": "item",
           "name": "minecraft:book",
-          "weight": 1,
+          "weight": 15,
           "conditions": [
             {
               "condition": "champions:champion_properties",
               "entity": "this",
-              "tier": 3
+              "tier": {
+                "min": 3,
+                "max": 3
+              }
             },
             {
               "condition": "killed_by_player"
@@ -73,6 +176,82 @@
           "functions": [
             {
               "function": "enchant_randomly"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:iron_ingot",
+          "weight": 35,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 3,
+                "max": 3
+              }
+            },
+            {
+              "condition": "killed_by_player"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4,
+                "min": 3
+              },
+              "function": "minecraft:set_count"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:gold_ingot",
+          "weight": 35,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 3,
+                "max": 3
+              }
+            },
+            {
+              "condition": "killed_by_player"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4,
+                "min": 3
+              },
+              "function": "minecraft:set_count"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:air",
+          "weight": 15,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 3,
+                "max": 3
+              }
+            },
+            {
+              "condition": "killed_by_player"
             }
           ]
         }
@@ -85,13 +264,14 @@
         {
           "type": "item",
           "name": "minecraft:book",
-          "weight": 1,
+          "weight": 25,
           "conditions": [
             {
               "condition": "champions:champion_properties",
               "entity": "this",
               "tier": {
-                "min": 4
+                "min": 4,
+                "max": 4
               }
             },
             {
@@ -101,6 +281,93 @@
           "functions": [
             {
               "function": "enchant_randomly"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:iron_ingot",
+          "weight": 25,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 4,
+                "max": 4
+              }
+            },
+            {
+              "condition": "killed_by_player"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4,
+                "min": 3
+              },
+              "function": "minecraft:set_count"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:gold_ingot",
+          "weight": 25,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 4,
+                "max": 4
+              }
+            },
+            {
+              "condition": "killed_by_player"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6,
+                "min": 4
+              },
+              "function": "minecraft:set_count"
+            }
+          ]
+        },
+        {
+          "type": "item",
+          "name": "minecraft:diamond",
+          "weight": 25,
+          "conditions": [
+            {
+              "condition": "champions:champion_properties",
+              "entity": "this",
+              "tier": {
+                "min": 4,
+                "max": 4
+              }
+            },
+            {
+              "condition": "killed_by_player"
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3,
+                "min": 1
+              },
+              "function": "minecraft:set_count"
             }
           ]
         }
