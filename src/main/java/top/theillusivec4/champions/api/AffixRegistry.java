@@ -7,6 +7,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.RegistryBuilder;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.affix.IAffix;
+import top.theillusivec4.champions.common.affix.core.BasicAffix;
 import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.function.Supplier;
@@ -20,8 +22,15 @@ public class AffixRegistry {
             .setName(AFFIX_REGISTRY_KEY.location())
             .setMaxID(2048)
             .setDefaultKey(EMPTY)
-            .add((owner, id, key, resourceLocation, obj) -> {
-                Champions.LOGGER.info("Affix added to registry: {}", resourceLocation);
+            .onAdd((owner, manager, id, resourceKey, affix, oldAffix) -> {
+                if (affix instanceof BasicAffix basic) {
+                    // apply default setting with id
+                    basic.applyDefaultSettingWithId(affix.getIdentifier());
+                    basic.tryRegisterEvents();
+                    // add affix to category map
+                    Champions.API.addCategory(basic.getCategory(), basic);
+                }
+                Champions.LOGGER.info("Affix added to registry: {}", resourceKey);
             })
     );
 

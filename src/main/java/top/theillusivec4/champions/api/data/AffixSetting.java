@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
+import top.theillusivec4.champions.api.AffixSettingBuilder;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -28,5 +29,22 @@ public record AffixSetting(ResourceLocation type, boolean enabled, Optional<MinM
 
     public static AffixSetting empty() {
         return new AffixSetting(Utils.getLocation("empty"), false, Optional.empty(), Optional.empty(), Optional.empty(), AffixCategory.CC, Optional.empty(), Optional.empty());
+    }
+
+    public static AffixSettingBuilder builder(){
+        return new AffixSettingBuilder();
+    }
+
+    public AffixSetting withNewType(ResourceLocation newType) {
+        return new AffixSetting(
+                newType,
+                this.enabled(),
+                this.tier(),
+                this.mobList(),
+                this.mobPermission(),
+                this.category(),
+                this.prefix(),
+                this.hasSub()
+        );
     }
 }

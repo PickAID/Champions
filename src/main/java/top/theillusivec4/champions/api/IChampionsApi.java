@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.api;
 
 import net.minecraft.resources.ResourceLocation;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixDataLoader;
 import top.theillusivec4.champions.api.data.AttributesModifierDataLoader;

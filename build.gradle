@@ -130,18 +130,26 @@ repositories {
 
 }
 
+def isRunDataTask = gradle.startParameter.taskNames.any {
+    it.contains('runData') || it.contains('Data')
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    implementation fg.deobf("dev.latvian.mods:kubejs-forge:2001.6.5-build.16")
-    implementation fg.deobf("dev.latvian.mods:rhino-forge:2001.2.3-build.6")
+
+
+    implementation fg.deobf("curse.maven:rhino-416294:6186971")
     implementation fg.deobf("dev.architectury:architectury-forge:9.2.14")
+    // fixed kubejs stuck gradle when runData
+    if (isRunDataTask){
+        compileOnly fg.deobf("curse.maven:kubejs-238086:5853326")
+        compileOnly fg.deobf("curse.maven:probejs-585406:5227399")
+    } else {
+        implementation fg.deobf("curse.maven:kubejs-238086:5853326")
+        implementation fg.deobf("curse.maven:probejs-585406:5227399")
+    }
 
-
-
-
-
-//  implementation fg.deobf("net.darkhax.gamestages:GameStages-Forge-1.18.2:${gamestages_version}")
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
     if (rootMod.toBoolean()) {
         implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
@@ -173,7 +181,6 @@ dependencies {
     implementation fg.deobf("curse.maven:gateways-to-eternity-417802:5703251")
     implementation fg.deobf("curse.maven:placebo-283644:5414631")
     implementation fg.deobf("curse.maven:apotheosis-313970:6147871")
-    implementation fg.deobf("curse.maven:probejs-585406:5227399")
     implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
     implementation fg.deobf("curse.maven:citadel-331936:6002521")
 

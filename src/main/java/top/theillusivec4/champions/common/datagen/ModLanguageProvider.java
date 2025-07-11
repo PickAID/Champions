@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraftforge.common.data.LanguageProvider;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.registry.ModDamageTypes;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
 

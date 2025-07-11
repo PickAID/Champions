@@ -5,20 +5,22 @@ import dev.latvian.mods.kubejs.registry.RegistryInfo;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
-import top.theillusivec4.champions.api.BasicAffixBuilder;
+import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.AffixSettingBuilder;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.common.affix.core.CombatLifeCycleAffix;
 import top.theillusivec4.champions.common.integration.kubejs.ChampionsKubeJSPlugin;
 
 import java.util.function.Consumer;
 
-public class CustomAffix extends BasicAffix {
-	private final Builder builder;
+public class CustomAffix extends CombatLifeCycleAffix {
+	private final AffixSetting builder;
 	private final AffixBehavior behavior;
 
-	public CustomAffix(Builder builder) {
+	public CustomAffix(AffixSetting builder, AffixBehavior behavior) {
 		this.builder = builder;
-		this.behavior = builder.behavior;
+		this.behavior = behavior;
 	}
 
 	@Override
@@ -83,28 +85,28 @@ public class CustomAffix extends BasicAffix {
 
 	@Override
 	public float onDamage(IChampion champion, DamageSource source, float amount, float newAmount) {
-		if (builder.behavior.onDamageCallback != null) {
-			return builder.behavior.onDamageCallback.onDamage(champion, source, amount, newAmount);
+		if (this.behavior.onDamageCallback != null) {
+			return this.behavior.onDamageCallback.onDamage(champion, source, amount, newAmount);
 		}
 		return super.onDamage(champion, source, amount, newAmount);
 	}
 
 	@Override
 	public boolean onDeath(IChampion champion, DamageSource source) {
-		if (builder.behavior.onDeathCallback != null) {
-			return builder.behavior.onDeathCallback.onDeath(champion, source);
+		if (this.behavior.onDeathCallback != null) {
+			return this.behavior.onDeathCallback.onDeath(champion, source);
 		}
 		return super.onDeath(champion, source);
 	}
 
 	public static class Builder extends BuilderBase<CustomAffix> {
-		public AffixBehavior behavior;
-		public BasicAffixBuilder<CustomAffix> basicBuilder;
+		private final AffixBehavior behavior;
+		private final AffixSettingBuilder settingBuilder;
 
 		public Builder(ResourceLocation id) {
 			super(id);
-			this.basicBuilder = new BasicAffixBuilder<>(() -> null); // 临时占位
 			this.behavior = new AffixBehavior();
+			this.settingBuilder = new AffixSettingBuilder();
 		}
 
 		@Override
@@ -125,18 +127,17 @@ public class CustomAffix extends BasicAffix {
 		 * Used for kubejs script
 		 */
 		@SuppressWarnings("unused")
-		public Builder settings(Consumer<BasicAffixBuilder<?>> consumer) {
-			consumer.accept(this.basicBuilder);
+		public Builder settings(Consumer<AffixSettingBuilder> consumer) {
+			consumer.accept(this.settingBuilder);
 			return this;
 		}
 
 		@Override
 		public CustomAffix createObject() {
-			CustomAffix affix = new CustomAffix(this);
-
-			basicBuilder.setAffixSupplier(() -> affix);
-
-			return basicBuilder.build();
+			AffixSetting setting = settingBuilder.setType(id).build();
+			CustomAffix affix = new CustomAffix(setting, behavior);
+			Champions.API.addCategory(setting.category(), affix);
+			return affix;
 		}
 	}
 }

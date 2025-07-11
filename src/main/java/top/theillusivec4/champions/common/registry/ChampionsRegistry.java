@@ -11,5 +11,6 @@ public class ChampionsRegistry {
         ModLootModifiers.register(bus);
         ModArgumentTypes.register(bus);
         AffixTypes.register(bus);
+        ModLootItemConditions.register(bus);
     }
 }

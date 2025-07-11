@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -40,7 +40,7 @@ public class ChampionBuilder {
 			ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
 			List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
 			champion.getServer().setAffixes(newAffixes);
-			newAffixes.forEach(affix -> affix.onInitialSpawn(champion));
+			Utils.consumeIfLifeCycle(newAffixes, lifecycle -> lifecycle.onInitialSpawn(champion));
 		}
 	}
 
@@ -50,7 +50,7 @@ public class ChampionBuilder {
 		ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
 		affixes = affixes.isEmpty() ? ChampionBuilder.createAffixes(newRank, champion) : affixes;
 		champion.getServer().setAffixes(affixes);
-		affixes.forEach(affix -> affix.onInitialSpawn(champion));
+		Utils.consumeIfLifeCycle(affixes, lifecycle -> lifecycle.onInitialSpawn(champion));
 	}
 
 	public static List<IAffix> createAffixes(final Rank rank, final IChampion champion) {
@@ -286,7 +286,10 @@ public class ChampionBuilder {
 		ChampionBuilder.applyGrowth(newChampion, rank.getGrowthFactor());
 		List<IAffix> oldAffixes = oldChampion.getServer().getAffixes();
 		newServer.setAffixes(oldAffixes);
-		oldAffixes.forEach(affix -> affix.onInitialSpawn(newChampion));
+		Utils.consumeIfLifeCycle(newServer.getAffixes(), lifecycle -> {
+			lifecycle.onInitialSpawn(newChampion);
+			lifecycle.onSpawn(newChampion);
+		});
 	}
 
 	/**

@@ -1,9 +1,0 @@
-{
-  "type": "champions:champion_loot",
-  "conditions": [
-    {
-      "condition": "champions:champion_properties",
-      "entity": "this"
-    }
-  ]
-}

@@ -12,10 +12,11 @@ import net.minecraft.world.level.storage.loot.Serializer;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.registry.ModLootItemConditions;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -24,9 +25,6 @@ import java.util.Set;
 public record LootItemChampionPropertyCondition(LootContext.EntityTarget target,
                                                 MinMaxBounds.Ints tier, AffixesPredicate affixes)
         implements LootItemCondition {
-
-    public static final LootItemConditionType INSTANCE =
-            new LootItemConditionType(new ChampionConditionSerializer());
 
     @Nonnull
     @Override
@@ -56,7 +54,7 @@ public record LootItemChampionPropertyCondition(LootContext.EntityTarget target,
     @Nonnull
     @Override
     public LootItemConditionType getType() {
-        return INSTANCE;
+        return ModLootItemConditions.CHAMPION_PROPERTIES.get();
     }
 
     public static class ChampionConditionSerializer

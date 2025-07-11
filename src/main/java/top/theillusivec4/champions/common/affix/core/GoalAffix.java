@@ -5,10 +5,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffixLifecycle;
 
 import java.util.List;
 
-public abstract class GoalAffix extends BasicAffix {
+public abstract class GoalAffix extends BasicAffix implements IAffixLifecycle {
 
     @Override
     public void onSpawn(IChampion champion) {

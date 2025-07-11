@@ -13,15 +13,13 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.registry.ModLootItemConditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
 public class EntityIsChampion implements LootItemCondition {
-
-    public static LootItemConditionType type =
-            new LootItemConditionType(new EntityIsChampion.Serializer());
 
     @Nullable
     private final Integer minTier;
@@ -61,7 +59,7 @@ public class EntityIsChampion implements LootItemCondition {
     @Nonnull
     @Override
     public LootItemConditionType getType() {
-        return type;
+        return ModLootItemConditions.ENTITY_IS_CHAMPION.get();
     }
 
     public static class Serializer
