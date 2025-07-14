@@ -15,11 +15,10 @@ import top.theillusivec4.champions.common.integration.kubejs.ChampionsKubeJSPlug
 import java.util.function.Consumer;
 
 public class CustomAffix extends CombatLifeCycleAffix {
-	private final AffixSetting builder;
 	private final AffixBehavior behavior;
 
-	public CustomAffix(AffixSetting builder, AffixBehavior behavior) {
-		this.builder = builder;
+	public CustomAffix(AffixSetting setting, AffixBehavior behavior) {
+		this.setting = setting;
 		this.behavior = behavior;
 	}
 

@@ -26,7 +26,7 @@ import java.util.Optional;
 
 public abstract class AbstractBasicAffix implements IAffix {
 	public static final String DEFAULT_PREFIX = "affix.";
-	private AffixSetting affixSetting = AffixSetting.empty();
+	protected AffixSetting setting = AffixSetting.empty();
 
     public static boolean canTarget(LivingEntity livingEntity, @Nullable LivingEntity target, boolean sightCheck) {
 
@@ -60,21 +60,22 @@ public abstract class AbstractBasicAffix implements IAffix {
 
 	@Override
 	public AffixCategory getCategory() {
-		return affixSetting.category();
+		return setting.category();
 	}
 
 	@Override
 	public boolean isEnabled() {
-		return affixSetting.enabled();
+		return setting.enabled();
 	}
 
+	@Override
 	public ConfigEnums.Permission getMobPermission() {
-		return affixSetting.mobPermission().orElse(ConfigEnums.Permission.BLACKLIST);
+		return setting.mobPermission().orElse(ConfigEnums.Permission.BLACKLIST);
 	}
 
 	@Override
 	public String getPrefix() {
-		return affixSetting.prefix().orElse(DEFAULT_PREFIX);
+		return setting.prefix().orElse(DEFAULT_PREFIX);
 	}
 
 	@Override
@@ -97,32 +98,29 @@ public abstract class AbstractBasicAffix implements IAffix {
 
 	@Override
 	public MinMaxBounds.Ints getTier() {
-		return affixSetting.tier().orElse(MinMaxBounds.Ints.atLeast(1));
+		return setting.tier().orElse(MinMaxBounds.Ints.atLeast(1));
 	}
 
 	@Override
 	public Optional<List<ResourceLocation>> getMobList() {
-		return affixSetting.mobList();
+		return setting.mobList();
 	}
 
 	@Override
 	public AffixSetting getSetting() {
-		return this.affixSetting;
+		if (this.setting == null) {
+			this.setting = createDefaultSetting();
+		}
+		return this.setting;
 	}
 
 	@Override
 	public void applySetting(AffixSetting affixSetting) {
-		this.affixSetting = affixSetting;
+		this.setting = affixSetting;
 	}
 
-	@Override
-	public void applyDefaultSetting() {
-		applySetting(getSetting());
-	}
-
-	@Override
-	public void applyDefaultSettingWithId(ResourceLocation id) {
-		applySetting(createDefaultSetting().withNewType(id));
+	public void applyDefaultSettingWithId() {
+		applySetting(createDefaultSetting().withNewType(getIdentifier()));
 	}
 
 	public boolean isBlackList() {

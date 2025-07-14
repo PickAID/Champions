@@ -15,6 +15,7 @@ public class BasicAffix extends AbstractBasicAffix {
 
     @Override
     public AffixSetting createDefaultSetting() {
-        return AffixSetting.empty();
+        // return default setting(emptySetting)
+        return this.setting;
     }
 }

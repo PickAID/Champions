@@ -11,10 +11,7 @@ import java.util.Optional;
 public interface IAffixSettingHolder {
     void applySetting(AffixSetting affixSetting);
     AffixSetting getSetting();
-    void applyDefaultSetting();
-    void applyDefaultSettingWithId(ResourceLocation id);
     MinMaxBounds.Ints getTier();
     ConfigEnums.Permission getMobPermission();
     Optional<List<ResourceLocation>> getMobList();
-
 }
