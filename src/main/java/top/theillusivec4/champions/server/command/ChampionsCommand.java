@@ -26,7 +26,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import top.theillusivec4.champions.api.AffixRegistry;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.item.ChampionEggItem;
@@ -38,7 +38,6 @@ import top.theillusivec4.champions.common.util.Utils;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Objects;
 
 public class ChampionsCommand {
 
@@ -129,10 +128,11 @@ public class ChampionsCommand {
 
     ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
       ChampionBuilder.spawnPreset(champion, tier, new ArrayList<>(affixes));
-      source.getLevel().addFreshEntity(champion.getLivingEntity());
+      var livingEntity = champion.getLivingEntity();
+      source.getLevel().addFreshEntity(livingEntity);
       source.sendSuccess(() -> Component.translatable("commands.champions.summon.success",
-        Component.translatable("rank.champions.title." + tier).getString() + " " + Objects.requireNonNull(entity
-          .getDisplayName()).getString()), false);
+        Component.translatable("rank.champions.title." + tier).getString() + " " + livingEntity
+          .getName().getString()), false);
     });
 
     return Command.SINGLE_SUCCESS;

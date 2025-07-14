@@ -7,6 +7,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -69,5 +70,12 @@ public class MagneticAffix extends GoalAffix {
         target.hurtMarked = true;
       }
     }
+  }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .build();
   }
 }

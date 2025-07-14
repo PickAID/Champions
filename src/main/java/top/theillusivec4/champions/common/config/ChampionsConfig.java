@@ -86,6 +86,7 @@ public class ChampionsConfig {
   public static double shieldingChance;
   public static boolean mobInherit;
   public static int rankReduce;
+  public static boolean canHaveInfestedAffix;
   public static List<? extends String> entityStages;
   public static List<? extends String> tierStages;
   public static List<? extends String> bossBarBlackList;
@@ -243,6 +244,7 @@ public class ChampionsConfig {
     shieldingChance = SERVER.shieldingChance.get();
     mobInherit = SERVER.mobInherit.get();
     rankReduce = SERVER.rankReduce.get();
+    canHaveInfestedAffix = SERVER.canHaveInfestedAffix.get();
 
   }
 
@@ -424,6 +426,7 @@ public class ChampionsConfig {
     public final ModConfigSpec.ConfigValue<List<? extends String>> scalingHealthSpawnModifiers;
     public final ModConfigSpec.BooleanValue mobInherit;
     public final ModConfigSpec.IntValue rankReduce;
+    public final ModConfigSpec.BooleanValue canHaveInfestedAffix;
 
     public ServerConfig(ModConfigSpec.Builder builder) {
 
@@ -432,6 +435,8 @@ public class ChampionsConfig {
         .translation(CONFIG_PREFIX + "mobInherit").define("mobInherit", false);
       rankReduce = builder.comment("Set the children mob reduce rank when split, 0 means disable")
         .translation(CONFIG_PREFIX + "rankReduce").defineInRange("rankReduce", 1, 0, Integer.MAX_VALUE);
+      canHaveInfestedAffix = builder.comment("Set the children mob can have Infested Affix, avoid the server splited too much entity").
+        translation(CONFIG_PREFIX + "canHaveInfestedAffix").define("canHaveInfestedAffix", false);
       builder.pop();
 
       builder.push("loot");

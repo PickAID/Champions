@@ -4,7 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffect;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 
 import java.util.ArrayList;
 import java.util.List;

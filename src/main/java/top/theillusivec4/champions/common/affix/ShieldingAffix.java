@@ -9,11 +9,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AffixData;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.common.affix.core.CombatLifeCycleAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
-public class ShieldingAffix extends BasicAffix {
+public class ShieldingAffix extends CombatLifeCycleAffix {
 
   @Override
   public void onClientUpdate(IChampion champion) {
@@ -72,4 +74,13 @@ public class ShieldingAffix extends BasicAffix {
     }
     return true;
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.DEFENSE)
+      .build();
+  }
+
 }

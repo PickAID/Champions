@@ -5,6 +5,9 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.affix.IAffix;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.common.affix.core.BasicAffix;
 import top.theillusivec4.champions.common.registry.AffixTypes;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -16,6 +19,15 @@ public class AffixRegistry {
     .maxId(2048)
     .defaultKey(Keys.ADAPTABLE)
     .onAdd((registry, id, resourceKey, affix) -> {
+      if (affix instanceof BasicAffix basic &&
+        basic.getSetting().equals(AffixSetting.empty())
+      ){
+          // add default affix setting if empty
+          basic.applyDefaultSettingWithId();
+          basic.tryRegisterEvents();
+          // add affix to category map
+          Champions.API.addCategory(basic.getCategory(), basic);
+      }
       Champions.LOGGER.info("Affix added to registry: {}", resourceKey);
     })
     .create();

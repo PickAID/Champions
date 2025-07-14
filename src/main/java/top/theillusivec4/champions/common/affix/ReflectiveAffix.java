@@ -6,11 +6,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.registry.ModDamageTypes;
 
-public class ReflectiveAffix extends BasicAffix {
+public class ReflectiveAffix extends CombatAffix {
 
   @SubscribeEvent
   public void onDamageEvent(LivingDamageEvent.Pre evt) {
@@ -47,4 +49,14 @@ public class ReflectiveAffix extends BasicAffix {
     }
     return newAmount;
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.OFFENSE)
+      .setHasSub()
+      .build();
+  }
+
 }

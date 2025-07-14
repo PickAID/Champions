@@ -12,9 +12,11 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.event.EventHooks;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.AffixData;
-import top.theillusivec4.champions.common.affix.core.GoalAffix;
+import top.theillusivec4.champions.common.affix.core.GoalCombatAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
@@ -24,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class InfestedAffix extends GoalAffix {
+public class InfestedAffix extends GoalCombatAffix {
 
   private static void spawnParasites(LivingEntity livingEntity, int amount,
                                      @Nullable LivingEntity target, ServerLevel world) {
@@ -52,6 +54,15 @@ public class InfestedAffix extends GoalAffix {
     }
 
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.OFFENSE)
+      .build();
+  }
+
 
   @Override
   public void onInitialSpawn(IChampion champion) {

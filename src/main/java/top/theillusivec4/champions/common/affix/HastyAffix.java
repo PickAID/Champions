@@ -5,11 +5,13 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.common.affix.core.CombatLifeCycleAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.util.Utils;
 
-public class HastyAffix extends BasicAffix {
+public class HastyAffix extends CombatLifeCycleAffix {
 
   @Override
   public void onInitialSpawn(IChampion champion) {
@@ -38,4 +40,13 @@ public class HastyAffix extends BasicAffix {
       onInitialSpawn(champion);
     }
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.OFFENSE)
+      .build();
+  }
+
 }

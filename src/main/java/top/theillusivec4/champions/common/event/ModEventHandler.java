@@ -67,7 +67,7 @@ public class ModEventHandler {
     // register TheOneProbe integration
     if (ModList.get().isLoaded(TheOneProbe.MODID)) {
       Champions.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
-      InterModComms.sendTo(Champions.MODID, "theoneprobe", "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
+      InterModComms.sendTo(Champions.MODID, TheOneProbe.MODID, "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
     }
   }
 
