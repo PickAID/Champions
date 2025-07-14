@@ -9,14 +9,16 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
-import top.theillusivec4.champions.common.affix.core.GoalAffix;
+import top.theillusivec4.champions.common.affix.core.GoalCombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
 import java.util.Collections;
 import java.util.List;
 
-public class DesecratingAffix extends GoalAffix {
+public class DesecratingAffix extends GoalCombatAffix {
 
   @Override
   public boolean onAttacked(IChampion champion, DamageSource source, float amount) {
@@ -28,6 +30,14 @@ public class DesecratingAffix extends GoalAffix {
   public List<Tuple<Integer, Goal>> getGoals(IChampion champion) {
     return Collections
       .singletonList(new Tuple<>(0, new DesecrateGoal((Mob) champion.getLivingEntity())));
+  }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.OFFENSE)
+      .build();
   }
 
   public static class DesecrateGoal extends Goal {

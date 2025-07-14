@@ -10,7 +10,7 @@ import net.neoforged.neoforge.event.entity.living.LivingConversionEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.network.SPacketSyncChampion;

@@ -4,6 +4,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.rank.Rank;
 
 import java.util.List;

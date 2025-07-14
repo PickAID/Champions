@@ -28,5 +28,5 @@ public class DispenseHandler {
       });
     });
     return stack;
-  };
+  }
 }

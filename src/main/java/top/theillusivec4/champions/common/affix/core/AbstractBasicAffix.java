@@ -1,6 +1,5 @@
 package top.theillusivec4.champions.common.affix.core;
 
-import com.mojang.serialization.Codec;
 import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -13,9 +12,8 @@ import net.minecraft.world.entity.decoration.ArmorStand;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.BasicAffixBuilder;
-import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -24,11 +22,10 @@ import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 public abstract class AbstractBasicAffix implements IAffix {
   public static final String DEFAULT_PREFIX = "affix.";
-  public AffixSetting affixSetting = AffixSetting.empty();
+  protected AffixSetting setting = AffixSetting.empty();
 
   public static boolean canTarget(LivingEntity livingEntity, @Nullable LivingEntity target, boolean sightCheck) {
 
@@ -50,18 +47,9 @@ public abstract class AbstractBasicAffix implements IAffix {
     }
   }
 
-  public static <T extends IAffix, B extends BasicAffixBuilder<T>> Codec<T> codec(Supplier<B> affixType) {
-    return BasicAffixBuilder.of(affixType);
-  }
-
   @Override
   public ResourceLocation getIdentifier() {
     return Champions.API.getAffixId(this).orElseThrow();
-  }
-
-  @Override
-  public boolean hasSubscriptions() {
-    return affixSetting.hasSub().orElse(false);
   }
 
   @Override
@@ -71,21 +59,21 @@ public abstract class AbstractBasicAffix implements IAffix {
 
   @Override
   public AffixCategory getCategory() {
-    return affixSetting.category();
+    return setting.category();
   }
 
   @Override
   public boolean isEnabled() {
-    return affixSetting.enabled();
+    return setting.enabled();
   }
 
   public ConfigEnums.Permission getMobPermission() {
-    return affixSetting.mobPermission().orElse(ConfigEnums.Permission.BLACKLIST);
+    return setting.mobPermission().orElse(ConfigEnums.Permission.BLACKLIST);
   }
 
   @Override
   public String getPrefix() {
-    return affixSetting.prefix().orElse(DEFAULT_PREFIX);
+    return setting.prefix().orElse(DEFAULT_PREFIX);
   }
 
   @Override
@@ -108,25 +96,34 @@ public abstract class AbstractBasicAffix implements IAffix {
 
   @Override
   public MinMaxBounds.Ints getTier() {
-    return affixSetting.tier().orElse(MinMaxBounds.Ints.atLeast(1));
+    return setting.tier().orElse(MinMaxBounds.Ints.atLeast(1));
   }
 
   @Override
   public Optional<List<ResourceLocation>> getMobList() {
-    return affixSetting.mobList();
+    return setting.mobList();
+  }
+
+  @Override
+  public AffixSetting getSetting() {
+    if (this.setting == null) {
+      this.setting = createDefaultSetting();
+    }
+    return this.setting;
   }
 
   @Override
   public void applySetting(AffixSetting affixSetting) {
-    this.affixSetting = affixSetting;
+    this.setting = affixSetting;
+  }
+  public void applyDefaultSettingWithId() {
+    applySetting(createDefaultSetting().withNewType(getIdentifier()));
   }
 
   public boolean isBlackList() {
     return getMobPermission() == ConfigEnums.Permission.BLACKLIST;
   }
 
-  @Override
-  public AffixSetting getSetting() {
-    return affixSetting;
-  }
+  public abstract AffixSetting createDefaultSetting();
+
 }

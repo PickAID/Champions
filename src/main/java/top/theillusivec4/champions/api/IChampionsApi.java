@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.api;
 
 import net.minecraft.resources.ResourceLocation;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixDataLoader;
 import top.theillusivec4.champions.api.data.AttributesModifierDataLoader;
@@ -19,6 +20,7 @@ public interface IChampionsApi {
   Optional<IAffix> getAffix(String id);
 
   Optional<IAffix> getAffix(ResourceLocation id);
+
   Optional<ResourceLocation> getAffixId(IAffix affix);
 
   /**
@@ -52,6 +54,7 @@ public interface IChampionsApi {
 
   void addCategory(AffixCategory category, IAffix affix);
 
-  AffixDataLoader getAffixDataLoader();
   AttributesModifierDataLoader getAttributesModifierDataLoader();
+
+  AffixDataLoader getAffixDataLoader();
 }

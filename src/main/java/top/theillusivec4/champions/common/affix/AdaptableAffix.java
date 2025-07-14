@@ -1,13 +1,19 @@
 package top.theillusivec4.champions.common.affix;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageSource;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AffixData;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.config.ConfigEnums;
 
-public class AdaptableAffix extends BasicAffix {
+import java.util.List;
+
+public class AdaptableAffix extends CombatAffix {
   @Override
   public float onHurt(IChampion champion, DamageSource source, float amount, float newAmount) {
     String type = source.getMsgId();
@@ -23,6 +29,20 @@ public class AdaptableAffix extends BasicAffix {
     damageData.saveData();
     return Math.max(amount * (float) (1.0f - ChampionsConfig.adaptableMaxDamageReduction),
       newAmount);
+  }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.DEFENSE)
+      .setHasSub(false)
+      .setMobList(List.of(
+        ResourceLocation.withDefaultNamespace("pig"),
+        ResourceLocation.withDefaultNamespace("creeper")
+      ))
+      .setMobPermission(ConfigEnums.Permission.BLACKLIST)
+      .build();
   }
 
   public static class DamageData extends AffixData {

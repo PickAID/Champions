@@ -4,11 +4,12 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.registry.ModMobEffects;
 
-public class ParalyzingAffix extends BasicAffix {
+public class ParalyzingAffix extends CombatAffix {
 
   @Override
   public boolean onAttack(
@@ -20,4 +21,13 @@ public class ParalyzingAffix extends BasicAffix {
     }
     return true;
   }
+
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .build();
+  }
+
 }

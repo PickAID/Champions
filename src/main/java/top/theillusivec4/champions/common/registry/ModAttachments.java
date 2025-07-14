@@ -14,12 +14,8 @@ import top.theillusivec4.champions.common.util.ChampionHelper;
 public class ModAttachments {
 
   private static final DeferredRegister<AttachmentType<?>> ATTACHMENTS = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Champions.MODID);
-  public static final DeferredHolder<AttachmentType<?>, AttachmentType<ChampionAttachment.Provider>> CHAMPION_ATTACHMENT = ATTACHMENTS.register("champion_attachment", () -> AttachmentType.serializable(entity -> {
-    if (ChampionHelper.isValidChampionEntity((Entity) entity)) {
-      return ChampionAttachment.createProvider((LivingEntity) entity);
-    }
-    return null;
-  }).build());
+  public static final DeferredHolder<AttachmentType<?>, AttachmentType<ChampionAttachment.Provider>> CHAMPION_ATTACHMENT = ATTACHMENTS.register("champion_attachment", () ->
+    AttachmentType.serializable(entity -> ChampionHelper.isValidChampionEntity((Entity) entity) ? ChampionAttachment.createProvider((LivingEntity) entity) : null).build());
 
   public static void register(IEventBus bus) {
     ATTACHMENTS.register(bus);

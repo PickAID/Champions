@@ -7,7 +7,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.rank.Rank;
@@ -87,7 +87,8 @@ public class ChampionData {
         }
         ChampionBuilder.applyGrowth(champion, rank.getGrowthFactor());
         champion.getServer().setAffixes(affixes);
-        affixes.forEach(affix -> affix.onInitialSpawn(champion));
+        Utils.consumeIfLifeCycle(affixes,
+          lifecycle -> lifecycle.onInitialSpawn(champion));
         return true;
       }
     }
@@ -122,6 +123,18 @@ public class ChampionData {
         "No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
       return RankManager.getEmptyRank();
     }
+    // 特殊判断 min 和 Max 相等的情况
+    if (Objects.equals(min, max)){
+      Rank rank = ranks.get(min);
+      if (rank != null) {
+        return rank;
+      }
+      else {
+        Champions.LOGGER.error("Tier {} not found in rank config!", min);
+        return RankManager.getEmptyRank();
+      }
+    }
+
     Integer[] tierRange = new Integer[]{min, max};
     Integer firstTier = tierRange[0] != null ? tierRange[0] : ranks.firstKey();
     int maxTier = tierRange[1] != null ? tierRange[1] : -1;

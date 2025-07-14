@@ -7,11 +7,13 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHealEvent;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.registry.ModMobEffects;
 
-public class WoundingAffix extends BasicAffix {
+public class WoundingAffix extends CombatAffix {
 
   @SubscribeEvent
   public void onHeal(LivingHealEvent evt) {
@@ -35,4 +37,14 @@ public class WoundingAffix extends BasicAffix {
     }
     return true;
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.OFFENSE)
+      .setHasSub()
+      .build();
+  }
+
 }

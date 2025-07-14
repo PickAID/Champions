@@ -9,7 +9,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.server.command.AffixArgumentType.IAffixProvider;
 
 import java.util.Arrays;
