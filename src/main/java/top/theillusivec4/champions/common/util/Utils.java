@@ -23,6 +23,7 @@ public class Utils {
   private static Boolean scalingHealthLoaded = null;
   private static Boolean gameStagesLoaded = null;
   private static Boolean gateways = null;
+  private static Boolean kubejs = null;
 
   public static boolean isGameStagesLoaded() {
     if (gameStagesLoaded == null) {
@@ -38,6 +39,12 @@ public class Utils {
     return gateways;
   }
 
+  public static boolean isKubejsLoaded() {
+    if (kubejs == null) {
+      kubejs = ModList.get().isLoaded("kubejs");
+    }
+    return kubejs;
+  }
 
   public static boolean isScalingHealthLoaded() {
     if (scalingHealthLoaded == null) {

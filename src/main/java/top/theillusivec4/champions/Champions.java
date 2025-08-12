@@ -32,6 +32,7 @@ import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.event.ModEventHandler;
 import top.theillusivec4.champions.common.integration.gateways_to_eternity.GatewaysToEternityCompat;
+import top.theillusivec4.champions.common.integration.kubejs.events.NeoForgeJsEventHandler;
 import top.theillusivec4.champions.common.registry.ChampionsRegistry;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -61,6 +62,10 @@ public class Champions {
 
     if (Utils.isGatewaysLoaded()) {
       NeoForge.EVENT_BUS.register(new GatewaysToEternityCompat());
+    }
+
+    if (Utils.isKubejsLoaded()){
+      NeoForge.EVENT_BUS.register(new NeoForgeJsEventHandler());
     }
 
   }

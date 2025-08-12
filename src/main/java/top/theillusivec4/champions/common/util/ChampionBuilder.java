@@ -12,10 +12,12 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.Sephirah;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.event.customEvent.ChampionsEventHooks;
 import top.theillusivec4.champions.common.network.SPacketSyncChampion;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -36,14 +38,22 @@ public class ChampionBuilder {
     if (ChampionData.read(champion)) {
       return;
     }
+    if (!ChampionsEventHooks.onAddSephiahName(champion, null)) {
+      ChampionBuilder.removeSephirah(champion.getLivingEntity());
+    }
     LivingEntity entity = champion.getLivingEntity();
     Rank newRank = ChampionBuilder.createRank(entity);
     if (newRank != null && newRank.getTier() >= 1) {
+      if (!ChampionsEventHooks.onPreChampionSpawn(champion)) {
+        return; // 事件被取消
+      }
       champion.getServer().setRank(newRank);
       ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
       List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
       champion.getServer().setAffixes(newAffixes);
       Utils.consumeIfLifeCycle(newAffixes, lifecycle -> lifecycle.onInitialSpawn(champion));
+      // only post when champion spawned
+      ChampionsEventHooks.onPostChampionSpawn(champion);
     }
   }
 
@@ -173,17 +183,74 @@ public class ChampionBuilder {
         "All ranks have zero weight! Assigning EmptyRank to {}", livingEntity);
       return RankManager.getEmptyRank();
     }
-    int randomValue = livingEntity.getRandom().nextInt(totalWeight);
+    // 首先重新计算调整后的总权重
+    // 首先重新计算调整后的总权重
+    int adjustedTotalWeight = 0;
+    Map<Rank, Integer> adjustedWeights = new HashMap<>();
+
+    int rankIndex = 0;
+    int totalRanks = filteredRanks.size();
+
+    for (Rank rank : filteredRanks.values()) {
+      int weight = rank.getWeight();
+      if (hasSephirah(livingEntity) && rankIndex != 0) {
+        double factor = getSephiahFactor(livingEntity);
+
+        // 核心公式：weight = originalWeight * (1 + rankIndex * (factor - 1) / (totalRanks - 1))
+        // rankIndex=0(最低级): weight * 1 = 原权重
+        // rankIndex=max(最高级): weight * factor = 原权重 * factor
+        double multiplier = 1.0 + rankIndex * (factor - 1.0) / (totalRanks - 1);
+        weight = (int) (weight * multiplier);
+      }
+      adjustedWeights.put(rank, weight);
+      adjustedTotalWeight += weight;
+      rankIndex++;
+    }
+
+    // 基于调整后的总权重生成随机数
+    int randomValue = livingEntity.getRandom().nextInt(adjustedTotalWeight);
     int cumulativeWeight = 0;
 
     for (Rank rank : filteredRanks.values()) {
-      cumulativeWeight += rank.getWeight();
+      cumulativeWeight += adjustedWeights.get(rank);
       if (randomValue < cumulativeWeight) {
         return rank;
       }
     }
 
     return RankManager.getEmptyRank();
+  }
+
+  private static boolean hasSephirah(LivingEntity livingEntity) {
+    return livingEntity.getPersistentData().contains("sephirahName");
+  }
+
+  /**
+   * Set sephirah type of livingEntity
+   *
+   * @param livingEntity target to set sephirah
+   * @param sephirahName the name of sephirahName, if not correct, throws IllegalArgumentException
+   * @return true if successful, else false
+   */
+  public static boolean addSephirah(LivingEntity livingEntity, String sephirahName) throws IllegalArgumentException {
+    if (!hasSephirah(livingEntity)) {
+      livingEntity.getPersistentData().putString("sephirahName", Sephirah.valueOf(sephirahName).getSerializedName());
+      return true;
+    }
+    return false;
+  }
+
+  public static boolean removeSephirah(LivingEntity livingEntity) throws IllegalArgumentException {
+    if (hasSephirah(livingEntity)) {
+      livingEntity.getPersistentData().remove("sephirahName");
+      return true;
+    }
+    return false;
+  }
+
+  private static double getSephiahFactor(LivingEntity livingEntity) {
+    String sephirahName = livingEntity.getPersistentData().getString("sephirahName");
+    return ChampionsConfig.sephirahFactors.get(Sephirah.valueOf(sephirahName)).get();
   }
 
   public static void applyGrowth(final IChampion champion, float growthFactor) {

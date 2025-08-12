@@ -13,14 +13,13 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.Sephirah;
 import top.theillusivec4.champions.common.config.ConfigEnums.LootSource;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.config.EntitiesConfig.EntityConfig;
 import top.theillusivec4.champions.common.config.RanksConfig.RankConfig;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ChampionsConfig {
 
@@ -94,7 +93,7 @@ public class ChampionsConfig {
   public static boolean enableDebug;
   public static boolean allowChampionsList;
   public static Permission allowChampionsPermission;
-
+  public static final Map<Sephirah, ModConfigSpec.DoubleValue> sephirahFactors = new EnumMap<>(Sephirah.class);
   static {
     final Pair<ServerConfig, ModConfigSpec> specPair = new ModConfigSpec.Builder()
       .configure(ServerConfig::new);
@@ -684,6 +683,17 @@ public class ChampionsConfig {
         .translation(CONFIG_PREFIX + "scalingHealthSpawnModifiers")
         .defineListAllowEmpty("scalingHealthSpawnModifiers", new ArrayList<>(), () -> null, s -> s instanceof String);
 
+      builder.pop();
+
+      builder.push("Sephirah rank Factor");
+      for (Sephirah sephirah : Sephirah.values()) {
+        sephirahFactors.put(
+          sephirah,
+          builder
+            .comment("Weight for " + sephirah.name())
+            .defineInRange(sephirah.name().toLowerCase(), 10, 0, Double.MAX_VALUE)
+        );
+      }
       builder.pop();
     }
   }
