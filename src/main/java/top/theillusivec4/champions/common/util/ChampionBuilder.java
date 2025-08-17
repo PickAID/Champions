@@ -140,15 +140,16 @@ public class ChampionBuilder {
     if (ChampionHelper.notPotential(livingEntity)) {
       return RankManager.getEmptyRank();
     }
-    ImmutableSortedMap<Integer, Rank> ranks = RankManager.getRanks();
 
+    ImmutableSortedMap<Integer, Rank> ranks = RankManager.getRanks();
     if (ranks.isEmpty()) {
       Champions.LOGGER.error(
         "No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
       return RankManager.getEmptyRank();
     }
-    Integer[] tierRange = new Integer[]{null, null};
 
+    // 过滤实体对应的 tier 范围
+    Integer[] tierRange = new Integer[]{null, null};
     EntityManager.getSettings(livingEntity.getType()).ifPresent(entitySettings -> {
       tierRange[0] = entitySettings.minTier;
       tierRange[1] = entitySettings.maxTier;
@@ -158,62 +159,65 @@ public class ChampionBuilder {
     int maxTier = tierRange[1] != null ? tierRange[1] : -1;
 
     ImmutableSortedMap<Integer, Rank> filteredRanks;
-
     if (maxTier == -1) {
-      /* 如果 maxTier 未设置，则仅过滤 firstTier 以上的 Rank */
       filteredRanks = ranks.tailMap(firstTier, true);
     } else {
-      /* 如果 maxTier 设置了，过滤 firstTier 和 maxTier 范围内的 Rank */
       filteredRanks = ranks.tailMap(firstTier, true).headMap(maxTier + 1, true);
     }
 
-    // 如果没有符合条件的 Rank，返回 EmptyRank
     if (filteredRanks.isEmpty()) {
       Champions.LOGGER.warn(
         "No valid ranks found in the specified range! Assigning EmptyRank to {}", livingEntity);
       return RankManager.getEmptyRank();
     }
-    int totalWeight = filteredRanks.values().stream()
-      .mapToInt(Rank::getWeight)
-      .sum();
 
-    // 如果所有权重为 0，返回 EmptyRank
-    if (totalWeight <= 0) {
-      Champions.LOGGER.warn(
-        "All ranks have zero weight! Assigning EmptyRank to {}", livingEntity);
-      return RankManager.getEmptyRank();
-    }
-    // 首先重新计算调整后的总权重
-    // 首先重新计算调整后的总权重
+    // 分段线性加权：低级减半，高级增加
+    int totalRanks = filteredRanks.size();
+    int halfRanks = totalRanks / 2;
+    double minMultiplier = 0.5; // 最低级权重减半
+    double maxMultiplier = hasSephirah(livingEntity) ? getSephiahFactor(livingEntity) : 1.0;
+
+    Map<Rank, Integer> adjustedWeights = new LinkedHashMap<>();
     int adjustedTotalWeight = 0;
-    Map<Rank, Integer> adjustedWeights = new HashMap<>();
 
     int rankIndex = 0;
-    int totalRanks = filteredRanks.size();
-
+    Champions.LOGGER.info("=== Rank Weight Distribution ===");
     for (Rank rank : filteredRanks.values()) {
-      int weight = rank.getWeight();
-      if (hasSephirah(livingEntity) && rankIndex != 0) {
-        double factor = getSephiahFactor(livingEntity);
+      int baseWeight = rank.getWeight();
+      double multiplier;
 
-        // 核心公式：weight = originalWeight * (1 + rankIndex * (factor - 1) / (totalRanks - 1))
-        // rankIndex=0(最低级): weight * 1 = 原权重
-        // rankIndex=max(最高级): weight * factor = 原权重 * factor
-        double multiplier = 1.0 + rankIndex * (factor - 1.0) / (totalRanks - 1);
-        weight = (int) (weight * multiplier);
+      if (rank.getTier() == 0) {
+        multiplier = 1.0; // 保持原始权重，不受 Sephirah 影响
+      }else if (rankIndex < halfRanks) {
+        // 前半段低级，权重从 minMultiplier 平滑递增到 1
+        multiplier = minMultiplier + (1.0 - minMultiplier) * rankIndex / Math.max(1, (halfRanks - 1));
+      } else {
+        // 后半段高级，权重从 1 平滑递增到 maxMultiplier
+        multiplier = 1.0 + (maxMultiplier - 1.0) * (rankIndex - halfRanks) / Math.max(1, (totalRanks - halfRanks - 1));
       }
-      adjustedWeights.put(rank, weight);
-      adjustedTotalWeight += weight;
+
+      double adjustedWeightDouble = baseWeight * multiplier;
+      int adjustedWeight = (int) Math.round(adjustedWeightDouble);
+      adjustedWeights.put(rank, adjustedWeight);
+      adjustedTotalWeight += adjustedWeight;
+
+      double percent = adjustedWeightDouble / adjustedTotalWeight * 100.0;
+      Champions.LOGGER.info("Rank {}: original={}, multiplier={}, adjusted={} ({}% of total so far)",
+        rank.getTier(), baseWeight, String.format("%.2f", multiplier),
+        String.format("%.2f", adjustedWeightDouble), String.format("%.2f", percent));
+
       rankIndex++;
     }
 
-    // 基于调整后的总权重生成随机数
+    // 生成随机数
     int randomValue = livingEntity.getRandom().nextInt(adjustedTotalWeight);
     int cumulativeWeight = 0;
 
     for (Rank rank : filteredRanks.values()) {
       cumulativeWeight += adjustedWeights.get(rank);
       if (randomValue < cumulativeWeight) {
+        Champions.LOGGER.info("Selected rank {} \nweight: {} \nSephirah mark: {}",
+          rank.getTier(), adjustedWeights.get(rank), hasSephirah(livingEntity));
         return rank;
       }
     }

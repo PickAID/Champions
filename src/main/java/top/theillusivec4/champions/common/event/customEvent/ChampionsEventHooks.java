@@ -13,7 +13,7 @@ public class ChampionsEventHooks {
     SpawnChampionEvent.AddSephiahName event = new SpawnChampionEvent.AddSephiahName(champion, sephiahName);
     boolean notCancelled = !NeoForge.EVENT_BUS.post(event).isCanceled();
 
-    if (notCancelled && sephiahName != null && !sephiahName.isEmpty()) {
+    if (notCancelled && event.getName() != null && !event.getName().isEmpty()) {
       event.addSephirah();
     }
 
