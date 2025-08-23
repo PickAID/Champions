@@ -17,6 +17,7 @@ import top.theillusivec4.champions.common.registry.ModItems;
 import top.theillusivec4.champions.common.registry.ModParticleTypes;
 import top.theillusivec4.champions.common.util.Utils;
 
+@SuppressWarnings("removal")
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD, modid = Champions.MODID)
 public class ClientModEventHandler {
 

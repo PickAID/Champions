@@ -136,7 +136,6 @@ public class ChampionBuilder {
    * @return lowest rank if this living entity not potential, else living entity with new rank that applied entity settings.
    */
   public static Rank createRank(final LivingEntity livingEntity) {
-
     if (ChampionHelper.notPotential(livingEntity)) {
       return RankManager.getEmptyRank();
     }
@@ -162,7 +161,7 @@ public class ChampionBuilder {
     if (maxTier == -1) {
       filteredRanks = ranks.tailMap(firstTier, true);
     } else {
-      filteredRanks = ranks.tailMap(firstTier, true).headMap(maxTier + 1, true);
+      filteredRanks = ranks.tailMap(firstTier, true).headMap(maxTier + 1, false);
     }
 
     if (filteredRanks.isEmpty()) {
@@ -171,59 +170,197 @@ public class ChampionBuilder {
       return RankManager.getEmptyRank();
     }
 
-    // 分段线性加权：低级减半，高级增加
-    int totalRanks = filteredRanks.size();
-    int halfRanks = totalRanks / 2;
-    double minMultiplier = 0.5; // 最低级权重减半
-    double maxMultiplier = hasSephirah(livingEntity) ? getSephiahFactor(livingEntity) : 1.0;
+    // 推荐方案：基于累积概率的偏移法
+    return selectRankWithCumulativeBias(livingEntity, filteredRanks);
 
-    Map<Rank, Integer> adjustedWeights = new LinkedHashMap<>();
-    int adjustedTotalWeight = 0;
-
-    int rankIndex = 0;
-    Champions.LOGGER.info("=== Rank Weight Distribution ===");
-    for (Rank rank : filteredRanks.values()) {
-      int baseWeight = rank.getWeight();
-      double multiplier;
-
-      if (rank.getTier() == 0) {
-        multiplier = 1.0; // 保持原始权重，不受 Sephirah 影响
-      }else if (rankIndex < halfRanks) {
-        // 前半段低级，权重从 minMultiplier 平滑递增到 1
-        multiplier = minMultiplier + (1.0 - minMultiplier) * rankIndex / Math.max(1, (halfRanks - 1));
-      } else {
-        // 后半段高级，权重从 1 平滑递增到 maxMultiplier
-        multiplier = 1.0 + (maxMultiplier - 1.0) * (rankIndex - halfRanks) / Math.max(1, (totalRanks - halfRanks - 1));
-      }
-
-      double adjustedWeightDouble = baseWeight * multiplier;
-      int adjustedWeight = (int) Math.round(adjustedWeightDouble);
-      adjustedWeights.put(rank, adjustedWeight);
-      adjustedTotalWeight += adjustedWeight;
-
-      double percent = adjustedWeightDouble / adjustedTotalWeight * 100.0;
-      Champions.LOGGER.info("Rank {}: original={}, multiplier={}, adjusted={} ({}% of total so far)",
-        rank.getTier(), baseWeight, String.format("%.2f", multiplier),
-        String.format("%.2f", adjustedWeightDouble), String.format("%.2f", percent));
-
-      rankIndex++;
-    }
-
-    // 生成随机数
-    int randomValue = livingEntity.getRandom().nextInt(adjustedTotalWeight);
-    int cumulativeWeight = 0;
-
-    for (Rank rank : filteredRanks.values()) {
-      cumulativeWeight += adjustedWeights.get(rank);
-      if (randomValue < cumulativeWeight) {
-        Champions.LOGGER.info("Selected rank {} \nweight: {} \nSephirah mark: {}",
-          rank.getTier(), adjustedWeights.get(rank), hasSephirah(livingEntity));
-        return rank;
-      }
-    }
-
-    return RankManager.getEmptyRank();
+    // 备选方案：多次抽取取最大值法
+    // return selectRankWithMultipleDraws(livingEntity, filteredRanks);
   }
+
+  /**
+   * 方案1：基于累积概率的偏移法（推荐）
+   * 通过变换累积概率分布来实现偏向，避免权重操作的问题
+   */
+  private static Rank selectRankWithCumulativeBias(LivingEntity livingEntity,
+                                                   ImmutableSortedMap<Integer, Rank> filteredRanks) {
+    double factor = hasSephirah(livingEntity) ? getSephiahFactor(livingEntity) : 1.0;
+
+    // 计算原始累积概率分布
+    List<Rank> rankList = new ArrayList<>(filteredRanks.values());
+    int totalWeight = 0;
+    for (Rank rank : rankList) {
+      totalWeight += rank.getWeight();
+    }
+
+    double[] originalProbabilities = new double[rankList.size()];
+    double[] cumulativeProbabilities = new double[rankList.size()];
+
+    double cumulative = 0.0;
+    for (int i = 0; i < rankList.size(); i++) {
+      double prob = (double) rankList.get(i).getWeight() / totalWeight;
+      originalProbabilities[i] = prob;
+      cumulative += prob;
+      cumulativeProbabilities[i] = cumulative;
+    }
+
+    /*Champions.LOGGER.info("=== Original Rank Distribution ===");
+    for (int i = 0; i < rankList.size(); i++) {
+      Champions.LOGGER.info("Rank {}: probability={}, cumulative={}",
+        rankList.get(i).getTier(), originalProbabilities[i], cumulativeProbabilities[i]);
+    }*/
+
+    // 生成随机数并应用偏向
+    double rawRandom = livingEntity.getRandom().nextDouble();
+
+    // 使用幂函数变换累积概率，让随机数更容易命中高等级区间
+    // factor > 1 时，随机数向1偏移，更容易选中高等级
+    double biasedRandom = Math.pow(rawRandom, 1.0 / factor);
+
+    /*Champions.LOGGER.info("Random generation: raw={}, biased={}, factor={}",
+      rawRandom, biasedRandom, factor);
+    */
+    // 根据偏移后的随机数选择rank
+    for (int i = 0; i < rankList.size(); i++) {
+      if (biasedRandom <= cumulativeProbabilities[i]) {
+        /*Champions.LOGGER.info("Selected rank {}, Sephirah mark: {}",
+          rankList.get(i).getTier(), hasSephirah(livingEntity));*/
+        return rankList.get(i);
+      }
+    }
+
+    // 保底返回最高等级
+    return rankList.get(rankList.size() - 1);
+  }
+
+  /**
+   * 方案2：多次抽取取最大值法
+   * 进行多次独立抽取，选择其中等级最高的结果
+   */
+  private static Rank selectRankWithMultipleDraws(LivingEntity livingEntity,
+                                                  ImmutableSortedMap<Integer, Rank> filteredRanks) {
+    double factor = hasSephirah(livingEntity) ? getSephiahFactor(livingEntity) : 1.0;
+
+    // 根据factor决定抽取次数
+    int drawCount = Math.max(1, (int) Math.round(factor));
+
+    List<Rank> rankList = new ArrayList<>(filteredRanks.values());
+    int totalWeight = 0;
+    int[] weights = new int[rankList.size()];
+
+    for (int i = 0; i < rankList.size(); i++) {
+      weights[i] = rankList.get(i).getWeight();
+      totalWeight += weights[i];
+    }
+
+    Champions.LOGGER.info("=== Multiple Draws Method ===");
+    Champions.LOGGER.info("Draw count: {}, factor: {}", drawCount, factor);
+
+    Rank bestRank = null;
+    int bestTier = -1;
+
+    for (int draw = 0; draw < drawCount; draw++) {
+      int randomValue = livingEntity.getRandom().nextInt(totalWeight);
+
+      int cumulativeWeight = 0;
+      for (int i = 0; i < rankList.size(); i++) {
+        cumulativeWeight += weights[i];
+        if (randomValue < cumulativeWeight) {
+          Rank selectedRank = rankList.get(i);
+          Champions.LOGGER.info("Draw {}: selected rank {}", draw + 1, selectedRank.getTier());
+
+          if (bestRank == null || selectedRank.getTier() > bestTier) {
+            bestRank = selectedRank;
+            bestTier = selectedRank.getTier();
+          }
+          break;
+        }
+      }
+    }
+
+    Champions.LOGGER.info("Final selected rank: {}, Sephirah mark: {}",
+      bestRank.getTier(), hasSephirah(livingEntity));
+    return bestRank;
+  }
+
+  /**
+   * 方案3：分段概率重新分配法
+   * 将概率空间分为几个段，高等级段获得更多概率
+   */
+  private static Rank selectRankWithSegmentedReallocation(LivingEntity livingEntity,
+                                                          ImmutableSortedMap<Integer, Rank> filteredRanks) {
+    double factor = hasSephirah(livingEntity) ? getSephiahFactor(livingEntity) : 1.0;
+
+    List<Rank> rankList = new ArrayList<>(filteredRanks.values());
+    int rankCount = rankList.size();
+
+    // 将ranks分为三个段：低、中、高
+    int lowEnd = rankCount / 3;
+    int midEnd = (rankCount * 2) / 3;
+
+    // 计算原始权重分布
+    int totalWeight = 0;
+    int[] originalWeights = new int[rankCount];
+    for (int i = 0; i < rankCount; i++) {
+      originalWeights[i] = rankList.get(i).getWeight();
+      totalWeight += originalWeights[i];
+    }
+
+    // 根据factor重新分配概率
+    double[] newProbabilities = new double[rankCount];
+    double totalNewProb = 0.0;
+
+    for (int i = 0; i < rankCount; i++) {
+      double originalProb = (double) originalWeights[i] / totalWeight;
+      double multiplier = 1.0;
+
+      if (i >= midEnd) {
+        // 高等级段：增加概率
+        multiplier = factor;
+      } else if (i >= lowEnd) {
+        // 中等级段：保持或略微减少
+        multiplier = Math.sqrt(factor);
+      } else {
+        // 低等级段：减少概率
+        multiplier = 1.0 / Math.sqrt(factor);
+      }
+
+      newProbabilities[i] = originalProb * multiplier;
+      totalNewProb += newProbabilities[i];
+    }
+
+    // 归一化概率
+    for (int i = 0; i < rankCount; i++) {
+      newProbabilities[i] /= totalNewProb;
+    }
+
+    Champions.LOGGER.info("=== Segmented Reallocation Method ===");
+    double cumulative = 0.0;
+    for (int i = 0; i < rankCount; i++) {
+      cumulative += newProbabilities[i];
+      Champions.LOGGER.info("Rank {}: original={}, new={}, cumulative={}",
+        rankList.get(i).getTier(),
+        (double)originalWeights[i] / totalWeight,
+        newProbabilities[i],
+        cumulative);
+    }
+
+    // 根据新概率分布选择
+    double randomValue = livingEntity.getRandom().nextDouble();
+    Champions.LOGGER.info("Random value: {}, factor: {}", randomValue, factor);
+
+    double cumulativeProb = 0.0;
+    for (int i = 0; i < rankCount; i++) {
+      cumulativeProb += newProbabilities[i];
+      if (randomValue <= cumulativeProb) {
+        Champions.LOGGER.info("Selected rank {}, Sephirah mark: {}",
+          rankList.get(i).getTier(), hasSephirah(livingEntity));
+        return rankList.get(i);
+      }
+    }
+
+    return rankList.get(rankCount - 1);
+  }
+
 
   private static boolean hasSephirah(LivingEntity livingEntity) {
     return livingEntity.getPersistentData().contains("sephirahName");
@@ -254,7 +391,8 @@ public class ChampionBuilder {
 
   private static double getSephiahFactor(LivingEntity livingEntity) {
     String sephirahName = livingEntity.getPersistentData().getString("sephirahName");
-    return ChampionsConfig.sephirahFactors.get(Sephirah.valueOf(sephirahName)).get();
+    Double factor = ChampionsConfig.sephirahFactors.get(Sephirah.valueOf(sephirahName)).get();
+    return factor.isNaN() ? 1.0 : factor;
   }
 
   public static void applyGrowth(final IChampion champion, float growthFactor) {

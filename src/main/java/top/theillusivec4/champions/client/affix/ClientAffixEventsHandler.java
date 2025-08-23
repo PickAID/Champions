@@ -7,7 +7,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.registry.ModMobEffects;
-
+@SuppressWarnings("removal")
 @EventBusSubscriber(value = Dist.CLIENT, bus = EventBusSubscriber.Bus.GAME, modid = Champions.MODID)
 public class ClientAffixEventsHandler {
 
