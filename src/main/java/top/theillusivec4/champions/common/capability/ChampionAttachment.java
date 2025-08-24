@@ -9,7 +9,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.INBTSerializable;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
@@ -69,7 +68,7 @@ public class ChampionAttachment {
     }
 
     @Override
-    public @NotNull LivingEntity getLivingEntity() {
+    public LivingEntity getLivingEntity() {
       return this.champion;
     }
 
