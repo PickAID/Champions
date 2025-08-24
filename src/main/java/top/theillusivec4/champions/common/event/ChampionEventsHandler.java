@@ -19,17 +19,19 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.ExplosionEvent;
 import net.neoforged.neoforge.event.server.ServerAboutToStartEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.affix.IAffix;
+import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.ChampionsOverlay;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.event.customEvent.ChampionsEventHooks;
 import top.theillusivec4.champions.common.network.SyncAffixSettingPacket;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -47,13 +49,13 @@ import java.util.Optional;
 public class ChampionEventsHandler {
 
   @SubscribeEvent
-  public void onAddReloadListener(AddServerReloadListenersEvent event) {
+  private void onAddReloadListener(AddServerReloadListenersEvent event) {
     event.addListener(Utils.getLocation("affix_data"), Champions.API.getAffixDataLoader());
     event.addListener(Utils.getLocation("attributes_modifier_data"), Champions.API.getAttributesModifierDataLoader());
   }
 
   @SubscribeEvent
-  public void onLivingXpDrop(LivingExperienceDropEvent evt) {
+  private void onLivingXpDrop(LivingExperienceDropEvent evt) {
     LivingEntity livingEntity = evt.getEntity();
     ChampionAttachment.getAttachment(livingEntity).flatMap(champion -> champion.getServer().getRank()).ifPresent(rank -> {
       int growth = rank.getGrowthFactor();
@@ -67,7 +69,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onExplosion(ExplosionEvent.Start evt) {
+  private void onExplosion(ExplosionEvent.Start evt) {
     ServerExplosion explosion = evt.getExplosion();
     Entity entity = explosion.getDirectSourceEntity();
 
@@ -83,29 +85,60 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onLivingJoinWorld(EntityJoinLevelEvent evt) {
-    Entity entity = evt.getEntity();
-
-    if (!entity.level().isClientSide()) {
-      ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
-        IChampion.Server serverChampion = champion.getServer();
-        Optional<Rank> maybeRank = serverChampion.getRank();
-
-        if (maybeRank.isEmpty()) {
-          ChampionBuilder.spawn(champion);
+  private void onMobSpilt(MobSplitEvent event) {
+    if (ChampionsConfig.mobInherit) {
+      var parentMob = event.getParent();
+      var children = event.getChildren();
+      ChampionAttachment.getAttachment(parentMob).ifPresent(champion -> {
+        var serverChampion = champion.getServer();
+        if (ChampionHelper.isValidChampion(serverChampion)) {
+          serverChampion.getRank().ifPresent(rank -> children.forEach(child -> ChampionAttachment.getAttachment(child).ifPresent(championChild -> {
+              ArrayList<IAffix> parentAffixes = new ArrayList<>(serverChampion.getAffixes());
+              if (!ChampionsConfig.canHaveInfestedAffix) {
+                parentAffixes.remove(AffixTypes.INFESTED.get());
+              }
+              championChild.getServer().setRank(RankManager.getRank(rank.getTier() - ChampionsConfig.rankReduce));
+              if (!parentAffixes.isEmpty()) {
+                championChild.getServer().setAffixes(parentAffixes);
+              }
+              ChampionBuilder.applyGrowth(championChild, championChild.getServer().getRank().orElse(RankManager.getEmptyRank()).getGrowthFactor());
+            }))
+          );
         }
-        Utils.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onSpawn(champion));
-        serverChampion.getRank().ifPresent(rank -> {
-          var effects = rank.getEffects();
-          effects.forEach(effectPair -> champion.getLivingEntity()
-            .addEffect(new MobEffectInstance(effectPair.getA(), 200, effectPair.getB())));
-        });
       });
     }
   }
 
   @SubscribeEvent
-  public void onLivingUpdate(EntityTickEvent.Pre evt) {
+  private void onLivingJoinWorld(EntityJoinLevelEvent evt) {
+    Entity entity = evt.getEntity();
+
+    if (!entity.level().isClientSide()) {
+      if (ChampionHelper.isValidChampionEntity(entity)) {
+        ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
+          IChampion.Server serverChampion = champion.getServer();
+          Optional<Rank> maybeRank = serverChampion.getRank();
+
+          if (maybeRank.isEmpty()) {
+            if (!ChampionsEventHooks.onAttemptChampionSpawn(champion)) {
+              evt.setCanceled(true);
+              return; // 事件被取消
+            }
+            ChampionBuilder.spawn(champion);
+          }
+          Utils.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onSpawn(champion));
+          serverChampion.getRank().ifPresent(rank -> {
+            var effects = rank.getEffects();
+            effects.forEach(effectPair -> champion.getLivingEntity()
+              .addEffect(new MobEffectInstance(effectPair.getA(), 200, effectPair.getB())));
+          });
+        });
+      }
+    }
+  }
+
+  @SubscribeEvent
+  private void onLivingUpdate(EntityTickEvent.Pre evt) {
     if (evt.getEntity() instanceof LivingEntity livingEntity) {
       if (livingEntity.level().isClientSide()) {
         ChampionAttachment.getAttachment(livingEntity).ifPresent(champion -> {
@@ -149,7 +182,19 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onLivingAttack(LivingIncomingDamageEvent evt) {
+  private void onPlayerRightClick(PlayerInteractEvent.EntityInteract event) {
+    if (ChampionsConfig.enableDebug) {
+      var player = event.getEntity();
+      var target = event.getTarget();
+      if (player instanceof ServerPlayer serverPlayer && ChampionHelper.isChampionEntity(target)) {
+        ChampionAttachment.getAttachment(target).ifPresent(ChampionBuilder::resetAndUpdate);
+        serverPlayer.sendSystemMessage(Component.literal("[Debug] Removed %s rank, affixes and attribute modifiers".formatted(target.getName().getString())));
+      }
+    }
+  }
+
+  @SubscribeEvent
+  private void onLivingAttack(LivingIncomingDamageEvent evt) {
     LivingEntity livingEntity = evt.getEntity();
 
     if (!livingEntity.level().isClientSide()) {
@@ -183,32 +228,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  private void onMobSpilt(MobSplitEvent event) {
-    if (ChampionsConfig.mobInherit) {
-      var parentMob = event.getParent();
-      var children = event.getChildren();
-      ChampionAttachment.getAttachment(parentMob).ifPresent(champion -> {
-        var serverChampion = champion.getServer();
-        if (ChampionHelper.isValidChampion(serverChampion)) {
-          serverChampion.getRank().ifPresent(rank -> children.forEach(child -> ChampionAttachment.getAttachment(child).ifPresent(championChild -> {
-              ArrayList<IAffix> parentAffixes = new ArrayList<>(serverChampion.getAffixes());
-              if (!ChampionsConfig.canHaveInfestedAffix) {
-                parentAffixes.remove(AffixTypes.INFESTED.get());
-              }
-              championChild.getServer().setRank(RankManager.getRank(rank.getTier() - ChampionsConfig.rankReduce));
-              if (!parentAffixes.isEmpty()) {
-                championChild.getServer().setAffixes(parentAffixes);
-              }
-              ChampionBuilder.applyGrowth(championChild, championChild.getServer().getRank().orElse(RankManager.getEmptyRank()).getGrowthFactor());
-            }))
-          );
-        }
-      });
-    }
-  }
-
-  @SubscribeEvent
-  public void onLivingDamage(LivingDamageEvent.Pre evt) {
+  private void onLivingDamage(LivingDamageEvent.Pre evt) {
     LivingEntity livingEntity = evt.getEntity();
 
     if (!livingEntity.level().isClientSide()) {
@@ -227,7 +247,7 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onLivingDeath(LivingDeathEvent evt) {
+  private void onLivingDeath(LivingDeathEvent evt) {
     LivingEntity livingEntity = evt.getEntity();
 
     if (livingEntity.level().isClientSide()) {
@@ -268,18 +288,18 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent
-  public void onServerStart(ServerAboutToStartEvent evt) {
+  private void onServerStart(ServerAboutToStartEvent evt) {
     ChampionHelper.setServer(evt.getServer());
   }
 
   @SubscribeEvent
-  public void onServerClose(ServerStoppedEvent evt) {
+  private void onServerClose(ServerStoppedEvent evt) {
     ChampionHelper.setServer(null);
     ChampionHelper.clearBeacons();
   }
 
   @SubscribeEvent
-  public void onLivingHeal(LivingHealEvent evt) {
+  private void onLivingHeal(LivingHealEvent evt) {
     LivingEntity livingEntity = evt.getEntity();
 
     if (!livingEntity.level().isClientSide()) {
@@ -315,6 +335,5 @@ public class ChampionEventsHandler {
   private void registerCommands(final RegisterCommandsEvent evt) {
     ChampionsCommand.register(evt.getDispatcher());
   }
-
 
 }
