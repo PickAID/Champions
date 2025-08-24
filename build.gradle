@@ -27,7 +27,7 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 
-version = "${mod_version}"
+version = "${minecraft_version}-${mod_version}"
 group = "${mod_group_id}"
 
 base {
@@ -139,15 +139,15 @@ dependencies {
 
 
 
-    implementation fg.deobf("curse.maven:rhino-416294:6186971")
+    implementation fg.deobf("curse.maven:rhino-416294:4069880")
     implementation fg.deobf("dev.architectury:architectury-forge:9.2.14")
     // fixed kubejs stuck gradle when runData
     if (isRunDataTask){
-        compileOnly fg.deobf("curse.maven:kubejs-238086:5853326")
-        compileOnly fg.deobf("curse.maven:probejs-585406:5227399")
+        compileOnly fg.deobf("curse.maven:kubejs-238086:4377177")
+        compileOnly fg.deobf("curse.maven:probejs-585406:4365860")
     } else {
-        implementation fg.deobf("curse.maven:kubejs-238086:5853326")
-        implementation fg.deobf("curse.maven:probejs-585406:5227399")
+        implementation fg.deobf("curse.maven:kubejs-238086:4377177")
+        implementation fg.deobf("curse.maven:probejs-585406:4365860")
     }
 
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
@@ -166,24 +166,24 @@ dependencies {
     compileOnly fg.deobf("curse.maven:silent-lib-242998:${cf_silentlib}")
     compileOnly fg.deobf("curse.maven:scalinghealth-248027:${cf_scalinghealth}")
     compileOnly fg.deobf("curse.maven:TOP-245211:${cf_theoneprobe}")
-    compileOnly fg.deobf("curse.maven:jade-324717:${cf_jade}")
+//    compileOnly fg.deobf("curse.maven:jade-324717:${cf_jade}")
     implementation fg.deobf("curse.maven:jade-324717:${cf_jade}")
     implementation fg.deobf("net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}")
-    implementation fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-1.20.1:${bookshelf_version}")
-    runtimeOnly fg.deobf("curse.maven:curios-309927:5367944")
-    implementation fg.deobf("curse.maven:lionfish-api-1001614:5922047")
-    implementation fg.deobf("curse.maven:lendercataclysm-551586:5924796")
-    implementation fg.deobf("curse.maven:attributefix-280510:4911084")
+    implementation fg.deobf("net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:${bookshelf_version}")
+//    runtimeOnly fg.deobf("curse.maven:curios-309927:5367944")
+//    implementation fg.deobf("curse.maven:lionfish-api-1001614:5922047")
+//    implementation fg.deobf("curse.maven:lendercataclysm-551586:5924796")
+//    implementation fg.deobf("curse.maven:attributefix-280510:4911084")
     //runtimeOnly fg.deobf("curse.maven:atomicstrykers-infernal-mobs-227875:6130372")
-    implementation fg.deobf("curse.maven:citadel-331936:6002521")
-    implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
-    implementation fg.deobf("curse.maven:apothic-attributes-898963:5634071")
-    implementation fg.deobf("curse.maven:gateways-to-eternity-417802:5703251")
-    implementation fg.deobf("curse.maven:placebo-283644:5414631")
-    implementation fg.deobf("curse.maven:apotheosis-313970:6147871")
-    implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
-    implementation fg.deobf("curse.maven:citadel-331936:6002521")
-    implementation fg.deobf("curse.maven:the-twilight-forest-227639:5468648")
+//    implementation fg.deobf("curse.maven:citadel-331936:6002521")
+//    implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
+//    implementation fg.deobf("curse.maven:apothic-attributes-898963:5634071")
+//    implementation fg.deobf("curse.maven:gateways-to-eternity-417802:5703251")
+//    implementation fg.deobf("curse.maven:placebo-283644:5414631")
+//    implementation fg.deobf("curse.maven:apotheosis-313970:6147871")
+//    implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
+//    implementation fg.deobf("curse.maven:citadel-331936:6002521")
+//    implementation fg.deobf("curse.maven:the-twilight-forest-227639:5468648")
 }
 
 
