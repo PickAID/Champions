@@ -101,6 +101,7 @@ public class ModEventHandler {
     event.addProvider(new ModLanguageProvider(packOutput, "ru_ru"));
     event.addProvider(new ModLanguageProvider(packOutput, "tr_tr"));
     event.addProvider(new ModLanguageProvider(packOutput, "uk_ua"));
+    event.addProvider(new ModLanguageProvider(packOutput, "pt_br"));
   }
 
   @SubscribeEvent
