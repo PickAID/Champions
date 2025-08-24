@@ -16,6 +16,7 @@ import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.event.customEvent.ChampionsEventHooks;
 import top.theillusivec4.champions.common.network.NetworkHandler;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -36,11 +37,16 @@ public class ChampionBuilder {
 		LivingEntity entity = champion.getLivingEntity();
 		Rank newRank = ChampionBuilder.createRank(entity);
 		if (newRank != null && newRank.getTier() >= 1) {
+			if (!ChampionsEventHooks.onPreChampionSpawn(champion)) {
+				return; // 事件被取消
+			}
 			champion.getServer().setRank(newRank);
 			ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
 			List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
 			champion.getServer().setAffixes(newAffixes);
 			Utils.consumeIfLifeCycle(newAffixes, lifecycle -> lifecycle.onInitialSpawn(champion));
+			// only post when champion spawned
+			ChampionsEventHooks.onPostChampionSpawn(champion);
 		}
 	}
 

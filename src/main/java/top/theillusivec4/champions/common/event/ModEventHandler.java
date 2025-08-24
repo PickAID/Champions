@@ -114,5 +114,6 @@ public class ModEventHandler {
 		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ru_ru"));
 		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "tr_tr"));
 		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "uk_ua"));
+		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "pt_br"));
 	}
 }

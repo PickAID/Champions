@@ -35,6 +35,7 @@ import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.ChampionsOverlay;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.event.customEvent.ChampionsEventHooks;
 import top.theillusivec4.champions.common.network.NetworkHandler;
 import top.theillusivec4.champions.common.network.SPacketSyncAffixSetting;
 import top.theillusivec4.champions.common.rank.Rank;
@@ -98,6 +99,10 @@ public class ChampionEventsHandler {
 					Optional<Rank> maybeRank = serverChampion.getRank();
 
 					if (maybeRank.isEmpty()) {
+						if (!ChampionsEventHooks.onAttemptChampionSpawn(champion)) {
+							evt.setCanceled(true);
+							return; // 事件被取消
+						}
 						ChampionBuilder.spawn(champion);
 					}
 					Utils.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onSpawn(champion));

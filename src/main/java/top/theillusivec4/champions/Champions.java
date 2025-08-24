@@ -33,6 +33,7 @@ import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.event.ModEventHandler;
 import top.theillusivec4.champions.common.integration.gateways_to_eternity.GatewaysToEternityCompat;
+import top.theillusivec4.champions.common.integration.kubejs.events.ForgeJsEventHandler;
 import top.theillusivec4.champions.common.registry.ChampionsRegistry;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -88,6 +89,9 @@ public class Champions {
 			MinecraftForge.EVENT_BUS.register(new GatewaysToEternityCompat());
 		}
 		ChampionsRegistry.register(modEventBus);
+		if (Utils.isKubejsLoaded()) {
+			MinecraftForge.EVENT_BUS.register(new ForgeJsEventHandler());
+		}
 	}
 
 	public static Champions getInstance() {

@@ -52,13 +52,67 @@ public class ModLanguageProvider extends LanguageProvider {
             case "uk_ua":
                 this.addUkrainianTranslations();
                 break;
+	        case "pt_br":
+		        this.addBrazilianPortugueseTranslations();
+		        break;
             case "en_us":
             default:
                 this.addEnglishTranslations();
         }
     }
 
-    /**
+	private void addBrazilianPortugueseTranslations() {
+		this.addAffix(ADAPTABLE.get(), "Adaptável");
+		this.addAffix(ARCTIC.get(), "Ártico");
+		this.addAffix(DAMPENING.get(), "Amortecedor");
+		this.addAffix(DESECRATING.get(), "Profanador");
+		this.addAffix(ENKINDLING.get(), "Incendiário");
+		this.addAffix(HASTY.get(), "Apresado");
+		this.addAffix(INFESTED.get(), "Infestado");
+		this.addAffix(KNOCKING.get(), "Empurrador");
+		this.addAffix(LIVELY.get(), "Vigoroso");
+		this.addAffix(MAGNETIC.get(), "Magnético");
+		this.addAffix(MOLTEN.get(), "Fundido");
+		this.addAffix(PARALYZING.get(), "Paralisante");
+		this.addAffix(PLAGUED.get(), "Pestilento");
+		this.addAffix(REFLECTIVE.get(), "Reflexivo");
+		this.addAffix(SHIELDING.get(), "Protetor");
+		this.addAffix(WOUNDING.get(), "Dilacerante");
+		// Rank
+		this.addRank(1, "Comum");
+		this.addRank(2, "Habilidoso");
+		this.addRank(3, "Elite");
+		this.addRank(4, "Lendário");
+		this.addRank(5, "Supremo");
+		// Item
+		add(CHAMPION_EGG_ITEM.get(), "Ovo de Campeão");
+		// Item Tooltip
+		add("item.champions.egg.tooltip", "Afixos Aleatórios");
+		// Entity Type
+		add(ModEntityTypes.ENKINDLING_BULLET.get(), "Projétil Incendiário");
+		add(ARCTIC_BULLET.get(), "Projétil Ártico");
+		// Effect
+		add(PARALYSIS_EFFECT_TYPE.get(), "Paralisia");
+		add(WOUND_EFFECT_TYPE.get(), "Ferimento");
+		// Damage Type
+		addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s foi atingido por chamas", "%1$s foi atingido por chamas enquanto lutava contra %2$s");
+		addDamageType(REFLECTION_DAMAGE, "%1$s provou do próprio veneno", "");
+		// Dynamic Command Exception Type
+		add("argument.champions.affix.unknown", "Afixo desconhecido %s");
+		// Command
+		add("commands.champions.summon.success", "Invocado novo %s");
+		add("commands.champions.egg.success", "Criado novo %s");
+		add("command.champions.egg.unknown_entity", "Entidade desconhecida");
+		// Config
+		add("config.jade.plugin_champions.enable_affix_compact", "Ativar visualização compacta de afixos no Jade");
+		// Advancement
+		add("advancements.champions.kill_a_champion.title", "Caçador de Campeões");
+		add("advancements.champions.kill_a_champion.description", "Mate um monstro hostil poderoso");
+		// Stats
+		add("stat.champions.champion_mobs_killed", "Campeões Derrotados");
+	}
+
+	/**
      * uk_ua
      */
     private void addUkrainianTranslations() {
