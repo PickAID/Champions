@@ -48,6 +48,7 @@ public class ChampionBuilder {
       List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
       champion.getServer().setAffixes(newAffixes);
       Utils.consumeIfLifeCycle(newAffixes, lifecycle -> lifecycle.onInitialSpawn(champion));
+
       // only post when champion spawned
       ChampionsEventHooks.onPostChampionSpawn(champion);
     }
