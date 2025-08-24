@@ -8,10 +8,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
+import top.theillusivec4.champions.common.util.ChampionHelper;
 
 import java.util.function.Function;
 
@@ -30,10 +31,11 @@ public class TheOneProbePlugin implements IProbeInfoEntityProvider {
     if (ChampionsConfig.enableTOPIntegration) {
       ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
         IChampion.Server serverChampion = champion.getServer();
+        if (!ChampionHelper.isValidChampion(serverChampion)) {
+          return;
+        }
+
         serverChampion.getRank().ifPresent(rank -> {
-          if (rank.getTier() == 0) {
-            return;
-          }
           var color = rank.getDefaultColor();
           int r = ARGB.red(color.getValue());
           int g = ARGB.green(color.getValue());

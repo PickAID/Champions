@@ -50,11 +50,6 @@ public class ChampionsConfig {
   public static boolean fakeLoot;
   public static LootSource lootSource;
   public static boolean lootScaling;
-  public static double healthGrowth;
-  public static double attackGrowth;
-  public static double armorGrowth;
-  public static double toughnessGrowth;
-  public static double knockbackResistanceGrowth;
   public static int experienceGrowth;
   public static int explosionGrowth;
   public static double affixTargetRange;
@@ -167,11 +162,6 @@ public class ChampionsConfig {
     lootScaling = SERVER.lootScaling.get();
     ConfigLoot.parse(SERVER.lootDrops.get());
 
-    healthGrowth = SERVER.healthGrowth.get();
-    attackGrowth = SERVER.attackGrowth.get();
-    armorGrowth = SERVER.armorGrowth.get();
-    toughnessGrowth = SERVER.toughnessGrowth.get();
-    knockbackResistanceGrowth = SERVER.knockbackResistanceGrowth.get();
     experienceGrowth = SERVER.experienceGrowth.get();
     explosionGrowth = SERVER.explosionGrowth.get();
 
@@ -255,6 +245,7 @@ public class ChampionsConfig {
     mobInherit = SERVER.mobInherit.get();
     rankReduce = SERVER.rankReduce.get();
     canHaveInfestedAffix = SERVER.canHaveInfestedAffix.get();
+
   }
 
   private static boolean validateEntityName(final Object obj) {
@@ -313,7 +304,6 @@ public class ChampionsConfig {
       enableDebug = builder.comment("Enable debug for game testing")
         .translation(CONFIG_PREFIX + "enableDebug")
         .define("enableDebug", false);
-
       beaconProtectionRange = builder
         .comment("The range from an active beacon where no champions will spawn (0 to disable)")
         .translation(CONFIG_PREFIX + "beaconProtectionRange")
@@ -365,15 +355,12 @@ public class ChampionsConfig {
       enableTOPIntegration =
         builder.comment("Set to true to show champion tier and affixes in The One Probe overlay")
           .translation(CONFIG_PREFIX + "enableTOPIntegration").define("enableTOPIntegration", true);
-
       allowChampionsList =
         builder.comment("Set to true to enable champions entity allow list configuration by datapack")
           .translation(CONFIG_PREFIX + "allowChampionsList").define("allowChampionsList", true);
-
       allowChampionsPermission =
         builder.comment("The permission of champions entity allow list datapack.")
           .translation(CONFIG_PREFIX + "allowChampionsPermission").defineEnum("allowChampionsPermission", Permission.WHITELIST, Permission.values());
-
       builder.pop();
     }
   }
@@ -385,11 +372,6 @@ public class ChampionsConfig {
     public final ModConfigSpec.ConfigValue<List<? extends String>> lootDrops;
     public final ModConfigSpec.BooleanValue lootScaling;
 
-    public final ModConfigSpec.DoubleValue healthGrowth;
-    public final ModConfigSpec.DoubleValue attackGrowth;
-    public final ModConfigSpec.DoubleValue armorGrowth;
-    public final ModConfigSpec.DoubleValue toughnessGrowth;
-    public final ModConfigSpec.DoubleValue knockbackResistanceGrowth;
     public final ModConfigSpec.IntValue experienceGrowth;
     public final ModConfigSpec.IntValue explosionGrowth;
 
@@ -478,31 +460,6 @@ public class ChampionsConfig {
       builder.pop();
 
       builder.push("growth");
-
-      healthGrowth = builder
-        .comment("The percent increase in health multiplied by the growth factor")
-        .translation(CONFIG_PREFIX + "healthGrowth")
-        .defineInRange("healthGrowth", 0.35D, 0.0D, Double.MAX_VALUE);
-
-      attackGrowth = builder
-        .comment("The percent increase in attack damage multiplied by the growth factor")
-        .translation(CONFIG_PREFIX + "attackGrowth")
-        .defineInRange("attackGrowth", 0.5D, 0.0D, Double.MAX_VALUE);
-
-      armorGrowth = builder.comment("The increase in armor multiplied by the growth factor")
-        .translation(CONFIG_PREFIX + "armorGrowth")
-        .defineInRange("armorGrowth", 2.0D, 0.0D, 30.0D);
-
-      toughnessGrowth = builder
-        .comment("The increase in armor toughness multiplied by the growth factor")
-        .translation(CONFIG_PREFIX + "toughnessGrowth")
-        .defineInRange("toughnessGrowth", 1.0D, 0.0D, 30.0D);
-
-      knockbackResistanceGrowth = builder
-        .comment("The increase in knockback resistance multiplied by the growth factor")
-        .translation(CONFIG_PREFIX + "knockbackResistanceGrowth")
-        .defineInRange("knockbackResistanceGrowth", 0.05D, 0.0D, 1.0D);
-
       experienceGrowth = builder
         .comment("The increase in experience multiplied by the growth factor")
         .translation(CONFIG_PREFIX + "experienceGrowth")

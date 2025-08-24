@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -43,7 +43,7 @@ public class ChampionBuilder {
       ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
       List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
       champion.getServer().setAffixes(newAffixes);
-      newAffixes.forEach(affix -> affix.onInitialSpawn(champion));
+      Utils.consumeIfLifeCycle(newAffixes, lifecycle -> lifecycle.onInitialSpawn(champion));
     }
   }
 
@@ -53,7 +53,7 @@ public class ChampionBuilder {
     ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
     affixes = affixes.isEmpty() ? ChampionBuilder.createAffixes(newRank, champion) : affixes;
     champion.getServer().setAffixes(affixes);
-    affixes.forEach(affix -> affix.onInitialSpawn(champion));
+    Utils.consumeIfLifeCycle(affixes, lifecycle -> lifecycle.onInitialSpawn(champion));
   }
 
   public static List<IAffix> createAffixes(final Rank rank, final IChampion champion) {
@@ -126,55 +126,53 @@ public class ChampionBuilder {
    * @return lowest rank if this living entity not potential, else living entity with new rank that applied entity settings.
    */
   public static Rank createRank(final LivingEntity livingEntity) {
-    // 检查实体是否可以成为精英怪
+
     if (ChampionHelper.notPotential(livingEntity)) {
       return RankManager.getEmptyRank();
     }
-
-    // 获取所有等级配置
     ImmutableSortedMap<Integer, Rank> ranks = RankManager.getRanks();
+
     if (ranks.isEmpty()) {
-      Champions.LOGGER.error("No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
+      Champions.LOGGER.error(
+        "No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
       return RankManager.getEmptyRank();
     }
+    Integer[] tierRange = new Integer[]{null, null};
 
-    // 使用数组存储等级范围
-    final int[] tierRange = new int[]{ranks.firstKey(), ranks.lastKey()};
-
-    // 如果实体有特定设置，获取实体的等级范围设置
     EntityManager.getSettings(livingEntity.getType()).ifPresent(entitySettings -> {
-      if (entitySettings.minTier != null) {
-        tierRange[0] = entitySettings.minTier;
-      }
-      if (entitySettings.maxTier != null) {
-        tierRange[1] = entitySettings.maxTier;
-      }
+      tierRange[0] = entitySettings.minTier;
+      tierRange[1] = entitySettings.maxTier;
     });
 
-    int minTier = tierRange[0];
-    int maxTier = tierRange[1];
+    Integer firstTier = tierRange[0] != null ? tierRange[0] : ranks.firstKey();
+    int maxTier = tierRange[1] != null ? tierRange[1] : -1;
 
-    // 过滤出符合等级范围的Rank
-    ImmutableSortedMap<Integer, Rank> filteredRanks = ranks.subMap(minTier, true, maxTier, true);
+    ImmutableSortedMap<Integer, Rank> filteredRanks;
 
-    // 检查是否有符合条件的Rank
-    if (filteredRanks.isEmpty()) {
-      Champions.LOGGER.warn("No valid ranks found in the specified range! Assigning EmptyRank to {}", livingEntity);
-      return RankManager.getEmptyRank();
+    if (maxTier == -1) {
+      /* 如果 maxTier 未设置，则仅过滤 firstTier 以上的 Rank */
+      filteredRanks = ranks.tailMap(firstTier, true);
+    } else {
+      /* 如果 maxTier 设置了，过滤 firstTier 和 maxTier 范围内的 Rank */
+      filteredRanks = ranks.tailMap(firstTier, true).headMap(maxTier + 1, true);
     }
 
-    // 计算总权重
+    // 如果没有符合条件的 Rank，返回 EmptyRank
+    if (filteredRanks.isEmpty()) {
+      Champions.LOGGER.warn(
+        "No valid ranks found in the specified range! Assigning EmptyRank to {}", livingEntity);
+      return RankManager.getEmptyRank();
+    }
     int totalWeight = filteredRanks.values().stream()
       .mapToInt(Rank::getWeight)
       .sum();
 
-    // 如果所有权重为0，返回EmptyRank
+    // 如果所有权重为 0，返回 EmptyRank
     if (totalWeight <= 0) {
-      Champions.LOGGER.warn("All ranks have zero weight! Assigning EmptyRank to {}", livingEntity);
+      Champions.LOGGER.warn(
+        "All ranks have zero weight! Assigning EmptyRank to {}", livingEntity);
       return RankManager.getEmptyRank();
     }
-
-    // 根据权重随机选择一个Rank
     int randomValue = livingEntity.getRandom().nextInt(totalWeight);
     int cumulativeWeight = 0;
 
@@ -311,9 +309,9 @@ public class ChampionBuilder {
     ChampionBuilder.applyGrowth(newChampion, rank.getGrowthFactor());
     List<IAffix> oldAffixes = oldChampion.getServer().getAffixes();
     newServer.setAffixes(oldAffixes);
-    newServer.getAffixes().forEach(affix -> {
-      affix.onInitialSpawn(newChampion);
-      affix.onSpawn(newChampion);
+    Utils.consumeIfLifeCycle(newServer.getAffixes(), lifecycle -> {
+      lifecycle.onInitialSpawn(newChampion);
+      lifecycle.onSpawn(newChampion);
     });
   }
 }

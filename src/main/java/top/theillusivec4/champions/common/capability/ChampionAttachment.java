@@ -9,10 +9,9 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.ValueIOSerializable;
-import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.event.ChampionEventsHandler;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -68,7 +67,7 @@ public class ChampionAttachment {
     }
 
     @Override
-    public @NotNull LivingEntity getLivingEntity() {
+    public LivingEntity getLivingEntity() {
       return this.champion;
     }
 

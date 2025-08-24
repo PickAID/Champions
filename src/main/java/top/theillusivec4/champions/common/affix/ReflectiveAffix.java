@@ -1,17 +1,18 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.registry.ModDamageTypes;
 
-public class ReflectiveAffix extends BasicAffix {
+public class ReflectiveAffix extends CombatAffix {
 
   @SubscribeEvent
   public void onDamageEvent(LivingDamageEvent.Pre evt) {
@@ -42,15 +43,20 @@ public class ReflectiveAffix extends BasicAffix {
         newSource = ModDamageTypes.of(ModDamageTypes.REFLECTION_DAMAGE, source.getDirectEntity(), champion.getLivingEntity());
       }
       float min = (float) ChampionsConfig.reflectiveMinPercent;
-
-      if (source.is(DamageTypeTags.IS_FIRE) || source.is(DamageTypeTags.IS_PROJECTILE) || source.is(DamageTypeTags.IS_EXPLOSION) || source.is(DamageTypeTags.DAMAGES_HELMET) || source.is(DamageTypes.MAGIC) || source.is(DamageTypeTags.BYPASSES_ARMOR) || source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
-        newSource = new DamageSource(source.typeHolder(), sourceEntity, champion.getLivingEntity());
-      }
-
       float damage = (float) Math.min(amount * (sourceEntity.getRandom().nextFloat() * (ChampionsConfig.reflectiveMaxPercent - min) + min), ChampionsConfig.reflectiveMax);
 
       sourceEntity.hurt(newSource, damage);
     }
     return newAmount;
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.OFFENSE)
+      .setHasSub()
+      .build();
+  }
+
 }

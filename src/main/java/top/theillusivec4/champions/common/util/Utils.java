@@ -7,14 +7,20 @@ import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.io.FileUtils;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.affix.IAffix;
+import top.theillusivec4.champions.api.affix.IAffixLifecycle;
+import top.theillusivec4.champions.common.affix.core.CombatAffix;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 public class Utils {
+  private static Boolean scalingHealthLoaded = null;
   private static Boolean gameStagesLoaded = null;
   private static Boolean gateways = null;
 
@@ -30,6 +36,14 @@ public class Utils {
       gateways = ModList.get().isLoaded("gateways");
     }
     return gateways;
+  }
+
+
+  public static boolean isScalingHealthLoaded() {
+    if (scalingHealthLoaded == null) {
+      scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
+    }
+    return scalingHealthLoaded;
   }
 
   public static void createServerConfig(ModConfigSpec spec, String suffix) {
@@ -56,6 +70,22 @@ public class Utils {
       locations.add(getLocation(s));
     }
     return locations;
+  }
+
+  public static void consumeIfLifeCycle(List<IAffix> affixes, Consumer<IAffixLifecycle> consumer) {
+    affixes.forEach(iAffix -> {
+      if (iAffix instanceof IAffixLifecycle lifecycle) {
+        consumer.accept(lifecycle);
+      }
+    });
+  }
+
+  public static void consumeIfCombat(List<IAffix> affixes, Consumer<CombatAffix> consumer) {
+    affixes.forEach(iAffix -> {
+      if (iAffix instanceof CombatAffix lifecycle) {
+        consumer.accept(lifecycle);
+      }
+    });
   }
 
 }

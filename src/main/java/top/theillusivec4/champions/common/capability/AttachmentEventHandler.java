@@ -1,6 +1,5 @@
 package top.theillusivec4.champions.common.capability;
 
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -11,7 +10,7 @@ import net.neoforged.neoforge.event.entity.living.LivingConversionEvent;
 import net.neoforged.neoforge.event.entity.living.MobSpawnEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.network.SPacketSyncChampion;
@@ -37,10 +36,8 @@ public class AttachmentEventHandler {
 
           if (ChampionsConfig.championSpawners && evt.getSpawnType() == EntitySpawnReason.SPAWNER) {
             serverChampion.setRank(RankManager.getLowestRank()); // check basic spawner
-            ChampionBuilder.spawn(champion);
-          } else if (ChampionsConfig.championTrialSpawners && evt.getSpawnType() == EntitySpawnReason.TRIAL_SPAWNER) {
+          } else if (!ChampionsConfig.championTrialSpawners && evt.getSpawnType() == EntitySpawnReason.TRIAL_SPAWNER) {
             serverChampion.setRank(RankManager.getLowestRank()); // check trial spawner
-            ChampionBuilder.spawn(champion);
           }
         }
       });
@@ -79,7 +76,7 @@ public class AttachmentEventHandler {
           PacketDistributor.sendToPlayer(serverPlayer,
             new SPacketSyncChampion(entity.getId(),
               serverChampion.getRank().map(Rank::getTier).orElse(0),
-              serverChampion.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
+              serverChampion.getRank().orElse(new Rank()).getDefaultColor().serialize(),
               serverChampion.getAffixes().stream().map(IAffix::getIdentifier).collect(Collectors.toSet()))
           );
         }

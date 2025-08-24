@@ -7,6 +7,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -21,6 +22,13 @@ public class ArcticAffix extends GoalAffix {
   public List<Tuple<Integer, Goal>> getGoals(IChampion champion) {
     return Collections.singletonList(
       new Tuple<>(0, new AttackGoal((Mob) champion.getLivingEntity())));
+  }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .build();
   }
 
   static class AttackGoal extends Goal {

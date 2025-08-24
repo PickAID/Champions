@@ -12,15 +12,13 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.registry.ModLootItemConditions;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -35,7 +33,6 @@ public record ChampionPropertyCondition(LootContext.EntityTarget target,
     AffixesPredicate.CODEC.optionalFieldOf("affixes").forGetter(ChampionPropertyCondition::affixes)
   ).apply(instance, ChampionPropertyCondition::new));
 
-  @Nonnull
   @Override
   public Set<ContextKey<?>> getReferencedContextParams() {
     return ImmutableSet.of(this.target.getParam());
@@ -53,7 +50,7 @@ public record ChampionPropertyCondition(LootContext.EntityTarget target,
   }
 
   @Override
-  public @NotNull MapCodec<? extends EntitySubPredicate> codec() {
+  public MapCodec<? extends EntitySubPredicate> codec() {
     return CODEC;
   }
 

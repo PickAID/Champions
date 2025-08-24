@@ -9,13 +9,14 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.common.affix.core.CombatLifeCycleAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
 import java.util.List;
 
-public class PlaguedAffix extends BasicAffix {
+public class PlaguedAffix extends CombatLifeCycleAffix {
 
   @Override
   public void onClientUpdate(IChampion champion) {
@@ -68,4 +69,12 @@ public class PlaguedAffix extends BasicAffix {
       ChampionsConfig.plaguedEffect.getDuration(), ChampionsConfig.plaguedEffect.getAmplifier()));
     return true;
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .build();
+  }
+
 }

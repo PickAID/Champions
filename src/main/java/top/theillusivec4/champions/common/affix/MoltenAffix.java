@@ -17,13 +17,15 @@ import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.level.pathfinder.PathType;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.affix.core.BasicAffix;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
+import top.theillusivec4.champions.common.affix.core.CombatLifeCycleAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
 import java.util.Iterator;
 import java.util.Set;
 
-public class MoltenAffix extends BasicAffix {
+public class MoltenAffix extends CombatLifeCycleAffix {
 
   @Override
   public void onSpawn(IChampion champion) {
@@ -86,4 +88,13 @@ public class MoltenAffix extends BasicAffix {
     target.hurt(damageSource, amount);
     return true;
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.OFFENSE)
+      .build();
+  }
+
 }

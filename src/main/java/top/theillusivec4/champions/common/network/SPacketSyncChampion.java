@@ -12,8 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
@@ -52,17 +51,16 @@ public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
     });
   }
 
+  @Override
+  public Type<? extends CustomPacketPayload> type() {
+    return TYPE;
+  }
+
   public static void syncChampionDataToPlayerTrackingEntity(IChampion.Server championData, LivingEntity targetEntity) {
     PacketDistributor.sendToPlayersTrackingEntity(targetEntity,
       new SPacketSyncChampion(targetEntity.getId(),
         championData.getRank().map(Rank::getTier).orElse(0),
         championData.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
         championData.getAffixes().stream().map(IAffix::getIdentifier).collect(Collectors.toSet())));
-  }
-
-  @Override
-  @NotNull
-  public Type<? extends CustomPacketPayload> type() {
-    return TYPE;
   }
 }

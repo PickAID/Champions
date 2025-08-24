@@ -8,52 +8,61 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.monster.EnderMan;
-import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Shulker;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.event.EventHooks;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.data.AffixCategory;
+import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.AffixData;
-import top.theillusivec4.champions.common.affix.core.GoalAffix;
+import top.theillusivec4.champions.common.affix.core.GoalCombatAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
-import top.theillusivec4.champions.common.rank.RankManager;
+import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class InfestedAffix extends GoalAffix {
+public class InfestedAffix extends GoalCombatAffix {
 
   private static void spawnParasites(LivingEntity livingEntity, int amount,
                                      @Nullable LivingEntity target, ServerLevel world) {
-    boolean isEnder =
-      livingEntity instanceof EnderMan || livingEntity instanceof Shulker
-        || livingEntity instanceof Endermite || livingEntity instanceof EnderDragon;
+    boolean isEnder = livingEntity.getType().is(ModEntityTypes.Tags.IS_ENDER);
     EntityType<?> type =
       isEnder ? ChampionsConfig.infestedEnderParasite : ChampionsConfig.infestedParasite;
+    List<Mob> children = new ArrayList<>();
 
     for (int i = 0; i < amount; i++) {
       var entity = type
         .create(world, null, livingEntity.blockPosition(), EntitySpawnReason.MOB_SUMMONED,
           false, false);
-
-      if (entity instanceof LivingEntity) {
-        ChampionAttachment.getAttachment(entity)
-          .ifPresent(champion -> champion.getServer().setRank(RankManager.getLowestRank()));
-        livingEntity.level().addFreshEntity(entity);
-
-        if (entity instanceof Mob) {
-          ((Monster) entity).spawnAnim();
-          ((Monster) entity).setLastHurtByMob(target);
-          ((Monster) entity).setTarget(target);
-        }
+      if (entity instanceof Monster monster) {
+        children.add(monster);
       }
     }
+
+    if (!EventHooks.onMobSplit((Mob) livingEntity, children).isCanceled()) {
+      children.forEach(child -> {
+        world.addFreshEntity(child);
+        child.spawnAnim();
+        child.setLastHurtByMob(target);
+        child.setTarget(target);
+      });
+    }
+
   }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .setCategory(AffixCategory.OFFENSE)
+      .build();
+  }
+
 
   @Override
   public void onInitialSpawn(IChampion champion) {
@@ -87,8 +96,8 @@ public class InfestedAffix extends GoalAffix {
     }
     Level world = champion.getLivingEntity().level();
 
-    if (world instanceof ServerLevel) {
-      spawnParasites(champion.getLivingEntity(), buffer.num, target, (ServerLevel) world);
+    if (world instanceof ServerLevel serverLevel) {
+      spawnParasites(champion.getLivingEntity(), buffer.num, target, serverLevel);
     }
     return true;
   }

@@ -12,6 +12,7 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
+import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
@@ -42,6 +43,14 @@ import static top.theillusivec4.champions.api.AffixRegistry.AFFIX_REGISTRY;
 public class ModEventHandler {
 
   @SubscribeEvent
+  private void registerNetwork(final RegisterPayloadHandlersEvent event) {
+    final PayloadRegistrar registrar = event.registrar(Champions.MODID);
+    registrar.playToClient(SPacketSyncAffixData.TYPE, SPacketSyncAffixData.STREAM_CODEC, SPacketSyncAffixData::handle);
+    registrar.playToClient(SPacketSyncChampion.TYPE, SPacketSyncChampion.STREAM_CODEC, SPacketSyncChampion::handle);
+    registrar.playToClient(SyncAffixSettingPacket.TYPE, SyncAffixSettingPacket.STREAM_CODEC, SyncAffixSettingPacket::handle);
+  }
+
+  @SubscribeEvent
   private void onCommonSetup(final FMLCommonSetupEvent event) {
     event.enqueueWork(() -> {
       Utils.createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
@@ -54,52 +63,12 @@ public class ModEventHandler {
   }
 
   @SubscribeEvent
-  private void config(final ModConfigEvent.Loading evt) {
-
-    if (!evt.getConfig().getModId().equals(Champions.MODID)) {
-      return;
-    }
-
-    if (evt.getConfig().getType() == ModConfig.Type.SERVER) {
-      synchronized (this) {
-
-        IConfigSpec spec = evt.getConfig().getSpec();
-        CommentedConfig commentedConfig = evt.getConfig().getLoadedConfig().config();
-        ChampionsConfig.bake();
-        // 重建管理器
-        if (spec == ChampionsConfig.RANKS_SPEC) {
-          ChampionsConfig.transformRanks(commentedConfig);
-          RankManager.buildRanks();
-        } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
-          ChampionsConfig.transformEntities(commentedConfig);
-          EntityManager.buildEntitySettings();
-        } else if (spec == ChampionsConfig.STAGE_SPEC && Utils.isGameStagesLoaded()) {
-          ChampionsConfig.entityStages = ChampionsConfig.STAGE.entityStages.get();
-          ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
-        }
-      }
-    } else if (evt.getConfig().getType() == ModConfig.Type.CLIENT) {
-      ClientChampionsConfig.bake();
-    } else if (evt.getConfig().getType() == ModConfig.Type.COMMON) {
-      ChampionsConfig.bakeCommon();
-    }
-  }
-
-  @SubscribeEvent
   private void onInterModEnqueue(final InterModEnqueueEvent event) {
     // register TheOneProbe integration
     if (ModList.get().isLoaded(TheOneProbe.MODID)) {
       Champions.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
       InterModComms.sendTo(Champions.MODID, TheOneProbe.MODID, "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
     }
-  }
-
-  @SubscribeEvent
-  private void registerNetwork(final RegisterPayloadHandlersEvent event) {
-    final PayloadRegistrar registrar = event.registrar("champions");
-    registrar.playToClient(SPacketSyncAffixData.TYPE, SPacketSyncAffixData.STREAM_CODEC, SPacketSyncAffixData::handle);
-    registrar.playToClient(SPacketSyncChampion.TYPE, SPacketSyncChampion.STREAM_CODEC, SPacketSyncChampion::handle);
-    registrar.playToClient(SyncAffixSettingPacket.TYPE, SyncAffixSettingPacket.STREAM_CODEC, SyncAffixSettingPacket::handle);
   }
 
   @SubscribeEvent
@@ -132,6 +101,41 @@ public class ModEventHandler {
     event.addProvider(new ModLanguageProvider(packOutput, "ru_ru"));
     event.addProvider(new ModLanguageProvider(packOutput, "tr_tr"));
     event.addProvider(new ModLanguageProvider(packOutput, "uk_ua"));
+  }
+
+  @SubscribeEvent
+  private void config(final ModConfigEvent.Loading evt) {
+
+    if (!evt.getConfig().getModId().equals(Champions.MODID)) {
+      return;
+    }
+
+    if (evt.getConfig().getType() == ModConfig.Type.SERVER) {
+      ChampionsConfig.bake();
+      synchronized (this) {
+        IConfigSpec spec = evt.getConfig().getSpec();
+        CommentedConfig commentedConfig = evt.getConfig().getLoadedConfig().config();
+        // 重建管理器
+        try {
+          if (spec == ChampionsConfig.RANKS_SPEC) {
+            ChampionsConfig.transformRanks(commentedConfig);
+            RankManager.buildRanks();
+          } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
+            ChampionsConfig.transformEntities(commentedConfig);
+            EntityManager.buildEntitySettings();
+          } else if (spec == ChampionsConfig.STAGE_SPEC && Utils.isGameStagesLoaded()) {
+            ChampionsConfig.entityStages = ChampionsConfig.STAGE.entityStages.get();
+            ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
+          }
+        } catch (Exception e) {
+          Champions.LOGGER.error("Error loading config, please remove this file or check the format is correct: {}", FMLPaths.GAMEDIR.get().resolve(evt.getConfig().getFullPath()), e);
+        }
+      }
+    } else if (evt.getConfig().getType() == ModConfig.Type.CLIENT) {
+      ClientChampionsConfig.bake();
+    } else if (evt.getConfig().getType() == ModConfig.Type.COMMON) {
+      ChampionsConfig.bakeCommon();
+    }
   }
 
   @SubscribeEvent

@@ -19,7 +19,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
@@ -28,7 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import top.theillusivec4.champions.api.AffixRegistry;
-import top.theillusivec4.champions.api.IAffix;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.item.ChampionEggItem;
@@ -125,16 +124,17 @@ public class ChampionsCommand {
     var entityType = getTypeOrThrow(resourceLocation);
     var sourceEntity = source.getPlayerOrException();
 
-    Entity entity = entityType.create((ServerLevel) sourceEntity.level(), null,
+    Entity entity = entityType.create(sourceEntity.level(), null,
       pos != null ? pos : new BlockPos(sourceEntity.blockPosition()), EntitySpawnReason.COMMAND,
       false, false);
 
     ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
       ChampionBuilder.spawnPreset(champion, tier, new ArrayList<>(affixes));
-      source.getLevel().addFreshEntity(champion.getLivingEntity());
+      var livingEntity = champion.getLivingEntity();
+      source.getLevel().addFreshEntity(livingEntity);
       source.sendSuccess(() -> Component.translatable("commands.champions.summon.success",
-        Component.translatable("rank.champions.title." + tier).getString() + " " + Objects.requireNonNull(champion.getLivingEntity()
-          .getDisplayName()).getString()), false);
+        Component.translatable("rank.champions.title." + tier).getString() + " " + livingEntity
+          .getName().getString()), false);
     });
 
     return Command.SINGLE_SUCCESS;
