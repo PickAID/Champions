@@ -8,8 +8,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ServerExplosion;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.client.event.CustomizeGuiOverlayEvent;
@@ -316,7 +314,6 @@ public class ChampionEventsHandler {
   }
 
   @SubscribeEvent(priority = EventPriority.LOWEST)
-  @OnlyIn(Dist.CLIENT)
   private void onBossBarEvent(final CustomizeGuiOverlayEvent.BossEventProgress event) {
     event.setCanceled(ChampionsOverlay.isRendering);
   }
