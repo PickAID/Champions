@@ -2,18 +2,18 @@ package top.theillusivec4.champions.common.util;
 
 import com.google.common.collect.ImmutableSortedMap;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.Util;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ChatType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.event.customEvent.ChampionsEventHooks;
@@ -27,7 +27,7 @@ import java.util.*;
 import static top.theillusivec4.champions.common.integration.gamestages.GameStagesPlugin.hasTierStage;
 
 public class ChampionBuilder {
-	private static final RandomSource RAND = RandomSource.createNewThreadLocalInstance();
+	private static final Random RAND = new Random();
 
 	public static void spawn(final IChampion champion) {
 
@@ -171,7 +171,7 @@ public class ChampionBuilder {
 		if (growthFactor != 0) {
 			Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
 				if (value.enable()) {
-					var attribute = ForgeRegistries.ATTRIBUTES.getDelegate(value.attributeType());
+					var attribute = ForgeRegistries.ATTRIBUTES.getHolder(value.attributeType());
 					var setting = value.setting();
 					var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
 					if (matches) {
@@ -192,11 +192,11 @@ public class ChampionBuilder {
 		var playerList = Objects.requireNonNull(livingEntity.getServer()).getPlayerList();
 		Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
 			if (value.enable()) {
-				var attribute = ForgeRegistries.ATTRIBUTES.getDelegate(value.attributeType());
+				var attribute = ForgeRegistries.ATTRIBUTES.getHolder(value.attributeType());
 				var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
 				if (matches) {
 					attribute.ifPresent(attributeValue -> {
-						var attributeInstance = livingEntity.getAttributes().getInstance(attributeValue);
+						var attributeInstance = livingEntity.getAttributes().getInstance(attributeValue.value());
 						if (attributeInstance != null) {
 							attributeInstance.getModifiers().forEach(attributeModifier -> {
 								var isChampionModifier = attributeModifier.getName().contains(Champions.MODID);
@@ -205,7 +205,7 @@ public class ChampionBuilder {
 									if (ChampionsConfig.enableDebug) {
 										var debugInfo = "Removed champion modifier: UUID: %s Name:%s Operation: %s".formatted(attributeModifier.getId(), attributeModifier.getName(), attributeModifier.getOperation());
 										Champions.LOGGER.debug(debugInfo);
-										playerList.getPlayers().stream().filter(p -> p.hasPermissions(2)).forEach(serverPlayer -> serverPlayer.sendSystemMessage(Component.literal(debugInfo)));
+										playerList.getPlayers().stream().filter(p -> p.hasPermissions(2)).forEach(serverPlayer -> serverPlayer.sendMessage(Utils.literal(debugInfo), ChatType.SYSTEM, Util.NIL_UUID));
 									}
 								}
 							});
@@ -265,7 +265,7 @@ public class ChampionBuilder {
 		}
 	}
 
-	private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, ResourceLocation modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
+	private static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attributeValue, ResourceLocation modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
 		applyAttributeModifier(livingEntity, attributeValue, UUID.randomUUID(), getAttributeFormated(modifierId), setting.getFirst() * growthFactor, setting.getSecond());
 	}
 
@@ -274,7 +274,7 @@ public class ChampionBuilder {
 	}
 
 	public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, UUID modifierUuid, ResourceLocation modifierName, double amount, AttributeModifier.Operation operation) {
-		var attributeInstance = livingEntity.getAttributes().getInstance(attribute);
+		var attributeInstance = livingEntity.getAttributes().getInstance(attribute.value());
 		var attributeModifier = new AttributeModifier(modifierUuid, modifierName.toString(), amount, operation);
 		if (attributeInstance != null && !attributeInstance.hasModifier(attributeModifier)) {
 			attributeInstance.addPermanentModifier(attributeModifier);
@@ -306,7 +306,7 @@ public class ChampionBuilder {
 	 * @param validAffixes Affix list that can apply with entity and affix settings, and can apply to champion.
 	 * @param rand         mojang random source used get affix from random list.
 	 */
-	public static void addAffixToList(int size, List<IAffix> toModifier, Map<AffixCategory, List<IAffix>> validAffixes, RandomSource rand) {
+	public static void addAffixToList(int size, List<IAffix> toModifier, Map<AffixCategory, List<IAffix>> validAffixes, Random rand) {
 		List<IAffix> randomList = new ArrayList<>();
 		validAffixes.forEach((k, v) -> randomList.addAll(v));
 

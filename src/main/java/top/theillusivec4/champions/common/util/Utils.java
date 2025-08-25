@@ -1,6 +1,8 @@
 package top.theillusivec4.champions.common.util;
 
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
@@ -11,12 +13,9 @@ import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.affix.IAffixLifecycle;
 import top.theillusivec4.champions.common.affix.core.CombatAffix;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class Utils {
@@ -115,5 +114,29 @@ public class Utils {
 				consumer.accept(lifecycle);
 			}
 		});
+	}
+
+	public static TranslatableComponent translatable(String key, Object... args) {
+		return new TranslatableComponent(key, args);
+	}
+
+	public static TranslatableComponent literal(String key) {
+		return new TranslatableComponent(key);
+	}
+
+	public static BufferedReader openAsReader(InputStream in) throws IOException {
+		return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+	}
+
+	public static BufferedReader openAsReader(Resource resource) throws IOException {
+		return openAsReader(resource.getInputStream());
+	}
+
+	public static int nextIntInclusive(Random random,int min, int max) {
+		if (min > max) {
+			throw new IllegalArgumentException("min cannot be greater than max");
+		}
+		// Random.nextInt(bound) 是 [0, bound)，所以要加上差值 + 1
+		return random.nextInt((max - min) + 1) + min;
 	}
 }

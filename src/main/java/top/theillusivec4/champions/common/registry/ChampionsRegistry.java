@@ -9,7 +9,6 @@ public class ChampionsRegistry {
         ModMobEffects.register(bus);
         ModEntityTypes.register(bus);
         ModLootModifiers.register(bus);
-        ModArgumentTypes.register(bus);
         AffixTypes.register(bus);
         ModLootItemConditions.register(bus);
     }

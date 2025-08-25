@@ -2,6 +2,8 @@ package top.theillusivec4.champions.common.config;
 
 import net.minecraft.util.StringRepresentable;
 
+import java.util.Locale;
+
 public class ConfigEnums {
 
     public enum Permission implements StringRepresentable {
@@ -16,7 +18,7 @@ public class ConfigEnums {
 
         @Override
         public String getSerializedName() {
-            return this.name;
+	        return this.name.toUpperCase(Locale.ROOT);
         }
     }
 

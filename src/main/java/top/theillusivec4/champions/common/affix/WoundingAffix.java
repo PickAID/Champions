@@ -17,14 +17,14 @@ public class WoundingAffix extends CombatAffix {
 
 	@SubscribeEvent
 	public void onHeal(LivingHealEvent evt) {
-		if (evt.getEntity().hasEffect(ModMobEffects.WOUND_EFFECT_TYPE.get())) {
+		if (evt.getEntityLiving().hasEffect(ModMobEffects.WOUND_EFFECT_TYPE.get())) {
 			evt.setAmount(evt.getAmount() * 0.5F);
 		}
 	}
 
 	@SubscribeEvent
 	public void onDamage(LivingDamageEvent evt) {
-		if (evt.getEntity().hasEffect(ModMobEffects.WOUND_EFFECT_TYPE.get())) {
+		if (evt.getEntityLiving().hasEffect(ModMobEffects.WOUND_EFFECT_TYPE.get())) {
 			evt.setAmount(evt.getAmount() * 1.5F);
 		}
 	}

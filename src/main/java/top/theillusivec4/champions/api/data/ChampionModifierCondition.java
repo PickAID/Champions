@@ -9,7 +9,6 @@ import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.StringRepresentable;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 import top.theillusivec4.champions.common.loot.AffixesPredicate;
@@ -24,16 +23,16 @@ public record ChampionModifierCondition(Optional<Set<ResourceLocation>> mobList,
             setOf(ResourceLocation.CODEC).optionalFieldOf("entity").forGetter(ChampionModifierCondition::mobList),
             IntCodec.codec().optionalFieldOf("tier").forGetter(ChampionModifierCondition::tier),
             AffixesPredicate.codec().optionalFieldOf("affixes").forGetter(ChampionModifierCondition::affixes),
-            StringRepresentable.fromEnum(ConfigEnums.Permission::values).fieldOf("permission").forGetter(ChampionModifierCondition::permission)
+            StringRepresentable.fromEnum(ConfigEnums.Permission::values, (p)->ConfigEnums.Permission.valueOf(p.toUpperCase())).fieldOf("permission").forGetter(ChampionModifierCondition::permission)
     ).apply(instance, ChampionModifierCondition::new));
 
     public static <T> Codec<Set<T>> setOf(final Codec<T> codec) {
         return Codec.list(codec).xmap(ImmutableSet::copyOf, ImmutableList::copyOf);
     }
 
-    public boolean test(@NotNull IChampion champion) {
+    public boolean test(IChampion champion) {
         var entityType = champion.getLivingEntity().getType();
-        var entityId = ForgeRegistries.ENTITY_TYPES.getKey(entityType);
+        var entityId = ForgeRegistries.ENTITIES.getKey(entityType);
         var championAffixes = champion.getServer().getAffixes();
         var championTier = champion.getServer().getRank().orElse(RankManager.getEmptyRank()).getTier();
         // 首先处理 mobList + permission 的逻辑

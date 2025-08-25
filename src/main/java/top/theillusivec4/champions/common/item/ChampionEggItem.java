@@ -35,6 +35,7 @@ import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
+import top.theillusivec4.champions.common.util.Utils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNullableByDefault;
@@ -65,7 +66,7 @@ public class ChampionEggItem extends EggItem {
             String id = entityTag.get().getString(ID_TAG);
 
             if (!id.isEmpty()) {
-                return Optional.ofNullable(ForgeRegistries.ENTITY_TYPES.getValue(ResourceLocation.parse(id)));
+                return Optional.ofNullable(ForgeRegistries.ENTITIES.getValue(ResourceLocation.parse(id)));
             }
         }
         return Optional.empty();
@@ -122,7 +123,7 @@ public class ChampionEggItem extends EggItem {
             tier = entityTag.get().getInt(TIER_TAG);
         }
 
-        MutableComponent root = Component.translatable("rank.champions.title." + tier);
+        MutableComponent root = Utils.translatable("rank.champions.title." + tier);
         root.append(" ");
         root.append(type.map(EntityType::getDescription).orElse(EntityType.ZOMBIE.getDescription()));
         root.append(" ");
@@ -147,7 +148,7 @@ public class ChampionEggItem extends EggItem {
             affixTag.forEach(affix -> Champions.API.getAffix(affix.getAsString()).ifPresent(
                     affix1 -> {
                         final MutableComponent component =
-                                Component.translatable(affix1.toLanguageKey());
+		                        Utils.translatable(affix1.toLanguageKey());
                         component.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
                         tooltip.add(component);
                     }));
@@ -155,7 +156,7 @@ public class ChampionEggItem extends EggItem {
         }
 
         if (!hasAffix) {
-            final MutableComponent component = Component.translatable("item.champions.egg.tooltip");
+            final MutableComponent component = Utils.translatable("item.champions.egg.tooltip");
             component.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
             tooltip.add(component);
         }
@@ -181,7 +182,7 @@ public class ChampionEggItem extends EggItem {
             Optional<EntityType<?>> entitytype = getType(itemstack);
             entitytype.ifPresent(type -> {
                 Entity entity = type
-                        .create((ServerLevel) world, itemstack.getTag(), null, blockpos1,
+                        .create((ServerLevel) world, itemstack.getTag(), null,null, blockpos1,
                                 MobSpawnType.SPAWN_EGG, true,
                                 !Objects.equals(blockpos, blockpos1) && direction == Direction.UP);
 
@@ -220,7 +221,7 @@ public class ChampionEggItem extends EggItem {
                     Optional<EntityType<?>> entityType = getType(itemstack);
                     return entityType.map(type -> {
                         Entity entity = type
-                                .create((ServerLevel) worldIn, itemstack.getTag(), null, blockpos,
+                                .create((ServerLevel) worldIn, itemstack.getTag(), null,null, blockpos,
                                         MobSpawnType.SPAWN_EGG, false, false);
 
                         if (entity instanceof LivingEntity) {

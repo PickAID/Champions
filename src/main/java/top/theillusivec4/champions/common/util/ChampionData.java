@@ -4,11 +4,10 @@ import com.google.common.collect.ImmutableSortedMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -18,7 +17,7 @@ import java.util.*;
 public class ChampionData {
 
     private static final String CHAMPION_KEY = "ChampionsData";
-    private static final RandomSource RAND = RandomSource.create();
+    private static final Random RAND = new Random();
 
     /**
      * <p>Read tag data from this champion Persistent Data,<br>

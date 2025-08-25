@@ -207,11 +207,11 @@ public class ChampionsConfig {
         infestedPerHealth = SERVER.infestedPerHealth.get();
         infestedInterval = SERVER.infestedInterval.get();
 
-        EntityType<?> type = ForgeRegistries.ENTITY_TYPES
+        EntityType<?> type = ForgeRegistries.ENTITIES
                 .getValue(ResourceLocation.parse(SERVER.infestedParasite.get()));
         infestedParasite = type != null ? type : EntityType.SILVERFISH;
 
-        type = ForgeRegistries.ENTITY_TYPES
+        type = ForgeRegistries.ENTITIES
                 .getValue(ResourceLocation.parse(SERVER.infestedEnderParasite.get()));
         infestedEnderParasite = type != null ? type : EntityType.ENDERMITE;
 
@@ -281,7 +281,7 @@ public class ChampionsConfig {
         if (obj instanceof List<?> entityNameList) {
             for (var entityName : entityNameList) {
                 ResourceLocation location = ResourceLocation.parse((String) entityName);
-                valid = ForgeRegistries.ENTITY_TYPES.containsKey(location);
+                valid = ForgeRegistries.ENTITIES.containsKey(location);
             }
         }
         return valid;
@@ -298,14 +298,14 @@ public class ChampionsConfig {
                             A list of entity stages in the format: "stage;modid:entity" or "stage;modid:entity;modid:dimension"
                             Example: "test_stage;minecraft:zombie" or "test_stage;minecraft:spider;minecraft:the_nether\"""")
                     .translation(CONFIG_PREFIX + "entityStages")
-                    .defineListAllowEmpty("entityStages", new ArrayList<>(), s -> s instanceof String);
+                    .defineList("entityStages", new ArrayList<>(), s -> s instanceof String);
 
             tierStages = builder
                     .comment("""
                             A list of tier stages in the format: "stage;tier" or "stage;tier;modid:dimension"
                             Example: "test_stage;2" or "test_stage;3;minecraft:the_nether\"""")
                     .translation(CONFIG_PREFIX + "tierStages")
-                    .defineListAllowEmpty("tierStages", new ArrayList<>(), s -> s instanceof String);
+                    .defineList("tierStages", new ArrayList<>(), s -> s instanceof String);
         }
     }
 
@@ -347,7 +347,7 @@ public class ChampionsConfig {
             dimensionList = builder
                     .comment("A list of dimension names that are blacklisted/whitelisted for champions")
                     .translation(CONFIG_PREFIX + "dimensionList")
-                    .defineListAllowEmpty("dimensionList", new ArrayList<>(), s -> s instanceof String);
+                    .defineList("dimensionList", new ArrayList<>(), s -> s instanceof String);
 
             dimensionPermission = builder
                     .comment("Set whether the dimension list is a blacklist or whitelist")
@@ -371,7 +371,7 @@ public class ChampionsConfig {
             bossBarBlackList = builder.comment(
                             "Set entity id (for example, ['minecraft:end_dragon', 'minecraft:creeper']) to hidden HUD display for champions, including health, affixes, and tier")
                     .translation(CONFIG_PREFIX + "bossBarBlackList")
-                    .defineListAllowEmpty("bossBarBlackList", List.of(), ChampionsConfig::validateEntityName);
+                    .defineList("bossBarBlackList", List.of(), ChampionsConfig::validateEntityName);
 
             showParticles = builder.comment(
                             "Set to true to have champions generate a colored particle effect indicating their rank")
@@ -756,7 +756,7 @@ public class ChampionsConfig {
             scalingHealthSpawnModifiers = builder.comment(
                             "Scaling Health\nList of tiers with numbers to multiply spawn rates by difficulty\nFormat: [tier];[percent increase]")
                     .translation(CONFIG_PREFIX + "scalingHealthSpawnModifiers")
-                    .defineListAllowEmpty("scalingHealthSpawnModifiers", new ArrayList<>(), s -> s instanceof String);
+                    .defineList("scalingHealthSpawnModifiers", new ArrayList<>(), s -> s instanceof String);
 
             builder.pop();
         }

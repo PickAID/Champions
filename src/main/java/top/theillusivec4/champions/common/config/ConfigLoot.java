@@ -1,21 +1,17 @@
 package top.theillusivec4.champions.common.config;
 
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ConfigLoot {
 
-    private static final RandomSource RAND = RandomSource.create();
+    private static final Random RAND = new Random();
     private static final Map<Integer, List<Data>> DROPS = new HashMap<>();
 
     public static List<ItemStack> getLootDrops(int tier) {

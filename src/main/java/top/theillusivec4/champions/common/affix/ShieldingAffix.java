@@ -3,9 +3,7 @@ package top.theillusivec4.champions.common.affix;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
@@ -14,6 +12,8 @@ import top.theillusivec4.champions.common.affix.core.AffixData;
 import top.theillusivec4.champions.common.affix.core.CombatLifeCycleAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
+import java.util.Random;
+
 public class ShieldingAffix extends CombatLifeCycleAffix {
 
 	@Override
@@ -21,10 +21,10 @@ public class ShieldingAffix extends CombatLifeCycleAffix {
 		LivingEntity livingEntity = champion.getLivingEntity();
 		AffixData.BooleanData shielding =
 				AffixData.getData(champion, this.toString(), AffixData.BooleanData.class);
-		RandomSource random = livingEntity.getRandom();
+		Random random = livingEntity.getRandom();
 
 		if (shielding.mode) {
-			livingEntity.level().addParticle(ParticleTypes.ENTITY_EFFECT,
+			livingEntity.getLevel().addParticle(ParticleTypes.ENTITY_EFFECT,
 					livingEntity.position().x + (random.nextFloat() - 0.5D) * livingEntity.getBbWidth(),
 					livingEntity.position().y + random.nextFloat() * livingEntity.getBbHeight(),
 					livingEntity.position().z + (random.nextFloat() - 0.5D) * livingEntity.getBbWidth(),
@@ -61,7 +61,7 @@ public class ShieldingAffix extends CombatLifeCycleAffix {
 
 	@Override
 	public boolean onAttacked(IChampion champion, DamageSource source, float amount) {
-		if (source.is(DamageTypes.FELL_OUT_OF_WORLD)) {
+		if (source == DamageSource.OUT_OF_WORLD) {
 			return true;
 		}
 		AffixData.BooleanData shielding =

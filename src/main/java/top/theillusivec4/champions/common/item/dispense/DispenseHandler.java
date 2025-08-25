@@ -18,7 +18,7 @@ public class DispenseHandler {
     Direction direction = source.getBlockState().getValue(DispenserBlock.FACING);
     Optional<EntityType<?>> entityType = ChampionEggItem.getType(stack);
     entityType.ifPresent(type -> {
-      Entity entity = type.create(source.getLevel(), stack.getTag(), null, source.getPos().relative(direction), MobSpawnType.DISPENSER, true, direction != Direction.UP);
+      Entity entity = type.create(source.getLevel(), stack.getTag(), null, null, source.getPos().relative(direction), MobSpawnType.DISPENSER, true, direction != Direction.UP);
 
       if (entity != null) {
         ChampionCapability.getCapability(entity).ifPresent(champion -> {

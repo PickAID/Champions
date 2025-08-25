@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.affix;
 
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -10,14 +10,14 @@ import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
-import top.theillusivec4.champions.common.registry.ModDamageTypes;
 
 public class ReflectiveAffix extends CombatAffix {
+	private static final String REFLECTION_DAMAGE = "reflection";
 
 	@SubscribeEvent
 	public void onDamageEvent(LivingDamageEvent evt) {
-		if (!ChampionsConfig.reflectiveLethal && evt.getSource().is(ModDamageTypes.REFLECTION_DAMAGE)) {
-			LivingEntity living = evt.getEntity();
+		if (!ChampionsConfig.reflectiveLethal && evt.getSource().getMsgId().equals(REFLECTION_DAMAGE)) {
+			LivingEntity living = evt.getEntityLiving();
 			float currentDamage = evt.getAmount();
 
 			if (currentDamage >= living.getHealth()) {
@@ -28,24 +28,53 @@ public class ReflectiveAffix extends CombatAffix {
 
 	@Override
 	public float onDamage(IChampion champion, DamageSource source, float amount, float newAmount) {
-		// getDirectEntity causing damage entity, example arrow entity
-		// getEntity which is using weapon entity.
-		// source which is causing champion damage source.
+
 		if (source.getDirectEntity() instanceof LivingEntity sourceEntity) {
-			// if damage source came from reflection damage ( applied damage to player) or came from self, skipping repeat damage reflection calculation.
-			if (source.is(ModDamageTypes.REFLECTION_DAMAGE) || source.is(DamageTypes.THORNS)) {
+
+			if (source.getMsgId().equals(REFLECTION_DAMAGE) ||
+					(source instanceof EntityDamageSource && ((EntityDamageSource) source).isThorns())) {
 				return newAmount;
 			}
-
-			var newSource = ModDamageTypes.of(ModDamageTypes.REFLECTION_DAMAGE, champion.getLivingEntity());
-
-			if (source.getEntity() != null) {
-				newSource = ModDamageTypes.of(ModDamageTypes.REFLECTION_DAMAGE, source.getDirectEntity(), champion.getLivingEntity());
-			}
+			EntityDamageSource newSource =
+					new EntityDamageSource(REFLECTION_DAMAGE, champion.getLivingEntity());
+			newSource.setThorns();
 			float min = (float) ChampionsConfig.reflectiveMinPercent;
 
-			float damage = (float) Math.min(amount * (sourceEntity.getRandom().nextFloat() * (ChampionsConfig.reflectiveMaxPercent - min) + min), ChampionsConfig.reflectiveMax);
+			if (source.isFire()) {
+				newSource.setIsFire();
+			}
 
+			if (source.isProjectile()) {
+				newSource.setProjectile();
+			}
+
+			if (source.isExplosion()) {
+				newSource.setExplosion();
+			}
+
+			if (source.isMagic()) {
+				newSource.setMagic();
+			}
+
+			if (source.isDamageHelmet()) {
+				newSource.damageHelmet();
+			}
+
+			if (source.isBypassArmor()) {
+				newSource.bypassArmor();
+			}
+
+			if (source.scalesWithDifficulty()) {
+				newSource.setScalesWithDifficulty();
+			}
+
+			if (source.isBypassInvul()) {
+				newSource.bypassInvul();
+			}
+			float damage = (float) Math.min(
+					amount *
+							(sourceEntity.getRandom().nextFloat() * (ChampionsConfig.reflectiveMaxPercent - min)
+									+ min), ChampionsConfig.reflectiveMax);
 			sourceEntity.hurt(newSource, damage);
 		}
 		return newAmount;

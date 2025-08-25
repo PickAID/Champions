@@ -8,7 +8,7 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
-import net.minecraftforge.event.entity.living.MobSpawnEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.network.PacketDistributor;
@@ -42,16 +42,16 @@ public class CapabilityEventHandler {
      * @param evt the finalizeSpawn event
      */
     @SubscribeEvent
-    public void onSpecialSpawn(MobSpawnEvent.FinalizeSpawn evt) {
-        LivingEntity entity = evt.getEntity();
+    public void onSpecialSpawn(LivingSpawnEvent.SpecialSpawn evt) {
+        LivingEntity entity = evt.getEntityLiving();
 
-        if (!entity.level().isClientSide()) {
+        if (!entity.getLevel().isClientSide()) {
             ChampionCapability.getCapability(entity).ifPresent(champion -> {
                 IChampion.Server serverChampion = champion.getServer();
 
                 if (serverChampion.getRank().isEmpty()) {
                     // Todo: Custom entity spawn rank base on mob spawn type
-                    if (!ChampionsConfig.championSpawners && evt.getSpawnType() == MobSpawnType.SPAWNER) {
+                    if (!ChampionsConfig.championSpawners && evt.getSpawnReason() == MobSpawnType.SPAWNER) {
                         serverChampion.setRank(RankManager.getLowestRank());
                     }
                 }
@@ -61,9 +61,9 @@ public class CapabilityEventHandler {
 
     @SubscribeEvent
     public void onLivingConvert(LivingConversionEvent.Post evt) {
-        LivingEntity entity = evt.getEntity();
+        LivingEntity entity = evt.getEntityLiving();
 
-        if (!entity.level().isClientSide()) {
+        if (!entity.getLevel().isClientSide()) {
             entity.reviveCaps();
             LivingEntity outcome = evt.getOutcome();
             ChampionCapability.getCapability(entity).ifPresent(
@@ -84,7 +84,7 @@ public class CapabilityEventHandler {
     @SubscribeEvent
     public void startTracking(PlayerEvent.StartTracking evt) {
         Entity entity = evt.getTarget();
-        Player playerEntity = evt.getEntity();
+        Player playerEntity = evt.getPlayer();
 
         if (playerEntity instanceof ServerPlayer serverPlayer) {
             ChampionCapability.getCapability(entity).ifPresent(champion -> {

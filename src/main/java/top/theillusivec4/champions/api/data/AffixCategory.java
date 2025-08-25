@@ -2,6 +2,8 @@ package top.theillusivec4.champions.api.data;
 
 import net.minecraft.util.StringRepresentable;
 
+import java.util.Locale;
+
 public enum AffixCategory implements StringRepresentable {
     CC("cc"), OFFENSE("offense"), DEFENSE("defense");
 
@@ -13,6 +15,6 @@ public enum AffixCategory implements StringRepresentable {
 
     @Override
     public String getSerializedName() {
-        return this.name;
+        return this.name.toUpperCase(Locale.ROOT);
     }
 }

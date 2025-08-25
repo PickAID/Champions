@@ -16,7 +16,7 @@ public class LivelyAffix extends CombatLifeCycleAffix {
 		AffixData.IntegerData lastAttackTime = AffixData
 				.getData(champion, this.toString(), AffixData.IntegerData.class);
 		LivingEntity livingEntity = champion.getLivingEntity();
-		lastAttackTime.num = (int) livingEntity.level().getGameTime();
+		lastAttackTime.num = (int) livingEntity.getLevel().getGameTime();
 		lastAttackTime.saveData();
 		return super.onDamage(champion, source, amount, newAmount);
 	}
@@ -30,7 +30,7 @@ public class LivelyAffix extends CombatLifeCycleAffix {
 					AffixData.getData(champion, this.toString(), AffixData.IntegerData.class);
 
 			if ((lastAttackTime.num + ChampionsConfig.livelyCooldown * 20L) <
-					livingEntity.level().getGameTime()) {
+					livingEntity.getLevel().getGameTime()) {
 				double heal = ChampionsConfig.livelyHealAmount;
 
 				if (livingEntity.getNoActionTime() >= 100) {

@@ -7,7 +7,7 @@
   "mixins": [
   ],
   "client": [
-    "MinecraftMixin"
+    "ForgeHooksMixin"
   ],
   "injectors": {
     "defaultRequire": 1

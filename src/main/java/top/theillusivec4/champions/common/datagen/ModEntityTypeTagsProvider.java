@@ -1,51 +1,46 @@
 package top.theillusivec4.champions.common.datagen;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.PackOutput;
-import net.minecraft.data.tags.TagsProvider;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import org.jetbrains.annotations.NotNull;
+import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
-import java.util.concurrent.CompletableFuture;
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.stream.Stream;
 
+public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
 
-public class ModEntityTypeTagsProvider extends TagsProvider<EntityType<?>> {
+	public ModEntityTypeTagsProvider(DataGenerator generator, @Nullable ExistingFileHelper existingFileHelper) {
+		super(generator, Champions.MODID, existingFileHelper);
+	}
 
-    public ModEntityTypeTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> future, ExistingFileHelper helper) {
-        super(output, Registries.ENTITY_TYPE, future, Champions.MODID, helper);
-    }
+	@Override
+	protected void addTags() {
+		tag(ModEntityTypes.Tags.IS_ENDER)
+				.add(EntityType.ENDER_DRAGON)
+				.add(EntityType.ENDERMITE)
+				.add(EntityType.ENDERMAN)
+				.add(EntityType.SHULKER);
+		// add champion mob allow list
+		lookUpMonster().forEach(this::addEntity);
+	}
 
-    @Override
-    protected void addTags(@NotNull HolderLookup.Provider provider) {
-        tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "ender_dragon"));
-        tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "endermite"));
-        tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "enderman"));
-        tag(ModEntityTypes.Tags.IS_ENDER).add(lookup(provider, "shulker"));
-        // add champion mob allow list
-        lookUpMonster(provider).listElements().forEach(this::addEntity);
-    }
+	private Stream<Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>>> lookUpMonster() {
+		return ForgeRegistries.ENTITIES.getEntries().stream().filter(resourceKeyEntityTypeEntry -> resourceKeyEntityTypeEntry.getValue().getCategory() == MobCategory.MONSTER);
+	}
 
-    void addEntity(Holder.Reference<EntityType<?>> entityType) {
-        tag(ModEntityTypes.Tags.ALLOW_CHAMPIONS).add(entityType.key());
-    }
+	void addEntity(Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entityTypeHolder) {
+		tag(ModEntityTypes.Tags.ALLOW_CHAMPIONS).add(entityTypeHolder.getKey());
+	}
 
-    private HolderLookup<EntityType<?>> lookUpMonster(@NotNull HolderLookup.Provider provider) {
-        return provider.lookupOrThrow(Registries.ENTITY_TYPE).filterElements(entityType -> entityType.getCategory() == MobCategory.MONSTER && EntityType.getKey(entityType).getNamespace().equals(ResourceLocation.DEFAULT_NAMESPACE));
-    }
-
-    private ResourceKey<EntityType<?>> create(String name) {
-        return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.parse(name));
-    }
-
-    private ResourceKey<EntityType<?>> lookup(HolderLookup.Provider provider, String name) {
-        return provider.lookupOrThrow(Registries.ENTITY_TYPE).getOrThrow(create(name)).key();
-    }
+	@Override
+	public String getName() {
+		return "Champions Entity Type Tags";
+	}
 }

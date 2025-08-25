@@ -4,11 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.io.Reader;
 import java.util.HashMap;
@@ -30,15 +30,21 @@ public class GatewaysSettingLoader extends SimplePreparableReloadListener<Map<Re
 
     public Map<ResourceLocation, GatewaysSetting> listResources(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
         pProfiler.startTick();
-        for (Map.Entry<ResourceLocation, Resource> resource : pResourceManager.listResources(FOLDER, p -> p.getPath().endsWith(".json")).entrySet()) {
-            try (Reader reader = resource.getValue().openAsReader()) {
-                JsonElement element = JsonParser.parseReader(reader);
-                GatewaysSetting.CODEC.parse(JsonOps.INSTANCE, element)
-                        .resultOrPartial(error -> Champions.LOGGER.debug("Failed to parse gateways setting {}", error))
-                        .ifPresent(itemValues -> loadedData.put(resource.getKey(), itemValues));
+	    for (ResourceLocation loc : pResourceManager.listResources(FOLDER, p -> p.endsWith(".json"))) {
+		    try {
+			    var resource = pResourceManager.getResource(loc);
+
+	            try (Reader reader = Utils.openAsReader(resource)) {
+	                JsonElement element = JsonParser.parseReader(reader);
+	                GatewaysSetting.CODEC.parse(JsonOps.INSTANCE, element)
+	                        .resultOrPartial(error -> Champions.LOGGER.debug("Failed to parse gateways setting {}", error))
+	                        .ifPresent(itemValues -> loadedData.put(loc, itemValues));
+	            } catch (Exception e) {
+	                Champions.LOGGER.error("Failed to load custom data pack: {}", loc, e);
+	            }
             } catch (Exception e) {
-                Champions.LOGGER.error("Failed to load custom data pack: {}", resource.getKey(), e);
-            }
+			    Champions.LOGGER.error("Failed to load resource: {}", loc, e);
+		    }
         }
         pProfiler.endTick();
         return loadedData;

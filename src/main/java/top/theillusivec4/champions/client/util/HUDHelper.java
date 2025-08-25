@@ -1,8 +1,9 @@
 package top.theillusivec4.champions.client.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
@@ -24,7 +25,7 @@ public class HUDHelper {
     private static final ResourceLocation GUI_BAR_TEXTURES = ResourceLocation.withDefaultNamespace("textures/gui/bars.png");
     private static final ResourceLocation GUI_STAR = Utils.getLocation("textures/gui/staricon.png");
 
-    public static boolean renderHealthBar(GuiGraphics guiGraphics, final LivingEntity livingEntity) {
+    public static boolean renderHealthBar(PoseStack poseStack, final LivingEntity livingEntity) {
         return ChampionCapability.getCapability(livingEntity).map(champion -> {
             IChampion.Client clientChampion = champion.getClient();
             return ChampionHelper.isValidChampion(clientChampion) && clientChampion.getRank().map(rank -> {
@@ -51,31 +52,34 @@ public class HUDHelper {
                     // set shader color for render element
                     RenderSystem.setShaderColor(r, g, b, 1.0F);
                     RenderSystem.enableBlend();
+	                RenderSystem.setShaderTexture(0, GUI_BAR_TEXTURES);
                     ChampionsOverlay.startX = xOffset + k;
                     ChampionsOverlay.startY = yOffset + 1;
 
-                    guiGraphics.blit(GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256);
+	                GuiComponent.blit(poseStack, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256);
                     int healthOffset =
                             (int) ((livingEntity.getHealth() / livingEntity.getMaxHealth()) * 183.0F);
 
                     if (healthOffset > 0) {
-                        guiGraphics.blit(GUI_BAR_TEXTURES, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
+	                    GuiComponent.blit(poseStack, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
                                 256);
                     }
+
+	                RenderSystem.setShaderTexture(0, GUI_STAR);
 
                     if (championLevel <= 18) {
                         int startStarsX = xOffset + i / 2 - 5 - 5 * (championLevel - 1);
 
                         for (int tier = 0; tier < championLevel; tier++) {
-                            guiGraphics.blit(GUI_STAR, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9);
+	                        GuiComponent.blit(poseStack, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9);
                             startStarsX += 10;
                         }
                     } else {
                         int startStarsX = xOffset + i / 2 - 5;
                         String count = "x" + championLevel;
-                        guiGraphics.blit(GUI_STAR, startStarsX - client.font.width(count) / 2,
+	                    GuiComponent.blit(poseStack, startStarsX - client.font.width(count) / 2,
                                 yOffset + 1, 0, 0, 9, 9, 9, 9);
-                        guiGraphics.drawString(client.font, count,
+	                    client.font.drawShadow(poseStack, count,
                                 startStarsX + 10 - client.font.width(count) / 2.0F, yOffset + 2,
                                 16777215, true);
                     }
@@ -83,12 +87,12 @@ public class HUDHelper {
                     String name;
 
                     if (customName == null) {
-                        name = Component.translatable("rank.champions.title." + championLevel).getString();
+                        name = Utils.translatable("rank.champions.title." + championLevel).getString();
                         name += " " + livingEntity.getName().getString();
                     } else {
                         name = customName.getString();
                     }
-                    guiGraphics.drawString(client.font, name,
+	                client.font.drawShadow(poseStack, name,
                             xOffset + (float) (i / 2 - client.font.width(name) / 2),
                             yOffset + (float) (j - 9), color, true);
                     // reset shader color
@@ -97,11 +101,11 @@ public class HUDHelper {
 
                     for (var affix : affixSet) {
                         builder.append(
-                                Component.translatable(affix).getString());
+                                Utils.translatable(affix).getString());
                         builder.append(" ");
                     }
                     String affixes = builder.toString().trim();
-                    guiGraphics.drawString(client.font, affixes,
+	                client.font.drawShadow(poseStack, affixes,
                             xOffset + (float) (i / 2 - client.font.width(affixes) / 2),
                             yOffset + (float) (j + 6), 16777215, true);
                     RenderSystem.disableBlend();

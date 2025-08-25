@@ -4,11 +4,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.io.Reader;
 import java.util.HashMap;
@@ -32,21 +32,27 @@ public class AttributesModifierDataLoader extends SimplePreparableReloadListener
         attributeModifierMap.putAll(loadedData);
     }
 
-    public Map<ResourceLocation, ModifierSetting> listResources(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
-        pProfiler.startTick();
-        for (Map.Entry<ResourceLocation, Resource> resource : pResourceManager.listResources(FOLDER, p -> p.getPath().endsWith(".json")).entrySet()) {
-            try (Reader reader = resource.getValue().openAsReader()) {
-                JsonElement element = JsonParser.parseReader(reader);
-                ModifierSetting.MAP_CODEC.codec().parse(JsonOps.INSTANCE, element)
-                        .resultOrPartial(error -> Champions.LOGGER.debug("Failed to parse Attributes Modifier setting {}", error))
-                        .ifPresent(itemValues -> loadedData.put(resource.getKey(), itemValues));
-            } catch (Exception e) {
-                Champions.LOGGER.error("Failed to load custom data pack: {}", resource.getKey(), e);
-            }
-        }
-        pProfiler.endTick();
-        return loadedData;
-    }
+	public Map<ResourceLocation, ModifierSetting> listResources(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
+		pProfiler.startTick();
+		for (ResourceLocation loc : pResourceManager.listResources(FOLDER, p -> p.endsWith(".json"))) {
+			try {
+				var resource = pResourceManager.getResource(loc);
+				try (Reader reader = Utils.openAsReader(resource)) {
+					JsonElement element = JsonParser.parseReader(reader);
+					ModifierSetting.MAP_CODEC.codec()
+							.parse(JsonOps.INSTANCE, element)
+							.resultOrPartial(error -> Champions.LOGGER.debug("Failed to parse Attributes Modifier setting {}", error))
+							.ifPresent(itemValues -> loadedData.put(loc, itemValues));
+				} catch (Exception e) {
+					Champions.LOGGER.error("Failed to load custom data pack: {}", loc, e);
+				}
+			} catch (Exception e) {
+				Champions.LOGGER.error("Failed to load resource: {}", loc, e);
+			}
+		}
+		pProfiler.endTick();
+		return loadedData;
+	}
 
     public void cache(Map<ResourceLocation, ModifierSetting> attributeModifierMap) {
         loadedData.clear();

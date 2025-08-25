@@ -1,46 +1,67 @@
 package top.theillusivec4.champions.common.datagen;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.HashCache;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.data.AffixSetting;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AffixConfigProvider implements DataProvider {
 
-    private final PackOutput packOutput;
-    private final CompletableFuture<HolderLookup.Provider> lookupProvider;
+	private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+	private final DataGenerator generator;
+	private final Map<String, JsonElement> affixSettings = new HashMap<>();
 
-    public AffixConfigProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        this.packOutput = packOutput;
-        this.lookupProvider = lookupProvider;
-    }
+	public AffixConfigProvider(DataGenerator generator) {
+		this.generator = generator;
+	}
 
-    @Override
-    public CompletableFuture<?> run(CachedOutput cachedOutput) {
-        List<CompletableFuture<?>> futures = new ArrayList<>();
-        Champions.API.getAffixes().forEach(affix -> {
-            var affixId = affix.getIdentifier();
+	@Override
+	public void run(HashCache pCache) throws IOException {
+		// 收集所有需要生成的数据
+		Champions.API.getAffixes().forEach(affix -> {
+			var affixId = affix.getIdentifier();
+			JsonElement jsonElement = AffixSetting.CODEC.encodeStart(JsonOps.INSTANCE, affix.getSetting())
+					.get()
+					.orThrow()
+					.getAsJsonObject();
 
-            Path outputPath = packOutput.getOutputFolder()
-                    .resolve("data/" + affixId.getNamespace() + "/affix_setting/" + affixId.getPath() + ".json");
-            futures.add(lookupProvider.thenCompose(provider ->
-                    DataProvider.saveStable(cachedOutput, AffixSetting.CODEC.encodeStart(JsonOps.INSTANCE, affix.getSetting()).get().orThrow().getAsJsonObject(), outputPath)
-            ));
-        });
+			affixSettings.put(affixId.toString(), jsonElement);
+		});
 
-        return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
-    }
+		// 写入所有数据
+		Path outputFolder = generator.getOutputFolder();
 
-    @Override
-    public String getName() {
-        return "Affix_configs";
-    }
+		for (Map.Entry<String, JsonElement> entry : affixSettings.entrySet()) {
+			String[] splitId = entry.getKey().split(":");
+			String namespace = splitId[0];
+			String path = splitId[1];
+
+			Path outputPath = outputFolder
+					.resolve("data")
+					.resolve(namespace)
+					.resolve("affix_setting")
+					.resolve(path + ".json");
+
+			try {
+				DataProvider.save(GSON, pCache, entry.getValue(), outputPath);
+			} catch (IOException e) {
+				throw new IOException("Failed to save affix setting " + entry.getKey(), e);
+			}
+		}
+	}
+
+	@Override
+	public String getName() {
+		return "Affix_configs";
+	}
 }

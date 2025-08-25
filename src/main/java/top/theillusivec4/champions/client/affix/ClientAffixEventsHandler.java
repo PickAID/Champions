@@ -13,7 +13,7 @@ public class ClientAffixEventsHandler {
 
     @SubscribeEvent
     public static void handleJailing(MovementInputUpdateEvent evt) {
-        if (evt.getEntity().hasEffect(ModMobEffects.PARALYSIS_EFFECT_TYPE.get())) {
+        if (evt.getEntityLiving().hasEffect(ModMobEffects.PARALYSIS_EFFECT_TYPE.get())) {
             Input input = evt.getInput();
             input.shiftKeyDown = false;
             input.jumping = false;

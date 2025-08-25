@@ -3,7 +3,6 @@ package top.theillusivec4.champions.common.event;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
@@ -13,6 +12,7 @@ import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
@@ -94,26 +94,21 @@ public class ModEventHandler {
 	@SubscribeEvent
 	public void onGatherData(GatherDataEvent event) {
 		var generator = event.getGenerator();
-		var packOutput = generator.getPackOutput();
-		var lookupProvider = event.getLookupProvider();
 		var existingFileHelper = event.getExistingFileHelper();
-		// datapack provider for lookup datapack entries(RegistrySetBuilder).
-		var datapackProvider = generator.addProvider(event.includeServer(), new ModDatapackProvider(packOutput, lookupProvider));
 
-		generator.addProvider(event.includeServer(), new ModGlobalLootModifierProvider(packOutput, Champions.MODID));
-		generator.addProvider(event.includeServer(), new GatewaysConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
-		generator.addProvider(event.includeServer(), new ModDamageTypeTagsProvider(packOutput, datapackProvider.getRegistryProvider(), existingFileHelper));
-		generator.addProvider(event.includeServer(), new AffixConfigProvider(packOutput, datapackProvider.getRegistryProvider()));
-		generator.addProvider(event.includeServer(), new AttributesModifierDataProvider(packOutput, datapackProvider.getRegistryProvider()));
-		generator.addProvider(event.includeServer(), new ModEntityTypeTagsProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(new ModGlobalLootModifierProvider(generator));
+		generator.addProvider(new AffixConfigProvider(generator));
+		generator.addProvider(new GatewaysConfigProvider(generator));
+		generator.addProvider(new AttributesModifierDataProvider(generator));
+		generator.addProvider(new ModEntityTypeTagsProvider(generator, existingFileHelper));
 		// translate
-		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput));
-		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "zh_cn"));
+		generator.addProvider(new ModLanguageProvider(generator));
+		generator.addProvider(new ModLanguageProvider(generator, "zh_cn"));
 		// add more translate to data generation
-		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ko_kr"));
-		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "ru_ru"));
-		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "tr_tr"));
-		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "uk_ua"));
-		generator.addProvider(event.includeClient(), new ModLanguageProvider(packOutput, "pt_br"));
+		generator.addProvider(new ModLanguageProvider(generator, "ko_kr"));
+		generator.addProvider(new ModLanguageProvider(generator, "ru_ru"));
+		generator.addProvider(new ModLanguageProvider(generator, "tr_tr"));
+		generator.addProvider(new ModLanguageProvider(generator, "uk_ua"));
+		generator.addProvider(new ModLanguageProvider(generator, "pt_br"));
 	}
 }

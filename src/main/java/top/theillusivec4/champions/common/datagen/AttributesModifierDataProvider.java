@@ -1,13 +1,13 @@
 package top.theillusivec4.champions.common.datagen;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.data.CachedOutput;
+import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.PackOutput;
+import net.minecraft.data.HashCache;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -18,82 +18,95 @@ import top.theillusivec4.champions.api.data.ModifierSetting;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 import top.theillusivec4.champions.common.loot.AffixesPredicate;
 
+import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class AttributesModifierDataProvider implements DataProvider {
 
-    private final PackOutput packOutput;
-    private final CompletableFuture<HolderLookup.Provider> lookupProvider;
+	private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
+	private final DataGenerator generator;
+	private final Map<ResourceLocation, ModifierSetting> settings = new HashMap<>();
 
-    public AttributesModifierDataProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-        this.packOutput = packOutput;
-        this.lookupProvider = lookupProvider;
-    }
+	public AttributesModifierDataProvider(DataGenerator generator) {
+		this.generator = generator;
+	}
 
-    @Override
-    public CompletableFuture<?> run(CachedOutput cachedOutput) {
-        List<CompletableFuture<?>> futures = new ArrayList<>();
-        try {
-            lookupProvider.get().lookupOrThrow(Registries.ATTRIBUTE).listElements().forEach(attribute -> {
+	@Override
+	public void run(HashCache cache) throws IOException {
+		// 收集所有需要生成的数据
+		ForgeRegistries.ATTRIBUTES.getEntries().forEach(entry -> {
+			ResourceLocation attributeId = entry.getKey().location();
+			double baseValue = 1d;
+			boolean enable = false;
+			AttributeModifier.Operation operation = AttributeModifier.Operation.ADDITION;
 
-                var attributeId = attribute.key().location();
-                var ref = new Object() {
-                    double baseValue = 1d;
-                    boolean enable = false;
-                    AttributeModifier.Operation operation = AttributeModifier.Operation.ADDITION;
-                };
+			// 应用默认设置
+			if (attributeId.equals(ForgeRegistries.ATTRIBUTES.getKey(Attributes.MAX_HEALTH))) {
+				baseValue = 0.35D;
+				enable = true;
+				operation = AttributeModifier.Operation.MULTIPLY_TOTAL;
+			} else if (attributeId.equals(ForgeRegistries.ATTRIBUTES.getKey(Attributes.ATTACK_DAMAGE))) {
+				baseValue = 0.5D;
+				enable = true;
+				operation = AttributeModifier.Operation.MULTIPLY_TOTAL;
+			} else if (attributeId.equals(ForgeRegistries.ATTRIBUTES.getKey(Attributes.ARMOR))) {
+				baseValue = 2.0D;
+				enable = true;
+			} else if (attributeId.equals(ForgeRegistries.ATTRIBUTES.getKey(Attributes.ARMOR_TOUGHNESS))) {
+				baseValue = 1.0D;
+				enable = true;
+			} else if (attributeId.equals(ForgeRegistries.ATTRIBUTES.getKey(Attributes.KNOCKBACK_RESISTANCE))) {
+				baseValue = 0.05D;
+				enable = true;
+			}
 
+			ModifierSetting setting = new ModifierSetting(
+					attributeId,
+					enable,
+					Pair.of(baseValue, operation),
+					Optional.of(new ChampionModifierCondition(
+							Optional.of(Set.of(ResourceLocation.parse("minecraft:creeper"))),
+							Optional.of(MinMaxBounds.Ints.ANY),
+							Optional.of(new AffixesPredicate(Set.of(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY)),
+							ConfigEnums.Permission.BLACKLIST
+					))
+			);
 
-                Path outputPath = packOutput.getOutputFolder()
-                        .resolve("data").resolve(attributeId.getNamespace()).resolve(AttributesModifierDataLoader.getFolder()).resolve(attributeId.getPath() + ".json");
-                // apples default setting
-                if (attributeId == ForgeRegistries.ATTRIBUTES.getKey(Attributes.MAX_HEALTH)) {
-                    ref.baseValue = 0.35D;
-                    ref.enable = true;
-                    ref.operation = AttributeModifier.Operation.MULTIPLY_TOTAL;
-                } else if (attributeId == ForgeRegistries.ATTRIBUTES.getKey(Attributes.ATTACK_DAMAGE)) {
-                    ref.baseValue = 0.5D;
-                    ref.enable = true;
-                    ref.operation = AttributeModifier.Operation.MULTIPLY_TOTAL;
-                } else if (attributeId == ForgeRegistries.ATTRIBUTES.getKey(Attributes.ARMOR)) {
-                    ref.baseValue = 2.0D;
-                    ref.enable = true;
-                } else if (attributeId == ForgeRegistries.ATTRIBUTES.getKey(Attributes.ARMOR_TOUGHNESS)) {
-                    ref.baseValue = 1.0D;
-                    ref.enable = true;
-                } else if (attributeId == ForgeRegistries.ATTRIBUTES.getKey(Attributes.KNOCKBACK_RESISTANCE)) {
-                    ref.baseValue = 0.05D;
-                    ref.enable = true;
-                } else {
-                    ref.baseValue = 0;
-                    ref.enable = false;
-                    ref.operation = AttributeModifier.Operation.ADDITION;
-                }
+			settings.put(attributeId, setting);
+		});
 
-                futures.add(lookupProvider.thenCompose(provider ->
-                        DataProvider.saveStable(cachedOutput, ModifierSetting.MAP_CODEC.codec().encodeStart(JsonOps.INSTANCE, new ModifierSetting(attributeId,
-                                        ref.enable, Pair.of(ref.baseValue, ref.operation),
-                                        Optional.of(new ChampionModifierCondition(Optional.of(Set.of(ResourceLocation.withDefaultNamespace("creeper"))),
-                                                Optional.of(MinMaxBounds.Ints.ANY),
-                                                Optional.of(new AffixesPredicate(Set.of(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY)), ConfigEnums.Permission.BLACKLIST)))).result().orElseThrow()
-                                , outputPath)
-                ));
-            });
-        } catch (InterruptedException | ExecutionException e) {
-            throw new RuntimeException(e);
-        }
+		// 写入所有数据
+		Path outputFolder = generator.getOutputFolder();
+		for (Map.Entry<ResourceLocation, ModifierSetting> entry : settings.entrySet()) {
+			ResourceLocation attributeId = entry.getKey();
+			Path outputPath = outputFolder
+					.resolve("data")
+					.resolve(attributeId.getNamespace())
+					.resolve(AttributesModifierDataLoader.getFolder())
+					.resolve(attributeId.getPath() + ".json");
 
-        return CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
-    }
+			try {
+				DataProvider.save(
+						GSON,
+						cache,
+						ModifierSetting.MAP_CODEC.codec()
+								.encodeStart(JsonOps.INSTANCE, entry.getValue())
+								.result()
+								.orElseThrow(),
+						outputPath
+				);
+			} catch (IOException e) {
+				throw new IOException("Failed to save attribute modifier " + attributeId, e);
+			}
+		}
+	}
 
-    @Override
-    public String getName() {
-        return "attribute modifiers";
-    }
+	@Override
+	public String getName() {
+		return "attribute modifiers";
+	}
 }

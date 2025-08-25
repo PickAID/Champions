@@ -27,6 +27,7 @@ import java.util.Optional;
 public abstract class AbstractBasicAffix implements IAffix {
 	public static final String DEFAULT_PREFIX = "affix.";
 	protected AffixSetting setting = AffixSetting.empty();
+	private ResourceLocation name;
 
     public static boolean canTarget(LivingEntity livingEntity, @Nullable LivingEntity target, boolean sightCheck) {
 
@@ -87,7 +88,7 @@ public abstract class AbstractBasicAffix implements IAffix {
 
 	public boolean canApply(IChampion champion) {
 		boolean isValidEntity;
-		var entityKey = ForgeRegistries.ENTITY_TYPES.getKey(champion.getLivingEntity().getType());
+		var entityKey = ForgeRegistries.ENTITIES.getKey(champion.getLivingEntity().getType());
 		if (isBlackList()) {
 			isValidEntity = getMobList().map(mobList -> !mobList.contains(entityKey)).orElse(true);
 		} else {
@@ -129,4 +130,19 @@ public abstract class AbstractBasicAffix implements IAffix {
 
 	public abstract AffixSetting createDefaultSetting();
 
+	@Override
+	public IAffix setRegistryName(ResourceLocation name) {
+		this.name = name;
+		return this;
+	}
+
+	@Override
+	public @Nullable ResourceLocation getRegistryName() {
+		return name;
+	}
+
+	@Override
+	public Class<IAffix> getRegistryType() {
+		return IAffix.class;
+	}
 }

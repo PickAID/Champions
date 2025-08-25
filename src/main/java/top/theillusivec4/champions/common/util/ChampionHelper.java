@@ -96,7 +96,7 @@ public class ChampionHelper {
 	 */
 	public static boolean notPotential(final LivingEntity livingEntity) {
 		return !isValidEntity(livingEntity) ||
-				!isValidDimension(livingEntity.level().dimension().location()) ||
+				!isValidDimension(livingEntity.getLevel().dimension().location()) ||
 				nearActiveBeacon(livingEntity);
 	}
 
@@ -108,7 +108,8 @@ public class ChampionHelper {
 	}
 
 	private static boolean isValidEntity(final LivingEntity livingEntity) {
-		ResourceLocation rl = ForgeRegistries.ENTITY_TYPES.getDelegateOrThrow(livingEntity.getType()).key().location();
+		ResourceLocation rl = ForgeRegistries.ENTITIES.getKey(livingEntity.getType());
+		if (rl==null) return false;
 
 		String entity = rl.toString();
 
@@ -151,7 +152,7 @@ public class ChampionHelper {
 		Set<BlockPos> toRemove = new HashSet<>();
 
 		for (BlockPos pos : BEACON_POS) {
-			Level level = livingEntity.level();
+			Level level = livingEntity.getLevel();
 
 			if (!level.isLoaded(pos)) {
 				continue;

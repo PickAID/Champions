@@ -9,12 +9,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.nbt.TagParser;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.rank.Rank;
+import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ChampionSelectorOptions {
     public static void setup() {
         EntitySelectorOptions.register("champions", ChampionSelectorOptions::championsArgument,
                 entitySelectorParser -> true,
-                Component.translatable("argument.entity.options.champions.description"));
+                Utils.translatable("argument.entity.options.champions.description"));
     }
 
     private static void championsArgument(EntitySelectorParser parser) throws CommandSyntaxException {

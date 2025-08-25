@@ -2,7 +2,7 @@ package top.theillusivec4.champions.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
+import com.mojang.math.Vector3f;
 import net.minecraft.client.model.ShulkerBulletModel;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -46,9 +46,9 @@ public class ColorizedBulletRenderer extends EntityRenderer<BaseBulletEntity> {
         float xRot = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
         float tickModifier = (float) entity.tickCount + partialTicks;
         matrixStack.translate(0.0D, 0.15000000596046448D, 0.0D);
-        matrixStack.mulPose(Axis.YP.rotationDegrees(Mth.sin(tickModifier * 0.1F) * 180.0F));
-        matrixStack.mulPose(Axis.XP.rotationDegrees(Mth.cos(tickModifier * 0.1F) * 180.0F));
-        matrixStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(tickModifier * 0.15F) * 360.0F));
+        matrixStack.mulPose(Vector3f.YP.rotationDegrees(Mth.sin(tickModifier * 0.1F) * 180.0F));
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(Mth.cos(tickModifier * 0.1F) * 180.0F));
+        matrixStack.mulPose(Vector3f.ZP.rotationDegrees(Mth.sin(tickModifier * 0.15F) * 360.0F));
         float r = (float) ((this.color >> 16) & 0xFF) / 255F;
         float g = (float) ((this.color >> 8) & 0xFF) / 255F;
         float b = (float) ((this.color) & 0xFF) / 255F;

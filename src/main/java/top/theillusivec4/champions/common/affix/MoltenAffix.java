@@ -1,11 +1,6 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.core.Holder;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
-import net.minecraft.world.damagesource.DamageType;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -73,8 +68,7 @@ public class MoltenAffix extends CombatLifeCycleAffix {
 			livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 40, 0, true, false));
 
 			if (!ChampionsConfig.moltenWaterResistance && livingEntity.isInWaterOrRain()) {
-				Holder.Reference<DamageType> drown = livingEntity.level().registryAccess().lookupOrThrow(Registries.DAMAGE_TYPE).getOrThrow(DamageTypes.DROWN);
-				livingEntity.hurt(new DamageSource(drown), 1.0F);
+				livingEntity.hurt(DamageSource.DROWN, 1.0F);
 			}
 		}
 	}
@@ -83,8 +77,8 @@ public class MoltenAffix extends CombatLifeCycleAffix {
 	public boolean onAttack(IChampion champion, LivingEntity target, DamageSource source,
 	                        float amount) {
 		target.setSecondsOnFire(10);
-		DamageSource inFire = new DamageSources(target.level().registryAccess()).inFire();
-		target.hurt(inFire, amount);
+		source.setIsFire();
+		target.hurt(source, amount);
 		return true;
 	}
 

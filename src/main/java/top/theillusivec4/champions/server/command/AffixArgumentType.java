@@ -6,10 +6,10 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.affix.IAffix;
+import top.theillusivec4.champions.common.util.Utils;
 import top.theillusivec4.champions.server.command.AffixArgumentType.IAffixProvider;
 
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public class AffixArgumentType implements ArgumentType<IAffixProvider> {
 
     private static final Collection<String> EXAMPLES = Arrays.asList("molten", "reflecting");
     private static final DynamicCommandExceptionType UNKNOWN_AFFIX = new DynamicCommandExceptionType(
-            type -> Component.translatable("argument.champions.affix.unknown", type));
+            type -> Utils.translatable("argument.champions.affix.unknown", type));
 
     public static AffixArgumentType affix() {
         return new AffixArgumentType();

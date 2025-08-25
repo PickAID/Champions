@@ -21,8 +21,8 @@ public record AffixSetting(ResourceLocation type, boolean enabled, Optional<MinM
             Codec.BOOL.fieldOf("enable").forGetter(AffixSetting::enabled),
             IntCodec.codec().optionalFieldOf("tier").forGetter(AffixSetting::tier),
             Codec.list(ResourceLocation.CODEC).optionalFieldOf("mobList").forGetter(AffixSetting::mobList),
-            StringRepresentable.fromEnum(ConfigEnums.Permission::values).optionalFieldOf("mobPermission").forGetter(AffixSetting::mobPermission),
-            StringRepresentable.fromEnum(AffixCategory::values).fieldOf("category").forGetter(AffixSetting::category),
+            StringRepresentable.fromEnum(ConfigEnums.Permission::values, ConfigEnums.Permission::valueOf).optionalFieldOf("mobPermission").forGetter(AffixSetting::mobPermission),
+            StringRepresentable.fromEnum(AffixCategory::values, AffixCategory::valueOf).fieldOf("category").forGetter(AffixSetting::category),
             Codec.STRING.optionalFieldOf("prefix").forGetter(AffixSetting::prefix),
             Codec.BOOL.optionalFieldOf("hasSub").forGetter(AffixSetting::hasSub)
     ).apply(instance, AffixSetting::new));

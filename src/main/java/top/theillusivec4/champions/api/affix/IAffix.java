@@ -1,11 +1,12 @@
 package top.theillusivec4.champions.api.affix;
 
+import net.minecraftforge.registries.IForgeRegistryEntry;
 import top.theillusivec4.champions.api.data.AffixCategory;
 
 public interface IAffix extends IAffixBase,
 		IAffixSettingHolder,
 		IAffixSyncable,
-		IAffixCompatibility {
+		IAffixCompatibility, IForgeRegistryEntry<IAffix> {
 	/**
 	 * Is this category same with other category?
 	 *

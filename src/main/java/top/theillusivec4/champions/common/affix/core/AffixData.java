@@ -36,7 +36,7 @@ public abstract class AffixData {
         LivingEntity livingEntity = champion.getLivingEntity();
         CompoundTag tag;
 
-        if (!livingEntity.level().isClientSide()) {
+        if (!livingEntity.getLevel().isClientSide()) {
             tag = champion.getServer().getData(identifier);
         } else {
             tag = champion.getClient().getData(identifier);
@@ -51,7 +51,7 @@ public abstract class AffixData {
     public void saveData() {
         LivingEntity livingEntity = champion.getLivingEntity();
 
-        if (!livingEntity.level().isClientSide()) {
+        if (!livingEntity.getLevel().isClientSide()) {
             champion.getServer().setData(identifier, writeToNBT());
         } else {
             champion.getClient().setData(identifier, writeToNBT());
