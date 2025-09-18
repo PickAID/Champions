@@ -18,7 +18,7 @@ public class ClientAffixEventsHandler {
     var player = event.getEntity();
     if (player.hasEffect(ModMobEffects.PARALYSIS_EFFECT_TYPE)) {
       ClientInput input = event.getInput();
-      event.getInput().moveVector = Vec2.ZERO;
+      input.moveVector = Vec2.ZERO;
       input.keyPresses = Input.EMPTY;
     }
   }
