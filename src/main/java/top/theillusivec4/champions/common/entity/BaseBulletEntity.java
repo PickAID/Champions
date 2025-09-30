@@ -217,7 +217,7 @@ public abstract class BaseBulletEntity extends Projectile {
   public void tick() {
     super.tick();
 
-    if (!this.level().isClientSide) {
+    if (!this.level().isClientSide()) {
 
       if (this.finalTarget == null && this.targetId != null) {
         this.finalTarget = this.level().getEntity(this.targetId);
@@ -255,7 +255,7 @@ public abstract class BaseBulletEntity extends Projectile {
     this.setPos(this.getX() + vec31.x, this.getY() + vec31.y, this.getZ() + vec31.z);
     ProjectileUtil.rotateTowardsMovement(this, 0.5F);
 
-    if (this.level().isClientSide) {
+    if (this.level().isClientSide()) {
       this.level().addParticle(this.getParticle(), this.getX() - vec31.x,
         this.getY() - vec31.y + 0.15D, this.getZ() - vec31.z, 0.0D, 0.0D, 0.0D);
     } else if (this.finalTarget != null && !this.finalTarget.isRemoved()) {
@@ -333,7 +333,7 @@ public abstract class BaseBulletEntity extends Projectile {
   }
 
   @Override
-  public boolean hurtServer(ServerLevel level, DamageSource pSource, float pAmount) {
+  public boolean hurtServer(ServerLevel level, @Nonnull DamageSource pSource, float pAmount) {
     this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
     level.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(),
       this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
@@ -343,9 +343,9 @@ public abstract class BaseBulletEntity extends Projectile {
 
   public void recreateFromPacket(@Nonnull ClientboundAddEntityPacket pPacket) {
     super.recreateFromPacket(pPacket);
-    double d0 = pPacket.getXa();
-    double d1 = pPacket.getYa();
-    double d2 = pPacket.getZa();
+    double d0 = pPacket.getX();
+    double d1 = pPacket.getY();
+    double d2 = pPacket.getZ();
     this.setDeltaMovement(d0, d1, d2);
   }
 

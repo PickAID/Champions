@@ -55,7 +55,7 @@ public class ChampionLootModifier extends LootModifier {
       if (damageSource == null) {
         return generatedLoot;
       }
-      var server = entity.getServer();
+      var server = entity.level().getServer();
       if (server != null && !server.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT) ||
         (!ChampionsConfig.fakeLoot && damageSource.getDirectEntity() instanceof FakePlayer)) {
         return generatedLoot;

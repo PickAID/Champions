@@ -3,11 +3,13 @@ package top.theillusivec4.champions.common.particle;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.RandomSource;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-public class RankParticle extends TextureSheetParticle {
+public class RankParticle extends SingleQuadParticle {
   private static final Random RANDOM = new Random();
   private final SpriteSet spriteSet;
 
@@ -15,7 +17,7 @@ public class RankParticle extends TextureSheetParticle {
                       double pZ, double pXSpeed, double pYSpeed,
                       double pZSpeed, SpriteSet pSpriteSet) {
     super(clientLevel, pX, pY, pZ, 0.5D - RANDOM.nextDouble(),
-      pYSpeed, 0.5D - RANDOM.nextDouble());
+      pYSpeed, 0.5D - RANDOM.nextDouble(), pSpriteSet.first());
     this.spriteSet = pSpriteSet;
     this.yd *= 0.2F;
 
@@ -57,10 +59,9 @@ public class RankParticle extends TextureSheetParticle {
     }
   }
 
-  @Nonnull
   @Override
-  public ParticleRenderType getRenderType() {
-    return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+  public @NotNull SingleQuadParticle.Layer getLayer() {
+    return SingleQuadParticle.Layer.TRANSLUCENT;
   }
 
   public record RankFactory(SpriteSet spriteSet) implements ParticleProvider<SimpleParticleType> {
@@ -68,7 +69,7 @@ public class RankParticle extends TextureSheetParticle {
     @Override
     public Particle createParticle(
       @Nonnull SimpleParticleType typeIn, @Nonnull ClientLevel worldIn,
-      double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+      double x, double y, double z, double xSpeed, double ySpeed, double zSpeed,@Nonnull RandomSource randomSource) {
       RankParticle rankParticle =
         new RankParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteSet);
       float f = worldIn.random.nextFloat() * 0.5F + 0.35F;

@@ -1,14 +1,14 @@
 package top.theillusivec4.champions.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.model.ShulkerBulletModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -16,8 +16,6 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import top.theillusivec4.champions.common.entity.BaseBulletEntity;
 import top.theillusivec4.champions.common.util.Utils;
-
-import javax.annotation.Nonnull;
 
 public class ColorizedBulletRenderer<T extends BaseBulletEntity, S extends BulletRenderState> extends EntityRenderer<T, S> {
 
@@ -34,14 +32,13 @@ public class ColorizedBulletRenderer<T extends BaseBulletEntity, S extends Bulle
   }
 
   @Override
-  protected int getBlockLightLevel(@Nonnull final BaseBulletEntity bullet,
-                                   @Nonnull final BlockPos blockPos) {
+  protected int getBlockLightLevel(final BaseBulletEntity bullet,
+                                   final BlockPos blockPos) {
     return 15;
   }
 
   @Override
-  public void render(S renderState,
-                     PoseStack matrixStack, MultiBufferSource buffer, int packedLight) {
+  public void submit(S renderState, PoseStack matrixStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
     matrixStack.pushPose();
     float yRot = Mth.rotLerp(renderState.xRot, renderState.yRot, renderState.partialTick);
     float xRot = Mth.lerp(renderState.partialTick, renderState.xRot, renderState.yRot);
@@ -52,18 +49,29 @@ public class ColorizedBulletRenderer<T extends BaseBulletEntity, S extends Bulle
     matrixStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(tickModifier * 0.15F) * 360.0F));
     matrixStack.scale(-0.5F, -0.5F, 0.5F);
     this.model.setupAnim(new BulletRenderState(color, xRot, yRot));
-    VertexConsumer vertexconsumer = buffer.getBuffer(this.model.renderType(GENERIC_SPARK_TEXTURE));
     // argb range(0, 255)
     // 0 transparent 255 opaque.
     // so need calculate percent to argb range: 100% * 255 = 255, 15% * 255 = 38.25 ~= 38
-    this.model.renderToBuffer(matrixStack, vertexconsumer, packedLight, OverlayTexture.NO_OVERLAY,
-      ARGB.opaque(this.color));
+    submitNodeCollector.submitModel(
+      this.model,
+      renderState,
+      matrixStack,
+      this.model.renderType(GENERIC_SPARK_TEXTURE),
+      renderState.lightCoords,
+      OverlayTexture.NO_OVERLAY,
+      renderState.outlineColor,
+      null,
+      ARGB.opaque(this.color),
+      null
+    );
     matrixStack.scale(1.5F, 1.5F, 1.5F);
-    VertexConsumer vertexconsumer1 = buffer.getBuffer(RENDER_TYPE);
-    this.model.renderToBuffer(matrixStack, vertexconsumer1, packedLight, OverlayTexture.NO_OVERLAY,
-      ARGB.color(ARGB.alpha(15 * 255), this.color));
+    submitNodeCollector.order(1)
+      .submitModel(
+        this.model, renderState, matrixStack, RENDER_TYPE, renderState.lightCoords, OverlayTexture.NO_OVERLAY, ARGB.color(ARGB.alpha(15 * 255), this.color), null, renderState.outlineColor, null
+      );
+
     matrixStack.popPose();
-    super.render(renderState, matrixStack, buffer, packedLight);
+    super.submit(renderState, matrixStack, submitNodeCollector, cameraRenderState);
   }
 
   @Override

@@ -268,7 +268,7 @@ public class ChampionEventsHandler {
               int messageTier = ChampionsConfig.deathMessageTier;
 
               if (messageTier > 0 && rank.getTier() >= messageTier) {
-                MinecraftServer server = livingEntity.getServer();
+                MinecraftServer server = livingEntity.level().getServer();
 
                 if (server != null) {
                   server.getPlayerList().broadcastSystemMessage(

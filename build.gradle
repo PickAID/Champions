@@ -169,7 +169,7 @@ dependencies {
   implementation "net.neoforged:neoforge:${neo_version}"
   compileOnly "curse.maven:TOP-245211:${cf_theoneprobe}"
 //  compileOnly "curse.maven:jade-324717:${cf_jade}"
-  implementation "curse.maven:jade-324717:${cf_jade}"
+  compileOnly "curse.maven:jade-324717:${cf_jade}"
   compileOnly "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
   compileOnly "dev.latvian.mods:rhino:${rhino_version}"
   compileOnly "dev.architectury:architectury-neoforge:${architectury_version}"

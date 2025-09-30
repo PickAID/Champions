@@ -217,7 +217,7 @@ public class ChampionBuilder {
    */
   public static void resetChampionModifiers(final IChampion champion) {
     var livingEntity = champion.getLivingEntity();
-    var playerList = Objects.requireNonNull(livingEntity.getServer()).getPlayerList();
+    var playerList = Objects.requireNonNull(livingEntity.level().getServer()).getPlayerList();
     Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
       if (value.enable()) {
         var attribute = BuiltInRegistries.ATTRIBUTE.get(value.attributeType());
