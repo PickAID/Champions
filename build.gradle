@@ -20,7 +20,7 @@ plugins {
     id 'maven-publish'
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
-    id("org.moddedmc.wiki.toolkit") version "0.2.7"
+//    id("org.moddedmc.wiki.toolkit") version "0.2.7" // disabled by unsupported java version(o
 }
 
 apply plugin: 'net.minecraftforge.gradle'
@@ -34,9 +34,9 @@ base {
     archivesName = mod_id + "-forge"
 }
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
-wiki {
+/*wiki {
     docs {
         // The name of the object (examplemod) should match the registered wiki project ID (if it exists).
         champions {
@@ -45,7 +45,7 @@ wiki {
             exportedAssetNamespaces = ['championns']
         }
     }
-}
+}*/
 
 minecraft {
     mappings channel: mapping_channel, version: mapping_version
@@ -150,15 +150,15 @@ dependencies {
         compileOnly fg.deobf("curse.maven:probejs-585406:5227399")
     }
 
-    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
-    if (rootMod.toBoolean()) {
-        implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
-            transitive = false
-            jarJar.ranged(it, "[${mixin_extras_version},)")
-        }
-    } else {
-        implementation("io.github.llamalad7.mixinextras:mixinextras-forge:${mixin_extras_version}")
-    }
+//    compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:${mixin_extras_version}"))
+//    if (rootMod.toBoolean()) {
+//        implementation(jarJar("io.github.llamalad7:mixinextras-forge:${mixin_extras_version}")) {
+//            transitive = false
+//            jarJar.ranged(it, "[${mixin_extras_version},)")
+//        }
+//    } else {
+//        implementation("io.github.llamalad7.mixinextras:mixinextras-forge:${mixin_extras_version}")
+//    }
 
     annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 
@@ -178,8 +178,8 @@ dependencies {
 //    implementation fg.deobf("curse.maven:citadel-331936:6002521")
 //    implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
 //    implementation fg.deobf("curse.maven:apothic-attributes-898963:5634071")
-    implementation fg.deobf("curse.maven:gateways-to-eternity-417802:4548643")
-    implementation fg.deobf("curse.maven:placebo-283644:4500363")
+    implementation fg.deobf("curse.maven:gateways-to-eternity-417802:4552976")
+    implementation fg.deobf("curse.maven:placebo-283644:4501015")
 //    implementation fg.deobf("curse.maven:apotheosis-313970:6147871")
 //    implementation fg.deobf("curse.maven:ice-and-fire-dragons-264231:5633453")
 //    implementation fg.deobf("curse.maven:citadel-331936:6002521")

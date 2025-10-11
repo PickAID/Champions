@@ -1,17 +1,18 @@
 package top.theillusivec4.champions.common.util;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.BeaconTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobCategory;
-import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BeaconBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
@@ -22,6 +23,7 @@ import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static top.theillusivec4.champions.common.integration.gamestages.GameStagesPlugin.hasEntityStage;
@@ -37,12 +39,13 @@ public class ChampionHelper {
 	 */
 	public static boolean isValidChampionEntity(final Entity entity) {
 		boolean isEligible = false;
-		if (entity instanceof LivingEntity livingEntity) {
+		if (entity instanceof LivingEntity) {
+			LivingEntity livingEntity = (LivingEntity) entity;
 			if (ChampionsConfig.allowChampionsList) {
 				isEligible = isValidChampionEntityType(livingEntity.getType());
 			} else {
 				// If champions are not allowed, check if the entity is an enemy
-				isEligible = livingEntity instanceof Enemy || livingEntity.getType().getCategory() == MobCategory.MONSTER;
+				isEligible = livingEntity instanceof IMob || livingEntity.getType().getCategory() == EntityClassification.MONSTER;
 			}
 			if (isEligible) {
 				isEligible = Utils.isGameStagesLoaded() ? hasEntityStage(livingEntity) : true;
@@ -53,11 +56,11 @@ public class ChampionHelper {
 
 	public static boolean isValidChampionEntityType(final EntityType<?> entityType) {
 		if (ChampionsConfig.allowChampionsList) {
-			var isEligible = entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+			boolean isEligible = entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
 			return ChampionsConfig.allowChampionsPermission == Permission.WHITELIST ? isEligible : !isEligible;
 		}
 
-		return entityType.getCategory() == MobCategory.MONSTER; // If entity is not a LivingEntity
+		return entityType.getCategory() == EntityClassification.MONSTER; // If entity is not a LivingEntity
 	}
 
 	/**
@@ -65,7 +68,7 @@ public class ChampionHelper {
 	 * @return True if champion is valid Champion(Has ranks and affixes), else false.
 	 */
 	public static boolean isValidChampion(IChampion.Client client) {
-		var rank = client.getRank();
+		Optional<Tuple<Integer, String>> rank = client.getRank();
 		return rank.isPresent() && rank.map(Tuple::getA).orElse(0) > 0 && !client.getAffixes().isEmpty();
 	}
 
@@ -74,7 +77,7 @@ public class ChampionHelper {
 	 * @return True if champion is valid Champion(Has ranks and affixes), else false.
 	 */
 	public static boolean isValidChampion(IChampion.Server server) {
-		var rank = server.getRank();
+		Optional<Rank> rank = server.getRank();
 		return rank.isPresent() && rank.map(Rank::getTier).orElse(-1) > 0 && !server.getAffixes().isEmpty();
 	}
 
@@ -96,7 +99,7 @@ public class ChampionHelper {
 	 */
 	public static boolean notPotential(final LivingEntity livingEntity) {
 		return !isValidEntity(livingEntity) ||
-				!isValidDimension(livingEntity.getLevel().dimension().location()) ||
+				!isValidDimension(livingEntity.level.dimension().location()) ||
 				nearActiveBeacon(livingEntity);
 	}
 
@@ -123,13 +126,11 @@ public class ChampionHelper {
 	public static boolean areEntitiesNearby(BlockPos pos, List<LivingEntity> livingEntities, EntityType<?> entityType) {
 		for (LivingEntity livingentity : livingEntities) {
 			if (livingentity.isAlive()
-					&& !livingentity.isRemoved()
-					&& pos.closerToCenterThan(livingentity.position(), 32.0)
+					&& pos.closerThan(livingentity.position(), 32.0)
 					&& livingentity.getType() == entityType) {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
@@ -152,18 +153,18 @@ public class ChampionHelper {
 		Set<BlockPos> toRemove = new HashSet<>();
 
 		for (BlockPos pos : BEACON_POS) {
-			Level level = livingEntity.getLevel();
+			World level = livingEntity.level;
 
 			if (!level.isLoaded(pos)) {
 				continue;
 			}
-			BlockEntity blockEntity = level.getBlockEntity(pos);
+			TileEntity blockEntity = level.getBlockEntity(pos);
 
-			if (blockEntity instanceof BeaconBlockEntity beaconBlockEntity && !blockEntity.isRemoved()) {
-
+			if (blockEntity instanceof BeaconTileEntity && !blockEntity.isRemoved()) {
+				BeaconTileEntity beaconBlockEntity = (BeaconTileEntity) blockEntity;
 				if (livingEntity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) <= range * range) {
 
-					if (beaconBlockEntity.levels > 0) {
+					if (beaconBlockEntity.getLevels() > 0) {
 						return true;
 					}
 				}

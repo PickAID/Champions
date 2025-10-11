@@ -1,24 +1,22 @@
 package top.theillusivec4.champions.common.capability;
 
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.CapabilityToken;
+import net.minecraftforge.common.capabilities.CapabilityInject;
 import net.minecraftforge.common.capabilities.ICapabilitySerializable;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.event.ChampionEventsHandler;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -26,13 +24,13 @@ import top.theillusivec4.champions.common.util.ChampionHelper;
 import top.theillusivec4.champions.common.util.Utils;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.*;
 
 public class ChampionCapability {
 
-    public static final Capability<IChampion> CHAMPION_CAP =
-            CapabilityManager.get(new CapabilityToken<>() {
-            });
+	@CapabilityInject(IChampion.class)
+    public static Capability<IChampion> CHAMPION_CAP;
 
     public static final ResourceLocation ID = Utils.getLocation("champion");
 
@@ -92,7 +90,7 @@ public class ChampionCapability {
 
         public static class Server implements IChampion.Server {
 
-            private final Map<String, CompoundTag> data = new HashMap<>();
+            private final Map<String, CompoundNBT> data = new HashMap<>();
             private Rank rank = null;
             private List<IAffix> affixes = new ArrayList<>();
 
@@ -117,13 +115,13 @@ public class ChampionCapability {
             }
 
             @Override
-            public void setData(String identifier, CompoundTag data) {
+            public void setData(String identifier, CompoundNBT data) {
                 this.data.put(identifier, data);
             }
 
             @Override
-            public CompoundTag getData(String identifier) {
-                return this.data.getOrDefault(identifier, new CompoundTag());
+            public CompoundNBT getData(String identifier) {
+                return this.data.getOrDefault(identifier, new CompoundNBT());
             }
         }
 
@@ -131,7 +129,7 @@ public class ChampionCapability {
 
             private final List<IAffix> affixes = new ArrayList<>();
             private final Map<ResourceLocation, IAffix> idToAffix = new HashMap<>();
-            private final Map<ResourceLocation, CompoundTag> data = new HashMap<>();
+            private final Map<ResourceLocation, CompoundNBT> data = new HashMap<>();
             private Tuple<Integer, String> rank = null;
 
             @Override
@@ -167,18 +165,18 @@ public class ChampionCapability {
             }
 
             @Override
-            public void setData(String identifier, CompoundTag data) {
+            public void setData(String identifier, CompoundNBT data) {
                 this.data.put(ResourceLocation.tryParse(identifier), data);
             }
 
             @Override
-            public CompoundTag getData(String identifier) {
-                return this.data.getOrDefault(ResourceLocation.tryParse(identifier), new CompoundTag());
+            public CompoundNBT getData(String identifier) {
+                return this.data.getOrDefault(ResourceLocation.tryParse(identifier), new CompoundNBT());
             }
         }
     }
 
-    public static class Provider implements ICapabilitySerializable<Tag> {
+    public static class Provider implements ICapabilitySerializable<INBT> {
 
         final LazyOptional<IChampion> optional;
         final IChampion data;
@@ -188,22 +186,22 @@ public class ChampionCapability {
             this.optional = LazyOptional.of(() -> data);
         }
 
-        @NotNull
+        @Nonnull
         @Override
-        public <T> LazyOptional<T> getCapability(@NotNull final Capability<T> cap,
+        public <T> LazyOptional<T> getCapability(final Capability<T> cap,
                                                  @Nullable final Direction side) {
             return cap == CHAMPION_CAP ? optional.cast() : LazyOptional.empty();
         }
 
         @Override
-        public Tag serializeNBT() {
-            CompoundTag compoundNBT = new CompoundTag();
+        public INBT serializeNBT() {
+            CompoundNBT compoundNBT = new CompoundNBT();
             IChampion.Server champion = data.getServer();
             champion.getRank().ifPresent(rank -> compoundNBT.putInt(TIER_TAG, rank.getTier()));
             List<IAffix> affixes = champion.getAffixes();
-            ListTag list = new ListTag();
+            ListNBT list = new ListNBT();
             affixes.forEach(affix -> {
-                CompoundTag tag = new CompoundTag();
+	            CompoundNBT tag = new CompoundNBT();
                 String id = affix.getIdentifier().toString();
                 tag.putString(ID_TAG, id);
                 tag.put(DATA_TAG, champion.getData(id));
@@ -214,8 +212,8 @@ public class ChampionCapability {
         }
 
         @Override
-        public void deserializeNBT(final Tag nbt) {
-            CompoundTag compoundNBT = (CompoundTag) nbt;
+        public void deserializeNBT(final INBT nbt) {
+	        CompoundNBT compoundNBT = (CompoundNBT) nbt;
             IChampion.Server champion = data.getServer();
 
             if (compoundNBT.contains(TIER_TAG)) {
@@ -224,11 +222,11 @@ public class ChampionCapability {
             }
 
             if (compoundNBT.contains(AFFIX_TAG)) {
-                ListTag list = compoundNBT.getList(AFFIX_TAG, CompoundTag.TAG_COMPOUND);
+                ListNBT list = compoundNBT.getList(AFFIX_TAG, Constants.NBT.TAG_COMPOUND);
                 List<IAffix> affixes = new ArrayList<>();
 
                 for (int i = 0; i < list.size(); i++) {
-                    CompoundTag tag = list.getCompound(i);
+	                CompoundNBT tag = list.getCompound(i);
                     String id = tag.getString(ID_TAG);
                     Champions.API.getAffix(id).ifPresent(affix -> {
                         affixes.add(affix);
@@ -241,5 +239,9 @@ public class ChampionCapability {
                 champion.setAffixes(affixes);
             }
         }
+
+	    public void invalidate() {
+		    this.optional.invalidate();
+	    }
     }
 }

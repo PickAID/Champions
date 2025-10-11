@@ -5,8 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
+import net.minecraft.data.DirectoryCache;
+import net.minecraft.data.IDataProvider;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.data.AffixSetting;
 
@@ -15,7 +16,7 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AffixConfigProvider implements DataProvider {
+public class AffixConfigProvider implements IDataProvider {
 
 	private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 	private final DataGenerator generator;
@@ -26,10 +27,10 @@ public class AffixConfigProvider implements DataProvider {
 	}
 
 	@Override
-	public void run(HashCache pCache) throws IOException {
+	public void run(DirectoryCache pCache) throws IOException {
 		// 收集所有需要生成的数据
 		Champions.API.getAffixes().forEach(affix -> {
-			var affixId = affix.getIdentifier();
+			ResourceLocation affixId = affix.getIdentifier();
 			JsonElement jsonElement = AffixSetting.CODEC.encodeStart(JsonOps.INSTANCE, affix.getSetting())
 					.get()
 					.orThrow()
@@ -53,7 +54,7 @@ public class AffixConfigProvider implements DataProvider {
 					.resolve(path + ".json");
 
 			try {
-				DataProvider.save(GSON, pCache, entry.getValue(), outputPath);
+				IDataProvider.save(GSON, pCache, entry.getValue(), outputPath);
 			} catch (IOException e) {
 				throw new IOException("Failed to save affix setting " + entry.getKey(), e);
 			}

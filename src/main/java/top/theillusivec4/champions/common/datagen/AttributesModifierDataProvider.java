@@ -1,16 +1,17 @@
 package top.theillusivec4.champions.common.datagen;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.HashCache;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.data.DirectoryCache;
+import net.minecraft.data.IDataProvider;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.api.data.AttributesModifierDataLoader;
 import top.theillusivec4.champions.api.data.ChampionModifierCondition;
@@ -23,9 +24,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 
-public class AttributesModifierDataProvider implements DataProvider {
+public class AttributesModifierDataProvider implements IDataProvider {
 
 	private static final Gson GSON = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
 	private final DataGenerator generator;
@@ -36,7 +36,7 @@ public class AttributesModifierDataProvider implements DataProvider {
 	}
 
 	@Override
-	public void run(HashCache cache) throws IOException {
+	public void run(DirectoryCache cache) throws IOException {
 		// 收集所有需要生成的数据
 		ForgeRegistries.ATTRIBUTES.getEntries().forEach(entry -> {
 			ResourceLocation attributeId = entry.getKey().location();
@@ -69,9 +69,9 @@ public class AttributesModifierDataProvider implements DataProvider {
 					enable,
 					Pair.of(baseValue, operation),
 					Optional.of(new ChampionModifierCondition(
-							Optional.of(Set.of(ResourceLocation.parse("minecraft:creeper"))),
-							Optional.of(MinMaxBounds.Ints.ANY),
-							Optional.of(new AffixesPredicate(Set.of(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY)),
+							Optional.of(Sets.newHashSet(new ResourceLocation("minecraft:creeper"))),
+							Optional.of(MinMaxBounds.IntBound.ANY),
+							Optional.of(new AffixesPredicate(Sets.newHashSet(), MinMaxBounds.IntBound.ANY, MinMaxBounds.IntBound.ANY)),
 							ConfigEnums.Permission.BLACKLIST
 					))
 			);
@@ -90,13 +90,13 @@ public class AttributesModifierDataProvider implements DataProvider {
 					.resolve(attributeId.getPath() + ".json");
 
 			try {
-				DataProvider.save(
+				IDataProvider.save(
 						GSON,
 						cache,
 						ModifierSetting.MAP_CODEC.codec()
 								.encodeStart(JsonOps.INSTANCE, entry.getValue())
 								.result()
-								.orElseThrow(),
+								.orElseThrow(()->new RuntimeException("Failed to serialize modifiers for " + attributeId)),
 						outputPath
 				);
 			} catch (IOException e) {

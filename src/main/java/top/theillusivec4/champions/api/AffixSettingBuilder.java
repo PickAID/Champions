@@ -1,10 +1,11 @@
 package top.theillusivec4.champions.api;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.config.ConfigEnums;
+import top.theillusivec4.champions.common.util.MinMaxBoundsHelper;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,7 @@ public class AffixSettingBuilder {
 
 	private ResourceLocation type;
 	private boolean isEnable;
-	private MinMaxBounds.Ints tier;
+	private MinMaxBounds.IntBound tier;
 	private List<ResourceLocation> mobList;
 	private ConfigEnums.Permission mobPermission;
 	private AffixCategory category;
@@ -27,7 +28,7 @@ public class AffixSettingBuilder {
 	public AffixSettingBuilder withDefault() {
 		return this.setEnable(true)
 				.setCategory(AffixCategory.CC)
-				.setTier(MinMaxBounds.Ints.between(1, 100));
+				.setTier(MinMaxBoundsHelper.between(1, 100));
 	}
 
 	public AffixSettingBuilder setType(ResourceLocation type) {
@@ -72,7 +73,7 @@ public class AffixSettingBuilder {
 	}
 
 
-	public AffixSettingBuilder setTier(MinMaxBounds.Ints tier) {
+	public AffixSettingBuilder setTier(MinMaxBounds.IntBound tier) {
 		this.tier = tier;
 		return this;
 	}

@@ -1,8 +1,8 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.DamageSource;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.CombatAffix;
@@ -17,7 +17,7 @@ public class ParalyzingAffix extends CombatAffix {
 
 		if (target.getRandom().nextFloat() < ChampionsConfig.paralyzingChance && !target.hasEffect(
 				ModMobEffects.PARALYSIS_EFFECT_TYPE.get())) {
-			target.addEffect(new MobEffectInstance(ModMobEffects.PARALYSIS_EFFECT_TYPE.get(), 60, 0));
+			target.addEffect(new EffectInstance(ModMobEffects.PARALYSIS_EFFECT_TYPE.get(), 60, 0));
 		}
 		return true;
 	}

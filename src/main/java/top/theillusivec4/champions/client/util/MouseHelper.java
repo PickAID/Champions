@@ -1,13 +1,13 @@
 package top.theillusivec4.champions.client.util;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.EntityRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.vector.Vector3d;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
@@ -25,20 +25,20 @@ public class MouseHelper {
             if (mc.level != null) {
                 mc.getProfiler().push("mouse_champion");
                 double d0 = ClientChampionsConfig.hudRange;
-                HitResult rayTraceResult = entity.pick(d0, partialTicks, false);
-                Vec3 vec3d = entity.getEyePosition(partialTicks);
+                RayTraceResult rayTraceResult = entity.pick(d0, partialTicks, false);
+                Vector3d vec3d = entity.getEyePosition(partialTicks);
                 double d1 = rayTraceResult.getLocation().distanceToSqr(vec3d);
-                Vec3 vec3d1 = entity.getViewVector(1.0F);
-                Vec3 vec3d2 = vec3d.add(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0);
-                AABB axisalignedbb =
+	            Vector3d vec3d1 = entity.getViewVector(1.0F);
+	            Vector3d vec3d2 = vec3d.add(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0);
+                AxisAlignedBB axisalignedbb =
                         entity.getBoundingBox().expandTowards(vec3d1.scale(d0)).inflate(1.0D, 1.0D, 1.0D);
-                EntityHitResult entityraytraceresult =
-                        ProjectileUtil.getEntityHitResult(entity, vec3d, vec3d2, axisalignedbb,
+                EntityRayTraceResult entityraytraceresult =
+                        ProjectileHelper.getEntityHitResult(entity, vec3d, vec3d2, axisalignedbb,
                                 (e) -> !e.isSpectator() && e.isPickable(), d1);
 
                 if (entityraytraceresult != null) {
                     Entity entity1 = entityraytraceresult.getEntity();
-                    var champion = ChampionCapability.getCapability(entity1).resolve();
+                    Optional<IChampion> champion = ChampionCapability.getCapability(entity1).resolve();
                     if (champion.isPresent() && ChampionHelper.isValidChampion(champion.get().getClient()))
                         return champion.map(IChampion::getLivingEntity);
                 }

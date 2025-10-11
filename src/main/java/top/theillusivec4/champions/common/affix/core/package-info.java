@@ -2,6 +2,6 @@
 @ParametersAreNonnullByDefault
 package top.theillusivec4.champions.common.affix.core;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import mcp.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;

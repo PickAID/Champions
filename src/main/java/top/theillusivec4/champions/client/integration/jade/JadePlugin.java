@@ -1,25 +1,23 @@
 package top.theillusivec4.champions.client.integration.jade;
 
-import mcp.mobius.waila.api.*;
-import net.minecraft.world.entity.LivingEntity;
+import mcp.mobius.waila.api.IRegistrar;
+import mcp.mobius.waila.api.IWailaPlugin;
+import mcp.mobius.waila.api.TooltipPosition;
+import mcp.mobius.waila.api.WailaPlugin;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.ResourceLocation;
 
 @WailaPlugin
 public class JadePlugin implements IWailaPlugin {
-
+	public static final ResourceLocation STAR_RENDERER = StarElement.getTexture();
 	@Override
-	public void register(IWailaCommonRegistration registration) {
+	public void register(IRegistrar registration) {
+		// register renderer
+		registration.registerTooltipRenderer(STAR_RENDERER, new StarElement());
 		// register data provider
-	}
-
-	@Override
-	public void registerClient(IWailaClientRegistration registration) {
-		// register component providers, icon providers, callbacks, and config options here
-		registration.registerComponentProvider(ChampionComponentProvider.INSTANCE, TooltipPosition.TAIL, LivingEntity.class);
-//		registration.addBeforeRenderCallback(((iBoxElement, tooltipRect, guiGraphics, accessor, colorSetting) -> {
-//			if (ChampionsOverlay.isRendering) {
-//				tooltipRect.setY(ChampionsOverlay.startY + 38);
-//			}
-//			return false;
-//		}));
+		// change name
+		registration.registerComponentProvider(ChampionComponentProvider.INSTANCE, TooltipPosition.HEAD,  LivingEntity.class);
+		// add icon and affix
+		registration.registerComponentProvider(ChampionComponentProvider.INSTANCE, TooltipPosition.BODY,  LivingEntity.class);
 	}
 }

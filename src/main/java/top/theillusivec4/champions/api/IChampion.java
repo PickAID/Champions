@@ -1,9 +1,9 @@
 package top.theillusivec4.champions.api;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.rank.Rank;
 
@@ -31,9 +31,9 @@ public interface IChampion {
 
         Optional<IAffix> getAffix(String id);
 
-        void setData(String identifier, CompoundTag data);
+        void setData(String identifier, CompoundNBT data);
 
-        CompoundTag getData(String identifier);
+	    CompoundNBT getData(String identifier);
     }
 
     interface Server {
@@ -46,8 +46,8 @@ public interface IChampion {
 
         void setAffixes(List<IAffix> affixes);
 
-        CompoundTag getData(String identifier);
+	    CompoundNBT getData(String identifier);
 
-        void setData(String identifier, CompoundTag data);
+        void setData(String identifier, CompoundNBT data);
     }
 }

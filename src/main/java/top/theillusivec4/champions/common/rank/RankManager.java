@@ -1,10 +1,9 @@
 package top.theillusivec4.champions.common.rank;
 
 import com.google.common.collect.ImmutableSortedMap;
-import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.potion.Effect;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.affix.IAffix;
@@ -14,7 +13,6 @@ import top.theillusivec4.champions.common.config.RanksConfig.RankConfig;
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.TreeMap;
 
 public class RankManager {
@@ -97,7 +95,7 @@ public class RankManager {
         } else {
             weight = rank.weight;
         }
-        var defaultColor = rank.defaultColor;
+        String defaultColor = rank.defaultColor;
 
         int growthFactor;
 
@@ -106,13 +104,13 @@ public class RankManager {
         } else {
             growthFactor = rank.growthFactor;
         }
-        List<Tuple<Holder<MobEffect>, Integer>> effects = new ArrayList<>();
+        List<Tuple<Effect, Integer>> effects = new ArrayList<>();
 
         rank.effects.forEach(effect -> {
             String[] parsed = effect.split(";");
-            Optional<Holder<MobEffect>> found = ForgeRegistries.MOB_EFFECTS.getHolder(ResourceLocation.parse(parsed[0]));
+            Effect found = ForgeRegistries.POTIONS.getValue(ResourceLocation.tryParse(parsed[0]));
 
-            if (found.isPresent()) {
+            if (found != null) {
                 int amplifier = 0;
 
                 if (parsed.length > 1) {
@@ -123,7 +121,7 @@ public class RankManager {
                                 .error("Found invalid amplifier value for effect, setting to default 1");
                     }
                 }
-                effects.add(new Tuple<>(found.get(), amplifier));
+                effects.add(new Tuple<>(found, amplifier));
             }
         });
 

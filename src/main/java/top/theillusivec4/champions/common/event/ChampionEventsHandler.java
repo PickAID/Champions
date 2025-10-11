@@ -1,19 +1,19 @@
 package top.theillusivec4.champions.common.event;
 
-import net.minecraft.Util;
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.ChatType;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.FastColor;
+import net.minecraft.tileentity.BeaconTileEntity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ColorHelper;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Explosion;
-import net.minecraft.world.level.block.entity.BeaconBlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.ChatType;
+import net.minecraft.world.Explosion;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
@@ -22,12 +22,12 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.server.ServerAboutToStartEvent;
-import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.event.world.ExplosionEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.fml.event.server.FMLServerAboutToStartEvent;
+import net.minecraftforge.fml.event.server.FMLServerStoppedEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
@@ -73,29 +73,30 @@ public class ChampionEventsHandler {
 		Explosion explosion = evt.getExplosion();
 		Entity entity = explosion.getExploder();
 
-		if (entity != null && !entity.getLevel().isClientSide()) {
-			ChampionCapability.getCapability(entity)
-					.ifPresent(champion -> champion.getServer().getRank().ifPresent(rank -> {
-						int growth = rank.getGrowthFactor();
-
-						if (growth > 0) {
-							explosion.radius += ChampionsConfig.explosionGrowth * growth;
-						}
-					}));
+		if (entity == null || entity.level.isClientSide()) {
+			return;
 		}
+		ChampionCapability.getCapability(entity)
+				.ifPresent(champion -> champion.getServer().getRank().ifPresent(rank -> {
+					int growth = rank.getGrowthFactor();
+
+					if (growth > 0) {
+						explosion.radius += ChampionsConfig.explosionGrowth * growth;
+					}
+				}));
 	}
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onLivingJoinWorld(EntityJoinWorldEvent evt) {
 		Entity entity = evt.getEntity();
 
-		if (!entity.getLevel().isClientSide()) {
+		if (!entity.level.isClientSide()) {
 			if (ChampionHelper.isValidChampionEntity(entity)) {
 				ChampionCapability.getCapability(entity).ifPresent(champion -> {
 					IChampion.Server serverChampion = champion.getServer();
 					Optional<Rank> maybeRank = serverChampion.getRank();
 
-					if (maybeRank.isEmpty()) {
+					if (!maybeRank.isPresent()) {
 						if (!ChampionsEventHooks.onAttemptChampionSpawn(champion)) {
 							evt.setCanceled(true);
 							return; // 事件被取消
@@ -104,9 +105,9 @@ public class ChampionEventsHandler {
 					}
 					Utils.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onSpawn(champion));
 					serverChampion.getRank().ifPresent(rank -> {
-						List<Tuple<Holder<MobEffect>, Integer>> effects = rank.getEffects();
+						List<Tuple<Effect, Integer>> effects = rank.getEffects();
 						effects.forEach(effectPair -> champion.getLivingEntity()
-								.addEffect(new MobEffectInstance(effectPair.getA().value(), 200, effectPair.getB())));
+								.addEffect(new EffectInstance(effectPair.getA(), 200, effectPair.getB())));
 					});
 				});
 			}
@@ -116,11 +117,11 @@ public class ChampionEventsHandler {
 	@SubscribeEvent
 	public void onPlayerRightClick(PlayerInteractEvent.EntityInteract event) {
 		if (ChampionsConfig.enableDebug) {
-			var player = event.getPlayer();
-			var target = event.getTarget();
-			if (!target.getLevel().isClientSide() && ChampionHelper.isChampionEntity(target)) {
+			PlayerEntity player = event.getPlayer();
+			Entity target = event.getTarget();
+			if (!target.level.isClientSide() && ChampionHelper.isChampionEntity(target)) {
 				ChampionCapability.getCapability(target).ifPresent(ChampionBuilder::resetAndUpdate);
-				player.displayClientMessage(Utils.literal("[Debug] Removed %s rank, affixes and attribute modifiers".formatted(target.getName().getString())), true);
+				player.displayClientMessage(Utils.literal("[Debug] Removed" + target.getName().getString() + " rank, affixes and attribute modifiers"), true);
 			}
 		}
 	}
@@ -129,7 +130,7 @@ public class ChampionEventsHandler {
 	public void onLivingUpdate(LivingEvent.LivingUpdateEvent evt) {
 		LivingEntity livingEntity = evt.getEntityLiving();
 
-		if (livingEntity.getLevel().isClientSide()) {
+		if (livingEntity.level.isClientSide()) {
 			ChampionCapability.getCapability(livingEntity).ifPresent(champion -> {
 				IChampion.Client clientChampion = champion.getClient();
 				if (ChampionHelper.isValidChampion(clientChampion)) {
@@ -138,11 +139,11 @@ public class ChampionEventsHandler {
 						if (ChampionsConfig.showParticles && rank.getA() > 0) {
 							String colorCode = rank.getB();
 							int color = Rank.getColor(colorCode);
-							float r = (float) FastColor.ARGB32.red(color) / 255;
-							float g = (float) FastColor.ARGB32.green(color) / 255;
-							float b = (float) FastColor.ARGB32.blue(color) / 255;
+							float r = (float) ColorHelper.PackedColor.red(color) / 255;
+							float g = (float) ColorHelper.PackedColor.green(color) / 255;
+							float b = (float) ColorHelper.PackedColor.blue(color) / 255;
 
-							livingEntity.getLevel().addParticle(ModParticleTypes.RANK_PARTICLE_TYPE.get(),
+							livingEntity.level.addParticle(ModParticleTypes.RANK_PARTICLE_TYPE.get(),
 									livingEntity.position().x + (livingEntity.getRandom().nextDouble() - 0.5D) *
 											(double) livingEntity.getBbWidth(), livingEntity.position().y +
 											livingEntity.getRandom().nextDouble() * livingEntity.getBbHeight(),
@@ -152,16 +153,16 @@ public class ChampionEventsHandler {
 					});
 				}
 			});
-		} else if (livingEntity.tickCount % 10 == 0) {
+		} else {
 			ChampionCapability.getCapability(livingEntity).ifPresent(champion -> {
 				IChampion.Server serverChampion = champion.getServer();
 				if (ChampionHelper.isValidChampion(serverChampion)) {
 					Utils.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onServerUpdate(champion));
 					serverChampion.getRank().ifPresent(rank -> {
 						if (livingEntity.tickCount % 4 == 0) {
-							List<Tuple<Holder<MobEffect>, Integer>> effects = rank.getEffects();
+							List<Tuple<Effect, Integer>> effects = rank.getEffects();
 							effects.forEach(effectPair -> livingEntity.addEffect(
-									new MobEffectInstance(effectPair.getA().value(), 100, effectPair.getB())));
+									new EffectInstance(effectPair.getA(), 100, effectPair.getB())));
 						}
 					});
 				}
@@ -173,7 +174,7 @@ public class ChampionEventsHandler {
 	public void onLivingAttack(LivingAttackEvent evt) {
 		LivingEntity livingEntity = evt.getEntityLiving();
 
-		if (livingEntity.getLevel().isClientSide()) {
+		if (livingEntity.level.isClientSide()) {
 			return;
 		}
 		ChampionCapability.getCapability(livingEntity).ifPresent(champion -> {
@@ -207,7 +208,7 @@ public class ChampionEventsHandler {
 	public void onLivingHurt(LivingHurtEvent evt) {
 		LivingEntity livingEntity = evt.getEntityLiving();
 
-		if (!livingEntity.getLevel().isClientSide()) {
+		if (!livingEntity.level.isClientSide()) {
 			float[] amounts = new float[]{evt.getAmount(), evt.getAmount()};
 			ChampionCapability.getCapability(livingEntity).ifPresent(champion -> {
 				IChampion.Server serverChampion = champion.getServer();
@@ -222,7 +223,7 @@ public class ChampionEventsHandler {
 	public void onLivingDamage(LivingDamageEvent evt) {
 		LivingEntity livingEntity = evt.getEntityLiving();
 
-		if (!livingEntity.getLevel().isClientSide()) {
+		if (!livingEntity.level.isClientSide()) {
 			float[] amounts = new float[]{evt.getAmount(), evt.getAmount()};
 			ChampionCapability.getCapability(livingEntity).ifPresent(champion -> {
 				IChampion.Server serverChampion = champion.getServer();
@@ -237,7 +238,7 @@ public class ChampionEventsHandler {
 	public void onLivingDeath(LivingDeathEvent evt) {
 		LivingEntity livingEntity = evt.getEntityLiving();
 
-		if (livingEntity.getLevel().isClientSide()) {
+		if (livingEntity.level.isClientSide()) {
 			return;
 		}
 		ChampionCapability.getCapability(livingEntity).ifPresent(champion -> {
@@ -251,7 +252,8 @@ public class ChampionEventsHandler {
 				if (!evt.isCanceled()) {
 					Entity source = evt.getSource().getEntity();
 
-					if (source instanceof ServerPlayer player && !(source instanceof FakePlayer)) {
+					if (source instanceof ServerPlayerEntity && !(source instanceof FakePlayer)) {
+						ServerPlayerEntity player = (ServerPlayerEntity) source;
 						player.awardStat(ChampionsStats.CHAMPION_MOBS_KILLED);
 						int messageTier = ChampionsConfig.deathMessageTier;
 
@@ -273,21 +275,21 @@ public class ChampionEventsHandler {
 	}
 
 	@SubscribeEvent
-	public void onServerStart(ServerAboutToStartEvent evt) {
+	public void onServerStart(FMLServerAboutToStartEvent evt) {
 		ChampionHelper.setServer(evt.getServer());
 	}
 
 	@SubscribeEvent
-	public void onServerClose(ServerStoppedEvent evt) {
+	public void onServerClose(FMLServerStoppedEvent evt) {
 		ChampionHelper.setServer(null);
 		ChampionHelper.clearBeacons();
 	}
 
 	@SubscribeEvent
-	public void onBeaconStart(AttachCapabilitiesEvent<BlockEntity> evt) {
-		BlockEntity blockEntity = evt.getObject();
+	public void onBeaconStart(AttachCapabilitiesEvent<TileEntity> evt) {
+		TileEntity blockEntity = evt.getObject();
 
-		if (blockEntity instanceof BeaconBlockEntity) {
+		if (blockEntity instanceof BeaconTileEntity) {
 			ChampionHelper.addBeacon(blockEntity.getBlockPos());
 		}
 	}
@@ -296,7 +298,7 @@ public class ChampionEventsHandler {
 	public void onLivingHeal(LivingHealEvent evt) {
 		LivingEntity livingEntity = evt.getEntityLiving();
 
-		if (!livingEntity.getLevel().isClientSide()) {
+		if (!livingEntity.level.isClientSide()) {
 			float[] amounts = new float[]{evt.getAmount(), evt.getAmount()};
 			ChampionCapability.getCapability(livingEntity).ifPresent(champion -> {
 				IChampion.Server serverChampion = champion.getServer();
@@ -306,20 +308,12 @@ public class ChampionEventsHandler {
 		}
 	}
 
-/*	@SubscribeEvent(priority = EventPriority.LOWEST)
-	@OnlyIn(Dist.CLIENT)
-	public void onBossBarEvent(final CustomizeGuiOverlayEvent.BossEventProgress evt) {
-		if (ChampionsOverlay.isRendering) {
-			evt.setCanceled(true);
-		}
-	}*/
-
 	@SubscribeEvent
 	public void onDatapackSync(OnDatapackSyncEvent event) {
 		// send to single player login or reload for all relevant players.
-		var relevantPlayers = event.getPlayerList().getPlayers();
-		var thisPlayer = event.getPlayer();
-		var syncAffixSetting = new SPacketSyncAffixSetting(Champions.API.getAffixDataLoader().getLoadedData());
+		List<ServerPlayerEntity> relevantPlayers = event.getPlayerList().getPlayers();
+		ServerPlayerEntity thisPlayer = event.getPlayer();
+		SPacketSyncAffixSetting syncAffixSetting = new SPacketSyncAffixSetting(Champions.API.getAffixDataLoader().getLoadedData());
 		// apply setting on server, and sync affix settings to client
 		SPacketSyncAffixSetting.handelSettingMainThread();
 		if (thisPlayer == null) {

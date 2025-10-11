@@ -1,16 +1,17 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.FleeSunGoal;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.ai.goal.RestrictSunGoal;
-import net.minecraft.world.entity.ai.goal.WrappedGoal;
-import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
-import net.minecraft.world.level.pathfinder.BlockPathTypes;
+
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.FleeSunGoal;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.goal.PrioritizedGoal;
+import net.minecraft.entity.ai.goal.RestrictSunGoal;
+import net.minecraft.pathfinding.GroundPathNavigator;
+import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.util.DamageSource;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
@@ -20,28 +21,30 @@ import top.theillusivec4.champions.common.config.ChampionsConfig;
 
 import java.util.Iterator;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MoltenAffix extends CombatLifeCycleAffix {
 
 	@Override
 	public void onSpawn(IChampion champion) {
 		LivingEntity livingEntity = champion.getLivingEntity();
-		livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 40, 0, true, false));
+		livingEntity.addEffect(new EffectInstance(Effects.FIRE_RESISTANCE, 40, 0, true, false));
 
-		if (livingEntity instanceof Mob mobEntity) {
+		if (livingEntity instanceof MobEntity) {
+			MobEntity mobEntity = (MobEntity) livingEntity;
 
-			mobEntity.setPathfindingMalus(BlockPathTypes.WATER, -1.0F);
-			mobEntity.setPathfindingMalus(BlockPathTypes.LAVA, 8.0F);
-			mobEntity.setPathfindingMalus(BlockPathTypes.DANGER_FIRE, 0.0F);
-			mobEntity.setPathfindingMalus(BlockPathTypes.DAMAGE_FIRE, 0.0F);
+			mobEntity.setPathfindingMalus(PathNodeType.WATER, -1.0F);
+			mobEntity.setPathfindingMalus(PathNodeType.LAVA, 8.0F);
+			mobEntity.setPathfindingMalus(PathNodeType.DANGER_FIRE, 0.0F);
+			mobEntity.setPathfindingMalus(PathNodeType.DAMAGE_FIRE, 0.0F);
 
 			try {
 
-				Set<WrappedGoal> goals = mobEntity.goalSelector.getAvailableGoals();
-				Iterator<WrappedGoal> iter = goals.iterator();
+				Set<PrioritizedGoal> goals = mobEntity.goalSelector.getRunningGoals().collect(Collectors.toSet());
+				Iterator<PrioritizedGoal> iter = goals.iterator();
 
 				while (iter.hasNext()) {
-					WrappedGoal goal = iter.next();
+					PrioritizedGoal goal = iter.next();
 					Goal baseGoal = goal.getGoal();
 
 					if (baseGoal instanceof FleeSunGoal || baseGoal instanceof RestrictSunGoal) {
@@ -52,8 +55,8 @@ public class MoltenAffix extends CombatLifeCycleAffix {
 				Champions.LOGGER.error("Error accessing goals!");
 			}
 
-			if (mobEntity.getNavigation() instanceof GroundPathNavigation) {
-				((GroundPathNavigation) mobEntity.getNavigation()).setAvoidSun(false);
+			if (mobEntity.getNavigation() instanceof GroundPathNavigator) {
+				((GroundPathNavigator) mobEntity.getNavigation()).setAvoidSun(false);
 			}
 		}
 	}
@@ -65,7 +68,7 @@ public class MoltenAffix extends CombatLifeCycleAffix {
 		if (livingEntity.tickCount % 20 == 0) {
 			//todo: figure out a better way to do this fire effect
 			//livingEntity.setFire(10);
-			livingEntity.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 40, 0, true, false));
+			livingEntity.addEffect(new EffectInstance(Effects.FIRE_RESISTANCE, 40, 0, true, false));
 
 			if (!ChampionsConfig.moltenWaterResistance && livingEntity.isInWaterOrRain()) {
 				livingEntity.hurt(DamageSource.DROWN, 1.0F);

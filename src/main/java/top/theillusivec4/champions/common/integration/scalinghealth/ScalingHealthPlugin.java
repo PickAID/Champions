@@ -1,6 +1,6 @@
 package top.theillusivec4.champions.common.integration.scalinghealth;
 
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
 import net.silentchaos512.scalinghealth.capability.DifficultySourceCapability;
 import net.silentchaos512.scalinghealth.capability.IDifficultySource;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -13,7 +13,7 @@ public class ScalingHealthPlugin {
 
     public static double getSpawnIncrease(int tier, LivingEntity livingEntity) {
         double difficulty =
-                livingEntity.getLevel().getCapability(DifficultySourceCapability.INSTANCE).map(
+                livingEntity.level.getCapability(DifficultySourceCapability.INSTANCE).map(
                         IDifficultySource::getDifficulty).orElse(0.0F);
         return getSpawnModifier(tier) * difficulty;
     }

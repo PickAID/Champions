@@ -1,19 +1,18 @@
 package top.theillusivec4.champions.common.affix.core;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.entity.item.ArmorStandEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -21,6 +20,7 @@ import top.theillusivec4.champions.common.config.ConfigEnums;
 import top.theillusivec4.champions.common.network.NetworkHandler;
 import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,10 +31,10 @@ public abstract class AbstractBasicAffix implements IAffix {
 
     public static boolean canTarget(LivingEntity livingEntity, @Nullable LivingEntity target, boolean sightCheck) {
 
-		if (target == null || !target.isAlive() || target instanceof ArmorStand || (sightCheck && !hasLineOfSight(livingEntity, target))) {
+		if (target == null || !target.isAlive() || target instanceof ArmorStandEntity || (sightCheck && !hasLineOfSight(livingEntity, target))) {
 			return false;
 		}
-		AttributeInstance attributeInstance = livingEntity.getAttribute(Attributes.FOLLOW_RANGE);
+	    ModifiableAttributeInstance attributeInstance = livingEntity.getAttribute(Attributes.FOLLOW_RANGE);
 		double range = attributeInstance == null ? 16.0D : attributeInstance.getValue();
 		range = ChampionsConfig.affixTargetRange == 0 ? range : Math.min(range, ChampionsConfig.affixTargetRange);
 		return livingEntity.distanceTo(target) <= range;
@@ -42,16 +42,17 @@ public abstract class AbstractBasicAffix implements IAffix {
 
 	private static boolean hasLineOfSight(LivingEntity livingEntity, LivingEntity target) {
 
-		if (livingEntity instanceof Mob mob) {
-			return mob.getSensing().hasLineOfSight(target);
+		if (livingEntity instanceof MobEntity) {
+			MobEntity mob = (MobEntity) livingEntity;
+			return mob.getSensing().canSee(target);
 		} else {
-			return livingEntity.hasLineOfSight(target);
+			return livingEntity.canSee(target);
 		}
 	}
 
 	@Override
 	public ResourceLocation getIdentifier() {
-		return Champions.API.getAffixId(this).orElseThrow();
+		return Champions.API.getAffixId(this).orElseThrow(IllegalStateException::new);
 	}
 
 	@Override
@@ -82,13 +83,13 @@ public abstract class AbstractBasicAffix implements IAffix {
 	@Override
 	public void sync(IChampion champion) {
 		LivingEntity livingEntity = champion.getLivingEntity();
-		CompoundTag tag = this.writeSyncTag(champion);
+		CompoundNBT tag = this.writeSyncTag(champion);
 		NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> livingEntity), new SPacketSyncAffixData(livingEntity.getId(), this.getIdentifier(), tag));
 	}
 
 	public boolean canApply(IChampion champion) {
 		boolean isValidEntity;
-		var entityKey = ForgeRegistries.ENTITIES.getKey(champion.getLivingEntity().getType());
+		ResourceLocation entityKey = ForgeRegistries.ENTITIES.getKey(champion.getLivingEntity().getType());
 		if (isBlackList()) {
 			isValidEntity = getMobList().map(mobList -> !mobList.contains(entityKey)).orElse(true);
 		} else {
@@ -98,8 +99,8 @@ public abstract class AbstractBasicAffix implements IAffix {
 	}
 
 	@Override
-	public MinMaxBounds.Ints getTier() {
-		return setting.tier().orElse(MinMaxBounds.Ints.atLeast(1));
+	public MinMaxBounds.IntBound getTier() {
+		return setting.tier().orElse(MinMaxBounds.IntBound.atLeast(1));
 	}
 
 	@Override

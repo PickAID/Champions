@@ -3,7 +3,7 @@ package top.theillusivec4.champions.client;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.client.gui.OverlayRegistry;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -21,8 +21,7 @@ public class ClientEventHandler {
 	public static void clientSetup(final FMLClientSetupEvent evt) {
 		Minecraft.getInstance().getItemColors()
 				.register(ChampionEggItem::getColor, ModItems.CHAMPION_EGG_ITEM.get());
-
-		OverlayRegistry.registerOverlayTop("Champions Health Bar", new ChampionsOverlay());
+		MinecraftForge.EVENT_BUS.register(new ChampionsOverlay());
 	}
 
 	@SubscribeEvent

@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.registry;
 
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.fml.RegistryObject;
 import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.affix.*;

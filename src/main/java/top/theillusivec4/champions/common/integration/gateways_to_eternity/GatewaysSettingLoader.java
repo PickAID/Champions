@@ -3,10 +3,11 @@ package top.theillusivec4.champions.common.integration.gateways_to_eternity;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.client.resources.ReloadListener;
+import net.minecraft.profiler.IProfiler;
+import net.minecraft.resources.IResource;
+import net.minecraft.resources.IResourceManager;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -14,28 +15,28 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GatewaysSettingLoader extends SimplePreparableReloadListener<Map<ResourceLocation, GatewaysSetting>> {
+public class GatewaysSettingLoader extends ReloadListener<Map<ResourceLocation, GatewaysSetting>> {
     private static final String FOLDER = "gateway_setting";
     private final Map<ResourceLocation, GatewaysSetting> loadedData = new HashMap<>();
 
     @Override
-    protected Map<ResourceLocation, GatewaysSetting> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected Map<ResourceLocation, GatewaysSetting> prepare(IResourceManager resourceManager, IProfiler profilerFiller) {
         return listResources(resourceManager, profilerFiller);
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, GatewaysSetting> affixSettingMap, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+    protected void apply(Map<ResourceLocation, GatewaysSetting> affixSettingMap, IResourceManager resourceManager, IProfiler profilerFiller) {
         affixSettingMap.putAll(loadedData);
     }
 
-    public Map<ResourceLocation, GatewaysSetting> listResources(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
+    public Map<ResourceLocation, GatewaysSetting> listResources(IResourceManager pResourceManager, IProfiler pProfiler) {
         pProfiler.startTick();
 	    for (ResourceLocation loc : pResourceManager.listResources(FOLDER, p -> p.endsWith(".json"))) {
 		    try {
-			    var resource = pResourceManager.getResource(loc);
+			    IResource resource = pResourceManager.getResource(loc);
 
 	            try (Reader reader = Utils.openAsReader(resource)) {
-	                JsonElement element = JsonParser.parseReader(reader);
+	                JsonElement element = new JsonParser().parse(reader);
 	                GatewaysSetting.CODEC.parse(JsonOps.INSTANCE, element)
 	                        .resultOrPartial(error -> Champions.LOGGER.debug("Failed to parse gateways setting {}", error))
 	                        .ifPresent(itemValues -> loadedData.put(loc, itemValues));

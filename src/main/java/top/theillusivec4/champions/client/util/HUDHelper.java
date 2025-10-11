@@ -1,15 +1,15 @@
 package top.theillusivec4.champions.client.util;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
-import net.minecraft.world.entity.LivingEntity;
-import top.theillusivec4.champions.api.affix.IAffix;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.ColorHelper;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.client.ChampionsOverlay;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
@@ -22,10 +22,10 @@ import java.util.stream.Collectors;
 
 public class HUDHelper {
 
-    private static final ResourceLocation GUI_BAR_TEXTURES = ResourceLocation.withDefaultNamespace("textures/gui/bars.png");
+    private static final ResourceLocation GUI_BAR_TEXTURES = new ResourceLocation("textures/gui/bars.png");
     private static final ResourceLocation GUI_STAR = Utils.getLocation("textures/gui/staricon.png");
 
-    public static boolean renderHealthBar(PoseStack poseStack, final LivingEntity livingEntity) {
+    public static boolean renderHealthBar(MatrixStack poseStack, final LivingEntity livingEntity) {
         return ChampionCapability.getCapability(livingEntity).map(champion -> {
             IChampion.Client clientChampion = champion.getClient();
             return ChampionHelper.isValidChampion(clientChampion) && clientChampion.getRank().map(rank -> {
@@ -44,46 +44,46 @@ public class HUDHelper {
                     String colorCode = rank.getB();
                     int color = Rank.getColor(colorCode);
 
-                    float r = FastColor.ARGB32.red(color) / 255.0F;
-                    float g = FastColor.ARGB32.green(color) / 255.0F;
-                    float b = FastColor.ARGB32.blue(color) / 255.0F;
+                    float r = ColorHelper.PackedColor.red(color) / 255.0F;
+                    float g = ColorHelper.PackedColor.green(color) / 255.0F;
+                    float b = ColorHelper.PackedColor.blue(color) / 255.0F;
 
                     RenderSystem.defaultBlendFunc();
                     // set shader color for render element
-                    RenderSystem.setShaderColor(r, g, b, 1.0F);
+                    RenderSystem.color4f(r, g, b, 1.0F);
                     RenderSystem.enableBlend();
-	                RenderSystem.setShaderTexture(0, GUI_BAR_TEXTURES);
+	                client.getTextureManager().bind(GUI_BAR_TEXTURES);
                     ChampionsOverlay.startX = xOffset + k;
                     ChampionsOverlay.startY = yOffset + 1;
 
-	                GuiComponent.blit(poseStack, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256);
+	                AbstractGui.blit(poseStack, xOffset + k, yOffset + j, 0, 60, 182, 5, 256, 256);
                     int healthOffset =
                             (int) ((livingEntity.getHealth() / livingEntity.getMaxHealth()) * 183.0F);
 
                     if (healthOffset > 0) {
-	                    GuiComponent.blit(poseStack, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
+	                    AbstractGui.blit(poseStack, xOffset + k, yOffset + j, 0, 65, healthOffset, 5, 256,
                                 256);
                     }
 
-	                RenderSystem.setShaderTexture(0, GUI_STAR);
+	                client.getTextureManager().bind(GUI_STAR);
 
                     if (championLevel <= 18) {
                         int startStarsX = xOffset + i / 2 - 5 - 5 * (championLevel - 1);
 
                         for (int tier = 0; tier < championLevel; tier++) {
-	                        GuiComponent.blit(poseStack, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9);
+	                        AbstractGui.blit(poseStack, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9);
                             startStarsX += 10;
                         }
                     } else {
                         int startStarsX = xOffset + i / 2 - 5;
                         String count = "x" + championLevel;
-	                    GuiComponent.blit(poseStack, startStarsX - client.font.width(count) / 2,
+	                    AbstractGui.blit(poseStack, startStarsX - client.font.width(count) / 2,
                                 yOffset + 1, 0, 0, 9, 9, 9, 9);
 	                    client.font.drawShadow(poseStack, count,
                                 startStarsX + 10 - client.font.width(count) / 2.0F, yOffset + 2,
                                 16777215, true);
                     }
-                    Component customName = livingEntity.getCustomName();
+                    ITextComponent customName = livingEntity.getCustomName();
                     String name;
 
                     if (customName == null) {
@@ -96,10 +96,10 @@ public class HUDHelper {
                             xOffset + (float) (i / 2 - client.font.width(name) / 2),
                             yOffset + (float) (j - 9), color, true);
                     // reset shader color
-                    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+                    RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
                     StringBuilder builder = new StringBuilder();
 
-                    for (var affix : affixSet) {
+                    for (String affix : affixSet) {
                         builder.append(
                                 Utils.translatable(affix).getString());
                         builder.append(" ");

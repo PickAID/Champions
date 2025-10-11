@@ -1,8 +1,8 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.util.DamageSource;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingHealEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,7 +33,7 @@ public class WoundingAffix extends CombatAffix {
 	public boolean onAttack(IChampion champion, LivingEntity target, DamageSource source,
 	                        float amount) {
 		if (target.getRandom().nextFloat() < ChampionsConfig.woundingChance) {
-			target.addEffect(new MobEffectInstance(ModMobEffects.WOUND_EFFECT_TYPE.get(), 200, 0));
+			target.addEffect(new EffectInstance(ModMobEffects.WOUND_EFFECT_TYPE.get(), 200, 0));
 		}
 		return true;
 	}

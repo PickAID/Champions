@@ -1,9 +1,9 @@
 package top.theillusivec4.champions.common.affix.core;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.goal.Goal;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.affix.IAffixCombatHandler;
 

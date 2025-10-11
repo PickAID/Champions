@@ -1,37 +1,33 @@
 package top.theillusivec4.champions.common.entity;
 
 import com.google.common.collect.Lists;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.Position;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileHelper;
+import net.minecraft.entity.projectile.ProjectileItemEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.IPacket;
+import net.minecraft.particles.BasicParticleType;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Direction;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.*;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
-public abstract class BaseBulletEntity extends Projectile {
+public abstract class BaseBulletEntity extends ProjectileItemEntity {
 
     @Nullable
     private Entity finalTarget;
@@ -44,12 +40,12 @@ public abstract class BaseBulletEntity extends Projectile {
     @Nullable
     private UUID targetId;
 
-    public BaseBulletEntity(EntityType<? extends Projectile> type, Level level) {
+    public BaseBulletEntity(EntityType<? extends ProjectileItemEntity> type, World level) {
         super(type, level);
         this.noPhysics = true;
     }
 
-    public BaseBulletEntity(EntityType<? extends Projectile> type, Level level,
+    public BaseBulletEntity(EntityType<? extends ProjectileItemEntity> type, World level,
                             LivingEntity livingEntity, @Nonnull Entity entity, Direction.Axis axis) {
         this(type, level);
         this.setOwner(livingEntity);
@@ -57,18 +53,19 @@ public abstract class BaseBulletEntity extends Projectile {
         double d0 = (double) blockpos.getX() + 0.5D;
         double d1 = (double) blockpos.getY() + 0.5D;
         double d2 = (double) blockpos.getZ() + 0.5D;
-        this.moveTo(d0, d1, d2, this.getYRot(), this.getXRot());
+        this.moveTo(d0, d1, d2, this.yRot, this.xRot);
         this.finalTarget = entity;
         this.currentMoveDirection = Direction.UP;
         this.selectNextMoveDirection(axis);
     }
 
     @Nonnull
-    public SoundSource getSoundSource() {
-        return SoundSource.HOSTILE;
+    public SoundCategory getSoundSource() {
+        return SoundCategory.HOSTILE;
     }
 
-    protected void addAdditionalSaveData(@Nonnull CompoundTag pCompound) {
+	@Override
+    public void addAdditionalSaveData(@Nonnull CompoundNBT pCompound) {
         super.addAdditionalSaveData(pCompound);
 
         if (this.finalTarget != null) {
@@ -84,7 +81,8 @@ public abstract class BaseBulletEntity extends Projectile {
         pCompound.putDouble("TZD", this.targetDeltaZ);
     }
 
-    protected void readAdditionalSaveData(@Nonnull CompoundTag pCompound) {
+	@Override
+	public void readAdditionalSaveData(@Nonnull CompoundNBT pCompound) {
         super.readAdditionalSaveData(pCompound);
         this.flightSteps = pCompound.getInt("Steps");
         this.targetDeltaX = pCompound.getDouble("TXD");
@@ -120,15 +118,15 @@ public abstract class BaseBulletEntity extends Projectile {
             blockpos = this.blockPosition().below();
         } else {
             d0 = (double) this.finalTarget.getBbHeight() * 0.5D;
-            blockpos = new BlockPos(this.finalTarget.getBlockX(), (int) (this.finalTarget.getBlockY() + d0),
-                    this.finalTarget.getBlockZ());
+            blockpos = new BlockPos(this.finalTarget.blockPosition().getX(), (int) (this.finalTarget.blockPosition().getY() + d0),
+                    this.finalTarget.blockPosition().getZ());
         }
         double d1 = (double) blockpos.getX() + 0.5D;
         double d2 = (double) blockpos.getY() + d0;
         double d3 = (double) blockpos.getZ() + 0.5D;
         Direction direction = null;
 
-        if (!this.closerToCenterThan(blockpos, this.position(), 2.0D)) {
+        if (!this.closerToCenterThan(blockpos, this.position(), 2.0F)) {
             BlockPos blockpos1 = this.blockPosition();
             List<Direction> list = Lists.newArrayList();
 
@@ -195,8 +193,8 @@ public abstract class BaseBulletEntity extends Projectile {
         this.flightSteps = 10 + this.random.nextInt(5) * 10;
     }
 
-    private boolean closerToCenterThan(BlockPos pos, Position position, double distance) {
-        return this.distToCenterSqr(pos, position.x(), position.y(), position.z()) < Mth.square(distance);
+    private boolean closerToCenterThan(BlockPos pos, Vector3d position, float distance) {
+        return this.distToCenterSqr(pos, position.x(), position.y(), position.z()) < MathHelper.square(distance);
     }
 
     private double distToCenterSqr(BlockPos pos, double x, double y, double z) {
@@ -209,7 +207,7 @@ public abstract class BaseBulletEntity extends Projectile {
     public void checkDespawn() {
 
         if (this.getLevel().getDifficulty() == Difficulty.PEACEFUL) {
-            this.discard();
+            this.remove();
         }
     }
 
@@ -219,7 +217,7 @@ public abstract class BaseBulletEntity extends Projectile {
         if (!this.getLevel().isClientSide) {
 
             if (this.finalTarget == null && this.targetId != null) {
-                this.finalTarget = ((ServerLevel) this.getLevel()).getEntity(this.targetId);
+                this.finalTarget = ((ServerWorld) this.getLevel()).getEntity(this.targetId);
 
                 if (this.finalTarget == null) {
                     this.targetId = null;
@@ -227,37 +225,37 @@ public abstract class BaseBulletEntity extends Projectile {
             }
 
             if (this.finalTarget == null || !this.finalTarget.isAlive() ||
-                    this.finalTarget instanceof Player && this.finalTarget.isSpectator()) {
+                    this.finalTarget instanceof PlayerEntity && this.finalTarget.isSpectator()) {
 
                 if (!this.isNoGravity()) {
                     this.setDeltaMovement(this.getDeltaMovement().add(0.0D, -0.04D, 0.0D));
                 }
             } else {
-                this.targetDeltaX = Mth.clamp(this.targetDeltaX * 1.025D, -1.0D, 1.0D);
-                this.targetDeltaY = Mth.clamp(this.targetDeltaY * 1.025D, -1.0D, 1.0D);
-                this.targetDeltaZ = Mth.clamp(this.targetDeltaZ * 1.025D, -1.0D, 1.0D);
-                Vec3 vec3 = this.getDeltaMovement();
+                this.targetDeltaX = MathHelper.clamp(this.targetDeltaX * 1.025D, -1.0D, 1.0D);
+                this.targetDeltaY = MathHelper.clamp(this.targetDeltaY * 1.025D, -1.0D, 1.0D);
+                this.targetDeltaZ = MathHelper.clamp(this.targetDeltaZ * 1.025D, -1.0D, 1.0D);
+                Vector3d vec3 = this.getDeltaMovement();
                 this.setDeltaMovement(
                         vec3.add((this.targetDeltaX - vec3.x) * 0.2D, (this.targetDeltaY - vec3.y) * 0.2D,
                                 (this.targetDeltaZ - vec3.z) * 0.2D));
             }
 
-            HitResult hitresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+	        RayTraceResult hitresult = ProjectileHelper.getHitResult(this,   this::canHitEntity);
 
-            if (hitresult.getType() != HitResult.Type.MISS &&
+            if (hitresult.getType() != RayTraceResult.Type.MISS &&
                     !net.minecraftforge.event.ForgeEventFactory.onProjectileImpact(this, hitresult)) {
                 this.onHit(hitresult);
             }
         }
         this.checkInsideBlocks();
-        Vec3 vec31 = this.getDeltaMovement();
+        Vector3d vec31 = this.getDeltaMovement();
         this.setPos(this.getX() + vec31.x, this.getY() + vec31.y, this.getZ() + vec31.z);
-        ProjectileUtil.rotateTowardsMovement(this, 0.5F);
+	    ProjectileHelper.rotateTowardsMovement(this, 0.5F);
 
         if (this.getLevel().isClientSide) {
             this.getLevel().addParticle(this.getParticle(), this.getX() - vec31.x,
                     this.getY() - vec31.y + 0.15D, this.getZ() - vec31.z, 0.0D, 0.0D, 0.0D);
-        } else if (this.finalTarget != null && !this.finalTarget.isRemoved()) {
+        } else if (this.finalTarget != null && !this.finalTarget.isAlive()) {
 
             if (this.flightSteps > 0) {
                 --this.flightSteps;
@@ -288,6 +286,7 @@ public abstract class BaseBulletEntity extends Projectile {
 
     }
 
+	@Override
     protected boolean canHitEntity(@Nonnull Entity pTarget) {
         return super.canHitEntity(pTarget) && !pTarget.noPhysics;
     }
@@ -304,27 +303,29 @@ public abstract class BaseBulletEntity extends Projectile {
         return 1.0F;
     }
 
-    protected void onHitEntity(@Nonnull EntityHitResult pResult) {
+    protected void onHitEntity(@Nonnull EntityRayTraceResult pResult) {
         super.onHitEntity(pResult);
         Entity entity = pResult.getEntity();
 
-        if (entity != this.getOwner() && entity instanceof LivingEntity target) {
-            this.bulletEffect(target);
+        if (entity != this.getOwner() && entity instanceof LivingEntity) {
+	        LivingEntity target = (LivingEntity) entity;
+	        this.bulletEffect(target);
         }
     }
 
-    protected void onHitBlock(@Nonnull BlockHitResult hitResult) {
+    protected void onHitBlock(@Nonnull BlockRayTraceResult hitResult) {
         super.onHitBlock(hitResult);
-        if (this.getLevel() instanceof ServerLevel serverLevel) {
-            serverLevel.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(),
+        if (this.getLevel() instanceof ServerWorld) {
+	        ServerWorld serverLevel = (ServerWorld) this.getLevel();
+	        serverLevel.sendParticles(ParticleTypes.EXPLOSION, this.getX(), this.getY(),
                     this.getZ(), 2, 0.2D, 0.2D, 0.2D, 0.0D);
             this.playSound(SoundEvents.SHULKER_BULLET_HIT, 1.0F, 1.0F);
         }
     }
 
-    protected void onHit(@Nonnull HitResult pResult) {
+    protected void onHit(@Nonnull RayTraceResult pResult) {
         super.onHit(pResult);
-        this.discard();
+        this.remove();
     }
 
     public boolean isPickable() {
@@ -333,24 +334,26 @@ public abstract class BaseBulletEntity extends Projectile {
 
     public boolean hurt(@Nonnull DamageSource pSource, float pAmount) {
 
-        if (this.getLevel() instanceof ServerLevel serverLevel) {
-            this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
+        if (this.getLevel() instanceof ServerWorld) {
+	        ServerWorld serverLevel = (ServerWorld) this.getLevel();
+	        this.playSound(SoundEvents.SHULKER_BULLET_HURT, 1.0F, 1.0F);
             serverLevel.sendParticles(ParticleTypes.CRIT, this.getX(), this.getY(),
                     this.getZ(), 15, 0.2D, 0.2D, 0.2D, 0.0D);
-            this.discard();
+            this.remove();
         }
         return true;
     }
 
-    public void recreateFromPacket(@Nonnull ClientboundAddEntityPacket pPacket) {
-        super.recreateFromPacket(pPacket);
-        double d0 = pPacket.getXa();
-        double d1 = pPacket.getYa();
-        double d2 = pPacket.getZa();
-        this.setDeltaMovement(d0, d1, d2);
-    }
+	@Override
+	public IPacket<?> getAddEntityPacket() {
+		return NetworkHooks.getEntitySpawningPacket(this);
+	}
 
-    protected abstract void bulletEffect(LivingEntity target);
+	protected abstract void bulletEffect(LivingEntity target);
 
-    protected abstract ParticleOptions getParticle();
+    protected abstract BasicParticleType getParticle();
+
+	World getLevel() {
+		return this.level;
+	}
 }

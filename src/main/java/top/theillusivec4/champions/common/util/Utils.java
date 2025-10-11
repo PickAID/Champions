@@ -1,8 +1,8 @@
 package top.theillusivec4.champions.common.util;
 
-import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.resources.IResource;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
@@ -32,12 +32,12 @@ public class Utils {
 			// 尝试使用新版forge api
 			// 如果找不到则回退到旧版的oldForge
 			try {
-				var testUsage = ResourceLocation.fromNamespaceAndPath(Champions.MODID, "for_test_usage");
+				ResourceLocation testUsage = new ResourceLocation(Champions.MODID, "for_test_usage");
 				Champions.LOGGER.info("Use Newer forge ResourceLocation method {}", testUsage);
 				oldForge = true;
 				return oldForge;
 			} catch (NoClassDefFoundError e) {
-				var testUsage = new ResourceLocation(Champions.MODID, "for_test_usage");
+				ResourceLocation testUsage = new ResourceLocation(Champions.MODID, "for_test_usage");
 				oldForge = false;
 				Champions.LOGGER.info("Use Old forge ResourceLocation method {}", testUsage);
 			}
@@ -87,9 +87,8 @@ public class Utils {
 		}
 	}
 
-	@SuppressWarnings("removal")
 	public static ResourceLocation getLocation(final String path) {
-		return isOldForge() ? new ResourceLocation(Champions.MODID, path) : ResourceLocation.fromNamespaceAndPath(Champions.MODID, path);
+		return new ResourceLocation(Champions.MODID, path);
 	}
 
 	public static Set<ResourceLocation> getLocationSet(final String... path) {
@@ -102,7 +101,8 @@ public class Utils {
 
 	public static void consumeIfLifeCycle(List<IAffix> affixes, Consumer<IAffixLifecycle> consumer) {
 		affixes.forEach(iAffix -> {
-			if (iAffix instanceof IAffixLifecycle lifecycle) {
+			if (iAffix instanceof IAffixLifecycle) {
+				IAffixLifecycle lifecycle = (IAffixLifecycle) iAffix;
 				consumer.accept(lifecycle);
 			}
 		});
@@ -110,25 +110,26 @@ public class Utils {
 
 	public static void consumeIfCombat(List<IAffix> affixes, Consumer<CombatAffix> consumer) {
 		affixes.forEach(iAffix -> {
-			if (iAffix instanceof CombatAffix lifecycle) {
+			if (iAffix instanceof CombatAffix) {
+				CombatAffix lifecycle = (CombatAffix) iAffix;
 				consumer.accept(lifecycle);
 			}
 		});
 	}
 
-	public static TranslatableComponent translatable(String key, Object... args) {
-		return new TranslatableComponent(key, args);
+	public static TranslationTextComponent translatable(String key, Object... args) {
+		return new TranslationTextComponent(key, args);
 	}
 
-	public static TranslatableComponent literal(String key) {
-		return new TranslatableComponent(key);
+	public static TranslationTextComponent literal(String key) {
+		return new TranslationTextComponent(key);
 	}
 
 	public static BufferedReader openAsReader(InputStream in) throws IOException {
 		return new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
 	}
 
-	public static BufferedReader openAsReader(Resource resource) throws IOException {
+	public static BufferedReader openAsReader(IResource resource) throws IOException {
 		return openAsReader(resource.getInputStream());
 	}
 

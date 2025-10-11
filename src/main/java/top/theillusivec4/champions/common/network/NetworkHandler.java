@@ -1,14 +1,15 @@
 package top.theillusivec4.champions.common.network;
 
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkRegistry;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
-import top.theillusivec4.champions.api.affix.IAffix;
+
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.text.Color;
+import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkRegistry;
+import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraftforge.fml.network.simple.SimpleChannel;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -38,8 +39,8 @@ public class NetworkHandler {
                 SPacketSyncAffixSetting::handle);
     }
 
-    private static <M> void register(Class<M> messageType, BiConsumer<M, FriendlyByteBuf> encoder,
-                                     Function<FriendlyByteBuf, M> decoder,
+    private static <M> void register(Class<M> messageType, BiConsumer<M, PacketBuffer> encoder,
+                                     Function<PacketBuffer, M> decoder,
                                      BiConsumer<M, Supplier<NetworkEvent.Context>> messageConsumer) {
         INSTANCE.registerMessage(id++, messageType, encoder, decoder, messageConsumer);
     }
@@ -48,7 +49,7 @@ public class NetworkHandler {
         INSTANCE.send(PacketDistributor.TRACKING_ENTITY.with(() -> targetEntity),
                 new SPacketSyncChampion(targetEntity.getId(),
                         championData.getRank().map(Rank::getTier).orElse(0),
-                        championData.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).serialize(),
+                        championData.getRank().map(Rank::getDefaultColor).orElse(Color.fromRgb(0)).serialize(),
                         championData.getAffixes().stream().map(IAffix::getIdentifier)
                                 .collect(Collectors.toSet())));
     }

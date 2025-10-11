@@ -1,6 +1,6 @@
 package top.theillusivec4.champions.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixDataLoader;
@@ -8,6 +8,7 @@ import top.theillusivec4.champions.api.data.AttributesModifierDataLoader;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class ChampionsApiImpl implements IChampionsApi {
@@ -33,7 +34,7 @@ public class ChampionsApiImpl implements IChampionsApi {
 
     @Override
     public Optional<IAffix> getAffix(String id) {
-        return getAffix(ResourceLocation.parse(id));
+        return getAffix(new ResourceLocation(id));
     }
 
     @Override
@@ -48,7 +49,7 @@ public class ChampionsApiImpl implements IChampionsApi {
 
     @Override
     public List<IAffix> getAffixes() {
-        return getAffixStream().toList();
+        return getAffixStream().collect(Collectors.toList());
     }
 
     public Stream<IAffix> getAffixStream() {
@@ -57,7 +58,7 @@ public class ChampionsApiImpl implements IChampionsApi {
 
     @Override
     public List<IAffix> getAffixes(AffixCategory category) {
-        return getAffixStream().filter(affix -> affix.sameCategory(category)).toList();
+        return getAffixStream().filter(affix -> affix.sameCategory(category)).collect(Collectors.toList());
     }
 
     @Override

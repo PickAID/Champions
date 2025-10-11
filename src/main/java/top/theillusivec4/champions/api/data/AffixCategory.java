@@ -1,10 +1,10 @@
 package top.theillusivec4.champions.api.data;
 
-import net.minecraft.util.StringRepresentable;
+import net.minecraft.util.IStringSerializable;
 
 import java.util.Locale;
 
-public enum AffixCategory implements StringRepresentable {
+public enum AffixCategory implements IStringSerializable {
     CC("cc"), OFFENSE("offense"), DEFENSE("defense");
 
     final String name;

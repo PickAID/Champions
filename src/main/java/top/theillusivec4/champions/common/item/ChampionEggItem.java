@@ -1,38 +1,33 @@
 package top.theillusivec4.champions.common.item;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.Style;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
+
+import net.minecraft.block.BlockState;
+import net.minecraft.client.util.ITooltipFlag;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.fluid.FlowingFluid;
+import net.minecraft.item.*;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
-import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.ClipContext;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.FlowingFluid;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
+import net.minecraft.util.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.text.*;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.common.ForgeSpawnEggItem;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
 import top.theillusivec4.champions.common.util.Utils;
@@ -61,22 +56,22 @@ public class ChampionEggItem extends EggItem {
 
     public static Optional<EntityType<?>> getType(ItemStack stack) {
 
-        Optional<CompoundTag> entityTag = getTagOrEmpty(stack, ENTITY_TAG);
+        Optional<CompoundNBT> entityTag = getTagOrEmpty(stack, ENTITY_TAG);
         if (entityTag.isPresent()) {
             String id = entityTag.get().getString(ID_TAG);
 
             if (!id.isEmpty()) {
-                return Optional.ofNullable(ForgeRegistries.ENTITIES.getValue(ResourceLocation.parse(id)));
+                return Optional.ofNullable(ForgeRegistries.ENTITIES.getValue(ResourceLocation.tryParse(id)));
             }
         }
         return Optional.empty();
     }
 
     public static void read(IChampion champion, ItemStack stack) {
-        Optional<CompoundTag> tag = getTagOrEmpty(stack, CHAMPION_TAG);
+        Optional<CompoundNBT> tag = getTagOrEmpty(stack, CHAMPION_TAG);
         tag.ifPresent(entityTag -> {
             int tier = entityTag.getInt(TIER_TAG);
-            ListTag affixTag = entityTag.getList(AFFIX_TAG, CompoundTag.TAG_STRING);
+	        ListNBT affixTag = entityTag.getList(AFFIX_TAG, Constants.NBT.TAG_STRING);
             List<IAffix> affixes = new ArrayList<>();
             affixTag.forEach(affix -> Champions.API.getAffix(affix.getAsString()).ifPresent(affixes::add));
             ChampionBuilder.spawnPreset(champion, tier, affixes);
@@ -86,26 +81,26 @@ public class ChampionEggItem extends EggItem {
     public static void write(
             ItemStack stack, ResourceLocation entityId, int tier,
             Collection<IAffix> affixes) {
-        CompoundTag tag = stack.hasTag() ? stack.getTag() : new CompoundTag();
+        CompoundNBT tag = stack.hasTag() ? stack.getTag() : new CompoundNBT();
         assert tag != null;
 
-        CompoundTag compoundNBT = new CompoundTag();
+        CompoundNBT compoundNBT = new CompoundNBT();
         compoundNBT.putString(ID_TAG, entityId.toString());
         tag.put(ENTITY_TAG, compoundNBT);
 
-        CompoundTag tierTag = new CompoundTag();
+        CompoundNBT tierTag = new CompoundNBT();
         tierTag.putInt(TIER_TAG, tier);
-        ListTag listNBT = new ListTag();
-        affixes.forEach(affix -> listNBT.add(StringTag.valueOf(affix.toString())));
+        ListNBT listNBT = new ListNBT();
+        affixes.forEach(affix -> listNBT.add(StringNBT.valueOf(affix.toString())));
         tierTag.put(AFFIX_TAG, listNBT);
         tag.put(CHAMPION_TAG, tierTag);
         stack.setTag(tag);
     }
 
-    public static Optional<CompoundTag> getTagOrEmpty(ItemStack stack, String tagKey) {
-        var tag = stack.getTag();
+    public static Optional<CompoundNBT> getTagOrEmpty(ItemStack stack, String tagKey) {
+        CompoundNBT tag = stack.getTag();
         if (tag != null) {
-            CompoundTag entityTag = stack.getTagElement(tagKey);
+            CompoundNBT entityTag = stack.getTagElement(tagKey);
             if (entityTag != null) {
                 return Optional.of(entityTag);
             }
@@ -115,15 +110,15 @@ public class ChampionEggItem extends EggItem {
 
     @Nonnull
     @Override
-    public Component getName(@Nonnull ItemStack stack) {
+    public ITextComponent getName(@Nonnull ItemStack stack) {
         int tier = 0;
         Optional<EntityType<?>> type = getType(stack);
-        Optional<CompoundTag> entityTag = getTagOrEmpty(stack, CHAMPION_TAG);
+        Optional<CompoundNBT> entityTag = getTagOrEmpty(stack, CHAMPION_TAG);
         if (entityTag.isPresent()) {
             tier = entityTag.get().getInt(TIER_TAG);
         }
 
-        MutableComponent root = Utils.translatable("rank.champions.title." + tier);
+	    IFormattableTextComponent root = Utils.translatable("rank.champions.title." + tier);
         root.append(" ");
         root.append(type.map(EntityType::getDescription).orElse(EntityType.ZOMBIE.getDescription()));
         root.append(" ");
@@ -133,13 +128,13 @@ public class ChampionEggItem extends EggItem {
 
     @Override
     @ParametersAreNullableByDefault
-    public void appendHoverText(ItemStack stack, Level worldIn,
-                                 List<Component> tooltip, TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, World worldIn,
+                               List<ITextComponent> tooltip, ITooltipFlag flagIn) {
         boolean hasAffix = false;
-        Optional<CompoundTag> entityTag = getTagOrEmpty(stack, CHAMPION_TAG);
+        Optional<CompoundNBT> entityTag = getTagOrEmpty(stack, CHAMPION_TAG);
         if (entityTag.isPresent()) {
 
-            ListTag affixTag = entityTag.get().getList(AFFIX_TAG, CompoundTag.TAG_STRING);
+	        ListNBT affixTag = entityTag.get().getList(AFFIX_TAG, Constants.NBT.TAG_STRING);
 
             if (!affixTag.isEmpty()) {
                 hasAffix = true;
@@ -147,27 +142,27 @@ public class ChampionEggItem extends EggItem {
 
             affixTag.forEach(affix -> Champions.API.getAffix(affix.getAsString()).ifPresent(
                     affix1 -> {
-                        final MutableComponent component =
+                        final TranslationTextComponent component =
 		                        Utils.translatable(affix1.toLanguageKey());
-                        component.setStyle(Style.EMPTY.withColor(ChatFormatting.GRAY));
+                        component.setStyle(Style.EMPTY.withColor(TextFormatting.GRAY));
                         tooltip.add(component);
                     }));
 
         }
 
         if (!hasAffix) {
-            final MutableComponent component = Utils.translatable("item.champions.egg.tooltip");
-            component.setStyle(Style.EMPTY.withColor(ChatFormatting.AQUA));
+            final TranslationTextComponent component = Utils.translatable("item.champions.egg.tooltip");
+            component.setStyle(Style.EMPTY.withColor(TextFormatting.AQUA));
             tooltip.add(component);
         }
     }
 
     @Nonnull
     @Override
-    public InteractionResult useOn(UseOnContext context) {
-        Level world = context.getLevel();
+    public ActionResultType useOn(ItemUseContext context) {
+	    World world = context.getLevel();
 
-        if (!world.isClientSide() && world instanceof ServerLevel) {
+        if (!world.isClientSide() && world instanceof ServerWorld) {
             ItemStack itemstack = context.getItemInHand();
             BlockPos blockpos = context.getClickedPos();
             Direction direction = context.getClickedFace();
@@ -182,8 +177,8 @@ public class ChampionEggItem extends EggItem {
             Optional<EntityType<?>> entitytype = getType(itemstack);
             entitytype.ifPresent(type -> {
                 Entity entity = type
-                        .create((ServerLevel) world, itemstack.getTag(), null,null, blockpos1,
-                                MobSpawnType.SPAWN_EGG, true,
+                        .create((ServerWorld) world, itemstack.getTag(), null,null, blockpos1,
+                                SpawnReason.SPAWN_EGG, true,
                                 !Objects.equals(blockpos, blockpos1) && direction == Direction.UP);
 
                 if (entity instanceof LivingEntity) {
@@ -194,55 +189,55 @@ public class ChampionEggItem extends EggItem {
                 }
             });
         }
-        return InteractionResult.SUCCESS;
+        return ActionResultType.SUCCESS;
     }
 
     @Nonnull
     @Override
-    public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn,
-                                                  @Nonnull InteractionHand handIn) {
+    public ActionResult<ItemStack> use(World worldIn, PlayerEntity playerIn,
+                                       @Nonnull Hand handIn) {
         ItemStack itemstack = playerIn.getItemInHand(handIn);
 
         if (worldIn.isClientSide()) {
-            return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
-        } else if (worldIn instanceof ServerLevel) {
-            BlockHitResult raytraceresult = getPlayerPOVHitResult(worldIn, playerIn,
-                    ClipContext.Fluid.SOURCE_ONLY);
+            return new ActionResult<>(ActionResultType.PASS, itemstack);
+        } else if (worldIn instanceof ServerWorld) {
+            BlockRayTraceResult raytraceresult = getPlayerPOVHitResult(worldIn, playerIn,
+		            RayTraceContext.FluidMode.SOURCE_ONLY);
 
-            if (raytraceresult.getType() != HitResult.Type.BLOCK) {
-                return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+            if (raytraceresult.getType() != RayTraceResult.Type.BLOCK) {
+                return new ActionResult<>(ActionResultType.PASS, itemstack);
             } else {
                 BlockPos blockpos = raytraceresult.getBlockPos();
 
                 if (!(worldIn.getFluidState(blockpos).getType() instanceof FlowingFluid)) {
-                    return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+                    return new ActionResult<>(ActionResultType.PASS, itemstack);
                 } else if (worldIn.mayInteract(playerIn, blockpos) && playerIn
                         .mayUseItemAt(blockpos, raytraceresult.getDirection(), itemstack)) {
                     Optional<EntityType<?>> entityType = getType(itemstack);
                     return entityType.map(type -> {
                         Entity entity = type
-                                .create((ServerLevel) worldIn, itemstack.getTag(), null,null, blockpos,
-                                        MobSpawnType.SPAWN_EGG, false, false);
+                                .create((ServerWorld) worldIn, itemstack.getTag(), null,null, blockpos,
+                                        SpawnReason.SPAWN_EGG, false, false);
 
                         if (entity instanceof LivingEntity) {
                             ChampionCapability.getCapability(entity)
                                     .ifPresent(champion -> read(champion, itemstack));
                             worldIn.addFreshEntity(entity);
 
-                            if (!playerIn.getAbilities().invulnerable) {
+                            if (!playerIn.abilities.invulnerable) {
                                 itemstack.shrink(1);
                             }
                             playerIn.awardStat(Stats.ITEM_USED.get(this));
-                            return new InteractionResultHolder<>(InteractionResult.SUCCESS, itemstack);
+                            return new ActionResult<>(ActionResultType.SUCCESS, itemstack);
                         } else {
-                            return new InteractionResultHolder<>(InteractionResult.PASS, itemstack);
+                            return new ActionResult<>(ActionResultType.PASS, itemstack);
                         }
-                    }).orElse(new InteractionResultHolder<>(InteractionResult.PASS, itemstack));
+                    }).orElse(new ActionResult<>(ActionResultType.PASS, itemstack));
                 } else {
-                    return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
+                    return new ActionResult<>(ActionResultType.FAIL, itemstack);
                 }
             }
         }
-        return new InteractionResultHolder<>(InteractionResult.FAIL, itemstack);
+        return new ActionResult<>(ActionResultType.FAIL, itemstack);
     }
 }

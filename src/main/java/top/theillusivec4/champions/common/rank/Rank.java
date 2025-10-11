@@ -1,9 +1,9 @@
 package top.theillusivec4.champions.common.rank;
 
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.TextColor;
+
+import net.minecraft.potion.Effect;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.effect.MobEffect;
+import net.minecraft.util.text.Color;
 import top.theillusivec4.champions.api.affix.IAffix;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class Rank {
     private final int numAffixes;
     private final int growthFactor;
     private final int weight;
-    private final List<Tuple<Holder<MobEffect>, Integer>> effects;
+    private final List<Tuple<Effect, Integer>> effects;
     private final List<IAffix> presetAffixes;
 
     public Rank() {
@@ -25,7 +25,7 @@ public class Rank {
     }
 
     public Rank(int tier, int numAffixes, int growthFactor, int weight, String defaultColor,
-                List<Tuple<Holder<MobEffect>, Integer>> effects, List<IAffix> presetAffixes) {
+                List<Tuple<Effect, Integer>> effects, List<IAffix> presetAffixes) {
         this.tier = tier;
         this.numAffixes = numAffixes;
         this.growthFactor = growthFactor;
@@ -36,16 +36,16 @@ public class Rank {
     }
 
     public static int getColor(String color) {
-        var parsedColor = Optional.ofNullable(TextColor.parseColor(color));
-        return parsedColor.orElse(TextColor.fromRgb(0)).getValue();
+        Optional<Color> parsedColor = Optional.ofNullable(Color.parseColor(color));
+        return parsedColor.orElse(Color.fromRgb(0)).getValue();
     }
 
     public int getTier() {
         return tier;
     }
 
-    public TextColor getDefaultColor() {
-        return TextColor.parseColor(defaultColor);
+    public Color getDefaultColor() {
+        return Color.parseColor(defaultColor);
     }
 
     public int getNumAffixes() {
@@ -60,7 +60,7 @@ public class Rank {
         return weight;
     }
 
-    public List<Tuple<Holder<MobEffect>, Integer>> getEffects() {
+    public List<Tuple<Effect, Integer>> getEffects() {
         return effects;
     }
 

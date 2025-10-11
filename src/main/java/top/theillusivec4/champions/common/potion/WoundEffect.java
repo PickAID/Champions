@@ -1,11 +1,11 @@
 package top.theillusivec4.champions.common.potion;
 
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectCategory;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectType;
 
-public class WoundEffect extends MobEffect {
+public class WoundEffect extends Effect {
 
     public WoundEffect() {
-        super(MobEffectCategory.HARMFUL, 0x8d0037);
+        super(EffectType.HARMFUL, 0x8d0037);
     }
 }

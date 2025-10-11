@@ -1,21 +1,20 @@
 package top.theillusivec4.champions.common.registry;
 
-import net.minecraft.core.Registry;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
-import top.theillusivec4.champions.Champions;
+import net.minecraft.loot.LootConditionType;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.registry.Registry;
 import top.theillusivec4.champions.common.loot.EntityIsChampion;
 import top.theillusivec4.champions.common.loot.LootItemChampionPropertyCondition;
 
 public class ModLootItemConditions {
 
-	private static final DeferredRegister<LootItemConditionType> LOOT_ITEM_CONDITION_TYPE = DeferredRegister.create(Registry.LOOT_ITEM_REGISTRY, Champions.MODID);
-	public static final RegistryObject<LootItemConditionType> CHAMPION_PROPERTIES = LOOT_ITEM_CONDITION_TYPE.register("champion_properties", () -> new LootItemConditionType(new LootItemChampionPropertyCondition.ChampionConditionSerializer()));
-	public static final RegistryObject<LootItemConditionType> ENTITY_IS_CHAMPION = LOOT_ITEM_CONDITION_TYPE.register("entity_champion", () -> new LootItemConditionType(new EntityIsChampion.Serializer()));
+	public static final LootConditionType CHAMPION_PROPERTIES = register("champions:champion_properties", new LootConditionType(new LootItemChampionPropertyCondition.ChampionConditionSerializer()));
+	public static final LootConditionType ENTITY_IS_CHAMPION = register("champions:entity_champion", new LootConditionType(new EntityIsChampion.Serializer()));
 
-	public static void register(IEventBus bus) {
-		LOOT_ITEM_CONDITION_TYPE.register(bus);
+	private static LootConditionType register(String id, LootConditionType type) {
+		return Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(id), type);
+	}
+
+	public static void init() {
 	}
 }

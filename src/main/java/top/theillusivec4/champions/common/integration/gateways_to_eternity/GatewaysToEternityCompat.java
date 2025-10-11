@@ -1,11 +1,14 @@
 package top.theillusivec4.champions.common.integration.gateways_to_eternity;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import shadows.gateways.event.GateEvent;
 import top.theillusivec4.champions.api.AffixRegistry;
+import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.rank.RankManager;
@@ -27,27 +30,27 @@ public class GatewaysToEternityCompat {
 
 	@SubscribeEvent
 	public void onWaveEntitySpawned(GateEvent.WaveEntitySpawned event) {
-		var waveSpawnedEntity = event.getWaveEntity();
-		var waveSpawnedEntityId = ForgeRegistries.ENTITIES.getKey(waveSpawnedEntity.getType());
-		var gatewayEntity = event.getEntity();
-		var currentWave = gatewayEntity.getWave();
+		LivingEntity waveSpawnedEntity = event.getWaveEntity();
+		ResourceLocation waveSpawnedEntityId = ForgeRegistries.ENTITIES.getKey(waveSpawnedEntity.getType());
+		shadows.gateways.entity.GatewayEntity gatewayEntity = event.getEntity();
+		int currentWave = gatewayEntity.getWave();
 		settings.getLoadedData().values().forEach((gatewaysSetting) -> {
 			List<ResourceLocation> entityList = gatewaysSetting.entityBlackList().isPresent() ? gatewaysSetting.entityBlackList().get() : new ArrayList<>();
 
-			var waveRange = gatewaysSetting.waveRange();
+			MinMaxBounds.IntBound waveRange = gatewaysSetting.waveRange();
 			if (!gatewaysSetting.enable().orElse(false) || !waveRange.matches(currentWave) || entityList.contains(waveSpawnedEntityId)) {
 				return;
 			}
 
 			ChampionCapability.getCapability(waveSpawnedEntity).ifPresent(champion -> {
 				// first reset champions attribute
-				var serverChampion = champion.getServer();
+				IChampion.Server serverChampion = champion.getServer();
 				if (ChampionHelper.isValidChampion(serverChampion)) {
 					ChampionBuilder.resetAndUpdate(champion);
 				}
 
 				List<IAffix> affixes = new ArrayList<>();
-				var tierRange = gatewaysSetting.tier();
+				MinMaxBounds.IntBound tierRange = gatewaysSetting.tier();
 
 				int minTier = tierRange.getMin() != null ? tierRange.getMin() : 0;
 				int maxTier = tierRange.getMax() != null ? tierRange.getMax() : RankManager.getHighestRank().getTier();

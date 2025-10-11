@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.datagen;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.data.LanguageProvider;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.affix.IAffix;
@@ -491,6 +491,6 @@ public class ModLanguageProvider extends LanguageProvider {
 	 * @param translate 翻译 block.minecraft.block -> 石头
 	 */
 	protected void add(String pre, ResourceLocation post, String translate) {
-		add(post.toLanguageKey(pre), translate);
+		add(pre + "." + post.getNamespace() + "." + post.getPath(), translate);
 	}
 }

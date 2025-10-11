@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.util;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.entity.EntityType;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.affix.IAffix;
@@ -35,7 +35,7 @@ public class EntityManager {
                 return;
             }
             EntityType<?> type = ForgeRegistries.ENTITIES
-                    .getValue(ResourceLocation.parse(entityConfig.entity));
+                    .getValue(ResourceLocation.tryParse(entityConfig.entity));
 
             if (type == null) {
                 Champions.LOGGER.error("Invalid identifier while building entity settings, skipping...");
@@ -77,7 +77,10 @@ public class EntityManager {
             if (affixList != null) {
 
                 for (String s : affixList) {
-                    Champions.API.getAffix(s).ifPresentOrElse(this.affixList::add, () -> logInvalidAffix(s));
+                    Champions.API.getAffix(s).map(this.affixList::add).orElseGet(()->{
+	                    logInvalidAffix(s);
+						return true;
+                    });
                 }
             }
             Permission permission = Permission.BLACKLIST;

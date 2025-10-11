@@ -1,9 +1,9 @@
 package top.theillusivec4.champions.common.integration.gamestages;
 
 import net.darkhax.gamestages.GameStageHelper;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
@@ -115,7 +115,7 @@ public class GameStagesPlugin {
     }
 
     private static boolean hasRequiredStages(@Nonnull StageInfo info, @Nonnull LivingEntity living) {
-        String dimension = living.getLevel().dimension().location().toString();
+        String dimension = living.level.dimension().location().toString();
         Set<String> stages;
 
         if (info.dimensionalStages.containsKey(dimension)) {
@@ -126,8 +126,9 @@ public class GameStagesPlugin {
 
         if (stages.isEmpty()) {
             return true;
-        } else if (living.getLevel() instanceof ServerLevel serverLevel) {
-            return !serverLevel.getPlayers(
+        } else if (living.level instanceof ServerWorld) {
+	        ServerWorld serverLevel = (ServerWorld) living.level;
+	        return !serverLevel.getPlayers(
                             player -> GameStageHelper.hasAllOf(player, stages) && player.distanceTo(living) <= 256)
                     .isEmpty();
         }

@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.api.affix;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.DamageSource;
 import top.theillusivec4.champions.api.IChampion;
 
 public interface IAffixCombatHandler {

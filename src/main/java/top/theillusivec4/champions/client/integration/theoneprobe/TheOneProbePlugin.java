@@ -1,14 +1,15 @@
 package top.theillusivec4.champions.client.integration.theoneprobe;
 
+
 import mcjty.theoneprobe.api.*;
-import net.minecraft.network.chat.Style;
-import net.minecraft.util.FastColor;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.ColorHelper;
+import net.minecraft.util.text.Style;
+import net.minecraft.world.World;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.util.Utils;
@@ -23,8 +24,8 @@ public class TheOneProbePlugin implements IProbeInfoEntityProvider {
     }
 
     @Override
-    public void addProbeEntityInfo(ProbeMode probeMode, IProbeInfo probeInfo, Player player,
-                                   Level level, Entity entity,
+    public void addProbeEntityInfo(ProbeMode probeMode, IProbeInfo probeInfo, PlayerEntity player,
+                                   World level, Entity entity,
                                    IProbeHitEntityData probeHitEntityData) {
 
         if (ChampionsConfig.enableTOPIntegration) {
@@ -34,10 +35,10 @@ public class TheOneProbePlugin implements IProbeInfoEntityProvider {
                     if (rank.getTier() == 0) {
                         return;
                     }
-                    var color = rank.getDefaultColor();
-                    int r = FastColor.ARGB32.red(color.getValue());
-                    int g = FastColor.ARGB32.green(color.getValue());
-                    int b = FastColor.ARGB32.blue(color.getValue());
+                    net.minecraft.util.text.Color color = rank.getDefaultColor();
+                    int r = ColorHelper.PackedColor.red(color.getValue());
+                    int g = ColorHelper.PackedColor.green(color.getValue());
+                    int b = ColorHelper.PackedColor.blue(color.getValue());
                     Color rankColor = new Color(r, g, b);
                     IProbeInfo horizontal;
                     IProbeInfo vertical = probeInfo.vertical(

@@ -1,19 +1,19 @@
 package top.theillusivec4.champions.common.capability;
 
-import net.minecraft.network.chat.TextColor;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.util.text.Color;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.living.LivingConversionEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.network.PacketDistributor;
-import top.theillusivec4.champions.api.affix.IAffix;
+import net.minecraftforge.fml.network.PacketDistributor;
 import top.theillusivec4.champions.api.IChampion;
+import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.network.NetworkHandler;
 import top.theillusivec4.champions.common.network.SPacketSyncChampion;
@@ -32,8 +32,9 @@ public class CapabilityEventHandler {
         Entity entity = evt.getObject();
 
         if (ChampionHelper.isValidChampionEntity(entity)) {
-            evt.addCapability(ChampionCapability.ID,
-                    ChampionCapability.createProvider((LivingEntity) entity));
+	        ChampionCapability.Provider provider = ChampionCapability.createProvider((LivingEntity) entity);
+	        evt.addCapability(ChampionCapability.ID, provider);
+	        evt.addListener(provider::invalidate);
         }
     }
 
@@ -45,13 +46,13 @@ public class CapabilityEventHandler {
     public void onSpecialSpawn(LivingSpawnEvent.SpecialSpawn evt) {
         LivingEntity entity = evt.getEntityLiving();
 
-        if (!entity.getLevel().isClientSide()) {
+        if (!entity.level.isClientSide()) {
             ChampionCapability.getCapability(entity).ifPresent(champion -> {
                 IChampion.Server serverChampion = champion.getServer();
 
-                if (serverChampion.getRank().isEmpty()) {
+                if (!serverChampion.getRank().isPresent()) {
                     // Todo: Custom entity spawn rank base on mob spawn type
-                    if (!ChampionsConfig.championSpawners && evt.getSpawnReason() == MobSpawnType.SPAWNER) {
+                    if (!ChampionsConfig.championSpawners && evt.getSpawnReason() == SpawnReason.SPAWNER) {
                         serverChampion.setRank(RankManager.getLowestRank());
                     }
                 }
@@ -63,8 +64,8 @@ public class CapabilityEventHandler {
     public void onLivingConvert(LivingConversionEvent.Post evt) {
         LivingEntity entity = evt.getEntityLiving();
 
-        if (!entity.getLevel().isClientSide()) {
-            entity.reviveCaps();
+        if (!entity.level.isClientSide()) {
+	        ChampionCapability.Provider provider = ChampionCapability.createProvider(entity);
             LivingEntity outcome = evt.getOutcome();
             ChampionCapability.getCapability(entity).ifPresent(
                     oldChampion -> {
@@ -77,24 +78,24 @@ public class CapabilityEventHandler {
                                     });
                         }
                     });
-            entity.invalidateCaps();
         }
     }
 
     @SubscribeEvent
     public void startTracking(PlayerEvent.StartTracking evt) {
         Entity entity = evt.getTarget();
-        Player playerEntity = evt.getPlayer();
+        PlayerEntity playerEntity = evt.getPlayer();
 
-        if (playerEntity instanceof ServerPlayer serverPlayer) {
-            ChampionCapability.getCapability(entity).ifPresent(champion -> {
+        if (playerEntity instanceof ServerPlayerEntity) {
+	        ServerPlayerEntity serverPlayer = (ServerPlayerEntity) playerEntity;
+	        ChampionCapability.getCapability(entity).ifPresent(champion -> {
                 IChampion.Server serverChampion = champion.getServer();
                 if (ChampionHelper.isValidChampion(serverChampion)) {
                     NetworkHandler.INSTANCE
                             .send(PacketDistributor.PLAYER.with(() -> serverPlayer),
                                     new SPacketSyncChampion(entity.getId(),
                                             serverChampion.getRank().map(Rank::getTier).orElse(0),
-                                            serverChampion.getRank().map(Rank::getDefaultColor).orElse(TextColor.fromRgb(0)).toString(),
+                                            serverChampion.getRank().map(Rank::getDefaultColor).orElse(Color.fromRgb(0)).toString(),
                                             serverChampion.getAffixes().stream().map(IAffix::getIdentifier)
                                                     .collect(Collectors.toSet())));
                 }

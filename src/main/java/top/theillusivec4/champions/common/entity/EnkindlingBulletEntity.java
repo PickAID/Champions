@@ -1,35 +1,37 @@
 package top.theillusivec4.champions.common.entity;
 
-import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.Level;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.particles.BasicParticleType;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.Direction;
+import net.minecraft.util.EntityDamageSource;
+import net.minecraft.util.IndirectEntityDamageSource;
+import net.minecraft.world.World;
 import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import javax.annotation.Nonnull;
 
 public class EnkindlingBulletEntity extends BaseBulletEntity {
 
-    public EnkindlingBulletEntity(Level level) {
+    public EnkindlingBulletEntity(World level) {
         super(ModEntityTypes.ENKINDLING_BULLET.get(), level);
     }
 
-    public EnkindlingBulletEntity(Level level, LivingEntity livingEntity, @Nonnull Entity entity,
+    public EnkindlingBulletEntity(World level, LivingEntity livingEntity, @Nonnull Entity entity,
                                   Direction.Axis axis) {
         super(ModEntityTypes.ENKINDLING_BULLET.get(), level, livingEntity, entity, axis);
 
     }
 
-    public EnkindlingBulletEntity(EntityType<? extends EnkindlingBulletEntity> enkindlingBulletEntityEntityType, Level level) {
+    public EnkindlingBulletEntity(EntityType<? extends EnkindlingBulletEntity> enkindlingBulletEntityEntityType, World level) {
         super(enkindlingBulletEntityEntityType, level);
     }
 
-    @Override
+	@Override
     protected void bulletEffect(LivingEntity target) {
 
 	    if (this.getOwner() != null) {
@@ -43,7 +45,12 @@ public class EnkindlingBulletEntity extends BaseBulletEntity {
     }
 
     @Override
-    protected ParticleOptions getParticle() {
+    protected BasicParticleType getParticle() {
         return ParticleTypes.FLAME;
     }
+
+	@Override
+	protected Item getDefaultItem() {
+		return Items.SNOWBALL;
+	}
 }

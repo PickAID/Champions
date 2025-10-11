@@ -1,8 +1,9 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.damagesource.DamageSource;
+import com.google.common.collect.Lists;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
@@ -10,8 +11,6 @@ import top.theillusivec4.champions.common.affix.core.AffixData;
 import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums;
-
-import java.util.List;
 
 public class AdaptableAffix extends CombatAffix {
 	@Override
@@ -37,9 +36,9 @@ public class AdaptableAffix extends CombatAffix {
 				.withDefault()
 				.setCategory(AffixCategory.DEFENSE)
 				.setHasSub(false)
-				.setMobList(List.of(
-						ResourceLocation.withDefaultNamespace("pig"),
-						ResourceLocation.withDefaultNamespace("creeper")
+				.setMobList(Lists.newArrayList(
+						ResourceLocation.tryParse("pig"),
+						ResourceLocation.tryParse("creeper")
 				))
 				.setMobPermission(ConfigEnums.Permission.BLACKLIST)
 				.build();
@@ -50,14 +49,14 @@ public class AdaptableAffix extends CombatAffix {
 		int count;
 
 		@Override
-		public void readFromNBT(CompoundTag tag) {
+		public void readFromNBT(CompoundNBT tag) {
 			name = tag.getString("name");
 			count = tag.getInt("count");
 		}
 
 		@Override
-		public CompoundTag writeToNBT() {
-			CompoundTag compound = new CompoundTag();
+		public CompoundNBT writeToNBT() {
+			CompoundNBT compound = new CompoundNBT();
 			compound.putString("name", name);
 			compound.putInt("count", count);
 			return compound;

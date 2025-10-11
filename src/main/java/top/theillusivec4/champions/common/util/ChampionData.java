@@ -1,10 +1,10 @@
 package top.theillusivec4.champions.common.util;
 
 import com.google.common.collect.ImmutableSortedMap;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraftforge.common.util.Constants;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.affix.IAffix;
@@ -13,6 +13,7 @@ import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ChampionData {
 
@@ -28,20 +29,20 @@ public class ChampionData {
      */
     public static boolean read(IChampion champion) {
         LivingEntity livingEntity = champion.getLivingEntity();
-        CompoundTag tag = livingEntity.getPersistentData();
+        CompoundNBT tag = livingEntity.getPersistentData();
 
         if (!tag.isEmpty()) {
-            CompoundTag championTag = tag.getCompound(CHAMPION_KEY);
+            CompoundNBT championTag = tag.getCompound(CHAMPION_KEY);
 
             if (!championTag.isEmpty()) {
                 Rank rank = RankManager.getLowestRank();
 
                 if (championTag.contains("tier")) {
 
-                    if (championTag.contains("tier", Tag.TAG_INT)) {
+                    if (championTag.contains("tier", Constants.NBT.TAG_INT)) {
                         rank = RankManager.getRank(championTag.getInt("tier"));
-                    } else if (championTag.contains("tier", Tag.TAG_COMPOUND)) {
-                        CompoundTag valueTag = championTag.getCompound("tier");
+                    } else if (championTag.contains("tier", Constants.NBT.TAG_COMPOUND)) {
+                        CompoundNBT valueTag = championTag.getCompound("tier");
                         Integer min = valueTag.contains("min") ? valueTag.getInt("min") : null;
                         Integer max = valueTag.contains("max") ? valueTag.getInt("max") : null;
                         rank = createRank(livingEntity, min, max);
@@ -58,16 +59,16 @@ public class ChampionData {
 
                 if (championTag.contains("affixes")) {
 
-                    if (championTag.contains("affixes", Tag.TAG_LIST)) {
-                        ListTag listTag = championTag.getList("affixes", Tag.TAG_STRING);
+                    if (championTag.contains("affixes", Constants.NBT.TAG_LIST)) {
+                        ListNBT listTag = championTag.getList("affixes", Constants.NBT.TAG_STRING);
 
                         for (int i = 0; i < listTag.size(); i++) {
                             ids.add(listTag.getString(i));
                         }
-                    } else if (championTag.contains("affixes", Tag.TAG_COMPOUND)) {
-                        CompoundTag affixesTag = championTag.getCompound("affixes");
-                        count = affixesTag.contains("count", Tag.TAG_INT) ? affixesTag.getInt("count") : null;
-                        ListTag listTag = affixesTag.getList("values", Tag.TAG_STRING);
+                    } else if (championTag.contains("affixes", Constants.NBT.TAG_COMPOUND)) {
+                        CompoundNBT affixesTag = championTag.getCompound("affixes");
+                        count = affixesTag.contains("count", Constants.NBT.TAG_INT) ? affixesTag.getInt("count") : null;
+	                    ListNBT listTag = affixesTag.getList("values", Constants.NBT.TAG_STRING);
 
                         for (int i = 0; i < listTag.size(); i++) {
                             ids.add(listTag.getString(i));
@@ -105,7 +106,7 @@ public class ChampionData {
         }
         allAffixes.forEach((k, v) -> validAffixes.get(k).addAll(v.stream().filter(affix -> !affixes.contains(affix)
                 && entitySettings.map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true)
-                && affix.canApply(champion)).toList()));
+                && affix.canApply(champion)).collect(Collectors.toList())));
         ChampionBuilder.addAffixToList(total, affixes, validAffixes, RAND);
     }
 

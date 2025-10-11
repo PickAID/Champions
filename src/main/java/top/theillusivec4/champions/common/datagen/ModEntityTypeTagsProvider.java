@@ -1,10 +1,10 @@
 package top.theillusivec4.champions.common.datagen;
 
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.EntityTypeTagsProvider;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.MobCategory;
+import net.minecraft.data.EntityTypeTagsProvider;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
+import net.minecraft.util.RegistryKey;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
@@ -31,11 +31,11 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
 		lookUpMonster().forEach(this::addEntity);
 	}
 
-	private Stream<Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>>> lookUpMonster() {
-		return ForgeRegistries.ENTITIES.getEntries().stream().filter(resourceKeyEntityTypeEntry -> resourceKeyEntityTypeEntry.getValue().getCategory() == MobCategory.MONSTER);
+	private Stream<Map.Entry<RegistryKey<EntityType<?>>, EntityType<?>>> lookUpMonster() {
+		return ForgeRegistries.ENTITIES.getEntries().stream().filter(resourceKeyEntityTypeEntry -> resourceKeyEntityTypeEntry.getValue().getCategory() == EntityClassification.MONSTER);
 	}
 
-	void addEntity(Map.Entry<ResourceKey<EntityType<?>>, EntityType<?>> entityTypeHolder) {
+	void addEntity(Map.Entry<RegistryKey<EntityType<?>>, EntityType<?>> entityTypeHolder) {
 		tag(ModEntityTypes.Tags.ALLOW_CHAMPIONS).add(entityTypeHolder.getKey());
 	}
 

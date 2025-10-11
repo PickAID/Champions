@@ -3,12 +3,12 @@ package top.theillusivec4.champions.common.config;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import com.electronwill.nightconfig.core.conversion.ObjectConverter;
 import com.google.common.collect.Lists;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.potion.Effect;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.*;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -23,6 +23,7 @@ import top.theillusivec4.champions.common.integration.scalinghealth.ScalingHealt
 import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ChampionsConfig {
@@ -84,7 +85,7 @@ public class ChampionsConfig {
     public static double livelyPassiveMultiplier;
     public static double magneticStrength;
     public static boolean moltenWaterResistance;
-    public static MobEffectInstance plaguedEffect;
+    public static EffectInstance plaguedEffect;
     public static int plaguedRange;
     public static double reflectiveMaxPercent;
     public static double reflectiveMinPercent;
@@ -208,11 +209,11 @@ public class ChampionsConfig {
         infestedInterval = SERVER.infestedInterval.get();
 
         EntityType<?> type = ForgeRegistries.ENTITIES
-                .getValue(ResourceLocation.parse(SERVER.infestedParasite.get()));
+                .getValue(ResourceLocation.tryParse(SERVER.infestedParasite.get()));
         infestedParasite = type != null ? type : EntityType.SILVERFISH;
 
         type = ForgeRegistries.ENTITIES
-                .getValue(ResourceLocation.parse(SERVER.infestedEnderParasite.get()));
+                .getValue(ResourceLocation.tryParse(SERVER.infestedEnderParasite.get()));
         infestedEnderParasite = type != null ? type : EntityType.ENDERMITE;
 
         paralyzingChance = SERVER.paralyzingChance.get();
@@ -235,22 +236,22 @@ public class ChampionsConfig {
             if (s.length < 1) {
                 throw new IllegalArgumentException();
             }
-            MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(ResourceLocation.parse(s[0]));
+            Effect effect = ForgeRegistries.POTIONS.getValue(ResourceLocation.tryParse(s[0]));
 
             if (effect == null) {
                 throw new IllegalArgumentException();
             }
 
             if (s.length < 2) {
-                plaguedEffect = new MobEffectInstance(effect);
+                plaguedEffect = new EffectInstance(effect);
             } else if (s.length < 3) {
-                plaguedEffect = new MobEffectInstance(effect, Integer.parseInt(s[1]) * 20);
+                plaguedEffect = new EffectInstance(effect, Integer.parseInt(s[1]) * 20);
             } else {
-                plaguedEffect = new MobEffectInstance(effect, Integer.parseInt(s[1]) * 20,
+                plaguedEffect = new EffectInstance(effect, Integer.parseInt(s[1]) * 20,
                         Integer.parseInt(s[2]) - 1);
             }
         } catch (IllegalArgumentException e) {
-            plaguedEffect = new MobEffectInstance(MobEffects.POISON, 300, 0);
+            plaguedEffect = new EffectInstance(Effects.POISON, 300, 0);
             Champions.LOGGER.error("Error parsing plaguedEffect config value!");
         }
 
@@ -278,11 +279,12 @@ public class ChampionsConfig {
 
     private static boolean validateEntityName(final Object obj) {
         boolean valid = false;
-        if (obj instanceof List<?> entityNameList) {
-            for (var entityName : entityNameList) {
-                ResourceLocation location = ResourceLocation.parse((String) entityName);
-                valid = ForgeRegistries.ENTITIES.containsKey(location);
-            }
+        if (obj instanceof List<?>) {
+	        List<?> entityNameList = (List<?>) obj;
+	        for (Object o : entityNameList) {
+		        ResourceLocation location = ResourceLocation.tryParse((String) o);
+		        valid = ForgeRegistries.ENTITIES.containsKey(location);
+	        }
         }
         return valid;
     }
@@ -294,16 +296,14 @@ public class ChampionsConfig {
 
         public StageConfig(Builder builder) {
             entityStages = builder
-                    .comment("""
-                            A list of entity stages in the format: "stage;modid:entity" or "stage;modid:entity;modid:dimension"
-                            Example: "test_stage;minecraft:zombie" or "test_stage;minecraft:spider;minecraft:the_nether\"""")
+                    .comment("A list of entity stages in the format: \"stage;modid:entity\" or \"stage;modid:entity;modid:dimension\"\n" +
+                             "Example: \"test_stage;minecraft:zombie\" or \"test_stage;minecraft:spider;minecraft:the_nether\"")
                     .translation(CONFIG_PREFIX + "entityStages")
                     .defineList("entityStages", new ArrayList<>(), s -> s instanceof String);
 
             tierStages = builder
-                    .comment("""
-                            A list of tier stages in the format: "stage;tier" or "stage;tier;modid:dimension"
-                            Example: "test_stage;2" or "test_stage;3;minecraft:the_nether\"""")
+                    .comment("A list of tier stages in the format: \"stage;tier\" or \"stage;tier;modid:dimension\"\n" +
+                             "Example: \"test_stage;2\" or \"test_stage;3;minecraft:the_nether\"")
                     .translation(CONFIG_PREFIX + "tierStages")
                     .defineList("tierStages", new ArrayList<>(), s -> s instanceof String);
         }
@@ -371,7 +371,7 @@ public class ChampionsConfig {
             bossBarBlackList = builder.comment(
                             "Set entity id (for example, ['minecraft:end_dragon', 'minecraft:creeper']) to hidden HUD display for champions, including health, affixes, and tier")
                     .translation(CONFIG_PREFIX + "bossBarBlackList")
-                    .defineList("bossBarBlackList", List.of(), ChampionsConfig::validateEntityName);
+                    .defineList("bossBarBlackList", Collections.emptyList(), ChampionsConfig::validateEntityName);
 
             showParticles = builder.comment(
                             "Set to true to have champions generate a colored particle effect indicating their rank")

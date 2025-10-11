@@ -5,8 +5,8 @@ import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.command.CommandSource;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.util.Utils;
@@ -27,7 +27,7 @@ public class AffixArgumentType implements ArgumentType<IAffixProvider> {
         return new AffixArgumentType();
     }
 
-    public static Collection<IAffix> getAffixes(CommandContext<CommandSourceStack> context,
+    public static Collection<IAffix> getAffixes(CommandContext<CommandSource> context,
                                                 String name)
             throws CommandSyntaxException {
         return context.getArgument(name, IAffixProvider.class).getAffixes(context.getSource());
@@ -67,6 +67,6 @@ public class AffixArgumentType implements ArgumentType<IAffixProvider> {
     @FunctionalInterface
     public interface IAffixProvider {
 
-        Collection<IAffix> getAffixes(CommandSourceStack source) throws CommandSyntaxException;
+        Collection<IAffix> getAffixes(CommandSource source) throws CommandSyntaxException;
     }
 }

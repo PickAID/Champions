@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.affix.core;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.CompoundNBT;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 
@@ -34,9 +34,9 @@ public abstract class AffixData {
         this.champion = champion;
         this.identifier = identifier;
         LivingEntity livingEntity = champion.getLivingEntity();
-        CompoundTag tag;
+	    CompoundNBT tag;
 
-        if (!livingEntity.getLevel().isClientSide()) {
+        if (!livingEntity.level.isClientSide()) {
             tag = champion.getServer().getData(identifier);
         } else {
             tag = champion.getClient().getData(identifier);
@@ -44,14 +44,14 @@ public abstract class AffixData {
         readFromNBT(tag);
     }
 
-    public abstract void readFromNBT(CompoundTag tag);
+    public abstract void readFromNBT(CompoundNBT tag);
 
-    public abstract CompoundTag writeToNBT();
+    public abstract CompoundNBT writeToNBT();
 
     public void saveData() {
         LivingEntity livingEntity = champion.getLivingEntity();
 
-        if (!livingEntity.getLevel().isClientSide()) {
+        if (!livingEntity.level.isClientSide()) {
             champion.getServer().setData(identifier, writeToNBT());
         } else {
             champion.getClient().setData(identifier, writeToNBT());
@@ -63,13 +63,13 @@ public abstract class AffixData {
         public boolean mode;
 
         @Override
-        public void readFromNBT(CompoundTag tag) {
+        public void readFromNBT(CompoundNBT tag) {
             mode = tag.getBoolean("mode");
         }
 
         @Override
-        public CompoundTag writeToNBT() {
-            CompoundTag compound = new CompoundTag();
+        public CompoundNBT writeToNBT() {
+	        CompoundNBT compound = new CompoundNBT();
             compound.putBoolean("mode", mode);
             return compound;
         }
@@ -80,13 +80,13 @@ public abstract class AffixData {
         public int num;
 
         @Override
-        public void readFromNBT(CompoundTag tag) {
+        public void readFromNBT(CompoundNBT tag) {
             num = tag.getInt("num");
         }
 
         @Override
-        public CompoundTag writeToNBT() {
-            CompoundTag compound = new CompoundTag();
+        public CompoundNBT writeToNBT() {
+	        CompoundNBT compound = new CompoundNBT();
             compound.putInt("num", num);
             return compound;
         }

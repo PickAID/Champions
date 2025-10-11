@@ -1,6 +1,6 @@
 package top.theillusivec4.champions.api.affix;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.champions.api.data.AffixCategory;
 
 public interface IAffixBase {

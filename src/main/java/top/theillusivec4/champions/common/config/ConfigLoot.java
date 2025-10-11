@@ -1,9 +1,9 @@
 package top.theillusivec4.champions.common.config;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
 
@@ -70,7 +70,7 @@ public class ConfigLoot {
                     continue;
                 }
 
-                Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.parse(parsed[1]));
+                Item item = ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(parsed[1]));
 
                 if (item == null) {
                     Champions.LOGGER.error("Item not found! {}", parsed[1]);
@@ -109,15 +109,25 @@ public class ConfigLoot {
         DROPS.putAll(result);
     }
 
-    private record Data(ItemStack stack, boolean enchant, int weight) {
+	private static class Data {
 
-        public ItemStack getStack() {
-            ItemStack loot = stack.copy();
+		private final ItemStack stack;
+		private final boolean enchant;
+		private final int weight;
 
-            if (enchant) {
-                EnchantmentHelper.enchantItem(RAND, loot, 30, true);
-            }
-            return loot;
-        }
-    }
+		Data(ItemStack stack, boolean enchant, int weight) {
+			this.stack = stack;
+			this.enchant = enchant;
+			this.weight = weight;
+		}
+
+		public ItemStack getStack() {
+			ItemStack loot = stack.copy();
+
+			if (enchant) {
+				EnchantmentHelper.enchantItem(RAND, loot, 30, true);
+			}
+			return loot;
+		}
+	}
 }

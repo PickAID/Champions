@@ -1,20 +1,19 @@
 package top.theillusivec4.champions.common.event;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
-import net.minecraft.world.level.block.DispenserBlock;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraft.block.DispenserBlock;
+import net.minecraft.data.DataGenerator;
+import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.config.IConfigSpec;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.GatherDataEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.client.integration.theoneprobe.TheOneProbePlugin;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
@@ -42,12 +41,7 @@ public class ModEventHandler {
 	}
 
 	@SubscribeEvent
-	public void registerCapabilities(final RegisterCapabilitiesEvent evt) {
-		evt.register(IChampion.class);
-	}
-
-	@SubscribeEvent
-	public void config(final ModConfigEvent.Loading evt) {
+	public void config(final ModConfig.Loading evt) {
 
 		if (!evt.getConfig().getModId().equals(Champions.MODID)) {
 			return;
@@ -56,7 +50,7 @@ public class ModEventHandler {
 		if (evt.getConfig().getType() == ModConfig.Type.SERVER) {
 			synchronized (this) {
 
-				IConfigSpec<?> spec = evt.getConfig().getSpec();
+				ForgeConfigSpec spec = evt.getConfig().getSpec();
 				CommentedConfig commentedConfig = evt.getConfig().getConfigData();
 				// 重建管理器
 				try {
@@ -93,8 +87,8 @@ public class ModEventHandler {
 
 	@SubscribeEvent
 	public void onGatherData(GatherDataEvent event) {
-		var generator = event.getGenerator();
-		var existingFileHelper = event.getExistingFileHelper();
+		DataGenerator generator = event.getGenerator();
+		ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
         generator.addProvider(new ModGlobalLootModifierProvider(generator));
 		generator.addProvider(new AffixConfigProvider(generator));

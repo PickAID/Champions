@@ -1,11 +1,11 @@
 package top.theillusivec4.champions.common.affix;
 
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.math.vector.Vector3d;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.BasicAffix;
@@ -20,7 +20,7 @@ public class MagneticAffix extends GoalAffix {
 	@Override
 	public List<Tuple<Integer, Goal>> getGoals(IChampion champion) {
 		return Collections.singletonList(
-				new Tuple<>(0, new PullGoal((Mob) champion.getLivingEntity())));
+				new Tuple<>(0, new PullGoal((MobEntity) champion.getLivingEntity())));
 	}
 
 	@Override
@@ -31,10 +31,10 @@ public class MagneticAffix extends GoalAffix {
 	}
 
 	public static class PullGoal extends Goal {
-		final Mob mobEntity;
+		final MobEntity mobEntity;
 		LivingEntity target = null;
 
-		public PullGoal(final Mob mobEntity) {
+		public PullGoal(final MobEntity mobEntity) {
 			this.mobEntity = mobEntity;
 		}
 
@@ -68,12 +68,12 @@ public class MagneticAffix extends GoalAffix {
 			double y = mobEntity.position().y;
 			double z = mobEntity.position().z;
 			double strength = ChampionsConfig.magneticStrength;
-			Vec3 vec = new Vec3(x, y, z).subtract(
-							new Vec3(target.position().x, target.position().y, target.position().z)).normalize()
+			Vector3d vec = new Vector3d(x, y, z).subtract(
+							new Vector3d(target.position().x, target.position().y, target.position().z)).normalize()
 					.scale(strength);
 			target.setDeltaMovement(vec);
 
-			if (target instanceof Player) {
+			if (target instanceof PlayerEntity) {
 				target.hurtMarked = true;
 			}
 		}

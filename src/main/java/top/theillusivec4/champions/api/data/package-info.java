@@ -2,6 +2,6 @@
 @ParametersAreNonnullByDefault
 package top.theillusivec4.champions.api.data;
 
-import net.minecraft.MethodsReturnNonnullByDefault;
+import mcp.MethodsReturnNonnullByDefault;
 
 import javax.annotation.ParametersAreNonnullByDefault;

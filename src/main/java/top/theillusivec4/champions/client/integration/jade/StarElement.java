@@ -1,61 +1,66 @@
 package top.theillusivec4.champions.client.integration.jade;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import mcp.mobius.waila.api.ui.Element;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
-import net.minecraft.world.phys.Vec2;
+import mcp.mobius.waila.api.ICommonAccessor;
+import mcp.mobius.waila.api.IComponentProvider;
+import mcp.mobius.waila.api.ITooltipRenderer;
+import mcp.mobius.waila.api.RenderContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.AbstractGui;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ColorHelper;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
 import top.theillusivec4.champions.client.util.HUDHelper;
 import top.theillusivec4.champions.common.rank.Rank;
 
-public class StarElement extends Element {
-	private final int starCount;  // 记录星星的数量
-	private final int spacing;    // 间距
-	private final float r, g, b;  // 颜色
+import java.awt.*;
 
-	StarElement(int starCount, final String colorCode, int spacing) {
-		int color = Rank.getColor(colorCode);
-		this.starCount = starCount;
-		this.spacing = spacing;
+public class StarElement implements IComponentProvider, ITooltipRenderer {
+	private int starCount;  // 记录星星的数量
+	private int spacing;    // 间距
+	private float r, g, b;  // 颜色
 
-		r = FastColor.ARGB32.red(color) / 255.0F;
-		g = FastColor.ARGB32.green(color) / 255.0F;
-		b = FastColor.ARGB32.blue(color) / 255.0F;
+	public static CompoundNBT of(int starCount, final String colorCode, int spacing) {
+		CompoundNBT data = new CompoundNBT();
+		data.putInt("starCount", starCount);
+		data.putString("colorCode", colorCode);
+		data.putInt("spacing", spacing);
+		return data;
 	}
 
-	public static StarElement of(int starCount, final String colorCode, int spacing) {
-		return new StarElement(starCount, colorCode, spacing);
-	}
-
-	public ResourceLocation getTexture() {
+	public static ResourceLocation getTexture() {
 		return HUDHelper.getGuiStar();
 	}
-
 	@Override
-	public Vec2 getSize() {
+	public Dimension getSize(CompoundNBT compoundNBT, ICommonAccessor iCommonAccessor){
 		// 宽度 = (9px * 星星数) + (间距 * (星星数 - 1))
-		return new Vec2(starCount * 9 + (starCount - 1) * spacing, 9 + ClientChampionsConfig.jadeStarBottomPadding);
+		starCount = compoundNBT.getInt("starCount");
+		spacing = compoundNBT.getInt("spacing");
+		return new Dimension(starCount * 9 + (starCount - 1) * spacing, 9 + ClientChampionsConfig.jadeStarBottomPadding);
 	}
 
 	@Override
-	public void render(PoseStack poseStack, float x, float y, float maxX, float maxY) {
+	public void draw(CompoundNBT compoundNBT, ICommonAccessor iCommonAccessor, int x, int y) {
+		starCount = compoundNBT.getInt("starCount");
+		spacing = compoundNBT.getInt("spacing");
+		int color = Rank.getColor(compoundNBT.getString("colorCode"));
+		r = ColorHelper.PackedColor.red(color) / 255.0F;
+		g = ColorHelper.PackedColor.green(color) / 255.0F;
+		b = ColorHelper.PackedColor.blue(color) / 255.0F;
 		// set render element color
-		RenderSystem.setShaderColor(r, g, b, 1.0F);
-		RenderSystem.setShaderTexture(0, getTexture());
+		RenderSystem.color4f(r, g, b, 1.0F);
+		Minecraft.getInstance().getTextureManager().bind(getTexture());
 		for (int i = 0; i < starCount; i++) {
-			GuiComponent.blit(
-					poseStack,
-					(int) (x + i * (9 + spacing)), // 计算 X 偏移量
-					(int) y, // Y 坐标不变
+			AbstractGui.blit(
+					RenderContext.matrixStack,
+					x + i * (9 + spacing), // 计算 X 偏移量
+					y, // Y 坐标不变
 					0, 0,
 					9, 9, 9, 9
 			);
 		}
 		// reset color
-		RenderSystem.setShaderColor(1F, 1F, 1F, 1.0F);
+		RenderSystem.color4f(1F, 1F, 1F, 1.0F);
 	}
-
 }

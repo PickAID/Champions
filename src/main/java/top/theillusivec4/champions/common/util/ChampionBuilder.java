@@ -2,14 +2,15 @@ package top.theillusivec4.champions.common.util;
 
 import com.google.common.collect.ImmutableSortedMap;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.Util;
-import net.minecraft.core.Holder;
-import net.minecraft.network.chat.ChatType;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.attributes.Attribute;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
+import net.minecraft.server.management.PlayerList;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
+import net.minecraft.util.text.ChatType;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
@@ -23,6 +24,7 @@ import top.theillusivec4.champions.common.rank.RankManager;
 import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static top.theillusivec4.champions.common.integration.gamestages.GameStagesPlugin.hasTierStage;
 
@@ -92,7 +94,7 @@ public class ChampionBuilder {
 			return !affixesToAdd.contains(affix) && entitySettings
 					.map(entitySettings1 -> entitySettings1.canApply(affix)).orElse(true) && affix
 					.canApply(champion);
-		}).toList()));
+		}).collect(Collectors.toList())));
 		addAffixToList(size, affixesToAdd, validAffixes, RAND);
 		return affixesToAdd;
 	}
@@ -167,15 +169,15 @@ public class ChampionBuilder {
 	}
 
 	public static void applyGrowth(final IChampion champion, float growthFactor) {
-		var livingEntity = champion.getLivingEntity();
+		LivingEntity livingEntity = champion.getLivingEntity();
 		if (growthFactor != 0) {
 			Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
 				if (value.enable()) {
-					var attribute = ForgeRegistries.ATTRIBUTES.getHolder(value.attributeType());
-					var setting = value.setting();
-					var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
-					if (matches) {
-						attribute.ifPresent(attributeValue -> applyAttributeModifier(livingEntity, attributeValue, identifier, setting, growthFactor));
+					Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(value.attributeType());
+					Pair<Double, AttributeModifier.Operation> setting = value.setting();
+					boolean matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
+					if (matches && attribute != null) {
+						applyAttributeModifier(livingEntity, attribute, identifier, setting, growthFactor);
 					}
 				}
 			});
@@ -188,22 +190,22 @@ public class ChampionBuilder {
 	 * @param champion Need reset attribute target
 	 */
 	public static void resetChampionModifiers(final IChampion champion) {
-		var livingEntity = champion.getLivingEntity();
-		var playerList = Objects.requireNonNull(livingEntity.getServer()).getPlayerList();
+		LivingEntity livingEntity = champion.getLivingEntity();
+		PlayerList playerList = Objects.requireNonNull(livingEntity.getServer()).getPlayerList();
 		Champions.API.getAttributesModifierDataLoader().getLoadedData().forEach((identifier, value) -> {
 			if (value.enable()) {
-				var attribute = ForgeRegistries.ATTRIBUTES.getHolder(value.attributeType());
-				var matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
+				Attribute attribute = ForgeRegistries.ATTRIBUTES.getValue(value.attributeType());
+				boolean matches = value.modifierCondition().map(championModifierCondition -> championModifierCondition.test(champion)).orElse(true);
 				if (matches) {
-					attribute.ifPresent(attributeValue -> {
-						var attributeInstance = livingEntity.getAttributes().getInstance(attributeValue.value());
+					Optional.ofNullable(attribute).ifPresent(attributeValue -> {
+						ModifiableAttributeInstance attributeInstance = livingEntity.getAttributes().getInstance(attributeValue);
 						if (attributeInstance != null) {
 							attributeInstance.getModifiers().forEach(attributeModifier -> {
-								var isChampionModifier = attributeModifier.getName().contains(Champions.MODID);
+								boolean isChampionModifier = attributeModifier.getName().contains(Champions.MODID);
 								if (isChampionModifier) {
 									attributeInstance.removePermanentModifier(attributeModifier.getId());
 									if (ChampionsConfig.enableDebug) {
-										var debugInfo = "Removed champion modifier: UUID: %s Name:%s Operation: %s".formatted(attributeModifier.getId(), attributeModifier.getName(), attributeModifier.getOperation());
+										String debugInfo = String.format("Removed champion modifier: UUID: %s Name:%s Operation: %s", attributeModifier.getId(), attributeModifier.getName(), attributeModifier.getOperation());
 										Champions.LOGGER.debug(debugInfo);
 										playerList.getPlayers().stream().filter(p -> p.hasPermissions(2)).forEach(serverPlayer -> serverPlayer.sendMessage(Utils.literal(debugInfo), ChatType.SYSTEM, Util.NIL_UUID));
 									}
@@ -244,8 +246,8 @@ public class ChampionBuilder {
 	 */
 	public static void resetAndUpdate(final IChampion champion, final boolean resetGrowth, final boolean resetRank, final boolean resetAffix) {
 
-		var serverChampion = champion.getServer();
-		var targetEntity = champion.getLivingEntity();
+		IChampion.Server serverChampion = champion.getServer();
+		LivingEntity targetEntity = champion.getLivingEntity();
 
 		if (resetGrowth) {
 			ChampionBuilder.resetChampionModifiers(champion);
@@ -256,7 +258,7 @@ public class ChampionBuilder {
 		}
 
 		if (resetAffix) {
-			serverChampion.setAffixes(List.of());
+			serverChampion.setAffixes(Collections.emptyList());
 		}
 
 		// only manually sync to client because attributes will automatically sync by mojang
@@ -265,7 +267,7 @@ public class ChampionBuilder {
 		}
 	}
 
-	private static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attributeValue, ResourceLocation modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
+	private static void applyAttributeModifier(LivingEntity livingEntity, Attribute attributeValue, ResourceLocation modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
 		applyAttributeModifier(livingEntity, attributeValue, UUID.randomUUID(), getAttributeFormated(modifierId), setting.getFirst() * growthFactor, setting.getSecond());
 	}
 
@@ -273,9 +275,9 @@ public class ChampionBuilder {
 		return Utils.getLocation(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier");
 	}
 
-	public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, UUID modifierUuid, ResourceLocation modifierName, double amount, AttributeModifier.Operation operation) {
-		var attributeInstance = livingEntity.getAttributes().getInstance(attribute.value());
-		var attributeModifier = new AttributeModifier(modifierUuid, modifierName.toString(), amount, operation);
+	public static void applyAttributeModifier(LivingEntity livingEntity, Attribute attribute, UUID modifierUuid, ResourceLocation modifierName, double amount, AttributeModifier.Operation operation) {
+		ModifiableAttributeInstance attributeInstance = livingEntity.getAttributes().getInstance(attribute);
+		AttributeModifier attributeModifier = new AttributeModifier(modifierUuid, modifierName.toString(), amount, operation);
 		if (attributeInstance != null && !attributeInstance.hasModifier(attributeModifier)) {
 			attributeInstance.addPermanentModifier(attributeModifier);
 			if (attributeInstance.getAttribute() == Attributes.MAX_HEALTH) {

@@ -1,10 +1,10 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.particles.ParticleTypes;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.SoundEvents;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
@@ -24,7 +24,7 @@ public class ShieldingAffix extends CombatLifeCycleAffix {
 		Random random = livingEntity.getRandom();
 
 		if (shielding.mode) {
-			livingEntity.getLevel().addParticle(ParticleTypes.ENTITY_EFFECT,
+			livingEntity.level.addParticle(ParticleTypes.ENTITY_EFFECT,
 					livingEntity.position().x + (random.nextFloat() - 0.5D) * livingEntity.getBbWidth(),
 					livingEntity.position().y + random.nextFloat() * livingEntity.getBbHeight(),
 					livingEntity.position().z + (random.nextFloat() - 0.5D) * livingEntity.getBbWidth(),
@@ -46,7 +46,7 @@ public class ShieldingAffix extends CombatLifeCycleAffix {
 	}
 
 	@Override
-	public void readSyncTag(IChampion champion, CompoundTag tag) {
+	public void readSyncTag(IChampion champion, CompoundNBT tag) {
 		AffixData.BooleanData shielding =
 				AffixData.getData(champion, this.toString(), AffixData.BooleanData.class);
 		shielding.readFromNBT(tag);
@@ -54,7 +54,7 @@ public class ShieldingAffix extends CombatLifeCycleAffix {
 	}
 
 	@Override
-	public CompoundTag writeSyncTag(IChampion champion) {
+	public CompoundNBT writeSyncTag(IChampion champion) {
 		return AffixData.getData(champion, this.toString(), AffixData.BooleanData.class)
 				.writeToNBT();
 	}

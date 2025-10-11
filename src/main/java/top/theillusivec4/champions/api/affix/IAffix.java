@@ -18,7 +18,7 @@ public interface IAffix extends IAffixBase,
 	}
 
 	default String toLanguageKey() {
-		return getPrefix() + getIdentifier().toLanguageKey();
+		return getPrefix() + getIdentifier().getNamespace() +  "." + getIdentifier().getPath();
 	}
 
 	default boolean hasSubscriptions() {

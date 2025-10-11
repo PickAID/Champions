@@ -1,19 +1,19 @@
 package top.theillusivec4.champions.common.particle;
 
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.particles.BasicParticleType;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-public class RankParticle extends TextureSheetParticle {
+public class RankParticle extends SpriteTexturedParticle {
     private static final Random RANDOM = new Random();
-    private final SpriteSet spriteSet;
+    private final IAnimatedSprite spriteSet;
 
-    public RankParticle(ClientLevel clientLevel, double pX, double pY,
+    public RankParticle(ClientWorld clientLevel, double pX, double pY,
                         double pZ, double pXSpeed, double pYSpeed,
-                        double pZSpeed, SpriteSet pSpriteSet) {
+                        double pZSpeed, IAnimatedSprite pSpriteSet) {
         super(clientLevel, pX, pY, pZ, 0.5D - RANDOM.nextDouble(),
                 pYSpeed, 0.5D - RANDOM.nextDouble());
         this.spriteSet = pSpriteSet;
@@ -59,15 +59,18 @@ public class RankParticle extends TextureSheetParticle {
 
     @Nonnull
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public IParticleRenderType getRenderType() {
+        return IParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
-    public record RankFactory(SpriteSet spriteSet) implements ParticleProvider<SimpleParticleType> {
-
+    public static class RankFactory implements IParticleFactory<BasicParticleType> {
+	    IAnimatedSprite spriteSet;
+		public RankFactory (IAnimatedSprite spriteSet) {
+			this.spriteSet = spriteSet;
+		}
         @Override
         public Particle createParticle(
-                @Nonnull SimpleParticleType typeIn, @Nonnull ClientLevel worldIn,
+                @Nonnull BasicParticleType typeIn, @Nonnull ClientWorld worldIn,
                 double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
             RankParticle rankParticle =
                     new RankParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteSet);

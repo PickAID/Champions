@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.DamageSource;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
@@ -16,7 +16,7 @@ public class LivelyAffix extends CombatLifeCycleAffix {
 		AffixData.IntegerData lastAttackTime = AffixData
 				.getData(champion, this.toString(), AffixData.IntegerData.class);
 		LivingEntity livingEntity = champion.getLivingEntity();
-		lastAttackTime.num = (int) livingEntity.getLevel().getGameTime();
+		lastAttackTime.num = (int) livingEntity.level.getGameTime();
 		lastAttackTime.saveData();
 		return super.onDamage(champion, source, amount, newAmount);
 	}
@@ -30,7 +30,7 @@ public class LivelyAffix extends CombatLifeCycleAffix {
 					AffixData.getData(champion, this.toString(), AffixData.IntegerData.class);
 
 			if ((lastAttackTime.num + ChampionsConfig.livelyCooldown * 20L) <
-					livingEntity.getLevel().getGameTime()) {
+					livingEntity.level.getGameTime()) {
 				double heal = ChampionsConfig.livelyHealAmount;
 
 				if (livingEntity.getNoActionTime() >= 100) {

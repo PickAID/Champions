@@ -1,12 +1,12 @@
 package top.theillusivec4.champions.common.network;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.Entity;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.fml.network.NetworkEvent;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.common.capability.ChampionCapability;
 
@@ -30,7 +30,7 @@ public class SPacketSyncChampion {
         this.defaultColor = defaultColor;
     }
 
-    public static void encode(SPacketSyncChampion msg, FriendlyByteBuf buf) {
+    public static void encode(SPacketSyncChampion msg, PacketBuffer buf) {
         buf.writeInt(msg.entityId);
         buf.writeInt(msg.tier);
         buf.writeInt(msg.affixSize);
@@ -38,7 +38,7 @@ public class SPacketSyncChampion {
         msg.affixes.forEach(buf::writeResourceLocation);
     }
 
-    public static SPacketSyncChampion decode(FriendlyByteBuf buf) {
+    public static SPacketSyncChampion decode(PacketBuffer buf) {
         int entityId = buf.readInt();
         int tier = buf.readInt();
         Set<ResourceLocation> affixes = new HashSet<>();
@@ -53,7 +53,7 @@ public class SPacketSyncChampion {
 
     public static void handle(SPacketSyncChampion msg, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {
-            ClientLevel world = Minecraft.getInstance().level;
+            ClientWorld world = Minecraft.getInstance().level;
 
             if (world != null) {
                 Entity entity = world.getEntity(msg.entityId);

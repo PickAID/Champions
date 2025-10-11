@@ -1,9 +1,9 @@
 package top.theillusivec4.champions.common.datagen;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.loot.LootContext;
+import net.minecraft.loot.conditions.ILootCondition;
 import net.minecraftforge.common.data.GlobalLootModifierProvider;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.common.loot.AffixesPredicate;
@@ -18,8 +18,8 @@ public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
 
 	@Override
 	protected void start() {
-		this.add("champion_loot_modifier", ModLootModifiers.CHAMPION_LOOT.get(), new ChampionLootModifier(new LootItemCondition[]{
-				new LootItemChampionPropertyCondition(LootContext.EntityTarget.THIS, MinMaxBounds.Ints.ANY, AffixesPredicate.getAny())
+		this.add("champion_loot_modifier", ModLootModifiers.CHAMPION_LOOT.get(), new ChampionLootModifier(new ILootCondition[]{
+				new LootItemChampionPropertyCondition(LootContext.EntityTarget.THIS, MinMaxBounds.IntBound.ANY, AffixesPredicate.getAny())
 		}));
 	}
 }

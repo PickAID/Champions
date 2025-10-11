@@ -1,11 +1,11 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
@@ -24,22 +24,23 @@ import java.util.List;
 public class InfestedAffix extends GoalCombatAffix {
 
 	private static void spawnParasites(LivingEntity livingEntity, int amount,
-	                                   @Nullable LivingEntity target, ServerLevel world) {
+	                                   @Nullable LivingEntity target, ServerWorld world) {
 		boolean isEnder = livingEntity.getType().is(ModEntityTypes.Tags.IS_ENDER);
 		EntityType<?> type =
 				isEnder ? ChampionsConfig.infestedEnderParasite : ChampionsConfig.infestedParasite;
 
 		for (int i = 0; i < amount; i++) {
 			Entity entity = type
-					.create(world, null, null,null, livingEntity.blockPosition(), MobSpawnType.MOB_SUMMONED,
+					.create(world, null, null,null, livingEntity.blockPosition(), SpawnReason.MOB_SUMMONED,
 							false, false);
 
 			if (entity instanceof LivingEntity) {
 				ChampionCapability.getCapability(entity)
 						.ifPresent(champion -> champion.getServer().setRank(RankManager.getLowestRank()));
-				livingEntity.getLevel().addFreshEntity(entity);
+				livingEntity.level.addFreshEntity(entity);
 
-				if (entity instanceof Mob mob) {
+				if (entity instanceof MobEntity) {
+					MobEntity mob = (MobEntity) entity;
 					mob.spawnAnim();
 					mob.setLastHurtByMob(target);
 					mob.setTarget(target);
@@ -86,10 +87,10 @@ public class InfestedAffix extends GoalCombatAffix {
 		if (source.getDirectEntity() instanceof LivingEntity) {
 			target = (LivingEntity) source.getDirectEntity();
 		}
-		Level world = champion.getLivingEntity().getLevel();
+		World world = champion.getLivingEntity().level;
 
-		if (world instanceof ServerLevel) {
-			spawnParasites(champion.getLivingEntity(), buffer.num, target, (ServerLevel) world);
+		if (world instanceof ServerWorld) {
+			spawnParasites(champion.getLivingEntity(), buffer.num, target, (ServerWorld) world);
 		}
 		return true;
 	}
@@ -97,7 +98,7 @@ public class InfestedAffix extends GoalCombatAffix {
 	@Override
 	public List<Tuple<Integer, Goal>> getGoals(IChampion champion) {
 		return Collections.singletonList(
-				new Tuple<>(0, new SpawnParasiteGoal((Mob) champion.getLivingEntity())));
+				new Tuple<>(0, new SpawnParasiteGoal((MobEntity) champion.getLivingEntity())));
 	}
 
 	@Override
@@ -108,10 +109,10 @@ public class InfestedAffix extends GoalCombatAffix {
 	}
 
 	private class SpawnParasiteGoal extends Goal {
-		private final Mob mobEntity;
+		private final MobEntity mobEntity;
 		private int attackTime;
 
-		public SpawnParasiteGoal(Mob mobEntity) {
+		public SpawnParasiteGoal(MobEntity mobEntity) {
 			this.mobEntity = mobEntity;
 		}
 
@@ -129,12 +130,12 @@ public class InfestedAffix extends GoalCombatAffix {
 					AffixData.IntegerData buffer = AffixData
 							.getData(champion, InfestedAffix.this.toString(), AffixData.IntegerData.class);
 
-					if (buffer.num > 0 && this.mobEntity.getLevel() instanceof ServerLevel) {
+					if (buffer.num > 0 && this.mobEntity.level instanceof ServerWorld) {
 						this.attackTime =
 								ChampionsConfig.infestedInterval * 20 + this.mobEntity.getRandom().nextInt(5) * 10;
 						int amount = ChampionsConfig.infestedAmount;
 						spawnParasites(this.mobEntity, amount, this.mobEntity.getTarget(),
-								(ServerLevel) this.mobEntity.getLevel());
+								(ServerWorld) this.mobEntity.level);
 						buffer.num = Math.max(0, buffer.num - amount);
 						buffer.saveData();
 					}

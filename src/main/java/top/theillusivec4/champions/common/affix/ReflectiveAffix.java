@@ -1,8 +1,9 @@
 package top.theillusivec4.champions.common.affix;
 
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.entity.LivingEntity;
+
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSource;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import top.theillusivec4.champions.api.IChampion;
@@ -29,7 +30,8 @@ public class ReflectiveAffix extends CombatAffix {
 	@Override
 	public float onDamage(IChampion champion, DamageSource source, float amount, float newAmount) {
 
-		if (source.getDirectEntity() instanceof LivingEntity sourceEntity) {
+		if (source.getDirectEntity() instanceof LivingEntity) {
+			LivingEntity sourceEntity = (LivingEntity) source.getDirectEntity();
 
 			if (source.getMsgId().equals(REFLECTION_DAMAGE) ||
 					(source instanceof EntityDamageSource && ((EntityDamageSource) source).isThorns())) {
@@ -55,11 +57,6 @@ public class ReflectiveAffix extends CombatAffix {
 			if (source.isMagic()) {
 				newSource.setMagic();
 			}
-
-			if (source.isDamageHelmet()) {
-				newSource.damageHelmet();
-			}
-
 			if (source.isBypassArmor()) {
 				newSource.bypassArmor();
 			}
