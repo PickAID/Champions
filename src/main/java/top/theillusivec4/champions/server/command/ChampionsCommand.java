@@ -23,9 +23,13 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.PlayerInventoryWrapper;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
@@ -147,10 +151,24 @@ public class ChampionsCommand {
     var player = source.getPlayerOrException();
 
     ItemStack egg = createEgg(entityType, tier, affixes);
-    ItemHandlerHelper.giveItemToPlayer(player, egg, 1);
+    if (!insertEggToPlayer(player, egg)) {
+      Champions.LOGGER.debug("Player inventory is full");
+    }
     source.sendSuccess(() -> Component.translatable("commands.champions.egg.success", egg.getDisplayName()), false);
 
     return Command.SINGLE_SUCCESS;
+  }
+
+  private static boolean insertEggToPlayer(Player player, ItemStack itemStack){
+    PlayerInventoryWrapper wrapper = PlayerInventoryWrapper.of(player);
+    try (Transaction transaction = Transaction.openRoot()){
+      int inserted = wrapper.insert(ItemResource.of(itemStack), 1, transaction);
+      if (inserted == 1) {
+        transaction.commit();
+        return true;
+      }
+    }
+    return false;
   }
 
   public static ItemStack createEgg(EntityType<?> entityType,
