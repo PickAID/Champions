@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.affix;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageSource;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixCategory;
@@ -38,8 +38,8 @@ public class AdaptableAffix extends CombatAffix {
       .setCategory(AffixCategory.DEFENSE)
       .setHasSub(false)
       .setMobList(List.of(
-        ResourceLocation.withDefaultNamespace("pig"),
-        ResourceLocation.withDefaultNamespace("creeper")
+        Identifier.withDefaultNamespace("pig"),
+        Identifier.withDefaultNamespace("creeper")
       ))
       .setMobPermission(ConfigEnums.Permission.BLACKLIST)
       .build();

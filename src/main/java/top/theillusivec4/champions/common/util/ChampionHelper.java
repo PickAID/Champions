@@ -2,7 +2,7 @@ package top.theillusivec4.champions.common.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
@@ -125,7 +125,7 @@ public class ChampionHelper {
   }
 
   private static boolean isValidEntity(final LivingEntity livingEntity) {
-    ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType());
+    Identifier rl = BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType());
 
     String entity = rl.toString();
 
@@ -149,7 +149,7 @@ public class ChampionHelper {
     return false;
   }
 
-  private static boolean isValidDimension(final ResourceLocation resourceLocation) {
+  private static boolean isValidDimension(final Identifier resourceLocation) {
     String dimension = resourceLocation.toString();
 
     if (ChampionsConfig.dimensionPermission == Permission.BLACKLIST) {

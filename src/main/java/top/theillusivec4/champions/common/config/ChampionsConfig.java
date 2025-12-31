@@ -5,7 +5,7 @@ import com.electronwill.nightconfig.core.serde.ObjectDeserializer;
 import com.google.common.collect.Lists;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -189,11 +189,11 @@ public class ChampionsConfig {
     infestedInterval = SERVER.infestedInterval.get();
 
     var type = BuiltInRegistries.ENTITY_TYPE
-      .getOptional(ResourceLocation.parse(SERVER.infestedParasite.get()));
+      .getOptional(Identifier.parse(SERVER.infestedParasite.get()));
     infestedParasite = type.isPresent() ? type.get() : EntityType.SILVERFISH;
 
     type = BuiltInRegistries.ENTITY_TYPE
-      .getOptional(ResourceLocation.parse(SERVER.infestedEnderParasite.get()));
+      .getOptional(Identifier.parse(SERVER.infestedEnderParasite.get()));
     infestedEnderParasite = type.isPresent() ? type.get() : EntityType.ENDERMITE;
 
     paralyzingChance = SERVER.paralyzingChance.get();
@@ -216,7 +216,7 @@ public class ChampionsConfig {
       if (s.length < 1) {
         throw new IllegalArgumentException();
       }
-      Optional<Holder.Reference<MobEffect>> effect = BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(s[0]));
+      Optional<Holder.Reference<MobEffect>> effect = BuiltInRegistries.MOB_EFFECT.get(Identifier.parse(s[0]));
 
       if (effect.isEmpty()) {
         throw new IllegalArgumentException();
@@ -252,7 +252,7 @@ public class ChampionsConfig {
     boolean valid = false;
     if (obj instanceof List<?> entityNameList) {
       for (var entityName : entityNameList) {
-        ResourceLocation location = ResourceLocation.parse((String) entityName);
+        Identifier location = Identifier.parse((String) entityName);
         valid = BuiltInRegistries.ENTITY_TYPE.containsKey(location);
       }
     }

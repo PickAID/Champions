@@ -5,7 +5,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -293,11 +293,11 @@ public class ChampionBuilder {
     }
   }
 
-  private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, ResourceLocation modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
+  private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, Identifier modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
     applyAttributeModifier(livingEntity, attributeValue, Utils.getLocation(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
   }
 
-  public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, ResourceLocation modifierId, double amount, AttributeModifier.Operation operation) {
+  public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, Identifier modifierId, double amount, AttributeModifier.Operation operation) {
     var attributeInstance = livingEntity.getAttributes().getInstance(attribute);
     if (attributeInstance != null && !attributeInstance.hasModifier(modifierId)) {
       attributeInstance.addOrReplacePermanentModifier(new AttributeModifier(modifierId, amount, operation));

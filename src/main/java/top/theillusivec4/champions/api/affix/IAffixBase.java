@@ -1,6 +1,6 @@
 package top.theillusivec4.champions.api.affix;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import top.theillusivec4.champions.api.data.AffixCategory;
 
 public interface IAffixBase {
@@ -9,7 +9,7 @@ public interface IAffixBase {
      *
      * @return String of IAffix id
      */
-    ResourceLocation getIdentifier();
+    Identifier getIdentifier();
 
     /**
      * Get IAffix's Category

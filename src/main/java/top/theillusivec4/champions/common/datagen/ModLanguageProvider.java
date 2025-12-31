@@ -2,7 +2,7 @@ package top.theillusivec4.champions.common.datagen;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import top.theillusivec4.champions.Champions;
@@ -452,8 +452,8 @@ public class ModLanguageProvider extends LanguageProvider {
    * @param byPlayerTranslate player killed by the player death message translation
    */
   protected void addDamageType(ResourceKey<DamageType> damageType, String translate, String byPlayerTranslate) {
-    add("death.attack." + damageType.location().getPath(), translate);
-    add("death.attack." + damageType.location().getPath() + ".player", byPlayerTranslate);
+    add("death.attack." + damageType.identifier().getPath(), translate);
+    add("death.attack." + damageType.identifier().getPath() + ".player", byPlayerTranslate);
   }
 
   /**
@@ -494,7 +494,7 @@ public class ModLanguageProvider extends LanguageProvider {
    * @param post      注册名 形似minecraft.block
    * @param translate 翻译 block.minecraft.block -> 石头
    */
-  protected void add(String pre, ResourceLocation post, String translate) {
+  protected void add(String pre, Identifier post, String translate) {
     add(post.toLanguageKey(pre), translate);
   }
 }

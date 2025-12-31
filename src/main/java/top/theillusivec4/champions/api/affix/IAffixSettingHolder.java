@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.api.affix;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.resources.Identifier;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.config.ConfigEnums;
 
@@ -13,6 +13,6 @@ public interface IAffixSettingHolder {
     AffixSetting getSetting();
     MinMaxBounds.Ints getTier();
     ConfigEnums.Permission getMobPermission();
-    Optional<List<ResourceLocation>> getMobList();
+    Optional<List<Identifier>> getMobList();
 
 }

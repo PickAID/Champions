@@ -2,16 +2,17 @@ package top.theillusivec4.champions.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.model.ShulkerBulletModel;
+import net.minecraft.client.model.object.projectile.ShulkerBulletModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import top.theillusivec4.champions.common.entity.BaseBulletEntity;
@@ -19,8 +20,8 @@ import top.theillusivec4.champions.common.util.Utils;
 
 public class ColorizedBulletRenderer<T extends BaseBulletEntity, S extends BulletRenderState> extends EntityRenderer<T, S> {
 
-  private static final ResourceLocation GENERIC_SPARK_TEXTURE = Utils.getLocation("textures/entity/generic_spark.png");
-  private static final RenderType RENDER_TYPE = RenderType.entityTranslucent(GENERIC_SPARK_TEXTURE);
+  private static final Identifier GENERIC_SPARK_TEXTURE = Utils.getLocation("textures/entity/generic_spark.png");
+  private static final RenderType RENDER_TYPE = RenderTypes.entityTranslucent(GENERIC_SPARK_TEXTURE);
   private final ShulkerBulletModel model;
 
   private final int color;

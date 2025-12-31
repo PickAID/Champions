@@ -4,9 +4,9 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementType;
-import net.minecraft.advancements.critereon.EntityPredicate;
-import net.minecraft.advancements.critereon.KilledTrigger;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.KilledTrigger;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.advancements.AdvancementProvider;
@@ -52,11 +52,11 @@ public class ModAdvancementProvider extends AdvancementProvider {
           null,
           AdvancementType.CHALLENGE, true, true, true
         )
-        .addCriterion("kill_a_champion", KilledTrigger.TriggerInstance.playerKilledEntity(new EntityPredicate.Builder()
-          .subPredicate(new ChampionPropertyCondition(LootContext.EntityTarget.THIS,
-            Optional.of(MinMaxBounds.Ints.ANY),
-            Optional.of(new AffixesPredicate(Utils.getLocationSet("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
-          )))
+//        .addCriterion("kill_a_champion", KilledTrigger.TriggerInstance.playerKilledEntity(new EntityPredicate.Builder()
+//          .subPredicate(new ChampionPropertyCondition(LootContext.EntityTarget.THIS,
+//            Optional.of(MinMaxBounds.Ints.ANY),
+//            Optional.of(new AffixesPredicate(Utils.getLocationSet("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
+//          )))
         .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion"))).save(saver, Utils.getLocation("kill_a_champion"))
         .value();
     }

@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.api;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.resources.Identifier;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.config.ConfigEnums;
@@ -12,14 +12,13 @@ import java.util.Optional;
 /**
  * Basic affix builder for custom affix behavior
  *
- * @param <T> Affix type
  */
 public class AffixSettingBuilder {
 
-  private ResourceLocation type;
+  private Identifier type;
   private boolean isEnable;
   private MinMaxBounds.Ints tier;
-  private List<ResourceLocation> mobList;
+  private List<Identifier> mobList;
   private ConfigEnums.Permission mobPermission;
   private AffixCategory category;
   private String prefix;
@@ -29,7 +28,7 @@ public class AffixSettingBuilder {
         return RecordCodecBuilder.create(instance -> instance.group(
                 Codec.BOOL.fieldOf("setEnable").forGetter(IAffix::isEnabled),
                 IntCodec.codec().fieldOf("tier").forGetter(IAffix::getTier),
-                Codec.list(ResourceLocation.CODEC).optionalFieldOf("mobList").forGetter(IAffix::getMobList),
+                Codec.list(Identifier.CODEC).optionalFieldOf("mobList").forGetter(IAffix::getMobList),
                 StringRepresentable.fromEnum(ConfigEnums.Permission::values).fieldOf("mobPermission").forGetter(IAffix::getMobPermission),
                 StringRepresentable.fromEnum(AffixCategory::values).fieldOf("category").forGetter(IAffix::getCategory),
                 Codec.STRING.fieldOf("prefix").forGetter(IAffix::getPrefix),
@@ -56,7 +55,7 @@ public class AffixSettingBuilder {
       .setTier(MinMaxBounds.Ints.between(1, 100));
   }
 
-  public AffixSettingBuilder setType(ResourceLocation type) {
+  public AffixSettingBuilder setType(Identifier type) {
     this.type = type;
     return this;
   }
@@ -92,7 +91,7 @@ public class AffixSettingBuilder {
   }
 
 
-  public AffixSettingBuilder setMobList(List<ResourceLocation> mobList) {
+  public AffixSettingBuilder setMobList(List<Identifier> mobList) {
     this.mobList = mobList;
     return this;
   }

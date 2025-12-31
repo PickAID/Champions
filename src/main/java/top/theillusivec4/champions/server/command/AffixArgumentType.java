@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.server.command.AffixArgumentType.IAffixProvider;
@@ -45,8 +45,8 @@ public class AffixArgumentType implements ArgumentType<IAffixProvider> {
     while (reader.canRead()) {
       reader.skipWhitespace();  // 跳过空白字符
 
-      // 尝试读取ResourceLocation类型的标识符
-      ResourceLocation affixId = ResourceLocation.read(reader);
+      // 尝试读取Identifier类型的标识符
+      Identifier affixId = Identifier.read(reader);
       String id = affixId.toString();
 
       // 检查并添加到affixes列表中

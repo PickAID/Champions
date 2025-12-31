@@ -3,7 +3,7 @@ package top.theillusivec4.champions.common.rank;
 import com.google.common.collect.ImmutableSortedMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffect;
 import top.theillusivec4.champions.Champions;
@@ -110,7 +110,7 @@ public class RankManager {
 
     rank.effects.forEach(effect -> {
       String[] parsed = effect.split(";");
-      Optional<Holder.Reference<MobEffect>> found = BuiltInRegistries.MOB_EFFECT.get(ResourceLocation.parse(parsed[0]));
+      Optional<Holder.Reference<MobEffect>> found = BuiltInRegistries.MOB_EFFECT.get(Identifier.parse(parsed[0]));
 
       if (found.isPresent()) {
         int amplifier = 0;

@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -55,8 +55,10 @@ public class ChampionLootModifier extends LootModifier {
       if (damageSource == null) {
         return generatedLoot;
       }
-      var server = entity.level().getServer();
-      if (server != null && !server.getGameRules().getBoolean(GameRules.RULE_DOMOBLOOT) ||
+
+//      var server = entity.level().getServer();
+
+      if (entity.level() instanceof ServerLevel level && !level.getGameRules().get(GameRules.MOB_DROPS) ||
         (!ChampionsConfig.fakeLoot && damageSource.getDirectEntity() instanceof FakePlayer)) {
         return generatedLoot;
       }

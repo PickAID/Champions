@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.capability;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -73,7 +73,7 @@ public class ChampionAttachment {
 
     public static class Server implements IChampion.Server {
 
-      private final Map<ResourceLocation, CompoundTag> data = new HashMap<>();
+      private final Map<Identifier, CompoundTag> data = new HashMap<>();
       private Rank rank = null;
       private List<IAffix> affixes = new ArrayList<>();
 
@@ -99,20 +99,20 @@ public class ChampionAttachment {
 
       @Override
       public void setData(String identifier, CompoundTag data) {
-        this.data.put(ResourceLocation.parse(identifier), data);
+        this.data.put(Identifier.parse(identifier), data);
       }
 
       @Override
       public CompoundTag getData(String identifier) {
-        return this.data.getOrDefault(ResourceLocation.parse(identifier), new CompoundTag());
+        return this.data.getOrDefault(Identifier.parse(identifier), new CompoundTag());
       }
     }
 
     public static class Client implements IChampion.Client {
 
       private final List<IAffix> affixes = new ArrayList<>();
-      private final Map<ResourceLocation, IAffix> idToAffix = new HashMap<>();
-      private final Map<ResourceLocation, CompoundTag> data = new HashMap<>();
+      private final Map<Identifier, IAffix> idToAffix = new HashMap<>();
+      private final Map<Identifier, CompoundTag> data = new HashMap<>();
       private Tuple<Integer, String> rank = null;
 
       @Override
@@ -131,10 +131,10 @@ public class ChampionAttachment {
       }
 
       @Override
-      public void setAffixes(Set<ResourceLocation> affixes) {
+      public void setAffixes(Set<Identifier> affixes) {
         this.affixes.clear();
 
-        for (ResourceLocation affix : affixes) {
+        for (Identifier affix : affixes) {
           Champions.API.getAffix(affix).ifPresent(val -> {
             this.affixes.add(val);
             this.idToAffix.put(val.getIdentifier(), val);
@@ -144,17 +144,17 @@ public class ChampionAttachment {
 
       @Override
       public Optional<IAffix> getAffix(String id) {
-        return Optional.ofNullable(this.idToAffix.get(ResourceLocation.parse(id)));
+        return Optional.ofNullable(this.idToAffix.get(Identifier.parse(id)));
       }
 
       @Override
       public void setData(String identifier, CompoundTag data) {
-        this.data.put(ResourceLocation.parse(identifier), data);
+        this.data.put(Identifier.parse(identifier), data);
       }
 
       @Override
       public CompoundTag getData(String identifier) {
-        return this.data.getOrDefault(ResourceLocation.parse(identifier), new CompoundTag());
+        return this.data.getOrDefault(Identifier.parse(identifier), new CompoundTag());
       }
     }
   }

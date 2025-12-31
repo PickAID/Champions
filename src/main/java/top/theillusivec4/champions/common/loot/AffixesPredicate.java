@@ -2,8 +2,8 @@ package top.theillusivec4.champions.common.loot;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.critereon.MinMaxBounds;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.advancements.criterion.MinMaxBounds;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import top.theillusivec4.champions.api.affix.IAffix;
 
@@ -11,11 +11,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public record AffixesPredicate(Set<ResourceLocation> values, MinMaxBounds.Ints matches,
+public record AffixesPredicate(Set<Identifier> values, MinMaxBounds.Ints matches,
                                MinMaxBounds.Ints count) {
 
     public static final Codec<AffixesPredicate> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-      NeoForgeExtraCodecs.setOf(ResourceLocation.CODEC).fieldOf("values").forGetter(AffixesPredicate::values),
+      NeoForgeExtraCodecs.setOf(Identifier.CODEC).fieldOf("values").forGetter(AffixesPredicate::values),
       MinMaxBounds.Ints.CODEC.fieldOf("matches").forGetter(AffixesPredicate::matches),
       MinMaxBounds.Ints.CODEC.fieldOf("count").forGetter(AffixesPredicate::count)
     ).apply(instance, AffixesPredicate::new));

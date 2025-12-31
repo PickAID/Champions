@@ -1,6 +1,6 @@
 package top.theillusivec4.champions.common.util;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLPaths;
@@ -68,12 +68,12 @@ public class Utils {
     }
   }
 
-  public static ResourceLocation getLocation(final String path) {
-    return ResourceLocation.fromNamespaceAndPath(Champions.MODID, path);
+  public static Identifier getLocation(final String path) {
+    return Identifier.fromNamespaceAndPath(Champions.MODID, path);
   }
 
-  public static Set<ResourceLocation> getLocationSet(final String... path) {
-    Set<ResourceLocation> locations = new HashSet<>();
+  public static Set<Identifier> getLocationSet(final String... path) {
+    Set<Identifier> locations = new HashSet<>();
     for (String s : path) {
       locations.add(getLocation(s));
     }

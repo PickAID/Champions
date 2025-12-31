@@ -1,7 +1,6 @@
 package top.theillusivec4.champions.common.event;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
-import mcjty.theoneprobe.TheOneProbe;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.InterModComms;
@@ -21,7 +20,6 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
-import top.theillusivec4.champions.client.integration.theoneprobe.TheOneProbePlugin;
 import top.theillusivec4.champions.common.capability.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.datagen.*;
@@ -65,10 +63,12 @@ public class ModEventHandler {
   @SubscribeEvent
   private void onInterModEnqueue(final InterModEnqueueEvent event) {
     // register TheOneProbe integration
-    if (ModList.get().isLoaded(TheOneProbe.MODID)) {
-      Champions.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
-      InterModComms.sendTo(Champions.MODID, TheOneProbe.MODID, "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
-    }
+
+//    if (ModList.get().isLoaded(TheOneProbe.MODID)) {
+//      Champions.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
+//      InterModComms.sendTo(Champions.MODID, TheOneProbe.MODID, "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
+//    }
+
   }
 
   @SubscribeEvent

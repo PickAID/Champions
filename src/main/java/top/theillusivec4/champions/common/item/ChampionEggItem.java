@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -66,7 +66,7 @@ public class ChampionEggItem extends EggItem {
       var id = entityTag.get().getString(ID_TAG);
 
       if (id.isPresent()) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id.get()));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id.get()));
       }
     }
     return Optional.empty();
@@ -95,7 +95,7 @@ public class ChampionEggItem extends EggItem {
   }
 
   public static void write(
-    ItemStack stack, ResourceLocation entityId, int tier,
+    ItemStack stack, Identifier entityId, int tier,
     Collection<IAffix> affixes) {
     CompoundTag tag = stack.getOrDefault(ModDataComponents.ENTITY_TAG_COMPONENT, new CompoundTag());
 

@@ -2,9 +2,9 @@ package top.theillusivec4.champions.api.data;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import org.jetbrains.annotations.NotNull;
@@ -16,10 +16,10 @@ import top.theillusivec4.champions.common.rank.RankManager;
 import java.util.Optional;
 import java.util.Set;
 
-public record ChampionModifierCondition(Optional<Set<ResourceLocation>> mobList, Optional<MinMaxBounds.Ints> tier,
+public record ChampionModifierCondition(Optional<Set<Identifier>> mobList, Optional<MinMaxBounds.Ints> tier,
                                         Optional<AffixesPredicate> affixes, ConfigEnums.Permission permission) {
   public static final MapCodec<ChampionModifierCondition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    NeoForgeExtraCodecs.setOf(ResourceLocation.CODEC).optionalFieldOf("entity").forGetter(ChampionModifierCondition::mobList),
+    NeoForgeExtraCodecs.setOf(Identifier.CODEC).optionalFieldOf("entity").forGetter(ChampionModifierCondition::mobList),
     MinMaxBounds.Ints.CODEC.optionalFieldOf("tier").forGetter(ChampionModifierCondition::tier),
     AffixesPredicate.CODEC.optionalFieldOf("affixes").forGetter(ChampionModifierCondition::affixes),
     StringRepresentable.fromEnum(ConfigEnums.Permission::values).fieldOf("permission").forGetter(ChampionModifierCondition::permission)

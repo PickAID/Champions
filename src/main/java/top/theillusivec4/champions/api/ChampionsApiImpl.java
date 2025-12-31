@@ -1,6 +1,6 @@
 package top.theillusivec4.champions.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixDataLoader;
@@ -33,16 +33,16 @@ public class ChampionsApiImpl implements IChampionsApi {
 
   @Override
   public Optional<IAffix> getAffix(String id) {
-    return getAffix(ResourceLocation.parse(id));
+    return getAffix(Identifier.parse(id));
   }
 
   @Override
-  public Optional<IAffix> getAffix(ResourceLocation id) {
+  public Optional<IAffix> getAffix(Identifier id) {
     return AffixRegistry.AFFIX_REGISTRY.getOptional(id);
   }
 
   @Override
-  public Optional<ResourceLocation> getAffixId(IAffix affix) {
+  public Optional<Identifier> getAffixId(IAffix affix) {
     return Optional.ofNullable(AffixRegistry.AFFIX_REGISTRY.getKey(affix));
   }
 

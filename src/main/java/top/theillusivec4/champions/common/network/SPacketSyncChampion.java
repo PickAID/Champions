@@ -5,7 +5,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
-                                  Set<ResourceLocation> affixes) implements CustomPacketPayload {
+                                  Set<Identifier> affixes) implements CustomPacketPayload {
 
   public static final Type<SPacketSyncChampion> TYPE = new Type<>(Utils.getLocation("sync_champion"));
 
@@ -33,7 +33,7 @@ public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
     SPacketSyncChampion::tier,
     ByteBufCodecs.STRING_UTF8,
     SPacketSyncChampion::defaultColor,
-    ByteBufCodecs.fromCodec(NeoForgeExtraCodecs.setOf(ResourceLocation.CODEC)), SPacketSyncChampion::affixes, SPacketSyncChampion::new
+    ByteBufCodecs.fromCodec(NeoForgeExtraCodecs.setOf(Identifier.CODEC)), SPacketSyncChampion::affixes, SPacketSyncChampion::new
   );
 
   public static void handle(final SPacketSyncChampion data, final IPayloadContext cxt) {

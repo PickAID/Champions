@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.resources.FileToIdConverter;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
@@ -17,25 +17,25 @@ import java.util.Map;
 
 public class AffixDataLoader extends SimpleJsonResourceReloadListener<AffixSetting> {
   private static final String FOLDER = "affix_setting";
-  private final Map<ResourceLocation, AffixSetting> loadedData = new HashMap<>();
+  private final Map<Identifier, AffixSetting> loadedData = new HashMap<>();
 
   public AffixDataLoader() {
     super(AffixSetting.CODEC, FileToIdConverter.json(FOLDER));
   }
 
   @Override
-  protected Map<ResourceLocation, AffixSetting> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+  protected Map<Identifier, AffixSetting> prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
     return listResources(resourceManager, profilerFiller);
   }
 
   @Override
-  protected void apply(Map<ResourceLocation, AffixSetting> affixSettingMap, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
+  protected void apply(Map<Identifier, AffixSetting> affixSettingMap, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
     affixSettingMap.putAll(loadedData);
   }
 
-  public Map<ResourceLocation, AffixSetting> listResources(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
+  public Map<Identifier, AffixSetting> listResources(ResourceManager pResourceManager, ProfilerFiller pProfiler) {
     pProfiler.startTick();
-    for (Map.Entry<ResourceLocation, Resource> resource : pResourceManager.listResources(FOLDER, p -> p.getPath().endsWith(".json")).entrySet()) {
+    for (Map.Entry<Identifier, Resource> resource : pResourceManager.listResources(FOLDER, p -> p.getPath().endsWith(".json")).entrySet()) {
       try (Reader reader = resource.getValue().openAsReader()) {
         JsonElement element = JsonParser.parseReader(reader);
         AffixSetting.CODEC.parse(JsonOps.INSTANCE, element)
@@ -49,12 +49,12 @@ public class AffixDataLoader extends SimpleJsonResourceReloadListener<AffixSetti
     return loadedData;
   }
 
-  public void cache(Map<ResourceLocation, AffixSetting> affixSettings) {
+  public void cache(Map<Identifier, AffixSetting> affixSettings) {
     loadedData.clear();
     loadedData.putAll(affixSettings);
   }
 
-  public Map<ResourceLocation, AffixSetting> getLoadedData() {
+  public Map<Identifier, AffixSetting> getLoadedData() {
     return loadedData;
   }
 }

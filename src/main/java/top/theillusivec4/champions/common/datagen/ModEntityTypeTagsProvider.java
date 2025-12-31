@@ -6,7 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EntityTypeTagsProvider;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class ModEntityTypeTagsProvider extends EntityTypeTagsProvider {
   }
 
   private ResourceKey<EntityType<?>> create(String name) {
-    return ResourceKey.create(Registries.ENTITY_TYPE, ResourceLocation.parse(name));
+    return ResourceKey.create(Registries.ENTITY_TYPE, Identifier.parse(name));
   }
 
   private EntityType<?> lookup(HolderLookup.Provider provider, String name) {
