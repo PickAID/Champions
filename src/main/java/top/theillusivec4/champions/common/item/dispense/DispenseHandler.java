@@ -18,7 +18,7 @@ public class DispenseHandler {
     Direction direction = source.state().getValue(DispenserBlock.FACING);
     Optional<EntityType<?>> entityType = ChampionEggItem.getType(stack);
     entityType.ifPresent(type -> {
-      Entity entity = type.create(source.level(), (s) -> stack.getTags(), source.pos().relative(direction), EntitySpawnReason.DISPENSER, true, direction != Direction.UP);
+      Entity entity = type.create(source.level(), null, source.pos().relative(direction), EntitySpawnReason.DISPENSER, true, direction != Direction.UP);
       ChampionAttachment.getAttachment(entity).ifPresent(champion -> {
         if (ChampionHelper.isValidChampion(champion.getServer())) {
           ChampionEggItem.read(champion, stack);

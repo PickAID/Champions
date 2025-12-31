@@ -30,7 +30,7 @@ public class InfestedAffix extends GoalCombatAffix {
 
   private static void spawnParasites(LivingEntity livingEntity, int amount,
                                      @Nullable LivingEntity target, ServerLevel world) {
-    boolean isEnder = livingEntity.getType().is(ModEntityTypes.Tags.IS_ENDER);
+    boolean isEnder = livingEntity.is(ModEntityTypes.Tags.IS_ENDER);
     EntityType<?> type =
       isEnder ? ChampionsConfig.infestedEnderParasite : ChampionsConfig.infestedParasite;
     List<Mob> children = new ArrayList<>();

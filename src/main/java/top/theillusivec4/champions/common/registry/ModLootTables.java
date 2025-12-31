@@ -23,7 +23,7 @@ public class ModLootTables {
     if (LOCATIONS.add(name)) {
       return name;
     } else {
-      throw new IllegalArgumentException(name.location() + " is already a registered built-in loot table");
+      throw new IllegalArgumentException(name.identifier() + " is already a registered built-in loot table");
     }
   }
 

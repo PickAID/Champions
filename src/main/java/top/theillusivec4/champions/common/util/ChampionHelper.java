@@ -42,11 +42,11 @@ public class ChampionHelper {
       if (ChampionsConfig.allowChampionsList) {
         // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
         if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
-          return entity.getType().is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+          return entity.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
         }
         // If entitiesPermission is BLACKLIST, reject the entity
         else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
-          return !entity.getType().is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+          return !entity.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
         }
       } else {
         // If champions are not allowed, check if the entity is an enemy
@@ -65,13 +65,13 @@ public class ChampionHelper {
 
     if (ChampionsConfig.allowChampionsList) {
       // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
-      if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
-        return entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
-      }
+//      if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
+//        return entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+//      }
       // If entitiesPermission is BLACKLIST, reject the entity
-      else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
-        return !entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
-      }
+//      else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
+//        return !entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+//      }
     }
 
     return entityType.getCategory() == MobCategory.MONSTER; // If entity is not a LivingEntity
@@ -113,7 +113,7 @@ public class ChampionHelper {
    */
   public static boolean notPotential(final LivingEntity livingEntity) {
     return !isValidEntity(livingEntity) ||
-      !isValidDimension(livingEntity.level().dimension().location()) ||
+      !isValidDimension(livingEntity.level().dimension().identifier()) ||
       nearActiveBeacon(livingEntity);
   }
 

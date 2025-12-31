@@ -2,10 +2,12 @@ package top.theillusivec4.champions.common.util;
 
 import com.google.common.collect.ImmutableSortedMap;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.commands.Commands;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -233,7 +235,7 @@ public class ChampionBuilder {
                   if (ChampionsConfig.enableDebug) {
                     var debugInfo = "Removed champion modifier: Name:%s Operation: %s Amount: %s".formatted(attributeModifier.id(), attributeModifier.operation(), attributeModifier.amount());
                     Champions.LOGGER.debug(debugInfo);
-                    playerList.getPlayers().stream().filter(p -> p.hasPermissions(2)).forEach(serverPlayer -> serverPlayer.sendSystemMessage(Component.literal(debugInfo)));
+                    playerList.getPlayers().stream().filter(player -> player.permissions().hasPermission(Permissions.COMMANDS_ADMIN)).forEach(player -> player.sendSystemMessage(Component.literal(debugInfo)));
                   }
                 }
               });
