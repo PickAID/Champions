@@ -36,15 +36,15 @@ public class AffixTypes {
     DAMPENING = register("dampening", DampeningAffix::new); // 抑制 √
     DESECRATING = register("desecrating", DesecratingAffix::new); // 亵渎 Goal Affix ×
     ENKINDLING = register("enkindling", EnkindlingAffix::new); // 点燃 Goal Affi ×
-    HASTY = register("hasty", HastyAffix::new); // 匆忙 √
+    HASTY = register("hasty", HastyAffix::new); // 急速 √
     INFESTED = register("infested", InfestedAffix::new); // 寄生 Goal Affix ×
     KNOCKING = register("knocking", KnockingAffix::new); // 击退 √
     LIVELY = register("lively", LivelyAffix::new); // 活性 √
     MAGNETIC = register("magnetic", MagneticAffix::new); // 磁性 Goal Affix ×
-    MOLTEN = register("molten", MoltenAffix::new); // 熔融 √ 未完全实现 目前还不能传递伤害量
+    MOLTEN = register("molten", MoltenAffix::new); // 熔融 √
     PARALYZING = register("paralyzing", ParalyzingAffix::new); // 瘫痪 √
-    PLAGUED = register("plagued", PlaguedAffix::new); // 瘟疫 ·
-    REFLECTIVE = register("reflective", ReflectiveAffix::new); // 反思 ·
+    PLAGUED = register("plagued", PlaguedAffix::new); // 瘟疫 √ 差一个范围实体效果组件
+    REFLECTIVE = register("reflective", ReflectiveAffix::new); // 反射 √
     SHIELDING = register("shielding", ShieldingAffix::new); // 防护 ·
     WOUNDING = register("wounding", WoundingAffix::new); // 伤害 ·
   }

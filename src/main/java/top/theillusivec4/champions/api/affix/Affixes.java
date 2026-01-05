@@ -21,7 +21,6 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
-import top.theillusivec4.champions.api.affix.effect.AffixEffectComponentTypes;
 import top.theillusivec4.champions.api.affix.effect.AffixTarget;
 import top.theillusivec4.champions.api.affix.effect.AllOf;
 import top.theillusivec4.champions.api.affix.effect.AttributeEffect;
@@ -157,11 +156,13 @@ public final class Affixes {
         .withTargetedConditionalEffects(
           AffixEffectComponentTypes.POST_ATTACK,
           AffixTarget.ATTACKER,
-          AffixTarget.ATTACKER,
+          AffixTarget.VICTIM,
           AllOf.entityEffects(
             AffixEntityEffectTypes.damageEntity(
-              LootContextBasedValueTypes.constant(5.0f), // 这里本应该造成所受到伤害量的攻击
-              LootContextBasedValueTypes.constant(5.0f),
+              LootContextBasedValueTypes.lootParam(LootParamSourceTypes.Floats.LATEST_ORIGINAL_DAMAGE_AMOUNT),
+              LootContextBasedValueTypes.lootParam(LootParamSourceTypes.Floats.LATEST_ORIGINAL_DAMAGE_AMOUNT),
+//              LootContextBasedValueTypes.constant(5.0f), // 这里本应该造成所受到伤害量的攻击
+//              LootContextBasedValueTypes.constant(5.0f),
               damageTypes.getOrThrow(DamageTypes.IN_FIRE)
             ),
             AffixEntityEffectTypes.ignite(
@@ -207,8 +208,8 @@ public final class Affixes {
           AffixTarget.ATTACKER,
           AffixEntityEffectTypes.applyMobEffect(
             HolderSet.direct(MobEffects.POISON),
-            LootContextBasedValueTypes.constant(300),
-            LootContextBasedValueTypes.constant(300),
+            LootContextBasedValueTypes.constant(10),
+            LootContextBasedValueTypes.constant(15),
             LootContextBasedValueTypes.constant(1),
             LootContextBasedValueTypes.constant(1)
           )

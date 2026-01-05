@@ -40,7 +40,7 @@ public final class SpawnEggCommand {
   public static final String SUCCESS_KEY = "commands.champions_egg.success";
   public static final String FAILED_KEY = "commands.champions_egg.failed";
   public static final SuggestionProvider<CommandSourceStack> SPAWN_EGGS = SuggestionProviders.register(Utils.id("spawn_eggs"), (context, builder) -> SharedSuggestionProvider.suggestResource(BuiltInRegistries.ITEM.stream().filter(item -> item instanceof SpawnEggItem), builder, BuiltInRegistries.ITEM::getKey, Item::getName));
-  private static final DynamicCommandExceptionType NOT_SPAWN_EGG = new DynamicCommandExceptionType(object -> Component.translatable(FAILED_KEY));
+  private static final DynamicCommandExceptionType NOT_SPAWN_EGG = new DynamicCommandExceptionType(item -> Component.translatable(FAILED_KEY, item));
 
   public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext builder) {
     dispatcher.register(Commands.literal("champions_egg").requires(Commands.hasPermission(Commands.LEVEL_ADMINS)).then(Commands.argument("players", EntityArgument.players()).then(Commands.argument("spawn_egg", ItemArgument.item(builder)).suggests(SPAWN_EGGS).then(Commands.argument("level", IntegerArgumentType.integer(1, 255)).then(Commands.argument("affixes", ResourceArgument.resource(builder, Registries.AFFIX)).executes(context -> giveSpawnEgg(context.getSource(), ItemArgument.getItem(context, "spawn_egg"), EntityArgument.getPlayers(context, "players"), IntegerArgumentType.getInteger(context, "level"), ResourceArgument.getResource(context, "affixes", Registries.AFFIX))))))
@@ -74,7 +74,7 @@ public final class SpawnEggCommand {
         source.sendSuccess(() -> Component.translatable(SUCCESS_KEY, player.getDisplayName()), true);
       }
     } else {
-      throw NOT_SPAWN_EGG.create(item);
+      throw NOT_SPAWN_EGG.create(item.getName());
     }
 
     return players.size();

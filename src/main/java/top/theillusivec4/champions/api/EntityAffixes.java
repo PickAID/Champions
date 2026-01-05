@@ -12,7 +12,6 @@ import top.theillusivec4.champions.api.affix.Affix;
 import java.util.ArrayList;
 import java.util.List;
 
-@Deprecated
 public class EntityAffixes {
   public static final EntityAffixes EMPTY = new EntityAffixes();
   public static final StreamCodec<RegistryFriendlyByteBuf, EntityAffixes> STREAM_CODEC = StreamCodec.composite(
