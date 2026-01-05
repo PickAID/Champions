@@ -19,6 +19,7 @@
 
 package top.theillusivec4.champions;
 
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -41,11 +42,9 @@ import top.theillusivec4.champions.common.entity.EntityTypes;
 import top.theillusivec4.champions.common.item.DataComponentTypes;
 import top.theillusivec4.champions.common.item.Items;
 import top.theillusivec4.champions.common.item.components.ItemEventListener;
-import top.theillusivec4.champions.common.loot.LootModifiers;
 import top.theillusivec4.champions.common.loot.predicates.LootItemConditionTypes;
 import top.theillusivec4.champions.common.particles.ParticleTypes;
 import top.theillusivec4.champions.common.registries.BuiltInRegistries;
-import top.theillusivec4.champions.common.stats.Stats;
 
 @Mod(Champions.MODID)
 public class Champions {

@@ -12,6 +12,7 @@ import top.theillusivec4.champions.common.util.Utils;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 public record AffixSetting(Identifier type, boolean enabled, Optional<MinMaxBounds.Ints> tier,
                            Optional<List<Identifier>> mobList, Optional<ConfigEnums.Permission> mobPermission,
                            AffixCategory category, Optional<String> prefix, Optional<Boolean> hasSub) {

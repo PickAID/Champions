@@ -15,6 +15,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class AffixDataLoader extends SimpleJsonResourceReloadListener<AffixSetting> {
   private static final String FOLDER = "affix_setting";
   private final Map<Identifier, AffixSetting> loadedData = new HashMap<>();

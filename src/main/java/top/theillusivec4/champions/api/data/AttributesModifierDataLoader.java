@@ -14,6 +14,7 @@ import java.io.Reader;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public class AttributesModifierDataLoader extends SimplePreparableReloadListener<Map<Identifier, ModifierSetting>> {
   private static final String FOLDER = "modifier_setting";
   private final Map<Identifier, ModifierSetting> loadedData = new HashMap<>();

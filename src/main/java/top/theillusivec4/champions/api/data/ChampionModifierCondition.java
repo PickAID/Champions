@@ -16,6 +16,7 @@ import top.theillusivec4.champions.common.rank.RankManager;
 import java.util.Optional;
 import java.util.Set;
 
+@Deprecated
 public record ChampionModifierCondition(Optional<Set<Identifier>> mobList, Optional<MinMaxBounds.Ints> tier,
                                         Optional<AffixesPredicate> affixes, ConfigEnums.Permission permission) {
   public static final MapCodec<ChampionModifierCondition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

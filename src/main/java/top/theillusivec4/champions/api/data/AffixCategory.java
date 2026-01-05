@@ -2,6 +2,7 @@ package top.theillusivec4.champions.api.data;
 
 import net.minecraft.util.StringRepresentable;
 
+@Deprecated
 public enum AffixCategory implements StringRepresentable {
   CC("cc"), OFFENSE("offense"), DEFENSE("defense");
 

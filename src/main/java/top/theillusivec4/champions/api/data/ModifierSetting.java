@@ -9,6 +9,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.Optional;
 
+@Deprecated
 public record ModifierSetting(Identifier attributeType, boolean enable,
                               Pair<Double, AttributeModifier.Operation> setting,
                               Optional<ChampionModifierCondition> modifierCondition) {
