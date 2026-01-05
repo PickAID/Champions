@@ -8,8 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import top.theillusivec4.champions.common.registry.ModDamageTypes;
-import top.theillusivec4.champions.common.registry.ModEntityTypes;
+import top.theillusivec4.champions.common.damagesource.DamageTypes;
 
 import javax.annotation.Nonnull;
 
@@ -17,7 +16,7 @@ public class EnkindlingBulletEntity extends BaseBulletEntity {
 
   public EnkindlingBulletEntity(Level level, LivingEntity livingEntity, @Nonnull Entity entity,
                                 Direction.Axis axis) {
-    super(ModEntityTypes.ENKINDLING_BULLET.get(), level, livingEntity, entity, axis);
+    super(EntityTypes.ENKINDLING_BULLET.get(), level, livingEntity, entity, axis);
   }
 
   public EnkindlingBulletEntity(EntityType<? extends EnkindlingBulletEntity> enkindlingBulletEntityEntityType, Level level) {
@@ -28,9 +27,9 @@ public class EnkindlingBulletEntity extends BaseBulletEntity {
   protected void bulletEffect(LivingEntity target) {
 
     if (this.getOwner() != null) {
-      target.hurt(ModDamageTypes.of(ModDamageTypes.ENKINDLING_BULLET, this, this.getOwner()), 1);
+      target.hurt(DamageTypes.of(DamageTypes.ENKINDLING_BULLET, this, this.getOwner()), 1);
     } else {
-      target.hurt(ModDamageTypes.of(ModDamageTypes.ENKINDLING_BULLET, this), 1);
+      target.hurt(DamageTypes.of(DamageTypes.ENKINDLING_BULLET, this), 1);
     }
     target.setRemainingFireTicks(8 * 20);
   }

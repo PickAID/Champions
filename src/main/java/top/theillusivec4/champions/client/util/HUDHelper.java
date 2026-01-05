@@ -11,7 +11,7 @@ import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.ChampionsOverlay;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.util.ChampionHelper;
 import top.theillusivec4.champions.common.util.Utils;
@@ -21,8 +21,8 @@ import java.util.stream.Collectors;
 
 public class HUDHelper {
 
-  private static final Identifier GUI_BAR_TEXTURES = Utils.getLocation("textures/gui/bars.png");
-  private static final Identifier GUI_STAR = Utils.getLocation("textures/gui/staricon.png");
+  private static final Identifier GUI_BAR_TEXTURES = Utils.id("textures/gui/bars.png");
+  private static final Identifier GUI_STAR = Utils.id("textures/gui/staricon.png");
 
   public static boolean renderHealthBar(GuiGraphics guiGraphics, final LivingEntity livingEntity) {
     return ChampionAttachment.getAttachment(livingEntity).map(champion -> {

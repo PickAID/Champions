@@ -2,7 +2,6 @@ package top.theillusivec4.champions.common.util;
 
 import com.google.common.collect.ImmutableSortedMap;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.commands.Commands;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -26,6 +25,7 @@ import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
 
 import java.util.*;
 
+@Deprecated
 public class ChampionBuilder {
 
   /**
@@ -296,7 +296,7 @@ public class ChampionBuilder {
   }
 
   private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, Identifier modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
-    applyAttributeModifier(livingEntity, attributeValue, Utils.getLocation(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
+    applyAttributeModifier(livingEntity, attributeValue, Utils.id(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
   }
 
   public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, Identifier modifierId, double amount, AttributeModifier.Operation operation) {

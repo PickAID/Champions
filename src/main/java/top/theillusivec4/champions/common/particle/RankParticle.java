@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
+@Deprecated
 public class RankParticle extends SingleQuadParticle {
   private static final Random RANDOM = new Random();
   private final SpriteSet spriteSet;

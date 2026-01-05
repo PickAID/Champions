@@ -13,6 +13,7 @@ import top.theillusivec4.champions.common.config.ConfigEnums;
 
 import java.util.List;
 
+@Deprecated
 public class AdaptableAffix extends CombatAffix {
   @Override
   public float onHurt(IChampion champion, DamageSource source, float amount, float newAmount) {

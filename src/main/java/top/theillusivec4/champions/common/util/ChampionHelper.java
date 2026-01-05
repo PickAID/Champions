@@ -14,17 +14,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.rank.Rank;
-import top.theillusivec4.champions.common.registry.ModEntityTypes;
+import top.theillusivec4.champions.common.entity.EntityTypes;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class ChampionHelper {
 
   private static final Set<BlockPos> BEACON_POS = new HashSet<>();
@@ -42,11 +43,11 @@ public class ChampionHelper {
       if (ChampionsConfig.allowChampionsList) {
         // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
         if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
-          return entity.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+          return entity.is(EntityTypes.Tags.ALLOW_CHAMPIONS);
         }
         // If entitiesPermission is BLACKLIST, reject the entity
         else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
-          return !entity.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+          return !entity.is(EntityTypes.Tags.ALLOW_CHAMPIONS);
         }
       } else {
         // If champions are not allowed, check if the entity is an enemy

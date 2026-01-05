@@ -3,6 +3,7 @@ package top.theillusivec4.champions.api.affix;
 import net.minecraft.nbt.CompoundTag;
 import top.theillusivec4.champions.api.IChampion;
 
+@Deprecated
 public interface IAffixSyncable {
     /**
      * sync champion data to champion mob

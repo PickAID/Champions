@@ -3,8 +3,6 @@ package top.theillusivec4.champions.common.event;
 import com.electronwill.nightconfig.core.CommentedConfig;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.InterModComms;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.IConfigSpec;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
@@ -20,7 +18,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.datagen.*;
 import top.theillusivec4.champions.common.item.dispense.DispenseHandler;
@@ -28,8 +26,8 @@ import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
 import top.theillusivec4.champions.common.network.SPacketSyncChampion;
 import top.theillusivec4.champions.common.network.SyncAffixSettingPacket;
 import top.theillusivec4.champions.common.rank.RankManager;
-import top.theillusivec4.champions.common.registry.ModItems;
-import top.theillusivec4.champions.common.registry.ModStats;
+import top.theillusivec4.champions.common.item.Items;
+import top.theillusivec4.champions.common.stats.Stats;
 import top.theillusivec4.champions.common.util.EntityManager;
 import top.theillusivec4.champions.common.util.Utils;
 import top.theillusivec4.champions.server.command.ChampionSelectorOptions;
@@ -38,6 +36,7 @@ import java.util.List;
 
 import static top.theillusivec4.champions.api.AffixRegistry.AFFIX_REGISTRY;
 
+@Deprecated
 public class ModEventHandler {
 
   @SubscribeEvent
@@ -54,9 +53,9 @@ public class ModEventHandler {
       Utils.createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
       Utils.createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
       ChampionAttachment.register();
-      ModStats.registerFormatter();
+      Stats.registerFormatter();
       ChampionSelectorOptions.setup();
-      DispenserBlock.registerBehavior(ModItems.CHAMPION_EGG_ITEM.get(), DispenseHandler::handleChampionEggDispense);
+      DispenserBlock.registerBehavior(Items.CHAMPION_EGG_ITEM.get(), DispenseHandler::handleChampionEggDispense);
     });
   }
 

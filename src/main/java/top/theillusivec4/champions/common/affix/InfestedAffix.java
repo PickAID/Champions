@@ -17,20 +17,21 @@ import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.common.affix.core.AffixData;
 import top.theillusivec4.champions.common.affix.core.GoalCombatAffix;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
-import top.theillusivec4.champions.common.registry.ModEntityTypes;
+import top.theillusivec4.champions.common.entity.EntityTypes;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class InfestedAffix extends GoalCombatAffix {
 
   private static void spawnParasites(LivingEntity livingEntity, int amount,
                                      @Nullable LivingEntity target, ServerLevel world) {
-    boolean isEnder = livingEntity.is(ModEntityTypes.Tags.IS_ENDER);
+    boolean isEnder = livingEntity.is(EntityTypes.Tags.IS_ENDER);
     EntityType<?> type =
       isEnder ? ChampionsConfig.infestedEnderParasite : ChampionsConfig.infestedParasite;
     List<Mob> children = new ArrayList<>();

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Deprecated
 public record AffixesPredicate(Set<Identifier> values, MinMaxBounds.Ints matches,
                                MinMaxBounds.Ints count) {
 

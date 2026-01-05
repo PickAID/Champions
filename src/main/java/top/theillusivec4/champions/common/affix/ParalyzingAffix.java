@@ -7,8 +7,9 @@ import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
-import top.theillusivec4.champions.common.registry.ModMobEffects;
+import top.theillusivec4.champions.common.effect.MobEffects;
 
+@Deprecated
 public class ParalyzingAffix extends CombatAffix {
 
   @Override
@@ -16,8 +17,8 @@ public class ParalyzingAffix extends CombatAffix {
     IChampion champion, LivingEntity target, DamageSource source,
     float amount) {
 
-    if (target.getRandom().nextFloat() < ChampionsConfig.paralyzingChance && !target.hasEffect(ModMobEffects.PARALYSIS_EFFECT_TYPE)) {
-      target.addEffect(new MobEffectInstance(ModMobEffects.PARALYSIS_EFFECT_TYPE, 60, 0));
+    if (target.getRandom().nextFloat() < ChampionsConfig.paralyzingChance && !target.hasEffect(MobEffects.PARALYSIS_EFFECT_TYPE)) {
+      target.addEffect(new MobEffectInstance(MobEffects.PARALYSIS_EFFECT_TYPE, 60, 0));
     }
     return true;
   }

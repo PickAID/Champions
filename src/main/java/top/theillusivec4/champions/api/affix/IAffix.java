@@ -2,6 +2,7 @@ package top.theillusivec4.champions.api.affix;
 
 import top.theillusivec4.champions.api.data.AffixCategory;
 
+@Deprecated
 public interface IAffix extends IAffixBase,
   IAffixSettingHolder,
   IAffixSyncable,

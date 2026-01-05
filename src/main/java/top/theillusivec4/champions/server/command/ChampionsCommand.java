@@ -32,27 +32,29 @@ import net.neoforged.neoforge.transfer.transaction.Transaction;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.AffixRegistry;
 import top.theillusivec4.champions.api.affix.IAffix;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.item.ChampionEggItem;
-import top.theillusivec4.champions.common.registry.ModItems;
+import top.theillusivec4.champions.common.item.Items;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
 import top.theillusivec4.champions.common.util.ChampionHelper;
 import top.theillusivec4.champions.common.util.Utils;
+import top.theillusivec4.champions.server.command.argument.AffixArgumentType;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
+@Deprecated
 public class ChampionsCommand {
 
   public static final SuggestionProvider<CommandSourceStack> AFFIXES = SuggestionProviders
-    .register(Utils.getLocation("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
+    .register(Utils.id("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
       AffixRegistry.AFFIX_REGISTRY.stream().filter(IAffix::isEnabled), builder, IAffix::getIdentifier, affix -> Component.translatable(affix.toLanguageKey())));
 
   public static final SuggestionProvider<CommandSourceStack> MONSTER_ENTITIES = SuggestionProviders
-    .register(Utils.getLocation("monster_entities"),
+    .register(Utils.id("monster_entities"),
       (context, builder) -> SharedSuggestionProvider.suggestResource(
         BuiltInRegistries.ENTITY_TYPE.stream()
           .filter(type -> {
@@ -174,7 +176,7 @@ public class ChampionsCommand {
   public static ItemStack createEgg(EntityType<?> entityType,
                                     int tier,
                                     Collection<IAffix> affixes) {
-    ItemStack egg = new ItemStack(ModItems.CHAMPION_EGG_ITEM.get());
+    ItemStack egg = new ItemStack(Items.CHAMPION_EGG_ITEM.get());
 
     // Get entity's egg model data
     // then applies to champions egg

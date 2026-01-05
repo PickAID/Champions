@@ -9,6 +9,7 @@ import top.theillusivec4.champions.Champions;
 
 import java.util.*;
 
+@Deprecated
 public class ConfigLoot {
 
   private static final RandomSource RAND = RandomSource.create();

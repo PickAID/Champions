@@ -25,6 +25,7 @@ import top.theillusivec4.champions.common.config.ChampionsConfig;
 import java.util.Iterator;
 import java.util.Set;
 
+@Deprecated
 public class MoltenAffix extends CombatLifeCycleAffix {
 
   @Override

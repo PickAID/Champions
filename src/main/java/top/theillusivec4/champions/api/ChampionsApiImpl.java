@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+@Deprecated
 public class ChampionsApiImpl implements IChampionsApi {
   private static final ConcurrentHashMap<AffixCategory, List<IAffix>> categories = new ConcurrentHashMap<>();
   private static final AffixDataLoader AFFIX_DATA_LOADER = new AffixDataLoader();

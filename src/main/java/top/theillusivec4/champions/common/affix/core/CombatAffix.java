@@ -5,6 +5,7 @@ import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.affix.IAffixCombatHandler;
 
+@Deprecated
 public abstract class CombatAffix extends BasicAffix implements IAffixCombatHandler {
 	@Override
 	public boolean onAttack(IChampion champion, LivingEntity target, DamageSource source, float amount) {

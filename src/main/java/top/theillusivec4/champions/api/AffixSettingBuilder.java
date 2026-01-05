@@ -13,6 +13,7 @@ import java.util.Optional;
  * Basic affix builder for custom affix behavior
  *
  */
+@Deprecated
 public class AffixSettingBuilder {
 
   private Identifier type;

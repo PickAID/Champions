@@ -2,6 +2,7 @@ package top.theillusivec4.champions.common.config;
 
 import java.util.List;
 
+@Deprecated
 public class RanksConfig {
 
   public List<RankConfig> ranks;

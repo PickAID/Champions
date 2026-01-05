@@ -2,6 +2,7 @@ package top.theillusivec4.champions.common.config;
 
 import net.minecraft.util.StringRepresentable;
 
+@Deprecated
 public class ConfigEnums {
 
   public enum Permission implements StringRepresentable {

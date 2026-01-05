@@ -9,6 +9,7 @@ import top.theillusivec4.champions.api.affix.IAffixCombatHandler;
 
 import java.util.List;
 
+@Deprecated
 public abstract class GoalCombatAffix extends GoalAffix implements IAffixCombatHandler {
 
     // 默认的战斗处理方法，子类可以重写

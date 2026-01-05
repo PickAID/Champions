@@ -11,13 +11,14 @@ import top.theillusivec4.champions.common.affix.core.CombatLifeCycleAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.util.Utils;
 
+@Deprecated
 public class HastyAffix extends CombatLifeCycleAffix {
 
   @Override
   public void onInitialSpawn(IChampion champion) {
     AttributeInstance speed = champion.getLivingEntity().getAttribute(Attributes.MOVEMENT_SPEED);
     AttributeModifier hastyModifier =
-      new AttributeModifier(Utils.getLocation("hasty"),
+      new AttributeModifier(Utils.id("hasty"),
         ChampionsConfig.hastyMovementBonus,
         AttributeModifier.Operation.ADD_VALUE);
 

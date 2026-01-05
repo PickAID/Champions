@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeMap;
 
+@Deprecated
 public class RankManager {
 
   private static final TreeMap<Integer, Rank> RANKS = new TreeMap<>();

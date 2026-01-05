@@ -13,6 +13,7 @@ import top.theillusivec4.champions.common.util.Utils;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public record SyncAffixSettingPacket(
   Map<Identifier, AffixSetting> affixSettingMap) implements CustomPacketPayload {
   public static final StreamCodec<FriendlyByteBuf, SyncAffixSettingPacket> STREAM_CODEC = StreamCodec.composite(
@@ -24,7 +25,7 @@ public record SyncAffixSettingPacket(
     SyncAffixSettingPacket::affixSettingMap,    // getter function
     SyncAffixSettingPacket::new    // factory function
   );
-  public static final Type<SyncAffixSettingPacket> TYPE = new Type<>(Utils.getLocation("sync_affix_setting"));
+  public static final Type<SyncAffixSettingPacket> TYPE = new Type<>(Utils.id("sync_affix_setting"));
 
   public static void handle(final SyncAffixSettingPacket data, final IPayloadContext cxt) {
     cxt.enqueueWork(() -> {

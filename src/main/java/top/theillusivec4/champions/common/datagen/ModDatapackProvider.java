@@ -6,11 +6,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.common.registry.ModDamageTypes;
+import top.theillusivec4.champions.common.damagesource.DamageTypes;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 public class ModDatapackProvider extends DatapackBuiltinEntriesProvider {
   private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder();
 
@@ -20,7 +21,7 @@ public class ModDatapackProvider extends DatapackBuiltinEntriesProvider {
   }
 
   private void addDamageType() {
-    BUILDER.add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap);
+    BUILDER.add(Registries.DAMAGE_TYPE, DamageTypes::bootstrap);
   }
 
 }

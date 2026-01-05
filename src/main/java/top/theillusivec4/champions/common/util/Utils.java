@@ -1,22 +1,22 @@
 package top.theillusivec4.champions.common.util;
 
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.Entity;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.io.FileUtils;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.IChampionHandler;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.affix.IAffixLifecycle;
 import top.theillusivec4.champions.common.affix.core.CombatAffix;
+import top.theillusivec4.champions.common.capabilities.Capabilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class Utils {
@@ -24,6 +24,10 @@ public class Utils {
   private static Boolean gameStagesLoaded = null;
   private static Boolean gateways = null;
   private static Boolean kubejs = null;
+
+  public static Optional<IChampionHandler> getChampionHandler(Entity entity) {
+    return Optional.ofNullable(entity.getCapability(Capabilities.ChampionHandler.ENTITY));
+  }
 
   public static boolean isGameStagesLoaded() {
     if (gameStagesLoaded == null) {
@@ -68,14 +72,14 @@ public class Utils {
     }
   }
 
-  public static Identifier getLocation(final String path) {
+  public static Identifier id(final String path) {
     return Identifier.fromNamespaceAndPath(Champions.MODID, path);
   }
 
   public static Set<Identifier> getLocationSet(final String... path) {
     Set<Identifier> locations = new HashSet<>();
     for (String s : path) {
-      locations.add(getLocation(s));
+      locations.add(id(s));
     }
     return locations;
   }

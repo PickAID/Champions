@@ -29,7 +29,7 @@ public record AffixSetting(Identifier type, boolean enabled, Optional<MinMaxBoun
   ).apply(instance, AffixSetting::new));
 
   public static AffixSetting empty() {
-    return new AffixSetting(Utils.getLocation("empty"), false, Optional.empty(), Optional.empty(), Optional.empty(), AffixCategory.CC, Optional.empty(), Optional.empty());
+    return new AffixSetting(Utils.id("empty"), false, Optional.empty(), Optional.empty(), Optional.empty(), AffixCategory.CC, Optional.empty(), Optional.empty());
   }
 
   public static AffixSettingBuilder builder() {

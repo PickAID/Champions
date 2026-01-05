@@ -20,7 +20,7 @@ import top.theillusivec4.champions.common.util.Utils;
 
 public class ColorizedBulletRenderer<T extends BaseBulletEntity, S extends BulletRenderState> extends EntityRenderer<T, S> {
 
-  private static final Identifier GENERIC_SPARK_TEXTURE = Utils.getLocation("textures/entity/generic_spark.png");
+  private static final Identifier GENERIC_SPARK_TEXTURE = Utils.id("textures/entity/generic_spark.png");
   private static final RenderType RENDER_TYPE = RenderTypes.entityTranslucent(GENERIC_SPARK_TEXTURE);
   private final ShulkerBulletModel model;
 

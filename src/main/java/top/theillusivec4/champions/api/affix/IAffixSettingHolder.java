@@ -8,6 +8,7 @@ import top.theillusivec4.champions.common.config.ConfigEnums;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 public interface IAffixSettingHolder {
     void applySetting(AffixSetting affixSetting);
     AffixSetting getSetting();

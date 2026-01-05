@@ -4,6 +4,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
 
+@Deprecated
 public class AffixCallbacks {
   @FunctionalInterface
   public interface OnInitialSpawnCallback {

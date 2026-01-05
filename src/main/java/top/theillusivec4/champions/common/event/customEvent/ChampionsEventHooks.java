@@ -3,6 +3,7 @@ package top.theillusivec4.champions.common.event.customEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import top.theillusivec4.champions.api.IChampion;
 
+@Deprecated
 public class ChampionsEventHooks {
   public static boolean onAttemptChampionSpawn(IChampion champion) {
     SpawnChampionEvent.Attempt event = new SpawnChampionEvent.Attempt(champion);

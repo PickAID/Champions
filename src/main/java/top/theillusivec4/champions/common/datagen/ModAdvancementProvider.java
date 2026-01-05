@@ -4,9 +4,6 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementType;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.KilledTrigger;
-import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.advancements.AdvancementProvider;
@@ -14,16 +11,13 @@ import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.storage.loot.LootContext;
-import top.theillusivec4.champions.common.loot.AffixesPredicate;
-import top.theillusivec4.champions.common.loot.ChampionPropertyCondition;
 import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+@Deprecated
 public class ModAdvancementProvider extends AdvancementProvider {
 
   /**
@@ -57,7 +51,7 @@ public class ModAdvancementProvider extends AdvancementProvider {
 //            Optional.of(MinMaxBounds.Ints.ANY),
 //            Optional.of(new AffixesPredicate(Utils.getLocationSet("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
 //          )))
-        .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion"))).save(saver, Utils.getLocation("kill_a_champion"))
+        .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion"))).save(saver, Utils.id("kill_a_champion"))
         .value();
     }
   }

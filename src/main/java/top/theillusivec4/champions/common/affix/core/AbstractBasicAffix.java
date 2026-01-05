@@ -23,6 +23,7 @@ import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 public abstract class AbstractBasicAffix implements IAffix {
   public static final String DEFAULT_PREFIX = "affix.";
   protected AffixSetting setting = AffixSetting.empty();

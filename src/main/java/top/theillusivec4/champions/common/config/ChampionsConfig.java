@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 public class ChampionsConfig {
 
   public static final ModConfigSpec SERVER_SPEC;

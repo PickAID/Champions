@@ -8,15 +8,16 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.common.registry.ModMobEffects;
+import top.theillusivec4.champions.common.effect.MobEffects;
 
+@Deprecated
 @EventBusSubscriber(value = Dist.CLIENT, modid = Champions.MODID)
 public class ClientAffixEventsHandler {
 
   @SubscribeEvent
   public static void handleJailing(MovementInputUpdateEvent event) {
     var player = event.getEntity();
-    if (player.hasEffect(ModMobEffects.PARALYSIS_EFFECT_TYPE)) {
+    if (player.hasEffect(MobEffects.PARALYSIS_EFFECT_TYPE)) {
       ClientInput input = event.getInput();
       input.moveVector = Vec2.ZERO;
       input.keyPresses = Input.EMPTY;

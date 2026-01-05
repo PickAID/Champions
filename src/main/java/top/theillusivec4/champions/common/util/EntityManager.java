@@ -12,6 +12,7 @@ import top.theillusivec4.champions.common.config.EntitiesConfig.EntityConfig;
 import javax.annotation.Nullable;
 import java.util.*;
 
+@Deprecated
 public class EntityManager {
 
   private static final Map<EntityType<?>, EntitySettings> SETTINGS = new HashMap<>();

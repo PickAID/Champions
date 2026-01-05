@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 public class AttributesModifierDataProvider implements DataProvider {
 
   private final PackOutput packOutput;

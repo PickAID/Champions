@@ -3,6 +3,7 @@ package top.theillusivec4.champions.api.affix;
 import net.minecraft.resources.Identifier;
 import top.theillusivec4.champions.api.data.AffixCategory;
 
+@Deprecated
 public interface IAffixBase {
     /**
      * Get IAffix id
@@ -17,7 +18,6 @@ public interface IAffixBase {
      * @return AffixCategory
      */
     AffixCategory getCategory();
-
 
     /**
      * Get affix's prefix, usually used for translate key

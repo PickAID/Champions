@@ -4,6 +4,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.data.AffixSetting;
 
+@Deprecated
 public class BasicAffix extends AbstractBasicAffix {
 
   public void tryRegisterEvents() {

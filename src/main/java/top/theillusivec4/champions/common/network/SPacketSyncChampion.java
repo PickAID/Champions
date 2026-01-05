@@ -14,17 +14,18 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.util.Utils;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Deprecated
 public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
                                   Set<Identifier> affixes) implements CustomPacketPayload {
 
-  public static final Type<SPacketSyncChampion> TYPE = new Type<>(Utils.getLocation("sync_champion"));
+  public static final Type<SPacketSyncChampion> TYPE = new Type<>(Utils.id("sync_champion"));
 
   public static final StreamCodec<FriendlyByteBuf, SPacketSyncChampion> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.INT,

@@ -10,13 +10,14 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Deprecated
 public record ChampionPropertyCondition(
   LootContext.EntityTarget target,
   Optional<MinMaxBounds.Ints> tier,

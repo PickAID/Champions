@@ -12,6 +12,7 @@ import top.theillusivec4.champions.common.loot.ChampionPropertyCondition;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 public class ModGlobalLootModifierProvider extends GlobalLootModifierProvider {
   public ModGlobalLootModifierProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
     super(output, registries, Champions.MODID);
