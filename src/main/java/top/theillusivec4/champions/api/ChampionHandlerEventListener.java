@@ -58,6 +58,7 @@ public final class ChampionHandlerEventListener {
         }
 
         mutable.setLatestTime(mutable.getLatestTime() + 1);
+        mutable.setOriginalDamageAmount(mutable.getOriginalDamageAmount() + event.getOriginalDamage());
       });
     });
   }

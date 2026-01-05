@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.api.affix.effect;
+package top.theillusivec4.champions.api.affix;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentMap;
@@ -10,6 +10,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.affix.effect.AttributeEffect;
+import top.theillusivec4.champions.api.affix.effect.ConditionalEffect;
+import top.theillusivec4.champions.api.affix.effect.TargetedConditionalEffect;
 import top.theillusivec4.champions.api.affix.effect.entity.AffixEntityEffect;
 import top.theillusivec4.champions.api.affix.effect.value.AffixValueEffect;
 import top.theillusivec4.champions.common.loot.parameters.LootContextParamSets;

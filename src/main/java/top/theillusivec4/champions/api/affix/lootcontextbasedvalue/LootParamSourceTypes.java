@@ -23,7 +23,7 @@ public final class LootParamSourceTypes {
     private static final DeferredRegister<FloatLootParamSource<?>> DEFERRED_REGISTER = DeferredRegister.create(Registries.FLOAT_LOOT_PARAM_SOURCE, Champions.MODID);
     //  public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<DamageSource>> DAMAGE_AMOUNT = register("damage_amount", new FloatLootParamSource<>(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DAMAGE_SOURCE, damageSource -> damageSource.));
     public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<LatestDamage>> LATEST_DAMAGE_COUNT = register("latest_damage_count", new FloatLootParamSource<>(LootContextParams.LATEST_DAMAGE, latestDamage -> (float) latestDamage.damageCount(), 0.0f));
-    public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<Float>> DAMAGE_AMOUNT = register("damage_amount", new FloatLootParamSource<>(LootContextParams.DAMAGE_AMOUNT, Float::floatValue, 0.0f));
+    public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<LatestDamage>> LATEST_ORIGINAL_DAMAGE_AMOUNT = register("latest_original_damage_amount", new FloatLootParamSource<>(LootContextParams.LATEST_DAMAGE, LatestDamage::originalDamageAmount, 0.0f));
 
     private static <T> DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<T>> register(String name, FloatLootParamSource<T> floatLootParamSource) {
       return register(name, () -> floatLootParamSource);

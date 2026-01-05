@@ -9,11 +9,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public record LatestDamage(Optional<Holder<DamageType>> damageType, int damageCount, int latestTime) {
-  public static final LatestDamage EMPTY = new LatestDamage(Optional.empty(), 0, 0);
-  public static final MapCodec<LatestDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(DamageType.CODEC.optionalFieldOf("damage_type").forGetter(LatestDamage::damageType),
+public record LatestDamage(Optional<Holder<DamageType>> damageType, int damageCount, int latestTime, float originalDamageAmount) {
+  public static final LatestDamage EMPTY = new LatestDamage(Optional.empty(), 0, 0, 0);
+  public static final MapCodec<LatestDamage> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    DamageType.CODEC.optionalFieldOf("damage_type").forGetter(LatestDamage::damageType),
     Codec.intRange(0, 99).fieldOf("damage_count").forGetter(LatestDamage::damageCount),
-    Codec.INT.fieldOf("latest_time").forGetter(LatestDamage::latestTime)
+    Codec.INT.fieldOf("latest_time").forGetter(LatestDamage::latestTime),
+    Codec.FLOAT.fieldOf("original_damage_amount").forGetter(LatestDamage::originalDamageAmount)
   ).apply(instance, LatestDamage::new));
 
   public LatestDamage.Mutable toMutable() {
@@ -24,6 +26,7 @@ public record LatestDamage(Optional<Holder<DamageType>> damageType, int damageCo
     private @Nullable Holder<DamageType> damageType;
     private int damageCount;
     private int latestTime;
+    private float originalDamageAmount;
 
     public Mutable(LatestDamage latestDamage) {
       this.damageType = latestDamage.damageType().orElse(null);
@@ -35,7 +38,16 @@ public record LatestDamage(Optional<Holder<DamageType>> damageType, int damageCo
     }
 
     public LatestDamage toImmutable() {
-      return new LatestDamage(Optional.ofNullable(this.damageType), this.damageCount, this.latestTime);
+      return new LatestDamage(Optional.ofNullable(this.damageType), this.damageCount, this.latestTime, this.originalDamageAmount);
+    }
+
+    public float getOriginalDamageAmount() {
+      return originalDamageAmount;
+    }
+
+    public Mutable setOriginalDamageAmount(float originalDamageAmount) {
+      this.originalDamageAmount = originalDamageAmount;
+      return this;
     }
 
     public @Nullable Holder<DamageType> getDamageType() {

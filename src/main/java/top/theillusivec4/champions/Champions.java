@@ -19,7 +19,6 @@
 
 package top.theillusivec4.champions;
 
-import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -28,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.api.ChampionHandlerEventListener;
 import top.theillusivec4.champions.api.ChampionsApiImpl;
 import top.theillusivec4.champions.api.IChampionsApi;
-import top.theillusivec4.champions.api.affix.effect.AffixEffectComponentTypes;
+import top.theillusivec4.champions.api.affix.AffixEffectComponentTypes;
 import top.theillusivec4.champions.api.affix.effect.entity.AffixEntityEffectTypes;
 import top.theillusivec4.champions.api.affix.effect.value.AffixValueEffectTypes;
 import top.theillusivec4.champions.api.affix.lootcontextbasedvalue.LootContextBasedValueTypes;
