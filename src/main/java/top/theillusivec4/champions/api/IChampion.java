@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.api;
 
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.affix.IAffix;
@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+@Deprecated
 public interface IChampion {
 
   Client getClient();
@@ -27,7 +28,7 @@ public interface IChampion {
 
     List<IAffix> getAffixes();
 
-    void setAffixes(Set<ResourceLocation> affixIds);
+    void setAffixes(Set<Identifier> affixIds);
 
     Optional<IAffix> getAffix(String id);
 

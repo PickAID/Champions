@@ -2,21 +2,22 @@ package top.theillusivec4.champions.common.datagen;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.affix.IAffix;
-import top.theillusivec4.champions.common.registry.ModDamageTypes;
-import top.theillusivec4.champions.common.registry.ModEntityTypes;
+import top.theillusivec4.champions.common.damagesource.DamageTypes;
+import top.theillusivec4.champions.common.entity.EntityTypes;
 
-import static top.theillusivec4.champions.common.registry.AffixTypes.*;
-import static top.theillusivec4.champions.common.registry.ModDamageTypes.REFLECTION_DAMAGE;
-import static top.theillusivec4.champions.common.registry.ModEntityTypes.ARCTIC_BULLET;
-import static top.theillusivec4.champions.common.registry.ModItems.CHAMPION_EGG_ITEM;
-import static top.theillusivec4.champions.common.registry.ModMobEffects.PARALYSIS_EFFECT_TYPE;
-import static top.theillusivec4.champions.common.registry.ModMobEffects.WOUND_EFFECT_TYPE;
+import static top.theillusivec4.champions.common.registries.AffixTypes.*;
+import static top.theillusivec4.champions.common.damagesource.DamageTypes.REFLECTION_DAMAGE;
+import static top.theillusivec4.champions.common.entity.EntityTypes.ARCTIC_BULLET;
+import static top.theillusivec4.champions.common.item.Items.CHAMPION_EGG_ITEM;
+import static top.theillusivec4.champions.common.effect.MobEffects.PARALYSIS_EFFECT_TYPE;
+import static top.theillusivec4.champions.common.effect.MobEffects.WOUND_EFFECT_TYPE;
 
+@Deprecated
 public class ModLanguageProvider extends LanguageProvider {
   final private String locale;
 
@@ -89,13 +90,13 @@ public class ModLanguageProvider extends LanguageProvider {
     // Item Tooltip
     add("item.champions.egg.tooltip", "Afixos Aleatórios");
     // Entity Type
-    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Projétil Incendiário");
+    add(EntityTypes.ENKINDLING_BULLET.get(), "Projétil Incendiário");
     add(ARCTIC_BULLET.get(), "Projétil Ártico");
     // Effect
     add(PARALYSIS_EFFECT_TYPE.get(), "Paralisia");
     add(WOUND_EFFECT_TYPE.get(), "Ferimento");
     // Damage Type
-    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s foi atingido por chamas", "%1$s foi atingido por chamas enquanto lutava contra %2$s");
+    addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s foi atingido por chamas", "%1$s foi atingido por chamas enquanto lutava contra %2$s");
     addDamageType(REFLECTION_DAMAGE, "%1$s provou do próprio veneno", "");
     // Dynamic Command Exception Type
     add("argument.champions.affix.unknown", "Afixo desconhecido %s");
@@ -145,13 +146,13 @@ public class ModLanguageProvider extends LanguageProvider {
     // Item Tooltip
     add("item.champions.egg.tooltip", "Випадкові афікси");
     // Entity Type
-    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
     add(PARALYSIS_EFFECT_TYPE.get(), "Параліч");
     add(WOUND_EFFECT_TYPE.get(), "Поранення");
     // Damage Type
-    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s був охоплений полум'ям", "%1$s був охоплений полум'ям під час бою %2$s");
+    addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s був охоплений полум'ям", "%1$s був охоплений полум'ям під час бою %2$s");
     addDamageType(REFLECTION_DAMAGE, "%1$s відчули смак власних ліків", "");
     // Dynamic Command Exception Type
     add("argument.champions.affix.unknown", "Невідомий афікс %s");
@@ -200,13 +201,13 @@ public class ModLanguageProvider extends LanguageProvider {
     // 物品说明
     add("item.champions.egg.tooltip", "随机词缀");
     // 实体类型
-    add(ModEntityTypes.ENKINDLING_BULLET.get(), "火焰弹");
+    add(EntityTypes.ENKINDLING_BULLET.get(), "火焰弹");
     add(ARCTIC_BULLET.get(), "寒冰弹");
     // 状态效果
     add(PARALYSIS_EFFECT_TYPE.get(), "麻痹");
     add(WOUND_EFFECT_TYPE.get(), "创伤");
     // 伤害类型
-    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s被火焰击中", "%1$s在与%2$s的战斗中被火焰击中");
+    addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s被火焰击中", "%1$s在与%2$s的战斗中被火焰击中");
     addDamageType(REFLECTION_DAMAGE, "%1$s遭报应了!", "");
     // 动态命令异常类型
     add("argument.champions.affix.unknown", "未知词缀 %s");
@@ -256,13 +257,13 @@ public class ModLanguageProvider extends LanguageProvider {
     // Item Tooltip
     add("item.champions.egg.tooltip", "Random Affixes");
     // Entity Type
-    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
     add(PARALYSIS_EFFECT_TYPE.get(), "Paralysis");
     add(WOUND_EFFECT_TYPE.get(), "Wound");
     // Damage Type
-    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s was struck by flames", "%1$s was struck by flames whilst fighting %2$s");
+    addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s was struck by flames", "%1$s was struck by flames whilst fighting %2$s");
     addDamageType(REFLECTION_DAMAGE, "%1$s got a taste of their own medicine", "");
     // Dynamic Command Exception Type
     add("argument.champions.affix.unknown", "Unknown affix %s");
@@ -311,13 +312,13 @@ public class ModLanguageProvider extends LanguageProvider {
     // Item Tooltip
     add("item.champions.egg.tooltip", "Rasgele Özellikli");
     // Entity Type
-    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
     add(PARALYSIS_EFFECT_TYPE.get(), "Felç");
     add(WOUND_EFFECT_TYPE.get(), "Yaralanma");
     // Damage Type
-    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s yandı", "%1$s ,  %2$s ile savaşırken yandı.");
+    addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s yandı", "%1$s ,  %2$s ile savaşırken yandı.");
     addDamageType(REFLECTION_DAMAGE, "%1$s kendi ilacının tadına baktı", "");
     // Dynamic Command Exception Type
     add("argument.champions.affix.unknown", "%s - Bilinmeyen özellik");
@@ -366,13 +367,13 @@ public class ModLanguageProvider extends LanguageProvider {
     // Item Tooltip
     add("item.champions.egg.tooltip", "Моб с случайными усиливающими особенностями");
     // Entity Type
-    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
     add(PARALYSIS_EFFECT_TYPE.get(), "Паралич");
     add(WOUND_EFFECT_TYPE.get(), "Ранение");
     // Damage Type
-    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s was struck by flames", "%1$s was struck by flames whilst fighting %2$s");
+    addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s was struck by flames", "%1$s was struck by flames whilst fighting %2$s");
     addDamageType(REFLECTION_DAMAGE, "%1$s попробовал на вкус собственное лекарство", "");
     // Dynamic Command Exception Type
     add("argument.champions.affix.unknown", "Unknown affix %s");
@@ -421,13 +422,13 @@ public class ModLanguageProvider extends LanguageProvider {
     // Item Tooltip
     add("item.champions.egg.tooltip", "무작위 수식어");
     // Entity Type
-    add(ModEntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
+    add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
     add(PARALYSIS_EFFECT_TYPE.get(), "마비");
     add(WOUND_EFFECT_TYPE.get(), "상처");
     // Damage Type
-    addDamageType(ModDamageTypes.ENKINDLING_BULLET, "%1$s은(는) 불타올랐습니다", "%1$s은(는) %2$s과(와) 싸우다가 불타올랐습니다");
+    addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s은(는) 불타올랐습니다", "%1$s은(는) %2$s과(와) 싸우다가 불타올랐습니다");
     addDamageType(REFLECTION_DAMAGE, "%1$s은(는) 자기 꾀에 자기가 넘어갔습니다", "");
     // Dynamic Command Exception Type
     add("argument.champions.affix.unknown", "알 수 없는 수식어 %s");
@@ -452,8 +453,8 @@ public class ModLanguageProvider extends LanguageProvider {
    * @param byPlayerTranslate player killed by the player death message translation
    */
   protected void addDamageType(ResourceKey<DamageType> damageType, String translate, String byPlayerTranslate) {
-    add("death.attack." + damageType.location().getPath(), translate);
-    add("death.attack." + damageType.location().getPath() + ".player", byPlayerTranslate);
+    add("death.attack." + damageType.identifier().getPath(), translate);
+    add("death.attack." + damageType.identifier().getPath() + ".player", byPlayerTranslate);
   }
 
   /**
@@ -494,7 +495,7 @@ public class ModLanguageProvider extends LanguageProvider {
    * @param post      注册名 形似minecraft.block
    * @param translate 翻译 block.minecraft.block -> 石头
    */
-  protected void add(String pre, ResourceLocation post, String translate) {
+  protected void add(String pre, Identifier post, String translate) {
     add(post.toLanguageKey(pre), translate);
   }
 }

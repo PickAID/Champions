@@ -15,6 +15,7 @@ import top.theillusivec4.champions.common.rank.RankManager;
 
 import java.util.*;
 
+@Deprecated
 public class ChampionData {
 
   private static final String CHAMPION_KEY = "ChampionsData";

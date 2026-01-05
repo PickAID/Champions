@@ -1,13 +1,13 @@
 package top.theillusivec4.champions.common.datagen;
 
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import top.theillusivec4.champions.api.data.AttributesModifierDataLoader;
@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
+@Deprecated
 public class AttributesModifierDataProvider implements DataProvider {
 
   private final PackOutput packOutput;
@@ -38,7 +39,7 @@ public class AttributesModifierDataProvider implements DataProvider {
     List<CompletableFuture<?>> futures = new ArrayList<>();
     BuiltInRegistries.ATTRIBUTE.asHolderIdMap().forEach(attribute -> {
 
-      var attributeId = attribute.unwrapKey().orElseThrow().location();
+      var attributeId = attribute.unwrapKey().orElseThrow().identifier();
       var ref = new Object() {
         double baseValue = 1d;
         boolean enable = false;
@@ -75,7 +76,7 @@ public class AttributesModifierDataProvider implements DataProvider {
         DataProvider.saveStable(cachedOutput, provider, ModifierSetting.MAP_CODEC.codec(),
           new ModifierSetting(attributeId,
             ref.enable, Pair.of(ref.baseValue, ref.operation),
-            Optional.of(new ChampionModifierCondition(Optional.of(Set.of(ResourceLocation.parse("minecraft:creeper"))),
+            Optional.of(new ChampionModifierCondition(Optional.of(Set.of(Identifier.parse("minecraft:creeper"))),
               Optional.of(MinMaxBounds.Ints.ANY),
               Optional.of(new AffixesPredicate(Set.of(), MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.ANY)), ConfigEnums.Permission.BLACKLIST)))
           , outputPath)

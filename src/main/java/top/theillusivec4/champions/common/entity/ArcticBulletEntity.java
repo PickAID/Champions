@@ -11,14 +11,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.champions.common.registry.ModEntityTypes;
 
 import javax.annotation.Nonnull;
 
 public class ArcticBulletEntity extends BaseBulletEntity {
 
   public ArcticBulletEntity(Level level, LivingEntity livingEntity, @Nonnull Entity entity, Direction.Axis axis) {
-    super(ModEntityTypes.ARCTIC_BULLET.get(), level, livingEntity, entity, axis);
+    super(EntityTypes.ARCTIC_BULLET.get(), level, livingEntity, entity, axis);
   }
 
   public ArcticBulletEntity(EntityType<? extends ArcticBulletEntity> entityEntityType, Level level) {

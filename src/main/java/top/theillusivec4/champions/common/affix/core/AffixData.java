@@ -7,6 +7,7 @@ import top.theillusivec4.champions.api.IChampion;
 
 import java.lang.reflect.InvocationTargetException;
 
+@Deprecated
 public abstract class AffixData {
 
   private IChampion champion;

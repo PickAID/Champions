@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
+@Deprecated
 public class RankParticle extends SingleQuadParticle {
   private static final Random RANDOM = new Random();
   private final SpriteSet spriteSet;
@@ -72,7 +73,7 @@ public class RankParticle extends SingleQuadParticle {
       double x, double y, double z, double xSpeed, double ySpeed, double zSpeed,@Nonnull RandomSource randomSource) {
       RankParticle rankParticle =
         new RankParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, this.spriteSet);
-      float f = worldIn.random.nextFloat() * 0.5F + 0.35F;
+      float f = worldIn.getRandom().nextFloat() * 0.5F + 0.35F;
       rankParticle.setColor((float) xSpeed * f, (float) ySpeed * f, (float) zSpeed * f);
       return rankParticle;
     }

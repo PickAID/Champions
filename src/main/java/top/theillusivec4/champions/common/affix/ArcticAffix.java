@@ -16,6 +16,7 @@ import top.theillusivec4.champions.common.entity.ArcticBulletEntity;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class ArcticAffix extends GoalAffix {
 
   @Override

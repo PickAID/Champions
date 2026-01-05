@@ -11,7 +11,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.client.config.ClientChampionsConfig;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.util.ChampionHelper;
 
 import java.util.Optional;

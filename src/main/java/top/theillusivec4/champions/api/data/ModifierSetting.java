@@ -4,17 +4,18 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.util.Optional;
 
-public record ModifierSetting(ResourceLocation attributeType, boolean enable,
+@Deprecated
+public record ModifierSetting(Identifier attributeType, boolean enable,
                               Pair<Double, AttributeModifier.Operation> setting,
                               Optional<ChampionModifierCondition> modifierCondition) {
   public static final MapCodec<ModifierSetting> MAP_CODEC = RecordCodecBuilder.mapCodec(instance ->
     instance.group(
-      ResourceLocation.CODEC.fieldOf("attributeType").forGetter(ModifierSetting::attributeType),
+      Identifier.CODEC.fieldOf("attributeType").forGetter(ModifierSetting::attributeType),
       Codec.BOOL.fieldOf("enable").forGetter(ModifierSetting::enable),
       RecordCodecBuilder.<Pair<Double, AttributeModifier.Operation>>create(inst ->
         inst.group(

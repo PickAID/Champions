@@ -11,12 +11,13 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.util.Utils;
 
+@Deprecated
 public record SPacketSyncAffixData(int entityId, String affixId, CompoundTag data) implements CustomPacketPayload {
 
-  public static final Type<SPacketSyncAffixData> TYPE = new Type<>(Utils.getLocation("main"));
+  public static final Type<SPacketSyncAffixData> TYPE = new Type<>(Utils.id("main"));
 
   public static final StreamCodec<FriendlyByteBuf, SPacketSyncAffixData> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.VAR_INT,

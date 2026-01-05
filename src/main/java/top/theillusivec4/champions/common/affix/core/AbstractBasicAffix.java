@@ -1,9 +1,9 @@
 package top.theillusivec4.champions.common.affix.core;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -23,6 +23,7 @@ import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 public abstract class AbstractBasicAffix implements IAffix {
   public static final String DEFAULT_PREFIX = "affix.";
   protected AffixSetting setting = AffixSetting.empty();
@@ -48,7 +49,7 @@ public abstract class AbstractBasicAffix implements IAffix {
   }
 
   @Override
-  public ResourceLocation getIdentifier() {
+  public Identifier getIdentifier() {
     return Champions.API.getAffixId(this).orElseThrow();
   }
 
@@ -100,7 +101,7 @@ public abstract class AbstractBasicAffix implements IAffix {
   }
 
   @Override
-  public Optional<List<ResourceLocation>> getMobList() {
+  public Optional<List<Identifier>> getMobList() {
     return setting.mobList();
   }
 

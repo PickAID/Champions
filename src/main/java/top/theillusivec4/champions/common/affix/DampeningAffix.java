@@ -7,6 +7,7 @@ import top.theillusivec4.champions.api.data.AffixSetting;
 import top.theillusivec4.champions.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
+@Deprecated
 public class DampeningAffix extends CombatAffix {
 
   @Override

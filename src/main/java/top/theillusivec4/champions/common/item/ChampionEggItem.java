@@ -12,7 +12,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -37,8 +37,7 @@ import net.minecraft.world.phys.HitResult;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.IChampion;
 import top.theillusivec4.champions.api.affix.IAffix;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
-import top.theillusivec4.champions.common.registry.ModDataComponents;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.util.ChampionBuilder;
 import top.theillusivec4.champions.common.util.Utils;
 
@@ -47,8 +46,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.*;
 import java.util.function.Consumer;
 
+@Deprecated
 public class ChampionEggItem extends EggItem {
-
   private static final String ID_TAG = "Id";
   private static final String ENTITY_TAG = "EntityTag";
   private static final String TIER_TAG = "Tier";
@@ -56,7 +55,7 @@ public class ChampionEggItem extends EggItem {
   private static final String CHAMPION_TAG = "Champion";
 
   public ChampionEggItem() {
-    super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Utils.getLocation("champion_egg"))));
+    super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Utils.id("champion_egg"))));
   }
 
   public static Optional<EntityType<?>> getType(ItemStack stack) {
@@ -66,15 +65,15 @@ public class ChampionEggItem extends EggItem {
       var id = entityTag.get().getString(ID_TAG);
 
       if (id.isPresent()) {
-        return BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(id.get()));
+        return BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(id.get()));
       }
     }
     return Optional.empty();
   }
 
   public static Optional<CompoundTag> getTagOrEmpty(ItemStack stack, String tagKey) {
-    if (stack.has(ModDataComponents.ENTITY_TAG_COMPONENT)) {
-      CompoundTag entityTag = stack.get(ModDataComponents.ENTITY_TAG_COMPONENT);
+    if (stack.has(DataComponentTypes.ENTITY_TAG_COMPONENT)) {
+      CompoundTag entityTag = stack.get(DataComponentTypes.ENTITY_TAG_COMPONENT);
       if (entityTag != null) {
         return entityTag.getCompound(tagKey);
       }
@@ -95,9 +94,9 @@ public class ChampionEggItem extends EggItem {
   }
 
   public static void write(
-    ItemStack stack, ResourceLocation entityId, int tier,
+    ItemStack stack, Identifier entityId, int tier,
     Collection<IAffix> affixes) {
-    CompoundTag tag = stack.getOrDefault(ModDataComponents.ENTITY_TAG_COMPONENT, new CompoundTag());
+    CompoundTag tag = stack.getOrDefault(DataComponentTypes.ENTITY_TAG_COMPONENT, new CompoundTag());
 
     CompoundTag entityTag = new CompoundTag();
     entityTag.putString(ID_TAG, entityId.toString());
@@ -109,7 +108,7 @@ public class ChampionEggItem extends EggItem {
     affixes.forEach(affix -> listNBT.add(StringTag.valueOf(affix.getIdentifier().toString())));
     tierTag.put(AFFIX_TAG, listNBT);
     tag.put(CHAMPION_TAG, tierTag);
-    stack.set(ModDataComponents.ENTITY_TAG_COMPONENT, tag);
+    stack.set(DataComponentTypes.ENTITY_TAG_COMPONENT, tag);
   }
 
   @Nonnull

@@ -2,7 +2,7 @@ package top.theillusivec4.champions.common.util;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
@@ -14,17 +14,18 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BeaconBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 import top.theillusivec4.champions.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.common.rank.Rank;
-import top.theillusivec4.champions.common.registry.ModEntityTypes;
+import top.theillusivec4.champions.common.entity.EntityTypes;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Deprecated
 public class ChampionHelper {
 
   private static final Set<BlockPos> BEACON_POS = new HashSet<>();
@@ -42,11 +43,11 @@ public class ChampionHelper {
       if (ChampionsConfig.allowChampionsList) {
         // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
         if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
-          return entity.getType().is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+          return entity.is(EntityTypes.Tags.ALLOW_CHAMPIONS);
         }
         // If entitiesPermission is BLACKLIST, reject the entity
         else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
-          return !entity.getType().is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+          return !entity.is(EntityTypes.Tags.ALLOW_CHAMPIONS);
         }
       } else {
         // If champions are not allowed, check if the entity is an enemy
@@ -65,13 +66,13 @@ public class ChampionHelper {
 
     if (ChampionsConfig.allowChampionsList) {
       // When champions list is enabled, allow if entity is tagged and permission is WHITELIST
-      if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
-        return entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
-      }
+//      if (ChampionsConfig.allowChampionsPermission == Permission.WHITELIST) {
+//        return entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+//      }
       // If entitiesPermission is BLACKLIST, reject the entity
-      else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
-        return !entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
-      }
+//      else if (ChampionsConfig.allowChampionsPermission == Permission.BLACKLIST) {
+//        return !entityType.is(ModEntityTypes.Tags.ALLOW_CHAMPIONS);
+//      }
     }
 
     return entityType.getCategory() == MobCategory.MONSTER; // If entity is not a LivingEntity
@@ -113,7 +114,7 @@ public class ChampionHelper {
    */
   public static boolean notPotential(final LivingEntity livingEntity) {
     return !isValidEntity(livingEntity) ||
-      !isValidDimension(livingEntity.level().dimension().location()) ||
+      !isValidDimension(livingEntity.level().dimension().identifier()) ||
       nearActiveBeacon(livingEntity);
   }
 
@@ -125,7 +126,7 @@ public class ChampionHelper {
   }
 
   private static boolean isValidEntity(final LivingEntity livingEntity) {
-    ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType());
+    Identifier rl = BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType());
 
     String entity = rl.toString();
 
@@ -149,7 +150,7 @@ public class ChampionHelper {
     return false;
   }
 
-  private static boolean isValidDimension(final ResourceLocation resourceLocation) {
+  private static boolean isValidDimension(final Identifier resourceLocation) {
     String dimension = resourceLocation.toString();
 
     if (ChampionsConfig.dimensionPermission == Permission.BLACKLIST) {

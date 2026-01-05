@@ -4,7 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.data.AffixSetting;
@@ -13,18 +13,19 @@ import top.theillusivec4.champions.common.util.Utils;
 import java.util.HashMap;
 import java.util.Map;
 
+@Deprecated
 public record SyncAffixSettingPacket(
-  Map<ResourceLocation, AffixSetting> affixSettingMap) implements CustomPacketPayload {
+  Map<Identifier, AffixSetting> affixSettingMap) implements CustomPacketPayload {
   public static final StreamCodec<FriendlyByteBuf, SyncAffixSettingPacket> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.map(
       HashMap::new,
-      ByteBufCodecs.fromCodec(ResourceLocation.CODEC),
+      ByteBufCodecs.fromCodec(Identifier.CODEC),
       ByteBufCodecs.fromCodec(AffixSetting.CODEC)
     ),
     SyncAffixSettingPacket::affixSettingMap,    // getter function
     SyncAffixSettingPacket::new    // factory function
   );
-  public static final Type<SyncAffixSettingPacket> TYPE = new Type<>(Utils.getLocation("sync_affix_setting"));
+  public static final Type<SyncAffixSettingPacket> TYPE = new Type<>(Utils.id("sync_affix_setting"));
 
   public static void handle(final SyncAffixSettingPacket data, final IPayloadContext cxt) {
     cxt.enqueueWork(() -> {

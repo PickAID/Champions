@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.util;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.affix.IAffix;
@@ -12,6 +12,7 @@ import top.theillusivec4.champions.common.config.EntitiesConfig.EntityConfig;
 import javax.annotation.Nullable;
 import java.util.*;
 
+@Deprecated
 public class EntityManager {
 
   private static final Map<EntityType<?>, EntitySettings> SETTINGS = new HashMap<>();
@@ -34,7 +35,7 @@ public class EntityManager {
         Champions.LOGGER.error("Missing identifier while building entity settings, skipping...");
         return;
       }
-      var type = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(entityConfig.entity));
+      var type = BuiltInRegistries.ENTITY_TYPE.getOptional(Identifier.parse(entityConfig.entity));
 
       if (type.isEmpty()) {
         Champions.LOGGER.error("Invalid identifier while building entity settings, skipping...");

@@ -2,6 +2,7 @@ package top.theillusivec4.champions.api.affix;
 
 import top.theillusivec4.champions.api.IChampion;
 
+@Deprecated
 public interface IAffixCompatibility {
     /**
      * Does this IChampion mob can apply this Affix?

@@ -192,7 +192,7 @@ public abstract class BaseBulletEntity extends Projectile {
       this.targetDeltaZ = d4 / d5 * 0.15D;
     }
 
-    this.hasImpulse = true;
+//    this.hasImpulse = true;
     this.flightSteps = 10 + this.random.nextInt(5) * 10;
   }
 

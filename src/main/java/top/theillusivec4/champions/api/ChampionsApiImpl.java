@@ -1,6 +1,6 @@
 package top.theillusivec4.champions.api;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.data.AffixCategory;
 import top.theillusivec4.champions.api.data.AffixDataLoader;
@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+@Deprecated
 public class ChampionsApiImpl implements IChampionsApi {
   private static final ConcurrentHashMap<AffixCategory, List<IAffix>> categories = new ConcurrentHashMap<>();
   private static final AffixDataLoader AFFIX_DATA_LOADER = new AffixDataLoader();
@@ -33,16 +34,16 @@ public class ChampionsApiImpl implements IChampionsApi {
 
   @Override
   public Optional<IAffix> getAffix(String id) {
-    return getAffix(ResourceLocation.parse(id));
+    return getAffix(Identifier.parse(id));
   }
 
   @Override
-  public Optional<IAffix> getAffix(ResourceLocation id) {
+  public Optional<IAffix> getAffix(Identifier id) {
     return AffixRegistry.AFFIX_REGISTRY.getOptional(id);
   }
 
   @Override
-  public Optional<ResourceLocation> getAffixId(IAffix affix) {
+  public Optional<Identifier> getAffixId(IAffix affix) {
     return Optional.ofNullable(AffixRegistry.AFFIX_REGISTRY.getKey(affix));
   }
 

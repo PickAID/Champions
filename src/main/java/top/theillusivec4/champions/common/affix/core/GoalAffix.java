@@ -9,6 +9,7 @@ import top.theillusivec4.champions.api.affix.IAffixLifecycle;
 
 import java.util.List;
 
+@Deprecated
 public abstract class GoalAffix extends BasicAffix implements IAffixLifecycle {
 
     @Override

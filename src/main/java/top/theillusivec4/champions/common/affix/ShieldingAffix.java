@@ -15,6 +15,7 @@ import top.theillusivec4.champions.common.affix.core.AffixData;
 import top.theillusivec4.champions.common.affix.core.CombatLifeCycleAffix;
 import top.theillusivec4.champions.common.config.ChampionsConfig;
 
+@Deprecated
 public class ShieldingAffix extends CombatLifeCycleAffix {
 
   @Override

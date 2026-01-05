@@ -4,24 +4,22 @@ import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.critereon.EntitySubPredicate;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
-import top.theillusivec4.champions.common.registry.ModLootItemConditions;
 
 import java.util.Optional;
 import java.util.Set;
 
-public record EntityIsChampion(Optional<Integer> minTier, Optional<Integer> maxTier,
-                               LootContext.EntityTarget target) implements LootItemCondition, EntitySubPredicate {
+@Deprecated
+public record EntityIsChampion(
+  Optional<Integer> minTier,
+  Optional<Integer> maxTier,
+  LootContext.EntityTarget target
+) implements LootItemCondition {
 
   public static final MapCodec<EntityIsChampion> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
     Codec.INT.optionalFieldOf("minTier").forGetter(EntityIsChampion::minTier),
@@ -31,29 +29,29 @@ public record EntityIsChampion(Optional<Integer> minTier, Optional<Integer> maxT
 
   @Override
   public Set<ContextKey<?>> getReferencedContextParams() {
-    return ImmutableSet.of(target.getParam());
+    return ImmutableSet.of(target.contextParam());
   }
 
   @Override
   public boolean test(LootContext context) {
-    Entity entity = context.getOptionalParameter(target.getParam());
+    Entity entity = context.getOptionalParameter(target.contextParam());
     return entity != null && isChampion(entity);
   }
 
-  @Override
-  public LootItemConditionType getType() {
-    return ModLootItemConditions.ENTITY_IS_CHAMPION.get();
-  }
+//  @Override
+//  public LootItemConditionType getType() {
+//    return ModLootItemConditions.ENTITY_IS_CHAMPION.get();
+//  }
 
   @Override
-  public MapCodec<? extends EntitySubPredicate> codec() {
+  public MapCodec<EntityIsChampion> codec() {
     return CODEC;
   }
 
-  @Override
-  public boolean matches(Entity entity, ServerLevel level, @Nullable Vec3 position) {
-    return isChampion(entity);
-  }
+//  @Override
+//  public boolean matches(Entity entity, ServerLevel level, @Nullable Vec3 position) {
+//    return isChampion(entity);
+//  }
 
   private boolean isChampion(Entity entity) {
     return ChampionAttachment.getAttachment(entity).map(champion -> {

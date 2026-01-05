@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.common.config;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -9,6 +9,7 @@ import top.theillusivec4.champions.Champions;
 
 import java.util.*;
 
+@Deprecated
 public class ConfigLoot {
 
   private static final RandomSource RAND = RandomSource.create();
@@ -70,7 +71,7 @@ public class ConfigLoot {
           continue;
         }
 
-        Optional<Item> item = BuiltInRegistries.ITEM.getOptional(ResourceLocation.parse(parsed[1]));
+        Optional<Item> item = BuiltInRegistries.ITEM.getOptional(Identifier.parse(parsed[1]));
 
         if (item.isEmpty()) {
           Champions.LOGGER.error("Item not found! {}", parsed[1]);

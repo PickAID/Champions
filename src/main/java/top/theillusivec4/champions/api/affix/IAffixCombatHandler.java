@@ -4,6 +4,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.api.IChampion;
 
+@Deprecated
 public interface IAffixCombatHandler {
 	/**
 	 * When IChampion mob attacking a target living entity

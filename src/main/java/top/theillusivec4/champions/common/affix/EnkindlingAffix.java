@@ -17,6 +17,7 @@ import top.theillusivec4.champions.common.entity.EnkindlingBulletEntity;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class EnkindlingAffix extends GoalAffix {
 
   @Override

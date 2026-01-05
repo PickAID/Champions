@@ -1,15 +1,16 @@
 package top.theillusivec4.champions.api.affix;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import top.theillusivec4.champions.api.data.AffixCategory;
 
+@Deprecated
 public interface IAffixBase {
     /**
      * Get IAffix id
      *
      * @return String of IAffix id
      */
-    ResourceLocation getIdentifier();
+    Identifier getIdentifier();
 
     /**
      * Get IAffix's Category
@@ -17,7 +18,6 @@ public interface IAffixBase {
      * @return AffixCategory
      */
     AffixCategory getCategory();
-
 
     /**
      * Get affix's prefix, usually used for translate key

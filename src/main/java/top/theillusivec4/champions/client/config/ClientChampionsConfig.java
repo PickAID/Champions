@@ -4,6 +4,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.champions.Champions;
 
+@Deprecated
 public class ClientChampionsConfig {
 
   private static final String CONFIG_PREFIX = "gui." + Champions.MODID + ".config.";

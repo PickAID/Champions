@@ -16,6 +16,7 @@ import top.theillusivec4.champions.common.config.ChampionsConfig;
 
 import java.util.List;
 
+@Deprecated
 public class PlaguedAffix extends CombatLifeCycleAffix {
 
   @Override

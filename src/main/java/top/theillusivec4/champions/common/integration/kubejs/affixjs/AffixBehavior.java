@@ -2,6 +2,7 @@ package top.theillusivec4.champions.common.integration.kubejs.affixjs;
 
 import top.theillusivec4.champions.common.integration.kubejs.affixjs.AffixCallbacks.*;
 
+@Deprecated
 public class AffixBehavior {
   protected OnInitialSpawnCallback onInitialSpawnCallback;
   protected OnSpawnCallback onSpawnCallback;

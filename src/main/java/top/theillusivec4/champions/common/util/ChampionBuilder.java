@@ -5,7 +5,8 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -24,6 +25,7 @@ import top.theillusivec4.champions.common.util.EntityManager.EntitySettings;
 
 import java.util.*;
 
+@Deprecated
 public class ChampionBuilder {
 
   /**
@@ -233,7 +235,7 @@ public class ChampionBuilder {
                   if (ChampionsConfig.enableDebug) {
                     var debugInfo = "Removed champion modifier: Name:%s Operation: %s Amount: %s".formatted(attributeModifier.id(), attributeModifier.operation(), attributeModifier.amount());
                     Champions.LOGGER.debug(debugInfo);
-                    playerList.getPlayers().stream().filter(p -> p.hasPermissions(2)).forEach(serverPlayer -> serverPlayer.sendSystemMessage(Component.literal(debugInfo)));
+                    playerList.getPlayers().stream().filter(player -> player.permissions().hasPermission(Permissions.COMMANDS_ADMIN)).forEach(player -> player.sendSystemMessage(Component.literal(debugInfo)));
                   }
                 }
               });
@@ -293,11 +295,11 @@ public class ChampionBuilder {
     }
   }
 
-  private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, ResourceLocation modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
-    applyAttributeModifier(livingEntity, attributeValue, Utils.getLocation(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
+  private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, Identifier modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
+    applyAttributeModifier(livingEntity, attributeValue, Utils.id(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
   }
 
-  public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, ResourceLocation modifierId, double amount, AttributeModifier.Operation operation) {
+  public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, Identifier modifierId, double amount, AttributeModifier.Operation operation) {
     var attributeInstance = livingEntity.getAttributes().getInstance(attribute);
     if (attributeInstance != null && !attributeInstance.hasModifier(modifierId)) {
       attributeInstance.addOrReplacePermanentModifier(new AttributeModifier(modifierId, amount, operation));

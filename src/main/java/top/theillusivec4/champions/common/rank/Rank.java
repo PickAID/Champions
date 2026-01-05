@@ -9,6 +9,7 @@ import top.theillusivec4.champions.api.affix.IAffix;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class Rank {
 
   private final int tier;

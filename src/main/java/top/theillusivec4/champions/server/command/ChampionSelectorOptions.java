@@ -2,18 +2,18 @@ package top.theillusivec4.champions.server.command;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.commands.arguments.selector.EntitySelectorParser;
 import net.minecraft.commands.arguments.selector.options.EntitySelectorOptions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import top.theillusivec4.champions.api.affix.IAffix;
 import top.theillusivec4.champions.api.IChampion;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.common.rank.Rank;
 import top.theillusivec4.champions.common.rank.RankManager;
 
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class ChampionSelectorOptions {
 
   public static void setup() {
@@ -110,7 +111,7 @@ public class ChampionSelectorOptions {
         return count.matches(championAffixes.size());
       } else {
         Set<String> ids =
-          championAffixes.stream().map(IAffix::getIdentifier).map(ResourceLocation::toString).collect(Collectors.toSet());
+          championAffixes.stream().map(IAffix::getIdentifier).map(Identifier::toString).collect(Collectors.toSet());
         int found = 0;
 
         for (String affix : affixes) {

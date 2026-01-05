@@ -14,6 +14,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Objects;
 import java.util.Optional;
 
+@Deprecated
 public class ChampionsOverlay implements GuiLayer {
 
   public static boolean isRendering = false;

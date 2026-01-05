@@ -5,6 +5,7 @@ import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.ICancellableEvent;
 import top.theillusivec4.champions.api.IChampion;
 
+@Deprecated
 public abstract class SpawnChampionEvent extends Event {
   IChampion champion;
 

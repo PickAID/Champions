@@ -18,10 +18,12 @@ import top.theillusivec4.champions.common.config.ChampionsConfig;
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class DesecratingAffix extends GoalCombatAffix {
 
   @Override
   public boolean onAttacked(IChampion champion, DamageSource source, float amount) {
+    // ，免疫效果云及自身攻击
     return !(source.getEntity() instanceof AreaEffectCloud)
       || source.getDirectEntity() != champion.getLivingEntity();
   }
