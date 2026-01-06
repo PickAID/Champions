@@ -33,7 +33,7 @@ import top.theillusivec4.champions.affix.effect.value.AffixValueEffects;
 import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootContextBasedValues;
 import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootParamSourceTypes;
 import top.theillusivec4.champions.loot.predicates.LatestDamageCondition;
-import top.theillusivec4.champions.deprecated.common.registries.Registries;
+import top.theillusivec4.champions.registries.Registries;
 import top.theillusivec4.champions.util.Utils;
 
 import java.util.List;

@@ -27,6 +27,8 @@
     "WitherSkullMixin"
   ],
   "client": [
+    "BossHealthOverlayAccessor",
+    "BossHealthOverlayMixin"
   ],
   "injectors": {
     "defaultRequire": 1

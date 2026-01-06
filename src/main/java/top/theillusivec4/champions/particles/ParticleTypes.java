@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.deprecated.common.particles;
+package top.theillusivec4.champions.particles;
 
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;

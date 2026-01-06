@@ -30,7 +30,7 @@ import net.neoforged.neoforge.transfer.transaction.Transaction;
 import top.theillusivec4.champions.affix.Affix;
 import top.theillusivec4.champions.components.DataComponents;
 import top.theillusivec4.champions.components.ItemAffixes;
-import top.theillusivec4.champions.deprecated.common.registries.Registries;
+import top.theillusivec4.champions.registries.Registries;
 import top.theillusivec4.champions.util.Utils;
 
 import java.util.Collection;

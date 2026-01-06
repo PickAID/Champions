@@ -6,7 +6,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootContextUser;
 import net.minecraft.world.phys.Vec3;
-import top.theillusivec4.champions.deprecated.common.registries.BuiltInRegistries;
+import top.theillusivec4.champions.registries.BuiltInRegistries;
 
 import java.util.function.Function;
 

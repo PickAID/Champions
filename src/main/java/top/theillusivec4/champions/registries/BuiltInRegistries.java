@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.deprecated.common.registries;
+package top.theillusivec4.champions.registries;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
+import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.affix.Affix;
 import top.theillusivec4.champions.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.affix.effect.entity.AffixEntityEffect;
@@ -15,9 +16,13 @@ import top.theillusivec4.champions.affix.effect.value.AffixValueEffect;
 import top.theillusivec4.champions.affix.lootcontextbasedvalue.FloatLootParamSource;
 import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootContextBasedValue;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class BuiltInRegistries {
+  private static @Nullable List<Registry<?>> registries = new ArrayList<>();
   public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = simple(Registries.AFFIX_EFFECT_COMPONENT_TYPE);
   public static final Registry<MapCodec<? extends LootContextBasedValue>> LOOT_CONTEXT_BASED_VALUE_TYPE = simple(Registries.LOOT_CONTEXT_BASED_VALUE_TYPE);
   public static final Registry<MapCodec<? extends AffixValueEffect>> AFFIX_VALUE_EFFECT_TYPE = simple(Registries.AFFIX_VALUE_EFFECT_TYPE);
@@ -27,12 +32,8 @@ public final class BuiltInRegistries {
 
   public static void register(IEventBus modEventBus) {
     modEventBus.addListener(NewRegistryEvent.class, event -> {
-      event.register(AFFIX_EFFECT_COMPONENT_TYPE);
-      event.register(LOOT_CONTEXT_BASED_VALUE_TYPE);
-      event.register(AFFIX_VALUE_EFFECT_TYPE);
-      event.register(AFFIX_ENTITY_EFFECT_TYPE);
-      event.register(AFFIX_LOCATION_BASED_EFFECT_TYPE);
-      event.register(LOOT_PARAM_FLOAT_SOURCE);
+      Objects.requireNonNull(registries).forEach(event::register);
+      registries = null;
     });
 
     modEventBus.addListener(DataPackRegistryEvent.NewRegistry.class, event -> {
@@ -51,7 +52,9 @@ public final class BuiltInRegistries {
   private static <T> Registry<T> create(ResourceKey<Registry<T>> key, Consumer<RegistryBuilder<T>> consumer) {
     RegistryBuilder<T> builder = new RegistryBuilder<>(key);
     consumer.accept(builder);
-    return builder.create();
+    Registry<T> registry = builder.create();
+    registries.add(registry);
+    return registry;
   }
 
   private BuiltInRegistries() {
