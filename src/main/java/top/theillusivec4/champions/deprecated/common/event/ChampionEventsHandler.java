@@ -31,7 +31,7 @@ import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttach
 import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
 import top.theillusivec4.champions.deprecated.common.event.customEvent.ChampionsEventHooks;
 import top.theillusivec4.champions.deprecated.common.network.SyncAffixSettingPacket;
-import top.theillusivec4.champions.deprecated.common.particles.ParticleTypes;
+import top.theillusivec4.champions.particles.ParticleTypes;
 import top.theillusivec4.champions.deprecated.common.rank.Rank;
 import top.theillusivec4.champions.deprecated.common.rank.RankManager;
 import top.theillusivec4.champions.deprecated.common.registries.AffixTypes;

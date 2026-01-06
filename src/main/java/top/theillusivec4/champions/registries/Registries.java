@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.deprecated.common.registries;
+package top.theillusivec4.champions.registries;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;

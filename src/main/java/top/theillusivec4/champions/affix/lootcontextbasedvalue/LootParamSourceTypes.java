@@ -6,7 +6,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.affix.LatestDamage;
 import top.theillusivec4.champions.loot.parameters.LootContextParams;
-import top.theillusivec4.champions.deprecated.common.registries.Registries;
+import top.theillusivec4.champions.registries.Registries;
 
 import java.util.function.Supplier;
 

@@ -26,7 +26,7 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.affix.effect.*;
 import top.theillusivec4.champions.affix.effect.entity.AffixEntityEffect;
 import top.theillusivec4.champions.loot.parameters.LootContextParamSets;
-import top.theillusivec4.champions.deprecated.common.registries.Registries;
+import top.theillusivec4.champions.registries.Registries;
 
 import java.util.*;
 import java.util.function.Consumer;

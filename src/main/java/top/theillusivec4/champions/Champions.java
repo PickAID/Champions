@@ -24,10 +24,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.affix.EntityEventListener;
-import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
-import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.affix.AffixEffectComponents;
+import top.theillusivec4.champions.affix.EntityEventListener;
 import top.theillusivec4.champions.affix.effect.AffixLocationBasedEffects;
 import top.theillusivec4.champions.affix.effect.entity.AffixEntityEffects;
 import top.theillusivec4.champions.affix.effect.value.AffixValueEffects;
@@ -36,15 +34,18 @@ import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootParamSourceTy
 import top.theillusivec4.champions.attachments.Attachments;
 import top.theillusivec4.champions.capabilities.Capabilities;
 import top.theillusivec4.champions.commands.Commands;
+import top.theillusivec4.champions.components.DataComponents;
 import top.theillusivec4.champions.data.DataEventListener;
+import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
+import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.effects.MobEffects;
 import top.theillusivec4.champions.entities.EntityTypes;
-import top.theillusivec4.champions.components.DataComponents;
-import top.theillusivec4.champions.items.Items;
 import top.theillusivec4.champions.items.ItemEventListener;
+import top.theillusivec4.champions.items.Items;
 import top.theillusivec4.champions.loot.predicates.LootItemConditions;
-import top.theillusivec4.champions.deprecated.common.particles.ParticleTypes;
-import top.theillusivec4.champions.deprecated.common.registries.BuiltInRegistries;
+import top.theillusivec4.champions.particles.ParticleTypes;
+import top.theillusivec4.champions.registries.BuiltInRegistries;
+import top.theillusivec4.champions.stats.Stats;
 
 @Mod(Champions.MODID)
 public class Champions {
@@ -69,8 +70,9 @@ public class Champions {
     MobEffects.register(modEventBus);
     EntityTypes.register(modEventBus);
 //    LootModifiers.register(modEventBus);
-//    Stats.register(modEventBus);
+    Stats.register(modEventBus);
     DataComponents.register(modEventBus);
+//    Stats.register(modEventBus);
     Capabilities.register(modEventBus);
 
 //    ChampionsRegistry.register(modEventBus);
@@ -111,4 +113,8 @@ public class Champions {
 
   }
 
+  private static final class ModEventListener {
+    private ModEventListener() {
+    }
+  }
 }
