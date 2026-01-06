@@ -28,6 +28,7 @@ import top.theillusivec4.champions.api.ChampionHandlerEventListener;
 import top.theillusivec4.champions.api.ChampionsApiImpl;
 import top.theillusivec4.champions.api.IChampionsApi;
 import top.theillusivec4.champions.api.affix.AffixEffectComponentTypes;
+import top.theillusivec4.champions.api.affix.effect.AffixLocationBasedEffectTypes;
 import top.theillusivec4.champions.api.affix.effect.entity.AffixEntityEffectTypes;
 import top.theillusivec4.champions.api.affix.effect.value.AffixValueEffectTypes;
 import top.theillusivec4.champions.api.affix.lootcontextbasedvalue.LootContextBasedValueTypes;
@@ -79,6 +80,7 @@ public class Champions {
     LootContextBasedValueTypes.register(modEventBus);
     AffixValueEffectTypes.register(modEventBus);
     AffixEntityEffectTypes.register(modEventBus);
+    AffixLocationBasedEffectTypes.register(modEventBus);
     LootParamSourceTypes.register(modEventBus);
     AttachmentTypes.register(modEventBus);
     LootItemConditionTypes.register(modEventBus);

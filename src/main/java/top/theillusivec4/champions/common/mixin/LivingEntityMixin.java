@@ -22,6 +22,13 @@ public abstract class LivingEntityMixin extends Entity {
     super(type, level);
   }
 
+  @Inject(method = "isInvulnerableTo", at = @At(value = "RETURN"), cancellable = true)
+  private void champions$isInvulnerableTo(ServerLevel level, DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+    if (!cir.getReturnValue()) {
+      Utils.getChampionHandler(this).ifPresent(handler -> cir.setReturnValue(handler.isImmuneToDamage(level, source)));
+    }
+  }
+
   @Inject(method = "getKnockback", at = @At(value = "RETURN"), cancellable = true)
   private void champion$getKnockback(Entity target, DamageSource damageSource, CallbackInfoReturnable<Float> cir) {
     if (this.level() instanceof ServerLevel serverLevel) {

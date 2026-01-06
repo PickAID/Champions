@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.api.affix.effect.entity;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.particles.ParticleOptions;
@@ -34,7 +35,7 @@ public record SpawnParticlesEffect(
   ).apply(instance, SpawnParticlesEffect::new));
 
   @Override
-  public void apply(LootContext context, int level, Entity entity, Vec3 position) {
+  public void apply(LootContext context, int level, Entity entity, Vec3 origin) {
     ServerLevel serverLevel = context.getLevel();
     RandomSource random = entity.getRandom();
     Vec3 movement = entity.getKnownMovement();
@@ -42,9 +43,9 @@ public record SpawnParticlesEffect(
     float bbHeight = entity.getBbHeight();
     serverLevel.sendParticles(
       this.particle,
-      this.horizontalPosition.getCoordinate(position.x(), position.x(), bbWidth, random),
-      this.verticalPosition.getCoordinate(position.y(), position.y() + bbHeight / 2.0F, bbHeight, random),
-      this.horizontalPosition.getCoordinate(position.z(), position.z(), bbWidth, random),
+      this.horizontalPosition.getCoordinate(origin.x(), origin.x(), bbWidth, random),
+      this.verticalPosition.getCoordinate(origin.y(), origin.y() + bbHeight / 2.0F, bbHeight, random),
+      this.horizontalPosition.getCoordinate(origin.z(), origin.z(), bbWidth, random),
       this.count,
       this.horizontalVelocity.getVelocity(movement.x(), random),
       this.verticalVelocity.getVelocity(movement.y(), random),
@@ -87,11 +88,37 @@ public record SpawnParticlesEffect(
   }
 
   public record PositionSource(PositionSourceType type, float offset, float scale) {
-    public static final MapCodec<PositionSource> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    public static final MapCodec<PositionSource> MAP_CODEC = RecordCodecBuilder.<PositionSource>mapCodec(instance -> instance.group(
       PositionSourceType.CODEC.fieldOf("type").forGetter(PositionSource::type),
       Codec.FLOAT.optionalFieldOf("offset", 0.0f).forGetter(PositionSource::offset),
       Codec.FLOAT.optionalFieldOf("scale", 1.0f).forGetter(PositionSource::scale)
-    ).apply(instance, PositionSource::new));
+    ).apply(instance, PositionSource::new)).validate(source -> {
+      if (source.type == PositionSourceType.ENTITY_POSITION && source.scale() != 1.0f) {
+        return DataResult.error(() -> "Cannot scale an entity position coordinate source");
+      }
+
+      return DataResult.success(source);
+    });
+
+    public static PositionSource inBoundingBox() {
+      return inBoundingBox(0.0f);
+    }
+
+    public static PositionSource inBoundingBox(float offset) {
+      return inBoundingBox(offset, 1.0f);
+    }
+
+    public static PositionSource inBoundingBox(float offset, float scale) {
+      return new PositionSource(PositionSourceType.BOUNDING_BOX, offset, scale);
+    }
+
+    public static PositionSource entityPosition() {
+      return entityPosition(0.0f);
+    }
+
+    public static PositionSource entityPosition(float offset) {
+      return new PositionSource(PositionSourceType.BOUNDING_BOX, offset, 1.0f);
+    }
 
     public double getCoordinate(double position, double center, float boundingBoxSpan, RandomSource random) {
       return this.type.getCoordinate(position, center, boundingBoxSpan * this.scale, random) + this.offset;
@@ -99,10 +126,19 @@ public record SpawnParticlesEffect(
   }
 
   public record VelocitySource(float movementScale, FloatProvider base) {
+    public static final VelocitySource INSTANCE = new VelocitySource(0.0f, ConstantFloat.ZERO);
     public static final MapCodec<VelocitySource> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
       Codec.FLOAT.optionalFieldOf("movement_scale", 0.0f).forGetter(VelocitySource::movementScale),
       FloatProvider.CODEC.optionalFieldOf("base", ConstantFloat.ZERO).forGetter(VelocitySource::base)
     ).apply(instance, VelocitySource::new));
+
+    public static VelocitySource create(float movementScale) {
+      return create(movementScale, ConstantFloat.ZERO);
+    }
+
+    public static VelocitySource create(float movementScale, FloatProvider base) {
+      return new VelocitySource(movementScale, base);
+    }
 
     public double getVelocity(double movement, RandomSource random) {
       return movement * this.movementScale + this.base.sample(random);

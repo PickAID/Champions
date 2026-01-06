@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.api.affix.effect.entity;
 
 import com.mojang.serialization.MapCodec;
+import net.minecraft.advancements.criterion.EntityPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ExplosionParticleInfo;
@@ -23,6 +24,7 @@ import top.theillusivec4.champions.api.affix.lootcontextbasedvalue.LootContextBa
 import top.theillusivec4.champions.common.registries.Registries;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -35,6 +37,7 @@ public final class AffixEntityEffectTypes {
   public static final DeferredHolder<MapCodec<? extends AffixEntityEffect>, MapCodec<SpawnParticlesEffect>> SPAWN_PARTICLES = register("spawn_particles", SpawnParticlesEffect.MAP_CODEC);
   public static final DeferredHolder<MapCodec<? extends AffixEntityEffect>, MapCodec<IterationEntity>> ITERATION_ENTITY = register("iteration_entity", IterationEntity.MAP_CODEC);
   public static final DeferredHolder<MapCodec<? extends AffixEntityEffect>, MapCodec<ExplodeEffect>> EXPLODE = register("explode", ExplodeEffect.MAP_CODEC);
+  public static final DeferredHolder<MapCodec<? extends AffixEntityEffect>, MapCodec<PlaySound>> PLAY_SOUND = register("play_sound", PlaySound.MAP_CODEC);
 
   public static void register(IEventBus modEventBus) {
     DEFERRED_REGISTER.register(modEventBus);
@@ -44,8 +47,12 @@ public final class AffixEntityEffectTypes {
     return new AllOf.EntityEffects(Arrays.stream(effects).toList());
   }
 
-  public static AffixEntityEffect applyMobEffect(HolderSet<MobEffect> mobEffects, LootContextBasedValue minDuration, LootContextBasedValue maxDuration, LootContextBasedValue minAmplifier, LootContextBasedValue maxAmplifier) {
-    return new ApplyMobEffect(mobEffects, minDuration, maxDuration, minAmplifier, maxAmplifier);
+  public static AffixEntityEffect applyMobEffect(Holder<MobEffect> mobEffect, LootContextBasedValue duration, LootContextBasedValue amplifier) {
+    return applyMobEffect(mobEffect, duration, amplifier, false);
+  }
+
+  public static AffixEntityEffect applyMobEffect(Holder<MobEffect> mobEffect, LootContextBasedValue duration, LootContextBasedValue amplifier, boolean infinite) {
+    return new ApplyMobEffect(mobEffect, duration, amplifier, infinite);
   }
 
   public static AffixEntityEffect ignite(LootContextBasedValue value) {
@@ -75,6 +82,18 @@ public final class AffixEntityEffectTypes {
       blockParticles,
       sound
     );
+  }
+
+  public static AffixEntityEffect iterationEntity(double horizontalScale, double verticalScale, AffixEntityEffect effect) {
+    return new IterationEntity(horizontalScale, verticalScale, Optional.empty(), effect);
+  }
+
+  public static AffixEntityEffect iterationEntity(double horizontalScale, double verticalScale, EntityPredicate.Builder predicate, AffixEntityEffect effect) {
+    return new IterationEntity(horizontalScale, verticalScale, Optional.of(predicate.build()), effect);
+  }
+
+  public static AffixEntityEffect playSound(List<Holder<SoundEvent>> soundEvents, FloatProvider volume, FloatProvider pitch) {
+    return new PlaySound(soundEvents, volume, pitch);
   }
 
   private static <T extends AffixEntityEffect> DeferredHolder<MapCodec<? extends AffixEntityEffect>, MapCodec<T>> register(String name, MapCodec<T> mapCodec) {

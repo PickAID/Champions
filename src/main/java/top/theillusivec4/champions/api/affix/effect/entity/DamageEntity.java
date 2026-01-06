@@ -25,7 +25,7 @@ public record DamageEntity(LootContextBasedValue minDamage, LootContextBasedValu
   ).apply(instance, DamageEntity::new));
 
   @Override
-  public void apply(LootContext context, int level, Entity entity, Vec3 position) {
+  public void apply(LootContext context, int level, Entity entity, Vec3 origin) {
     float damage = Mth.randomBetween(context.getRandom(), this.minDamage.calculate(context, level), this.maxDamage.calculate(context, level));
     Entity attacker = context.getParameter(LootContextParams.DIRECT_ATTACKING_ENTITY);
     entity.hurtServer(context.getLevel(), new DamageSource(damageType, attacker), damage);

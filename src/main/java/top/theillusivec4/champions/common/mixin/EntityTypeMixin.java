@@ -34,7 +34,7 @@ public abstract class EntityTypeMixin<T extends Entity> implements EntityTypeTes
   @Unique
   private static <T extends Entity> Consumer<T> champion$appendAffixesConfig(ItemAffixes itemAffixes, Consumer<T> consumer) {
     return consumer.andThen(entity -> Utils.getChampionHandler(entity).ifPresent(handler -> {
-      handler.setChampionLevel(itemAffixes.level());
+      handler.setLevel(itemAffixes.level());
       handler.updateAffixes(mutable -> {
         for (Holder<Affix> affix : itemAffixes.affixes()) {
           mutable.add(affix);
