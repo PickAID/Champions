@@ -1,7 +1,7 @@
 {
   "required": true,
   "priority": 1000,
-  "package": "top.theillusivec4.champions.common.mixin",
+  "package": "top.theillusivec4.champions.mixin",
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "AbstractArrowMixin",

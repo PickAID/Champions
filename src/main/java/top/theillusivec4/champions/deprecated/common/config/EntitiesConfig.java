@@ -1,0 +1,18 @@
+package top.theillusivec4.champions.deprecated.common.config;
+
+import java.util.List;
+
+@Deprecated
+public class EntitiesConfig {
+
+  public List<EntityConfig> entities;
+
+  public static class EntityConfig {
+    public String entity;
+    public Integer minTier;
+    public Integer maxTier;
+    public List<String> presetAffixes;
+    public List<String> affixList;
+    public String affixPermission;
+  }
+}

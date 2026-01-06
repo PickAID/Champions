@@ -1,0 +1,33 @@
+package top.theillusivec4.champions.deprecated.common.affix;
+
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
+import top.theillusivec4.champions.deprecated.api.IChampion;
+import top.theillusivec4.champions.deprecated.api.data.AffixSetting;
+import top.theillusivec4.champions.deprecated.common.affix.core.CombatAffix;
+import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
+
+@Deprecated
+public class KnockingAffix extends CombatAffix {
+
+  @Override
+  public boolean onAttack(IChampion champion, LivingEntity target, DamageSource source,
+                          float amount) {
+    target.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 2));
+    LivingEntity livingEntity = champion.getLivingEntity();
+    target.knockback((float) ChampionsConfig.knockingMultiplier,
+      Mth.sin(livingEntity.getYRot() * ((float) Math.PI / 180F)),
+      (-Mth.cos(livingEntity.getYRot() * ((float) Math.PI / 180F))));
+    return true;
+  }
+
+  @Override
+  public AffixSetting createDefaultSetting() {
+    return AffixSetting.builder()
+      .withDefault()
+      .build();
+  }
+}

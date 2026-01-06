@@ -24,27 +24,27 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.api.ChampionHandlerEventListener;
-import top.theillusivec4.champions.api.ChampionsApiImpl;
-import top.theillusivec4.champions.api.IChampionsApi;
-import top.theillusivec4.champions.api.affix.AffixEffectComponentTypes;
-import top.theillusivec4.champions.api.affix.effect.AffixLocationBasedEffectTypes;
-import top.theillusivec4.champions.api.affix.effect.entity.AffixEntityEffectTypes;
-import top.theillusivec4.champions.api.affix.effect.value.AffixValueEffectTypes;
-import top.theillusivec4.champions.api.affix.lootcontextbasedvalue.LootContextBasedValueTypes;
-import top.theillusivec4.champions.api.affix.lootcontextbasedvalue.LootParamSourceTypes;
-import top.theillusivec4.champions.common.attachments.AttachmentTypes;
-import top.theillusivec4.champions.common.capabilities.Capabilities;
-import top.theillusivec4.champions.common.commands.Commands;
-import top.theillusivec4.champions.common.datagen.DataGenerationEventListener;
-import top.theillusivec4.champions.common.effect.MobEffects;
-import top.theillusivec4.champions.common.entity.EntityTypes;
-import top.theillusivec4.champions.common.item.DataComponentTypes;
-import top.theillusivec4.champions.common.item.Items;
-import top.theillusivec4.champions.common.item.components.ItemEventListener;
-import top.theillusivec4.champions.common.loot.predicates.LootItemConditionTypes;
-import top.theillusivec4.champions.common.particles.ParticleTypes;
-import top.theillusivec4.champions.common.registries.BuiltInRegistries;
+import top.theillusivec4.champions.affix.EntityEventListener;
+import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
+import top.theillusivec4.champions.deprecated.api.IChampionsApi;
+import top.theillusivec4.champions.affix.AffixEffectComponents;
+import top.theillusivec4.champions.affix.effect.AffixLocationBasedEffects;
+import top.theillusivec4.champions.affix.effect.entity.AffixEntityEffects;
+import top.theillusivec4.champions.affix.effect.value.AffixValueEffects;
+import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootContextBasedValues;
+import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootParamSourceTypes;
+import top.theillusivec4.champions.attachments.Attachments;
+import top.theillusivec4.champions.capabilities.Capabilities;
+import top.theillusivec4.champions.commands.Commands;
+import top.theillusivec4.champions.data.DataEventListener;
+import top.theillusivec4.champions.effects.MobEffects;
+import top.theillusivec4.champions.entities.EntityTypes;
+import top.theillusivec4.champions.components.DataComponents;
+import top.theillusivec4.champions.items.Items;
+import top.theillusivec4.champions.items.ItemEventListener;
+import top.theillusivec4.champions.loot.predicates.LootItemConditions;
+import top.theillusivec4.champions.deprecated.common.particles.ParticleTypes;
+import top.theillusivec4.champions.deprecated.common.registries.BuiltInRegistries;
 
 @Mod(Champions.MODID)
 public class Champions {
@@ -70,23 +70,23 @@ public class Champions {
     EntityTypes.register(modEventBus);
 //    LootModifiers.register(modEventBus);
 //    Stats.register(modEventBus);
-    DataComponentTypes.register(modEventBus);
+    DataComponents.register(modEventBus);
     Capabilities.register(modEventBus);
 
 //    ChampionsRegistry.register(modEventBus);
 
     BuiltInRegistries.register(modEventBus);
-    AffixEffectComponentTypes.register(modEventBus);
-    LootContextBasedValueTypes.register(modEventBus);
-    AffixValueEffectTypes.register(modEventBus);
-    AffixEntityEffectTypes.register(modEventBus);
-    AffixLocationBasedEffectTypes.register(modEventBus);
+    AffixEffectComponents.register(modEventBus);
+    LootContextBasedValues.register(modEventBus);
+    AffixValueEffects.register(modEventBus);
+    AffixEntityEffects.register(modEventBus);
+    AffixLocationBasedEffects.register(modEventBus);
     LootParamSourceTypes.register(modEventBus);
-    AttachmentTypes.register(modEventBus);
-    LootItemConditionTypes.register(modEventBus);
-    DataGenerationEventListener.register(modEventBus);
+    Attachments.register(modEventBus);
+    LootItemConditions.register(modEventBus);
 
-    ChampionHandlerEventListener.register();
+    DataEventListener.register(modEventBus);
+    EntityEventListener.register();
     ItemEventListener.register();
     Commands.register();
 
