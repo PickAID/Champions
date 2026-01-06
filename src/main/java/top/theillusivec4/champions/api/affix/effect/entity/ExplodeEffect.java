@@ -58,9 +58,9 @@ public record ExplodeEffect(
   ).apply(instance, ExplodeEffect::new));
 
   @Override
-  public void apply(LootContext context, int level, Entity entity, Vec3 position) {
+  public void apply(LootContext context, int level, Entity entity, Vec3 origin) {
     ServerLevel serverLevel = context.getLevel();
-    Vec3 pos = position.add(this.offset);
+    Vec3 pos = origin.add(this.offset);
     serverLevel.explode(
       this.attributeToUser ? entity : null,
       this.getDamageSource(entity, pos),

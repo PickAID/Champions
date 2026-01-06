@@ -9,13 +9,19 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.EntityAffixes;
+import top.theillusivec4.champions.api.affix.Affix;
 import top.theillusivec4.champions.api.affix.LatestDamage;
+import top.theillusivec4.champions.api.affix.effect.AffixLocationBasedEffect;
+
+import java.util.Map;
+import java.util.Set;
 
 public final class AttachmentTypes {
   private static final DeferredRegister<AttachmentType<?>> DEFERRED_REGISTER = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Champions.MODID);
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<EntityAffixes>> ENTITY_AFFIXES = register("entity_affixes", AttachmentType.builder(() -> EntityAffixes.EMPTY).serialize(EntityAffixes.CODEC).sync(EntityAffixes.STREAM_CODEC));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<LatestDamage>> LATEST_DAMAGE = register("latest_damage", AttachmentType.builder(() -> LatestDamage.EMPTY).serialize(LatestDamage.CODEC));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> LEVEL = register("level", AttachmentType.builder(() -> 1).serialize(Codec.intRange(1, 99).fieldOf("level")).sync(ByteBufCodecs.INT));
+  public static final DeferredHolder<AttachmentType<?>, AttachmentType<Map<Affix, AffixLocationBasedEffect>>> ACTION_EFFECTS = register("action_effects", AttachmentType.builder(Map::of));
 
   public static void register(IEventBus modEventBus) {
     DEFERRED_REGISTER.register(modEventBus);

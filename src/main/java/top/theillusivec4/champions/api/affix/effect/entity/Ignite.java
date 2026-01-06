@@ -15,7 +15,7 @@ public record Ignite(LootContextBasedValue duration) implements AffixEntityEffec
   ).apply(instance, Ignite::new));
 
   @Override
-  public void apply(LootContext context, int level, Entity entity, Vec3 position) {
+  public void apply(LootContext context, int level, Entity entity, Vec3 origin) {
     entity.igniteForSeconds(this.duration.calculate(context, level));
   }
 

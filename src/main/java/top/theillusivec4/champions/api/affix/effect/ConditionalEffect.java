@@ -10,6 +10,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public record ConditionalEffect<T>(T effect, Optional<LootItemCondition> requirements) implements Validatable {
   public static <T> Codec<ConditionalEffect<T>> codec(Codec<T> effectCodec) {
@@ -42,5 +43,11 @@ public record ConditionalEffect<T>(T effect, Optional<LootItemCondition> require
   @Override
   public void validate(ValidationContext context) {
     Validatable.validate(context, "requirements", this.requirements);
+  }
+
+  public void apply(LootContext context, Consumer<T> consumer) {
+    if (this.matches(context)) {
+      consumer.accept(effect);
+    }
   }
 }

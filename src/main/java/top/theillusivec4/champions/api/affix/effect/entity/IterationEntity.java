@@ -14,23 +14,30 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.Optional;
 
-public record IterationEntity(double xScale, double yScale, double zScale, Optional<EntityPredicate> predicate, AffixEntityEffect effect) implements AffixEntityEffect {
+/**
+ * 迭代实体效果组件
+ * 用于迭代过滤维度内全部实体并执行效果
+ *
+ * @param horizontalScale
+ * @param verticalScale
+ * @param predicate
+ * @param effect
+ */
+public record IterationEntity(double horizontalScale, double verticalScale, Optional<EntityPredicate> predicate, AffixEntityEffect effect) implements AffixEntityEffect {
   public static final MapCodec<IterationEntity> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    Codec.doubleRange(1.0, 1024.0).fieldOf("x_scale").forGetter(IterationEntity::xScale),
-    Codec.doubleRange(1.0, 1024.0).fieldOf("x_scale").forGetter(IterationEntity::xScale),
-    Codec.doubleRange(1.0, 1024.0).fieldOf("x_scale").forGetter(IterationEntity::xScale),
+    Codec.doubleRange(1.0, 1024.0).fieldOf("horizontal_scale").forGetter(IterationEntity::horizontalScale),
+    Codec.doubleRange(1.0, 1024.0).fieldOf("vertical_scale").forGetter(IterationEntity::verticalScale),
     EntityPredicate.CODEC.optionalFieldOf("predicate").forGetter(IterationEntity::predicate),
     AffixEntityEffect.CODEC.fieldOf("effect").forGetter(IterationEntity::effect)
   ).apply(instance, IterationEntity::new));
 
   @Override
-  public void apply(LootContext context, int level, Entity entity, Vec3 position) {
+  public void apply(LootContext context, int level, Entity entity, Vec3 origin) {
     ServerLevel serverLevel = context.getLevel();
-    AABB boundingBox = entity.getBoundingBox();
-    for (Entity entity1 : serverLevel.getEntities(entity, boundingBox.inflate(this.xScale, this.yScale, this.zScale))) {
-      Vec3 position1 = entity1.position();
-      if (this.predicate.map(predicate1 -> predicate1.matches(serverLevel, position1, entity1)).orElse(true)) {
-        this.effect.apply(context, level, entity1, position1);
+    AABB inflated = entity.getBoundingBox().inflate(this.horizontalScale, this.horizontalScale, this.verticalScale);
+    for (Entity target : serverLevel.getEntities(entity, inflated)) {
+      if (this.predicate.map(entityPredicate -> entityPredicate.matches(serverLevel, origin, target)).orElse(true)) {
+        this.effect.apply(context, level, target, target.position());
       }
     }
   }

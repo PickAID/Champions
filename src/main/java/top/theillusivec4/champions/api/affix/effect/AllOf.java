@@ -63,9 +63,9 @@ public final class AllOf {
     public static final MapCodec<EntityEffects> MAP_CODEC = AllOf.codec(AffixEntityEffect.CODEC, EntityEffects::new, EntityEffects::effects);
 
     @Override
-    public void apply(LootContext context, int level, Entity entity, Vec3 position) {
+    public void apply(LootContext context, int level, Entity entity, Vec3 origin) {
       for (AffixEntityEffect effect : this.effects) {
-        effect.apply(context, level, entity, position);
+        effect.apply(context, level, entity, origin);
       }
     }
 

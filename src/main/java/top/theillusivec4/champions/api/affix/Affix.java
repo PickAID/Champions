@@ -19,11 +19,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Util;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.api.affix.effect.*;
 import top.theillusivec4.champions.api.affix.effect.entity.AffixEntityEffect;
@@ -31,7 +29,6 @@ import top.theillusivec4.champions.common.loot.parameters.LootContextParamSets;
 import top.theillusivec4.champions.common.registries.Registries;
 
 import java.util.*;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -47,9 +44,7 @@ public record Affix(Component description, DataComponentMap effects) {
 
   public static <T> void applyConditionalEffects(List<ConditionalEffect<T>> effects, LootContext context, Consumer<T> consumer) {
     for (ConditionalEffect<T> effect : effects) {
-      if (effect.matches(context)) {
-        consumer.accept(effect.effect());
-      }
+      effect.apply(context, consumer);
     }
   }
 
@@ -57,23 +52,46 @@ public record Affix(Component description, DataComponentMap effects) {
     return new Builder();
   }
 
-  public void forEachModifier(ServerLevel serverLevel, int level, LivingEntity entity, BiConsumer<Holder<Attribute>, AttributeModifier> consumer) {
-    LootContext context = LootContextParamSets.attributes(serverLevel, entity, level);
-    for (AttributeEffect effect : getEffects(AffixEffectComponentTypes.ATTRIBUTES)) {
-      AttributeModifier modifier = effect.getModifier(context, level);
-      consumer.accept(effect.attribute(), modifier);
-    }
-  }
-
   public void modifyKnockback(ServerLevel serverLevel, int level, Entity victim, DamageSource source, LatestDamage latestDamage, MutableFloat knockback) {
     LootContext context = LootContextParamSets.knockback(serverLevel, victim, level, source, latestDamage, source.getDirectEntity(), source.getEntity());
     applyConditionalEffects(this.getEffects(AffixEffectComponentTypes.KNOCKBACK), context, effect -> knockback.setValue(effect.process(context, level, knockback.floatValue())));
   }
 
-  public void doPostAttack(ServerLevel serverLevel, int level, AffixTarget target, Entity victim, DamageSource source, LatestDamage latestDamage) {
-    LootContext context = null;
-    AffixTarget latestTarget = null;
+  public void modifyDamage(ServerLevel serverLevel, int level, Entity victim, DamageSource source, LatestDamage latestDamage, MutableFloat damage) {
+    LootContext context = LootContextParamSets.damage(serverLevel, victim, level, source, latestDamage, source.getDirectEntity(), source.getEntity());
+    applyConditionalEffects(this.getEffects(AffixEffectComponentTypes.DAMAGE), context, effect -> damage.setValue(effect.process(context, level, damage.floatValue())));
 
+//    LootContext lootContext = LootContextParamSets.damage(serverLevel, victim, level, source, latestDamage, source.getEntity(), source.getDirectEntity());
+//
+//    for (TargetedConditionalEffect<AffixValueEffect> effect : this.getEffects(AffixEffectComponentTypes.DAMAGE)) {
+//      if (target == effect.enchanted()) {
+//        if (effect.match(lootContext)) {
+//          damage.setValue(effect.effect().process(lootContext, level, damage.floatValue()));
+//        }
+//      }
+//    }
+  }
+
+  public void runInitialize(ServerLevel serverLevel, int level, Entity victim, Vec3 origin) {
+    LootContext lootContext = LootContextParamSets.location(serverLevel, victim, level, origin);
+    for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponentTypes.INITIALIZE)) {
+      effect.onChangedBlock(lootContext, level, victim, origin, true);
+    }
+  }
+
+  public void stopInitialized(ServerLevel serverLevel, int level, Entity victim, Vec3 origin) {
+    LootContext lootContext = LootContextParamSets.location(serverLevel, victim, level, origin);
+    for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponentTypes.INITIALIZE)) {
+      effect.onDeactivated(lootContext, level, victim, origin);
+    }
+  }
+
+  public void modifyHeal(ServerLevel serverLevel, int level, Entity victim, LatestDamage latestDamage, MutableFloat heal) {
+    LootContext lootContext = LootContextParamSets.heal(serverLevel, victim, level, latestDamage);
+    applyConditionalEffects(this.getEffects(AffixEffectComponentTypes.HEAL), lootContext, effect -> heal.setValue(effect.process(lootContext, level, heal.floatValue())));
+  }
+
+  public void doPostAttack(ServerLevel serverLevel, int level, AffixTarget target, Entity victim, DamageSource source, LatestDamage latestDamage) {
     for (TargetedConditionalEffect<AffixEntityEffect> effect : this.getEffects(AffixEffectComponentTypes.POST_ATTACK)) {
       if (target == effect.enchanted()) {
         Entity targetEntity = switch (effect.affected()) {
@@ -83,14 +101,10 @@ public record Affix(Component description, DataComponentMap effects) {
         };
 
         if (targetEntity != null) {
-          // 更新 LootContext
-          if (effect.affected() != latestTarget) {
-            latestTarget = effect.affected();
-            context = LootContextParamSets.postAttack(serverLevel, targetEntity, level, source, latestDamage, source.getEntity(), source.getDirectEntity());
-          }
+          LootContext lootContext = LootContextParamSets.postAttack(serverLevel, targetEntity, level, source, latestDamage, source.getEntity(), source.getDirectEntity());
 
-          if (effect.match(context)) {
-            effect.effect().apply(context, level, targetEntity, targetEntity.position());
+          if (effect.match(lootContext)) {
+            effect.effect().apply(lootContext, level, targetEntity, targetEntity.position());
           }
         }
       }
@@ -106,11 +120,6 @@ public record Affix(Component description, DataComponentMap effects) {
   public void modifyDamageProtection(ServerLevel serverLevel, int level, Entity victim, DamageSource source, LatestDamage latestDamage, MutableFloat protection) {
     LootContext context = LootContextParamSets.damageProtection(serverLevel, victim, level, source, latestDamage, source.getDirectEntity(), source.getEntity());
     applyConditionalEffects(this.getEffects(AffixEffectComponentTypes.DAMAGE_PROTECTION), context, effect -> protection.setValue(effect.process(context, level, protection.floatValue())));
-  }
-
-  public void doSpawn(ServerLevel serverLevel, Entity entity, int level) {
-    LootContext context = LootContextParamSets.spawn(serverLevel, entity, level);
-    applyConditionalEffects(this.getEffects(AffixEffectComponentTypes.SPAWN), context, effect -> effect.apply(context, level, entity, entity.position()));
   }
 
   public <T> Optional<T> getSpecialEffect(Supplier<DataComponentType<T>> componentTypeSupplier) {
@@ -163,6 +172,10 @@ public record Affix(Component description, DataComponentMap effects) {
     public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> dataComponentType, AffixTarget enchanted, AffixTarget affected, E effect) {
       this.getEffects(dataComponentType).add(TargetedConditionalEffect.create(enchanted, affected, effect));
       return this;
+    }
+
+    public <E> Builder withEnchantedTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> dataComponentTypeSupplier, AffixTarget enchanted, E effect, LootItemCondition.Builder builder) {
+      return this.withTargetedConditionalEffects(dataComponentTypeSupplier.get(), enchanted, AffixTarget.VICTIM, effect, builder);
     }
 
     public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> dataComponentTypeSupplier, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {

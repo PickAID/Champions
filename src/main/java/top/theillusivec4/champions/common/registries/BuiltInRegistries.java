@@ -9,6 +9,7 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.api.affix.effect.entity.AffixEntityEffect;
 import top.theillusivec4.champions.api.affix.effect.value.AffixValueEffect;
 import top.theillusivec4.champions.api.affix.lootcontextbasedvalue.FloatLootParamSource;
@@ -21,6 +22,7 @@ public final class BuiltInRegistries {
   public static final Registry<MapCodec<? extends LootContextBasedValue>> LOOT_CONTEXT_BASED_VALUE_TYPE = simple(Registries.LOOT_CONTEXT_BASED_VALUE_TYPE);
   public static final Registry<MapCodec<? extends AffixValueEffect>> AFFIX_VALUE_EFFECT_TYPE = simple(Registries.AFFIX_VALUE_EFFECT_TYPE);
   public static final Registry<MapCodec<? extends AffixEntityEffect>> AFFIX_ENTITY_EFFECT_TYPE = simple(Registries.AFFIX_ENTITY_EFFECT_TYPE);
+  public static final Registry<MapCodec<? extends AffixLocationBasedEffect>> AFFIX_LOCATION_BASED_EFFECT_TYPE = simple(Registries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
   public static final Registry<FloatLootParamSource<?>> LOOT_PARAM_FLOAT_SOURCE = simple(Registries.FLOAT_LOOT_PARAM_SOURCE);
 
   public static void register(IEventBus modEventBus) {
@@ -29,6 +31,7 @@ public final class BuiltInRegistries {
       event.register(LOOT_CONTEXT_BASED_VALUE_TYPE);
       event.register(AFFIX_VALUE_EFFECT_TYPE);
       event.register(AFFIX_ENTITY_EFFECT_TYPE);
+      event.register(AFFIX_LOCATION_BASED_EFFECT_TYPE);
       event.register(LOOT_PARAM_FLOAT_SOURCE);
     });
 

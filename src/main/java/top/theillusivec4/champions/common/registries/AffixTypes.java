@@ -45,8 +45,8 @@ public class AffixTypes {
     PARALYZING = register("paralyzing", ParalyzingAffix::new); // 瘫痪 √
     PLAGUED = register("plagued", PlaguedAffix::new); // 瘟疫 √ 差一个范围实体效果组件
     REFLECTIVE = register("reflective", ReflectiveAffix::new); // 反射 √
-    SHIELDING = register("shielding", ShieldingAffix::new); // 防护 ·
-    WOUNDING = register("wounding", WoundingAffix::new); // 伤害 ·
+    SHIELDING = register("shielding", ShieldingAffix::new); // 保护 √
+    WOUNDING = register("wounding", WoundingAffix::new); // 创伤 ·
   }
 
   private static <I extends IAffix> DeferredHolder<IAffix, I> register(String name, Supplier<I> supplier) {
