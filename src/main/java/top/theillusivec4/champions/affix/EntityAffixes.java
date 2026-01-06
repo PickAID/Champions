@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.api;
+package top.theillusivec4.champions.affix;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -7,7 +7,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import top.theillusivec4.champions.api.affix.Affix;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,27 +70,27 @@ public class EntityAffixes {
     return affixes;
   }
 
-  public static class Mutable {
-    private final List<Holder<Affix>> list;
+  public static class Mutable extends EntityAffixes {
+    private final List<Holder<Affix>> affixes;
 
     public Mutable(EntityAffixes entityAffixes) {
-      this.list = new ArrayList<>(entityAffixes.affixes);
+      this.affixes = new ArrayList<>(entityAffixes.affixes);
     }
 
     public Mutable() {
-      this.list = new ArrayList<>();
+      this.affixes = new ArrayList<>();
     }
 
     public void add(Holder<Affix> affix) {
-      list.add(affix);
+      affixes.add(affix);
     }
 
     public void remove(Holder<Affix> affix) {
-      list.remove(affix);
+      affixes.remove(affix);
     }
 
     public EntityAffixes toImmutable() {
-      return this.list.isEmpty() ? EntityAffixes.EMPTY : new EntityAffixes(this.list);
+      return this.affixes.isEmpty() ? EntityAffixes.EMPTY : new EntityAffixes(this.affixes);
     }
   }
 }
