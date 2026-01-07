@@ -1,7 +1,7 @@
 package top.theillusivec4.champions.loot.parameters;
 
 import net.minecraft.util.context.ContextKey;
-import top.theillusivec4.champions.affix.LatestDamage;
+import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.util.Utils;
 
 public final class LootContextParams {

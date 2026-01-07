@@ -9,7 +9,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.affix.LatestDamage;
+import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.mixin.LootContextParamSetsAccessor;
 import top.theillusivec4.champions.util.Utils;
 

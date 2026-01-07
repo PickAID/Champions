@@ -7,7 +7,7 @@ import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import top.theillusivec4.champions.affix.LatestDamage;
+import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.loot.parameters.LootContextParams;
 
 import java.util.Optional;

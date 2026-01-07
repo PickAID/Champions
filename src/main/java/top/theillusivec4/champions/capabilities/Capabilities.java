@@ -9,9 +9,12 @@ import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jspecify.annotations.Nullable;
-import top.theillusivec4.champions.affix.EntityChampionHandler;
-import top.theillusivec4.champions.affix.ChampionHandler;
+import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.champion.affix.EntityChampionHandler;
 import top.theillusivec4.champions.util.Utils;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public final class Capabilities {
 
@@ -20,16 +23,23 @@ public final class Capabilities {
       for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
         if (entityType.getCategory() == MobCategory.MONSTER) {
           event.registerEntity(ChampionHandlers.ENTITY, entityType, ChampionHandlers.Providers.ENTITY);
+          ChampionHandlers.IMPLEMENTERS.add(entityType);
         }
       }
     });
   }
+
 
   private Capabilities() {
   }
 
   public static final class ChampionHandlers {
     public static final EntityCapability<ChampionHandler, @Nullable Void> ENTITY = EntityCapability.create(Utils.id("champion_handler"), ChampionHandler.class, Void.class);
+    private static final Set<EntityType<?>> IMPLEMENTERS = new HashSet<>();
+
+    public static boolean isImplemented(EntityType<?> entityType) {
+      return IMPLEMENTERS.contains(entityType);
+    }
 
     private ChampionHandlers() {
     }
