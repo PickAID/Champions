@@ -35,8 +35,8 @@ public class HUDHelper {
         if (championLevel >= 1 || !affixSet.isEmpty()) {
           Minecraft client = Minecraft.getInstance();
           // calculate render position
-          int i = client.getWindow().getGuiScaledWidth();
-          int k = i / 2 - 91;
+          int windowWidth = client.getWindow().getGuiScaledWidth();
+          int k = windowWidth / 2 - 91;
           int j = 21;
           int xOffset = ClientChampionsConfig.hudXOffset;
           int yOffset = ClientChampionsConfig.hudYOffset;
@@ -56,14 +56,14 @@ public class HUDHelper {
           }
 
           if (championLevel <= 18) {
-            int startStarsX = xOffset + i / 2 - 5 - 5 * (championLevel - 1);
+            int startStarsX = xOffset + windowWidth / 2 - 5 - 5 * (championLevel - 1);
 
             for (int tier = 0; tier < championLevel; tier++) {
               guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI_STAR, startStarsX, yOffset + 1, 0, 0, 9, 9, 9, 9, color);
               startStarsX += 10;
             }
           } else {
-            int startStarsX = xOffset + i / 2 - 5;
+            int startStarsX = xOffset + windowWidth / 2 - 5;
             String count = "x" + championLevel;
             guiGraphics.blit(RenderPipelines.GUI_TEXTURED, GUI_STAR, startStarsX - client.font.width(count) / 2,
               yOffset + 1, 0, 0, 9, 9, 9, 9, color);
@@ -81,7 +81,7 @@ public class HUDHelper {
             name = customName.getString();
           }
           guiGraphics.drawString(client.font, name,
-            (int) (xOffset + (float) (i / 2 - client.font.width(name) / 2)),
+            (int) (xOffset + (float) (windowWidth / 2 - client.font.width(name) / 2)),
             (int) (yOffset + (float) (j - 9)), color, true);
           StringBuilder builder = new StringBuilder();
 
@@ -92,7 +92,7 @@ public class HUDHelper {
           }
           String affixes = builder.toString().trim();
           guiGraphics.drawString(client.font, affixes,
-            (int) (xOffset + (float) (i / 2 - client.font.width(affixes) / 2)),
+            (int) (xOffset + (float) (windowWidth / 2 - client.font.width(affixes) / 2)),
             (int) (yOffset + (float) (j + 6)), 16777215, true);
           return true;
         }

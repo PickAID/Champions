@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.mixin;
 
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,10 +15,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.champions.affix.Affix;
+import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.components.DataComponents;
 import top.theillusivec4.champions.components.ItemAffixes;
-import top.theillusivec4.champions.util.ChampionUtil;
 
 import java.util.function.Consumer;
 
@@ -26,17 +28,37 @@ public abstract class EntityTypeMixin<T extends Entity> implements EntityTypeTes
   @Inject(method = "appendCustomEntityStackConfig", at = @At(value = "RETURN"), cancellable = true)
   private static <T extends Entity> void champion$appendCustomEntityStackConfig(Consumer<T> initialConfig, Level level, ItemStack itemStack, @Nullable LivingEntity user, CallbackInfoReturnable<Consumer<T>> cir) {
     ItemAffixes itemAffixes = itemStack.get(DataComponents.ITEM_AFFIXES);
+    Holder<Rank> rank = itemStack.get(DataComponents.RANK);
+    Integer lvl = itemStack.get(DataComponents.LEVEL);
+    Integer color = itemStack.get(DataComponents.COLOR);
+    Component prefixName = itemStack.get(DataComponents.PREFIX_NAME);
+
     if (itemAffixes != null) {
-      cir.setReturnValue(champion$appendAffixesConfig(itemAffixes, cir.getReturnValue()));
+      cir.setReturnValue(champion$appendAffixesConfig(rank, lvl, color, prefixName, itemAffixes, cir.getReturnValue()));
     }
   }
 
   @Unique
-  private static <T extends Entity> Consumer<T> champion$appendAffixesConfig(ItemAffixes itemAffixes, Consumer<T> consumer) {
+  private static <T extends Entity> Consumer<T> champion$appendAffixesConfig(@Nullable Holder<Rank> rank, @Nullable Integer level, @Nullable Integer color, @Nullable Component prefixName, ItemAffixes affixes, Consumer<T> consumer) {
     return consumer.andThen(entity -> ChampionUtil.getHandler(entity).ifPresent(handler -> {
-      handler.setLevel(itemAffixes.level());
+      if (rank != null) {
+        handler.setRank(rank);
+      }
+
+      if (level != null) {
+        handler.setLevel(level);
+      }
+
+      if (color != null) {
+        handler.setColor(color);
+      }
+
+      if (prefixName != null) {
+        handler.setPrefixName(prefixName);
+      }
+
       handler.updateAffixes(mutable -> {
-        for (Holder<Affix> affix : itemAffixes.affixes()) {
+        for (Holder<Affix> affix : affixes.affixes()) {
           mutable.add(affix);
         }
       });

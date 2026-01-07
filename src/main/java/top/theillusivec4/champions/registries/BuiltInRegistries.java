@@ -9,12 +9,13 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.RegistryBuilder;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.affix.Affix;
-import top.theillusivec4.champions.affix.effect.AffixLocationBasedEffect;
-import top.theillusivec4.champions.affix.effect.entity.AffixEntityEffect;
-import top.theillusivec4.champions.affix.effect.value.AffixValueEffect;
-import top.theillusivec4.champions.affix.lootcontextbasedvalue.FloatLootParamSource;
-import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootContextBasedValue;
+import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffect;
+import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffect;
+import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffect;
+import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.FloatLootParamSource;
+import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
+import top.theillusivec4.champions.champion.rank.Rank;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public final class BuiltInRegistries {
 
     modEventBus.addListener(DataPackRegistryEvent.NewRegistry.class, event -> {
       event.dataPackRegistry(Registries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
+      event.dataPackRegistry(Registries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
     });
   }
 

@@ -31,7 +31,6 @@ import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttach
 import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
 import top.theillusivec4.champions.deprecated.common.event.customEvent.ChampionsEventHooks;
 import top.theillusivec4.champions.deprecated.common.network.SyncAffixSettingPacket;
-import top.theillusivec4.champions.particles.ParticleTypes;
 import top.theillusivec4.champions.deprecated.common.rank.Rank;
 import top.theillusivec4.champions.deprecated.common.rank.RankManager;
 import top.theillusivec4.champions.deprecated.common.registries.AffixTypes;
@@ -39,6 +38,7 @@ import top.theillusivec4.champions.deprecated.common.stats.Stats;
 import top.theillusivec4.champions.deprecated.common.util.ChampionBuilder;
 import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
 import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
+import top.theillusivec4.champions.particles.ParticleTypes;
 import top.theillusivec4.champions.util.Utils;
 
 import java.util.ArrayList;
@@ -59,6 +59,7 @@ public class ChampionEventsHandler {
 
   /**
    * 处理经验掉落
+   *
    * @param evt
    */
   @SubscribeEvent
@@ -77,6 +78,7 @@ public class ChampionEventsHandler {
 
   /**
    * 修改爆炸数据
+   *
    * @param evt
    */
   @SubscribeEvent
@@ -97,6 +99,7 @@ public class ChampionEventsHandler {
 
   /**
    * 处理史莱姆类生物分裂
+   *
    * @param event
    */
   @SubscribeEvent
@@ -164,16 +167,19 @@ public class ChampionEventsHandler {
               if (ChampionsConfig.showParticles && rank.getA() >= 1) {
                 String colorCode = rank.getB();
                 int color = Rank.getColor(colorCode);
-                float r = (float) ARGB.red(color) / 255;
-                float g = (float) ARGB.green(color) / 255;
-                float b = (float) ARGB.blue(color) / 255;
+                float red = (float) ARGB.red(color) / 255;
+                float green = (float) ARGB.green(color) / 255;
+                float bule = (float) ARGB.blue(color) / 255;
 
-                livingEntity.level().addParticle(ParticleTypes.RANK_PARTICLE_TYPE.get(),
-                  livingEntity.position().x + (livingEntity.getRandom().nextDouble() - 0.5D) *
-                    (double) livingEntity.getBbWidth(), livingEntity.position().y +
-                    livingEntity.getRandom().nextDouble() * livingEntity.getBbHeight(),
-                  livingEntity.position().z + (livingEntity.getRandom().nextDouble() - 0.5D) *
-                    (double) livingEntity.getBbWidth(), r, g, b);
+                livingEntity.level().addParticle(
+                  ParticleTypes.RANK_PARTICLE_TYPE.get(),
+                  livingEntity.position().x + (livingEntity.getRandom().nextDouble() - 0.5D) * (double) livingEntity.getBbWidth(),
+                  livingEntity.position().y + livingEntity.getRandom().nextDouble() * livingEntity.getBbHeight(),
+                  livingEntity.position().z + (livingEntity.getRandom().nextDouble() - 0.5D) * (double) livingEntity.getBbWidth(),
+                  red,
+                  green,
+                  bule
+                );
               }
             });
           }
@@ -332,6 +338,7 @@ public class ChampionEventsHandler {
 
   /**
    * 显示
+   *
    * @param event
    */
   @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -341,6 +348,7 @@ public class ChampionEventsHandler {
 
   /**
    * 数据包同步
+   *
    * @param event
    */
   @SubscribeEvent
@@ -355,6 +363,7 @@ public class ChampionEventsHandler {
 
   /**
    * 命令注册
+   *
    * @param evt
    */
   @SubscribeEvent

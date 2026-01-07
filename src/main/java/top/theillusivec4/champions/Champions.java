@@ -24,13 +24,13 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.affix.AffixEffectComponents;
-import top.theillusivec4.champions.affix.EntityEventListener;
-import top.theillusivec4.champions.affix.effect.AffixLocationBasedEffects;
-import top.theillusivec4.champions.affix.effect.entity.AffixEntityEffects;
-import top.theillusivec4.champions.affix.effect.value.AffixValueEffects;
-import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootContextBasedValues;
-import top.theillusivec4.champions.affix.lootcontextbasedvalue.LootParamSourceTypes;
+import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
+import top.theillusivec4.champions.champion.EntityEventListener;
+import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffects;
+import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffects;
+import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffects;
+import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValues;
+import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootParamSourceTypes;
 import top.theillusivec4.champions.attachments.Attachments;
 import top.theillusivec4.champions.capabilities.Capabilities;
 import top.theillusivec4.champions.commands.Commands;
@@ -51,9 +51,12 @@ import top.theillusivec4.champions.stats.Stats;
 public class Champions {
   public static final String MODID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
+  @Deprecated
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
   // champion instance
+  @Deprecated
   private static Champions INSTANCE;
+  @Deprecated
   public final ModContainer modContainer;
 
   public static Champions getInstance() {
@@ -61,6 +64,7 @@ public class Champions {
   }
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
+//    modEventBus.register(this);
     this.modContainer = modContainer;
     INSTANCE = this;
 //    modEventBus.register(new ModEventHandler());
@@ -113,8 +117,4 @@ public class Champions {
 
   }
 
-  private static final class ModEventListener {
-    private ModEventListener() {
-    }
-  }
 }
