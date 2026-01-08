@@ -5,6 +5,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.LatestDamage;
@@ -37,6 +38,8 @@ public interface ChampionHandler {
   void updateAffixes(Consumer<Affixes.Mutable> consumer);
 
   void copyFrom(Entity entity);
+
+  void copyFrom(ItemStack itemStack);
 
   void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer);
 

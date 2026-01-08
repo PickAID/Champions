@@ -48,6 +48,10 @@ public class Affixes {
     return new Mutable(this);
   }
 
+  public Affixes copy() {
+    return new Affixes(this.affixes);
+  }
+
   @Override
   public int hashCode() {
     return affixes.hashCode();
@@ -75,7 +79,7 @@ public class Affixes {
     return affixes;
   }
 
-  public static class Mutable extends Affixes {
+  public static class Mutable {
     private final List<Holder<Affix>> affixes;
 
     public Mutable(Affixes affixes) {
@@ -88,6 +92,10 @@ public class Affixes {
 
     public void add(Holder<Affix> affix) {
       affixes.add(affix);
+    }
+
+    public boolean contains(Holder<Affix> affix) {
+      return affixes.contains(affix);
     }
 
     public void remove(Holder<Affix> affix) {

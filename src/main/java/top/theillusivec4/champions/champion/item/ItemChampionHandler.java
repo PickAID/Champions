@@ -9,6 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import top.theillusivec4.champions.attachments.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.affix.Affix;
@@ -18,6 +19,7 @@ import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.components.DataComponents;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ItemChampionHandler implements ChampionHandler {
@@ -81,12 +83,61 @@ public class ItemChampionHandler implements ChampionHandler {
 
   @Override
   public void updateAffixes(Consumer<Affixes.Mutable> consumer) {
-
+    Affixes affixes = this.itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY);
+    Affixes.Mutable mutable = affixes.toMutable();
+    consumer.accept(mutable);
+    Affixes affixes1 = mutable.toImmutable();
+    if (!affixes1.equals(affixes)) {
+      this.itemStack.set(DataComponents.AFFIXES, affixes1);
+    }
   }
 
   @Override
   public void copyFrom(Entity entity) {
+    if (entity.hasData(Attachments.AFFIXES)) {
+      this.itemStack.set(DataComponents.AFFIXES, entity.getData(Attachments.AFFIXES).copy());
+    }
 
+    if (entity.hasData(Attachments.RANK)) {
+      Optional<Holder<Rank>> optional = entity.getData(Attachments.RANK);
+      optional.ifPresent(rank -> this.itemStack.set(DataComponents.RANK, rank));
+    }
+
+    if (entity.hasData(Attachments.PREFIX_NAME)) {
+      this.itemStack.set(DataComponents.PREFIX_NAME, entity.getData(Attachments.PREFIX_NAME).copy());
+    }
+
+    if (entity.hasData(Attachments.LEVEL)) {
+      this.itemStack.set(DataComponents.LEVEL, entity.getData(Attachments.LEVEL));
+    }
+
+    if (entity.hasData(Attachments.COLOR)) {
+      this.itemStack.set(DataComponents.COLOR, entity.getData(Attachments.COLOR));
+    }
+  }
+
+  @Override
+  public void copyFrom(ItemStack itemStack) {
+    if (itemStack.has(DataComponents.AFFIXES)) {
+      this.itemStack.set(DataComponents.AFFIXES, itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY).copy());
+    }
+
+    if (itemStack.has(DataComponents.RANK)) {
+      Holder<Rank> rank = itemStack.getOrDefault(DataComponents.RANK, this.level.registryAccess().getOrThrow(Ranks.COMMON));
+      this.itemStack.set(DataComponents.RANK, rank);
+    }
+
+    if (itemStack.has(DataComponents.PREFIX_NAME)) {
+      this.itemStack.set(DataComponents.PREFIX_NAME, itemStack.getOrDefault(DataComponents.PREFIX_NAME, Component.empty()).copy());
+    }
+
+    if (itemStack.has(DataComponents.LEVEL)) {
+      this.itemStack.set(DataComponents.LEVEL, itemStack.getOrDefault(DataComponents.LEVEL, 1));
+    }
+
+    if (itemStack.has(DataComponents.COLOR)) {
+      this.itemStack.set(DataComponents.COLOR, itemStack.getOrDefault(DataComponents.COLOR, -1));
+    }
   }
 
   @Override
@@ -115,7 +166,11 @@ public class ItemChampionHandler implements ChampionHandler {
 
   @Override
   public int getLevel() {
-    return this.itemStack.getOrDefault(DataComponents.LEVEL, 1);
+    if (this.itemStack.has(DataComponents.LEVEL)) {
+      return this.itemStack.getOrDefault(DataComponents.LEVEL, 1);
+    }
+
+    return this.getRank().value().level();
   }
 
   @Override
@@ -125,7 +180,11 @@ public class ItemChampionHandler implements ChampionHandler {
 
   @Override
   public int getColor() {
-    return this.itemStack.getOrDefault(DataComponents.COLOR, -1);
+    if (this.itemStack.has(DataComponents.COLOR)) {
+      return this.itemStack.getOrDefault(DataComponents.COLOR, -1);
+    }
+
+    return this.getRank().value().color();
   }
 
   @Override
@@ -145,7 +204,11 @@ public class ItemChampionHandler implements ChampionHandler {
 
   @Override
   public Component getPrefixName() {
-    return this.itemStack.getOrDefault(DataComponents.PREFIX_NAME, Component.empty());
+    if (this.itemStack.has(DataComponents.PREFIX_NAME)) {
+      return this.itemStack.getOrDefault(DataComponents.PREFIX_NAME, Component.empty());
+    }
+
+    return this.getRank().value().description();
   }
 
   @Override

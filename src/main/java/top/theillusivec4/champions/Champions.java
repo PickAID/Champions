@@ -25,7 +25,7 @@ import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
-import top.theillusivec4.champions.champion.EntityEventListener;
+import top.theillusivec4.champions.entities.EntityEventListener;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffects;
 import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffects;
 import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffects;
@@ -40,6 +40,7 @@ import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.effects.MobEffects;
 import top.theillusivec4.champions.entities.EntityTypes;
+import top.theillusivec4.champions.items.CreativeModeTabs;
 import top.theillusivec4.champions.items.ItemEventListener;
 import top.theillusivec4.champions.items.Items;
 import top.theillusivec4.champions.loot.predicates.LootItemConditions;
@@ -76,6 +77,7 @@ public class Champions {
 //    LootModifiers.register(modEventBus);
     Stats.register(modEventBus);
     DataComponents.register(modEventBus);
+    CreativeModeTabs.register(modEventBus);
 //    Stats.register(modEventBus);
     Capabilities.register(modEventBus);
 
