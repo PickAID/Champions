@@ -20,9 +20,9 @@ import top.theillusivec4.champions.client.gui.components.BossHealthOverlayHandle
 import top.theillusivec4.champions.client.gui.components.ChampionClientBossEvent;
 import top.theillusivec4.champions.client.particles.RankParticle;
 import top.theillusivec4.champions.deprecated.client.renderer.ColorizedBulletRenderer;
-import top.theillusivec4.champions.entities.EntityTypes;
+import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.client.item.CreativeModeTabEventListener;
-import top.theillusivec4.champions.particles.ParticleTypes;
+import top.theillusivec4.champions.particle.ParticleTypes;
 
 @Mod(value = Champions.MODID, dist = Dist.CLIENT)
 public class ChampionsClient {

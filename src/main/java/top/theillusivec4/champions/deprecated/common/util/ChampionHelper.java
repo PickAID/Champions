@@ -18,7 +18,7 @@ import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttach
 import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
 import top.theillusivec4.champions.deprecated.common.config.ConfigEnums.Permission;
 import top.theillusivec4.champions.deprecated.common.rank.Rank;
-import top.theillusivec4.champions.entities.EntityTypes;
+import top.theillusivec4.champions.world.entity.EntityTypes;
 
 import javax.annotation.Nullable;
 import java.util.HashSet;

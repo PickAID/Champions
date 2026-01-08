@@ -3,7 +3,7 @@ package top.theillusivec4.champions.data.lang;
 import net.minecraft.data.PackOutput;
 import top.theillusivec4.champions.champion.affix.Affixes;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.commands.SpawnEggCommand;
+import top.theillusivec4.champions.command.SpawnEggCommand;
 
 public class ZhCn extends ChampionsLanguageProvider {
   public ZhCn(PackOutput output) {

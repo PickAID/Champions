@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.affix.effect.AllOf;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
-import top.theillusivec4.champions.registries.Registries;
+import top.theillusivec4.champions.registry.Registries;
 
 import java.util.Arrays;
 import java.util.function.Supplier;

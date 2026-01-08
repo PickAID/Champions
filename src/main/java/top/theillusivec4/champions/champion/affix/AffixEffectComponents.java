@@ -12,9 +12,9 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.affix.effect.*;
 import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffect;
 import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffect;
-import top.theillusivec4.champions.loot.parameters.LootContextParamSets;
-import top.theillusivec4.champions.registries.BuiltInRegistries;
-import top.theillusivec4.champions.registries.Registries;
+import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
+import top.theillusivec4.champions.registry.BuiltInRegistries;
+import top.theillusivec4.champions.registry.Registries;
 
 import java.util.List;
 import java.util.function.UnaryOperator;

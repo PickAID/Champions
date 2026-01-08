@@ -3,7 +3,7 @@ package top.theillusivec4.champions.champion;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import top.theillusivec4.champions.capabilities.Capabilities;
+import top.theillusivec4.champions.capability.Capabilities;
 
 import java.util.Optional;
 

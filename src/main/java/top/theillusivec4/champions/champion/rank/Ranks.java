@@ -2,7 +2,7 @@ package top.theillusivec4.champions.champion.rank;
 
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import top.theillusivec4.champions.registries.Registries;
+import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
 public final class Ranks {

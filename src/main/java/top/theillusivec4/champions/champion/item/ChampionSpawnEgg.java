@@ -16,12 +16,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
-import top.theillusivec4.champions.capabilities.Capabilities;
+import top.theillusivec4.champions.capability.Capabilities;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.registries.Registries;
+import top.theillusivec4.champions.registry.Registries;
 
 import java.util.Optional;
 import java.util.function.Function;

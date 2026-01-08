@@ -3,7 +3,7 @@ package top.theillusivec4.champions.champion.affix.lootcontextbasedvalue;
 import com.mojang.serialization.Codec;
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.level.storage.loot.LootContext;
-import top.theillusivec4.champions.registries.BuiltInRegistries;
+import top.theillusivec4.champions.registry.BuiltInRegistries;
 
 import java.util.function.Function;
 

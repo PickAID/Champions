@@ -38,7 +38,6 @@ import top.theillusivec4.champions.deprecated.common.stats.Stats;
 import top.theillusivec4.champions.deprecated.common.util.ChampionBuilder;
 import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
 import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
-import top.theillusivec4.champions.particles.ParticleTypes;
 import top.theillusivec4.champions.util.Utils;
 
 import java.util.ArrayList;

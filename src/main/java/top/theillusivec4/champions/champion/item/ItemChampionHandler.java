@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.champion.item;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ARGB;
@@ -9,7 +10,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import top.theillusivec4.champions.attachments.Attachments;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.affix.Affix;
@@ -17,7 +19,7 @@ import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.components.DataComponents;
+import top.theillusivec4.champions.component.DataComponents;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -93,50 +95,50 @@ public class ItemChampionHandler implements ChampionHandler {
   }
 
   @Override
-  public void copyFrom(Entity entity) {
-    if (entity.hasData(Attachments.AFFIXES)) {
-      this.itemStack.set(DataComponents.AFFIXES, entity.getData(Attachments.AFFIXES).copy());
+  public void copyFrom(IAttachmentHolder holder) {
+    if (holder.hasData(Attachments.AFFIXES)) {
+      this.itemStack.set(DataComponents.AFFIXES, holder.getData(Attachments.AFFIXES).copy());
     }
 
-    if (entity.hasData(Attachments.RANK)) {
-      Optional<Holder<Rank>> optional = entity.getData(Attachments.RANK);
+    if (holder.hasData(Attachments.RANK)) {
+      Optional<Holder<Rank>> optional = holder.getData(Attachments.RANK);
       optional.ifPresent(rank -> this.itemStack.set(DataComponents.RANK, rank));
     }
 
-    if (entity.hasData(Attachments.PREFIX_NAME)) {
-      this.itemStack.set(DataComponents.PREFIX_NAME, entity.getData(Attachments.PREFIX_NAME).copy());
+    if (holder.hasData(Attachments.PREFIX_NAME)) {
+      this.itemStack.set(DataComponents.PREFIX_NAME, holder.getData(Attachments.PREFIX_NAME).copy());
     }
 
-    if (entity.hasData(Attachments.LEVEL)) {
-      this.itemStack.set(DataComponents.LEVEL, entity.getData(Attachments.LEVEL));
+    if (holder.hasData(Attachments.LEVEL)) {
+      this.itemStack.set(DataComponents.LEVEL, holder.getData(Attachments.LEVEL));
     }
 
-    if (entity.hasData(Attachments.COLOR)) {
-      this.itemStack.set(DataComponents.COLOR, entity.getData(Attachments.COLOR));
+    if (holder.hasData(Attachments.COLOR)) {
+      this.itemStack.set(DataComponents.COLOR, holder.getData(Attachments.COLOR));
     }
   }
 
   @Override
-  public void copyFrom(ItemStack itemStack) {
-    if (itemStack.has(DataComponents.AFFIXES)) {
-      this.itemStack.set(DataComponents.AFFIXES, itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY).copy());
+  public void copyFrom(DataComponentHolder holder) {
+    if (holder.has(DataComponents.AFFIXES)) {
+      this.itemStack.set(DataComponents.AFFIXES, holder.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY).copy());
     }
 
-    if (itemStack.has(DataComponents.RANK)) {
-      Holder<Rank> rank = itemStack.getOrDefault(DataComponents.RANK, this.level.registryAccess().getOrThrow(Ranks.COMMON));
+    if (holder.has(DataComponents.RANK)) {
+      Holder<Rank> rank = holder.getOrDefault(DataComponents.RANK, this.level.registryAccess().getOrThrow(Ranks.COMMON));
       this.itemStack.set(DataComponents.RANK, rank);
     }
 
-    if (itemStack.has(DataComponents.PREFIX_NAME)) {
-      this.itemStack.set(DataComponents.PREFIX_NAME, itemStack.getOrDefault(DataComponents.PREFIX_NAME, Component.empty()).copy());
+    if (holder.has(DataComponents.PREFIX_NAME)) {
+      this.itemStack.set(DataComponents.PREFIX_NAME, holder.getOrDefault(DataComponents.PREFIX_NAME, Component.empty()).copy());
     }
 
-    if (itemStack.has(DataComponents.LEVEL)) {
-      this.itemStack.set(DataComponents.LEVEL, itemStack.getOrDefault(DataComponents.LEVEL, 1));
+    if (holder.has(DataComponents.LEVEL)) {
+      this.itemStack.set(DataComponents.LEVEL, holder.getOrDefault(DataComponents.LEVEL, 1));
     }
 
-    if (itemStack.has(DataComponents.COLOR)) {
-      this.itemStack.set(DataComponents.COLOR, itemStack.getOrDefault(DataComponents.COLOR, -1));
+    if (holder.has(DataComponents.COLOR)) {
+      this.itemStack.set(DataComponents.COLOR, holder.getOrDefault(DataComponents.COLOR, -1));
     }
   }
 

@@ -1,16 +1,17 @@
 package top.theillusivec4.champions.champion.entity;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.apache.commons.lang3.mutable.MutableFloat;
-import top.theillusivec4.champions.attachments.Attachments;
+import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.affix.Affix;
@@ -22,8 +23,8 @@ import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
 import top.theillusivec4.champions.champion.affix.event.ChampionEventHooks;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.components.DataComponents;
-import top.theillusivec4.champions.loot.parameters.LootContextParamSets;
+import top.theillusivec4.champions.component.DataComponents;
+import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -119,59 +120,59 @@ public class EntityChampionHandler implements ChampionHandler {
   }
 
   @Override
-  public void copyFrom(Entity entity) {
-    if (this.entity != entity && this.entity.level() instanceof ServerLevel serverLevel) {
-      if (entity.hasData(Attachments.AFFIXES)) {
+  public void copyFrom(IAttachmentHolder holder) {
+    if (this.entity != holder && this.entity.level() instanceof ServerLevel serverLevel) {
+      if (holder.hasData(Attachments.AFFIXES)) {
         ChampionEventHooks.onUpdateAffixesPre(this.entity, serverLevel, this);
         this.stopInitializeEffects(serverLevel, this.getLevel(), this.entity, this.entity.position());
-        this.entity.setData(Attachments.AFFIXES, entity.getData(Attachments.AFFIXES).copy());
+        this.entity.setData(Attachments.AFFIXES, holder.getData(Attachments.AFFIXES).copy());
         ChampionEventHooks.onUpdateAffixesPost(this.entity, serverLevel, this);
         this.runInitializeEffects(serverLevel, this.getLevel(), this.entity, this.entity.position());
       }
 
-      if (entity.hasData(Attachments.RANK)) {
-        this.entity.setData(Attachments.RANK, entity.getData(Attachments.RANK));
+      if (holder.hasData(Attachments.RANK)) {
+        this.entity.setData(Attachments.RANK, holder.getData(Attachments.RANK));
       }
 
-      if (entity.hasData(Attachments.PREFIX_NAME)) {
-        this.entity.setData(Attachments.PREFIX_NAME, entity.getData(Attachments.PREFIX_NAME).copy());
+      if (holder.hasData(Attachments.PREFIX_NAME)) {
+        this.entity.setData(Attachments.PREFIX_NAME, holder.getData(Attachments.PREFIX_NAME).copy());
       }
 
-      if (entity.hasData(Attachments.LEVEL)) {
-        this.entity.setData(Attachments.LEVEL, entity.getData(Attachments.LEVEL));
+      if (holder.hasData(Attachments.LEVEL)) {
+        this.entity.setData(Attachments.LEVEL, holder.getData(Attachments.LEVEL));
       }
 
-      if (entity.hasData(Attachments.COLOR)) {
-        this.entity.setData(Attachments.COLOR, entity.getData(Attachments.COLOR));
+      if (holder.hasData(Attachments.COLOR)) {
+        this.entity.setData(Attachments.COLOR, holder.getData(Attachments.COLOR));
       }
     }
   }
 
   @Override
-  public void copyFrom(ItemStack itemStack) {
+  public void copyFrom(DataComponentHolder holder) {
     if (this.entity.level() instanceof ServerLevel serverLevel) {
-      if (itemStack.has(DataComponents.AFFIXES)) {
+      if (holder.has(DataComponents.AFFIXES)) {
         ChampionEventHooks.onUpdateAffixesPre(this.entity, serverLevel, this);
         this.stopInitializeEffects(serverLevel, this.getLevel(), this.entity, this.entity.position());
-        this.entity.setData(Attachments.AFFIXES, itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY).copy());
+        this.entity.setData(Attachments.AFFIXES, holder.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY).copy());
         ChampionEventHooks.onUpdateAffixesPost(this.entity, serverLevel, this);
         this.runInitializeEffects(serverLevel, this.getLevel(), this.entity, this.entity.position());
       }
 
-      if (itemStack.has(DataComponents.RANK)) {
-        this.entity.setData(Attachments.RANK, Optional.of(itemStack.getOrDefault(DataComponents.RANK, serverLevel.registryAccess().getOrThrow(Ranks.COMMON))));
+      if (holder.has(DataComponents.RANK)) {
+        this.entity.setData(Attachments.RANK, Optional.of(holder.getOrDefault(DataComponents.RANK, serverLevel.registryAccess().getOrThrow(Ranks.COMMON))));
       }
 
-      if (itemStack.has(DataComponents.PREFIX_NAME)) {
-        this.entity.setData(Attachments.PREFIX_NAME, itemStack.getOrDefault(DataComponents.PREFIX_NAME, Component.empty()));
+      if (holder.has(DataComponents.PREFIX_NAME)) {
+        this.entity.setData(Attachments.PREFIX_NAME, holder.getOrDefault(DataComponents.PREFIX_NAME, Component.empty()));
       }
 
-      if (itemStack.has(DataComponents.LEVEL)) {
-        this.entity.setData(Attachments.LEVEL, itemStack.getOrDefault(DataComponents.LEVEL, 1));
+      if (holder.has(DataComponents.LEVEL)) {
+        this.entity.setData(Attachments.LEVEL, holder.getOrDefault(DataComponents.LEVEL, 1));
       }
 
-      if (itemStack.has(DataComponents.COLOR)) {
-        this.entity.setData(Attachments.COLOR, itemStack.getOrDefault(DataComponents.COLOR, -1));
+      if (holder.has(DataComponents.COLOR)) {
+        this.entity.setData(Attachments.COLOR, holder.getOrDefault(DataComponents.COLOR, -1));
       }
     }
   }

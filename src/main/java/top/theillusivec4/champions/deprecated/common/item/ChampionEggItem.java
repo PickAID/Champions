@@ -35,7 +35,7 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.components.DataComponents;
+import top.theillusivec4.champions.component.DataComponents;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.api.affix.IAffix;
 import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttachment;

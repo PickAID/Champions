@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.registries.Registries;
+import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
 public final class ChampionSpawnEggs {

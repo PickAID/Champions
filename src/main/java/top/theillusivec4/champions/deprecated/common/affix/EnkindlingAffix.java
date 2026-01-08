@@ -12,7 +12,7 @@ import top.theillusivec4.champions.deprecated.api.data.AffixSetting;
 import top.theillusivec4.champions.deprecated.common.affix.core.AbstractBasicAffix;
 import top.theillusivec4.champions.deprecated.common.affix.core.GoalAffix;
 import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
-import top.theillusivec4.champions.entities.EnkindlingBulletEntity;
+import top.theillusivec4.champions.world.entity.EnkindlingBulletEntity;
 
 import java.util.Collections;
 import java.util.List;

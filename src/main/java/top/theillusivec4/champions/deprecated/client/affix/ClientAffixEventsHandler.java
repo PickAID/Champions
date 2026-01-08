@@ -8,7 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.MovementInputUpdateEvent;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.effects.MobEffects;
+import top.theillusivec4.champions.world.effect.MobEffects;
 
 @Deprecated
 @EventBusSubscriber(value = Dist.CLIENT, modid = Champions.MODID)

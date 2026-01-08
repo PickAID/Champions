@@ -19,6 +19,7 @@ public final class LanguageKeys {
   public static final String COMMANDS_LEVEL_SUCCESS_KEY = commandsKey("level.success");
   // CreativeModeTab
   public static final String ITEM_GROUP_CHAMPION_SPAWN_EGGS = itemGroup("champion_spawn_eggs");
+  public static final String ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS = itemGroup("custom_champion_spawn_eggs");
 
   public static Component getLevelComponent(int level) {
     return Component.translatable(tooltipLevelKey(level));

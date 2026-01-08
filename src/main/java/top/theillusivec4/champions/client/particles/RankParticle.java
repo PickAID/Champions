@@ -15,7 +15,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
-import top.theillusivec4.champions.particles.ParticleTypes;
+import top.theillusivec4.champions.particle.ParticleTypes;
 
 import java.util.Random;
 

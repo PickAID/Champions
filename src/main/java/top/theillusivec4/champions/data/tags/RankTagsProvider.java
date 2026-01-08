@@ -6,8 +6,8 @@ import net.minecraft.data.tags.KeyTagProvider;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.registries.Registries;
-import top.theillusivec4.champions.tags.RankTags;
+import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.tag.RankTags;
 
 import java.util.concurrent.CompletableFuture;
 

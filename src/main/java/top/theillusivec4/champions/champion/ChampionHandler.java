@@ -1,12 +1,14 @@
 package top.theillusivec4.champions.champion;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
@@ -37,9 +39,9 @@ public interface ChampionHandler {
 
   void updateAffixes(Consumer<Affixes.Mutable> consumer);
 
-  void copyFrom(Entity entity);
+  void copyFrom(IAttachmentHolder holder);
 
-  void copyFrom(ItemStack itemStack);
+  void copyFrom(DataComponentHolder holder);
 
   void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer);
 

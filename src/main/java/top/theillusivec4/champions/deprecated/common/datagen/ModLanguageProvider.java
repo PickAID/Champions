@@ -8,14 +8,14 @@ import net.neoforged.neoforge.common.data.LanguageProvider;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.affix.IAffix;
 import top.theillusivec4.champions.deprecated.common.damagesource.DamageTypes;
-import top.theillusivec4.champions.entities.EntityTypes;
+import top.theillusivec4.champions.world.entity.EntityTypes;
 
 import static top.theillusivec4.champions.deprecated.common.registries.AffixTypes.*;
 import static top.theillusivec4.champions.deprecated.common.damagesource.DamageTypes.REFLECTION_DAMAGE;
-import static top.theillusivec4.champions.entities.EntityTypes.ARCTIC_BULLET;
-import static top.theillusivec4.champions.items.Items.CHAMPION_EGG_ITEM;
-import static top.theillusivec4.champions.effects.MobEffects.PARALYSIS_EFFECT_TYPE;
-import static top.theillusivec4.champions.effects.MobEffects.WOUND_EFFECT_TYPE;
+import static top.theillusivec4.champions.world.entity.EntityTypes.ARCTIC_BULLET;
+import static top.theillusivec4.champions.world.item.Items.CHAMPION_EGG_ITEM;
+import static top.theillusivec4.champions.world.effect.MobEffects.PARALYSIS_EFFECT_TYPE;
+import static top.theillusivec4.champions.world.effect.MobEffects.WOUND_EFFECT_TYPE;
 
 @Deprecated
 public class ModLanguageProvider extends LanguageProvider {

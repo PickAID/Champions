@@ -32,8 +32,8 @@ import top.theillusivec4.champions.champion.affix.effect.entity.SpawnParticlesEf
 import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffects;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValues;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootParamSourceTypes;
-import top.theillusivec4.champions.loot.predicates.LatestDamageCondition;
-import top.theillusivec4.champions.registries.Registries;
+import top.theillusivec4.champions.world.loot.predicates.LatestDamageCondition;
+import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
 import java.util.List;
@@ -187,7 +187,7 @@ public final class Affixes {
           AffixTarget.ATTACKER,
           AffixTarget.VICTIM,
           AffixEntityEffects.applyMobEffect(
-            top.theillusivec4.champions.effects.MobEffects.PARALYSIS_EFFECT_TYPE,
+            top.theillusivec4.champions.world.effect.MobEffects.PARALYSIS_EFFECT_TYPE,
             LootContextBasedValues.constant(60),
             LootContextBasedValues.constant(0)
           ),
@@ -196,7 +196,7 @@ public final class Affixes {
             new EntityPredicate.Builder()
               .effects(
                 new MobEffectsPredicate.Builder()
-                  .and(top.theillusivec4.champions.effects.MobEffects.PARALYSIS_EFFECT_TYPE.getDelegate())
+                  .and(top.theillusivec4.champions.world.effect.MobEffects.PARALYSIS_EFFECT_TYPE.getDelegate())
               )
           ).invert()
         )
@@ -304,7 +304,7 @@ public final class Affixes {
             new EntityPredicate.Builder()
               .effects(
                 MobEffectsPredicate.Builder.effects()
-                  .and(top.theillusivec4.champions.effects.MobEffects.WOUND_EFFECT_TYPE)
+                  .and(top.theillusivec4.champions.world.effect.MobEffects.WOUND_EFFECT_TYPE)
               )
           )
         )
@@ -316,7 +316,7 @@ public final class Affixes {
             new EntityPredicate.Builder()
               .effects(
                 MobEffectsPredicate.Builder.effects()
-                  .and(top.theillusivec4.champions.effects.MobEffects.WOUND_EFFECT_TYPE)
+                  .and(top.theillusivec4.champions.world.effect.MobEffects.WOUND_EFFECT_TYPE)
               )
           )
         )
@@ -325,7 +325,7 @@ public final class Affixes {
           AffixTarget.VICTIM,
           AffixTarget.VICTIM,
           AffixEntityEffects.applyMobEffect(
-            top.theillusivec4.champions.effects.MobEffects.WOUND_EFFECT_TYPE,
+            top.theillusivec4.champions.world.effect.MobEffects.WOUND_EFFECT_TYPE,
             LootContextBasedValues.constant(20),
             LootContextBasedValues.constant(0)
           ),

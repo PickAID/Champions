@@ -35,7 +35,7 @@ import top.theillusivec4.champions.deprecated.api.affix.IAffix;
 import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
 import top.theillusivec4.champions.deprecated.common.item.ChampionEggItem;
-import top.theillusivec4.champions.items.Items;
+import top.theillusivec4.champions.world.item.Items;
 import top.theillusivec4.champions.deprecated.common.util.ChampionBuilder;
 import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
 import top.theillusivec4.champions.util.Utils;
