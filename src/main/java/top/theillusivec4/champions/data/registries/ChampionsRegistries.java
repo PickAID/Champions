@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.data;
+package top.theillusivec4.champions.data.registries;
 
 import net.minecraft.core.RegistrySetBuilder;
 import top.theillusivec4.champions.champion.affix.Affixes;

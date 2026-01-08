@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.affix.EntityAffixes;
+import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.champion.rank.Rank;
@@ -23,7 +23,7 @@ import java.util.Optional;
 
 public final class Attachments {
   private static final DeferredRegister<AttachmentType<?>> DEFERRED_REGISTER = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Champions.MODID);
-  public static final DeferredHolder<AttachmentType<?>, AttachmentType<EntityAffixes>> ENTITY_AFFIXES = register("entity_affixes", AttachmentType.builder(() -> EntityAffixes.EMPTY).serialize(EntityAffixes.MAP_CODEC).sync(EntityAffixes.STREAM_CODEC));
+  public static final DeferredHolder<AttachmentType<?>, AttachmentType<Affixes>> ENTITY_AFFIXES = register("entity_affixes", AttachmentType.builder(() -> Affixes.EMPTY).serialize(Affixes.MAP_CODEC).sync(Affixes.STREAM_CODEC));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<LatestDamage>> LATEST_DAMAGE = register("latest_damage", AttachmentType.builder(() -> LatestDamage.EMPTY).serialize(LatestDamage.MAP_CODEC));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Component>> PREFIX_NAME = register("prefix_name", AttachmentType.<Component>builder(Component::empty).serialize(ComponentSerialization.CODEC.fieldOf("prefix_name")).sync(ComponentSerialization.STREAM_CODEC));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> LEVEL = register("level", AttachmentType.builder(() -> 1).serialize(Codec.intRange(1, 99).fieldOf("level")).sync(ByteBufCodecs.INT));

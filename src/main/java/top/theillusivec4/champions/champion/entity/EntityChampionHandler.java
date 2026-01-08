@@ -1,7 +1,6 @@
-package top.theillusivec4.champions.champion.affix;
+package top.theillusivec4.champions.champion.entity;
 
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ARGB;
@@ -14,6 +13,10 @@ import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.attachments.Attachments;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.Affixes;
+import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
+import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.affix.effect.ConditionalEffect;
 import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
@@ -101,12 +104,12 @@ public class EntityChampionHandler implements ChampionHandler {
   }
 
   @Override
-  public void updateAffixes(Consumer<EntityAffixes.Mutable> consumer) {
+  public void updateAffixes(Consumer<Affixes.Mutable> consumer) {
     if (this.entity.level() instanceof ServerLevel serverLevel) {
-      EntityAffixes oldAffixes = entity.getData(Attachments.ENTITY_AFFIXES);
-      EntityAffixes.Mutable mutable = oldAffixes.toMutable();
+      Affixes oldAffixes = entity.getData(Attachments.ENTITY_AFFIXES);
+      Affixes.Mutable mutable = oldAffixes.toMutable();
       consumer.accept(mutable);
-      EntityAffixes newAffixes = mutable.toImmutable();
+      Affixes newAffixes = mutable.toImmutable();
       ChampionEventHooks.onUpdateAffixesPre(this.entity, serverLevel, this);
       this.stopInitializeEffects(serverLevel, this.getLevel(), this.entity, this.entity.position());
       this.entity.setData(Attachments.ENTITY_AFFIXES, newAffixes);
@@ -138,7 +141,7 @@ public class EntityChampionHandler implements ChampionHandler {
     }
   }
 
-  public EntityAffixes getAllAffixes() {
+  public Affixes getAllAffixes() {
     return this.entity.getData(Attachments.ENTITY_AFFIXES);
   }
 
@@ -190,15 +193,7 @@ public class EntityChampionHandler implements ChampionHandler {
   }
 
   @Override
-  public Component getDisplayName() {
-    if (this.name == null) {
-      this.name = this.getPrefixName().copy().append(CommonComponents.space().append(this.entity.getDisplayName()));
-    }
-
-    return this.name;
-  }
-
-  private Component getPrefixName() {
+  public Component getPrefixName() {
     if (this.entity.hasData(Attachments.PREFIX_NAME)) {
       return this.entity.getData(Attachments.PREFIX_NAME);
     }
@@ -214,6 +209,20 @@ public class EntityChampionHandler implements ChampionHandler {
   @Override
   public void setPrefixName(Component name) {
     this.entity.setData(Attachments.PREFIX_NAME, name);
+  }
+
+  @Override
+  public boolean isDisplay() {
+    if (!this.entity.level().isClientSide()) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public void setDisplay(boolean display) {
+
   }
 
   private LatestDamage getLatestDamage() {

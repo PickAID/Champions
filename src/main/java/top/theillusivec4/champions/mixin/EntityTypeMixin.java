@@ -27,7 +27,7 @@ import java.util.function.Consumer;
 public abstract class EntityTypeMixin<T extends Entity> implements EntityTypeTest<Entity, T>, FeatureElement {
   @Inject(method = "appendCustomEntityStackConfig", at = @At(value = "RETURN"), cancellable = true)
   private static <T extends Entity> void champion$appendCustomEntityStackConfig(Consumer<T> initialConfig, Level level, ItemStack itemStack, @Nullable LivingEntity user, CallbackInfoReturnable<Consumer<T>> cir) {
-    ItemAffixes itemAffixes = itemStack.get(DataComponents.ITEM_AFFIXES);
+    ItemAffixes itemAffixes = itemStack.get(DataComponents.AFFIXES);
     Holder<Rank> rank = itemStack.get(DataComponents.RANK);
     Integer lvl = itemStack.get(DataComponents.LEVEL);
     Integer color = itemStack.get(DataComponents.COLOR);

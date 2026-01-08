@@ -13,7 +13,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.affix.EntityAffixes;
 import top.theillusivec4.champions.particles.ParticleTypes;
 
 public final class EntityEventListener {
@@ -179,10 +178,10 @@ public final class EntityEventListener {
       for (Mob child : event.getChildren()) {
         ChampionUtil.getHandler(child).ifPresent(childHandler -> {
           int level = parentHandler.getLevel();
-          EntityAffixes entityAffixes = parentHandler.getAllAffixes();
+          Affixes affixes = parentHandler.getAllAffixes();
           childHandler.setLevel(level - 1);
           childHandler.updateAffixes(mutable -> {
-            for (Holder<Affix> affix : entityAffixes.getAffixes()) {
+            for (Holder<Affix> affix : affixes.getAffixes()) {
               mutable.add(affix);
             }
           });

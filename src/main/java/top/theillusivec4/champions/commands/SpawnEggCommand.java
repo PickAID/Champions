@@ -101,7 +101,7 @@ public final class SpawnEggCommand {
       ItemStack itemStack = player.getMainHandItem();
       if (isValidItem(itemStack.getItem())) {
         itemStack.set(DataComponents.RANK, rank);
-        itemStack.set(DataComponents.SHOW, true);
+        itemStack.set(DataComponents.DISPLAY, true);
 //        itemStack.set(DataComponents.LEVEL, rank.value().level());
 //        itemStack.set(DataComponents.PREFIX_NAME, rank.value().description());
 //        itemStack.set(DataComponents.COLOR, rank.value().color());
@@ -116,12 +116,12 @@ public final class SpawnEggCommand {
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
       if (isValidItem(itemStack.getItem())) {
-        ItemAffixes itemAffixes = itemStack.getOrDefault(DataComponents.ITEM_AFFIXES, ItemAffixes.EMPTY);
+        ItemAffixes itemAffixes = itemStack.getOrDefault(DataComponents.AFFIXES, ItemAffixes.EMPTY);
         if (!itemAffixes.contains(affix)) {
           ItemAffixes.Mutable mutable = itemAffixes.toMutable();
           mutable.add(affix);
-          itemStack.set(DataComponents.ITEM_AFFIXES, mutable.toMutable());
-          itemStack.set(DataComponents.SHOW, true);
+          itemStack.set(DataComponents.AFFIXES, mutable.toMutable());
+          itemStack.set(DataComponents.DISPLAY, true);
         }
 
       }
@@ -136,7 +136,7 @@ public final class SpawnEggCommand {
       ItemStack itemStack = player.getMainHandItem();
       if (isValidItem(itemStack.getItem())) {
         itemStack.set(DataComponents.LEVEL, level);
-        itemStack.set(DataComponents.SHOW, true);
+        itemStack.set(DataComponents.DISPLAY, true);
       }
     }
     source.sendSuccess(() -> Component.translatable("commands.champions.level.success", i), true);
@@ -151,8 +151,8 @@ public final class SpawnEggCommand {
         if (handler != null) {
           try (Transaction transaction = Transaction.openRoot()) {
             ItemStack itemStack = new ItemStack(item);
-            itemStack.set(DataComponents.ITEM_AFFIXES, new ItemAffixes(List.of(affix)));
-            itemStack.set(DataComponents.SHOW, true);
+            itemStack.set(DataComponents.AFFIXES, new ItemAffixes(List.of(affix)));
+            itemStack.set(DataComponents.DISPLAY, true);
 
             if (handler.insert(ItemResource.of(itemStack), 1, transaction) == 1) {
               transaction.commit();

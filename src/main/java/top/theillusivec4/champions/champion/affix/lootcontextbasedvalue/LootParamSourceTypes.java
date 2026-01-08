@@ -10,6 +10,7 @@ import top.theillusivec4.champions.registries.Registries;
 
 import java.util.function.Supplier;
 
+@Deprecated
 public final class LootParamSourceTypes {
 
   public static void register(IEventBus modEventBus) {

@@ -1,0 +1,155 @@
+package top.theillusivec4.champions.champion.item;
+
+import net.minecraft.core.Holder;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ARGB;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import top.theillusivec4.champions.champion.Affixes;
+import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.champion.affix.LatestDamage;
+import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
+import top.theillusivec4.champions.champion.rank.Rank;
+import top.theillusivec4.champions.champion.rank.Ranks;
+import top.theillusivec4.champions.components.DataComponents;
+
+import java.util.function.Consumer;
+
+public class ItemChampionHandler implements ChampionHandler {
+  private final ItemStack itemStack;
+  private final Level level;
+
+  public ItemChampionHandler(ItemStack itemStack, Level level) {
+    this.itemStack = itemStack;
+    this.level = level;
+  }
+
+  @Override
+  public void runInitializeEffects(ServerLevel serverLevel, int level, Entity victim, Vec3 origin) {
+
+  }
+
+  @Override
+  public void stopInitializeEffects(ServerLevel serverLevel, int level, Entity victim, Vec3 origin) {
+
+  }
+
+  @Override
+  public boolean isImmuneToDamage(ServerLevel serverLevel, DamageSource damageSource) {
+    return false;
+  }
+
+  @Override
+  public float getDamageProtection(ServerLevel level, DamageSource source) {
+    return 0;
+  }
+
+  @Override
+  public float modifyKnockback(ServerLevel level, DamageSource source, float knockback) {
+    return 0;
+  }
+
+  @Override
+  public float modifyDamage(ServerLevel level, Entity victim, DamageSource damageSource, float amount) {
+    return 0;
+  }
+
+  @Override
+  public float modifyHeal(ServerLevel level, float amount) {
+    return 0;
+  }
+
+  @Override
+  public void doPostAttackEffects(ServerLevel level, AffixTarget target, Entity victim, DamageSource source) {
+
+  }
+
+  @Override
+  public void tickEffects(ServerLevel level) {
+
+  }
+
+  @Override
+  public void runIteration(Consumer<Holder<Affix>> consumer) {
+
+  }
+
+  @Override
+  public void updateAffixes(Consumer<Affixes.Mutable> consumer) {
+
+  }
+
+  @Override
+  public void copyFrom(Entity entity) {
+
+  }
+
+  @Override
+  public void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer) {
+
+  }
+
+  @Override
+  public boolean isDisplay() {
+    return this.itemStack.getOrDefault(DataComponents.DISPLAY, false);
+  }
+
+  @Override
+  public void setDisplay(boolean display) {
+    if (!display) {
+      this.itemStack.remove(DataComponents.DISPLAY);
+    } else {
+      this.itemStack.set(DataComponents.DISPLAY, true);
+    }
+  }
+
+  @Override
+  public Affixes getAllAffixes() {
+    return this.itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY);
+  }
+
+  @Override
+  public int getLevel() {
+    return this.itemStack.getOrDefault(DataComponents.LEVEL, 1);
+  }
+
+  @Override
+  public void setLevel(int level) {
+    this.itemStack.set(DataComponents.LEVEL, Math.clamp(level, 1, 255));
+  }
+
+  @Override
+  public int getColor() {
+    return this.itemStack.getOrDefault(DataComponents.COLOR, -1);
+  }
+
+  @Override
+  public void setColor(int color) {
+    this.itemStack.set(DataComponents.COLOR, ARGB.opaque(color));
+  }
+
+  @Override
+  public Holder<Rank> getRank() {
+    return this.itemStack.getOrDefault(DataComponents.RANK, this.level.registryAccess().getOrThrow(Ranks.COMMON));
+  }
+
+  @Override
+  public void setRank(Holder<Rank> rank) {
+    this.itemStack.set(DataComponents.RANK, rank);
+  }
+
+  @Override
+  public Component getPrefixName() {
+    return this.itemStack.getOrDefault(DataComponents.PREFIX_NAME, Component.empty());
+  }
+
+  @Override
+  public void setPrefixName(Component name) {
+    this.itemStack.set(DataComponents.PREFIX_NAME, name);
+  }
+}

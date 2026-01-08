@@ -5,6 +5,8 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import top.theillusivec4.champions.data.lang.LanguageHelper;
+import top.theillusivec4.champions.data.registries.ChampionsRegistries;
 
 public final class DataEventListener {
   public static void register(IEventBus modEventBus) {
@@ -25,6 +27,6 @@ public final class DataEventListener {
     PackOutput output = dataGenerator.getPackOutput();
 
     event.createDatapackRegistryObjects(ChampionsRegistries.BUILDER);
-    event.addProvider(LanguageProviders.zhCn(output));
+    event.addProvider(LanguageHelper.zhCn(output));
   }
 }

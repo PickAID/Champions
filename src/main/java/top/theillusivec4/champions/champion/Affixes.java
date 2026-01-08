@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion.affix;
+package top.theillusivec4.champions.champion;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -7,31 +7,36 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import top.theillusivec4.champions.champion.affix.Affix;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntityAffixes {
-  public static final EntityAffixes EMPTY = new EntityAffixes();
-  public static final StreamCodec<RegistryFriendlyByteBuf, EntityAffixes> STREAM_CODEC = StreamCodec.composite(
-    ByteBufCodecs.collection(ArrayList::new, Affix.STREAM_CODEC), EntityAffixes::getAffixes,
-    EntityAffixes::new
+public class Affixes {
+  public static final Affixes EMPTY = new Affixes();
+  public static final StreamCodec<RegistryFriendlyByteBuf, Affixes> STREAM_CODEC = StreamCodec.composite(
+    ByteBufCodecs.collection(ArrayList::new, Affix.STREAM_CODEC), Affixes::getAffixes,
+    Affixes::new
   );
   private static final Codec<List<Holder<Affix>>> AFFIXES_CODEC = Affix.REFERENCE_CODEC.listOf();
-  public static final MapCodec<EntityAffixes> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    AFFIXES_CODEC.fieldOf("affixes").forGetter(EntityAffixes::getAffixes)
-  ).apply(instance, EntityAffixes::new));
+  public static final Codec<Affixes> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    AFFIXES_CODEC.fieldOf("affixes").forGetter(Affixes::getAffixes)
+  ).apply(instance, Affixes::new));
+
+  public static final MapCodec<Affixes> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    AFFIXES_CODEC.fieldOf("affixes").forGetter(Affixes::getAffixes)
+  ).apply(instance, Affixes::new));
   private final List<Holder<Affix>> affixes;
 
-  public static EntityAffixes.Mutable mutable() {
+  public static Affixes.Mutable mutable() {
     return new Mutable();
   }
 
-  public EntityAffixes() {
+  public Affixes() {
     this.affixes = List.of();
   }
 
-  private EntityAffixes(List<Holder<Affix>> affixes) {
+  private Affixes(List<Holder<Affix>> affixes) {
     this.affixes = List.copyOf(affixes);
   }
 
@@ -39,7 +44,7 @@ public class EntityAffixes {
     return affixes.contains(affix);
   }
 
-  public EntityAffixes.Mutable toMutable() {
+  public Affixes.Mutable toMutable() {
     return new Mutable(this);
   }
 
@@ -53,7 +58,7 @@ public class EntityAffixes {
     if (this == obj) {
       return true;
     } else {
-      return obj instanceof EntityAffixes champion && this.affixes.equals(champion.affixes);
+      return obj instanceof Affixes champion && this.affixes.equals(champion.affixes);
     }
   }
 
@@ -70,11 +75,11 @@ public class EntityAffixes {
     return affixes;
   }
 
-  public static class Mutable extends EntityAffixes {
+  public static class Mutable extends Affixes {
     private final List<Holder<Affix>> affixes;
 
-    public Mutable(EntityAffixes entityAffixes) {
-      this.affixes = new ArrayList<>(entityAffixes.affixes);
+    public Mutable(Affixes affixes) {
+      this.affixes = new ArrayList<>(affixes.affixes);
     }
 
     public Mutable() {
@@ -89,8 +94,8 @@ public class EntityAffixes {
       affixes.remove(affix);
     }
 
-    public EntityAffixes toImmutable() {
-      return this.affixes.isEmpty() ? EntityAffixes.EMPTY : new EntityAffixes(this.affixes);
+    public Affixes toImmutable() {
+      return this.affixes.isEmpty() ? Affixes.EMPTY : new Affixes(this.affixes);
     }
   }
 }
