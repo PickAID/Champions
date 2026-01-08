@@ -26,9 +26,6 @@ public final class Attachments {
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> LEVEL = register("level", AttachmentType.builder(() -> 1).serialize(Codec.intRange(1, 99).fieldOf("level")).sync(ByteBufCodecs.INT));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> COLOR = register("color", AttachmentType.builder(() -> -1).serialize(Codec.INT.fieldOf("color")).sync(ByteBufCodecs.INT));
 
-//  public static final DeferredHolder<AttachmentType<?>, AttachmentType<Map<Affix, AffixLocationBasedEffect>>> ACTION_EFFECTS = register("action_effects", AttachmentType.builder(Map::of));
-//  public static final DeferredHolder<AttachmentType<?>, AttachmentType<ServerBossEvent>> BOSS_EVENT = register("boss_event", AttachmentType.builder(() -> Instances.SERVER_BOSS_EVENT).serialize(MapCodecs.SERVER_BOSS_EVENT));
-
   public static void register(IEventBus modEventBus) {
     DEFERRED_REGISTER.register(modEventBus);
   }

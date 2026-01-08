@@ -112,12 +112,12 @@ public final class ChampionHealthOverlay {
     /*
     等级显示
      */
-    if (event.getLevel() <= 18) {
-      // 小于18的等级⭐⭐⭐
+    if (event.getLevel() <= 5) {
+      // 小于5的等级⭐⭐⭐⭐⭐
       startX = guiGraphics.guiWidth() / 2 - 5 - 5 * (event.getLevel() - 1);
       this.drawStar(guiGraphics, startX, startY, event);
     } else {
-      // 处理过高的等级 ⭐x20
+      // 处理过高的等级 ⭐x6
       startX = guiGraphics.guiWidth() / 2 - 5;
       String msg = "x" + event.getLevel();
       guiGraphics.blit(RenderPipelines.GUI_TEXTURED, STAR, startX - this.getClient().font.width(msg) / 2, startY, 0, 0, 9, 9, 9, 9, event.getColor());

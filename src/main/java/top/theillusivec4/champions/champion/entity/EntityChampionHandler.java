@@ -14,6 +14,7 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.champion.reference.ChampionLevel;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
 import top.theillusivec4.champions.champion.affix.LatestDamage;
@@ -213,7 +214,7 @@ public class EntityChampionHandler implements ChampionHandler {
 
   @Override
   public void setLevel(int level) {
-    this.entity.setData(Attachments.LEVEL, Math.clamp(level, 1, 255));
+    this.entity.setData(Attachments.LEVEL, Math.clamp(level, ChampionLevel.MIN_LEVEL, ChampionLevel.MAX_LEVEL));
   }
 
   @Override

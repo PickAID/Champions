@@ -31,6 +31,7 @@ import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.champion.reference.ChampionLevel;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
@@ -72,7 +73,7 @@ public final class SpawnEggCommand {
       )
       .then(Commands.literal("level")
         .then(Commands.argument("players", EntityArgument.players())
-          .then(Commands.argument("level", IntegerArgumentType.integer(1, 5))
+          .then(Commands.argument("level", IntegerArgumentType.integer(ChampionLevel.MIN_LEVEL, ChampionLevel.MAX_LEVEL))
             .executes(context -> level(context.getSource(), EntityArgument.getPlayers(context, "players"), IntegerArgumentType.getInteger(context, "level")))
           )
         )
