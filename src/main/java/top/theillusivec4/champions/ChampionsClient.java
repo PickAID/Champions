@@ -18,7 +18,7 @@ import top.theillusivec4.champions.client.gui.Gui;
 import top.theillusivec4.champions.client.gui.GuiLayers;
 import top.theillusivec4.champions.client.gui.components.BossHealthOverlayHandler;
 import top.theillusivec4.champions.client.gui.components.ChampionClientBossEvent;
-import top.theillusivec4.champions.client.particles.RankParticle;
+import top.theillusivec4.champions.client.particle.RankParticle;
 import top.theillusivec4.champions.deprecated.client.renderer.ColorizedBulletRenderer;
 import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.client.item.CreativeModeTabEventListener;

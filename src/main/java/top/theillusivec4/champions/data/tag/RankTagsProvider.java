@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.data.tags;
+package top.theillusivec4.champions.data.tag;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

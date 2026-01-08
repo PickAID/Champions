@@ -6,7 +6,7 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import top.theillusivec4.champions.deprecated.client.renderer.ColorizedBulletRenderer;
-import top.theillusivec4.champions.client.particles.RankParticle;
+import top.theillusivec4.champions.client.particle.RankParticle;
 import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.particle.ParticleTypes;
 import top.theillusivec4.champions.util.Utils;

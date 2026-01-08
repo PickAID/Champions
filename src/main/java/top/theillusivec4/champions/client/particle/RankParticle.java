@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.client.particles;
+package top.theillusivec4.champions.client.particle;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

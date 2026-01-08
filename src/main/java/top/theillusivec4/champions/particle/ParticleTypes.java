@@ -11,7 +11,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jspecify.annotations.NonNull;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.client.particles.RankParticle;
+import top.theillusivec4.champions.client.particle.RankParticle;
 
 public class ParticleTypes {
   private static final DeferredRegister<ParticleType<?>> DEFERRED_REGISTER = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, Champions.MODID);
