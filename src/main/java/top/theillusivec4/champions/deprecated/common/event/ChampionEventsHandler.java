@@ -171,15 +171,15 @@ public class ChampionEventsHandler {
                 float green = (float) ARGB.green(color) / 255;
                 float bule = (float) ARGB.blue(color) / 255;
 
-                livingEntity.level().addParticle(
-                  ParticleTypes.RANK_PARTICLE_TYPE.get(),
-                  livingEntity.position().x + (livingEntity.getRandom().nextDouble() - 0.5D) * (double) livingEntity.getBbWidth(),
-                  livingEntity.position().y + livingEntity.getRandom().nextDouble() * livingEntity.getBbHeight(),
-                  livingEntity.position().z + (livingEntity.getRandom().nextDouble() - 0.5D) * (double) livingEntity.getBbWidth(),
-                  red,
-                  green,
-                  bule
-                );
+//                livingEntity.level().addParticle(
+//                  ParticleTypes.RANK_PARTICLE_TYPE.get(),
+//                  livingEntity.position().x + (livingEntity.getRandom().nextDouble() - 0.5D) * (double) livingEntity.getBbWidth(),
+//                  livingEntity.position().y + livingEntity.getRandom().nextDouble() * livingEntity.getBbHeight(),
+//                  livingEntity.position().z + (livingEntity.getRandom().nextDouble() - 0.5D) * (double) livingEntity.getBbWidth(),
+//                  red,
+//                  green,
+//                  bule
+//                );
               }
             });
           }

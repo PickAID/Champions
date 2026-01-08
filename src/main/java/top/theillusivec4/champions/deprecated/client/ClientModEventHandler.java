@@ -22,7 +22,7 @@ public class ClientModEventHandler {
 
   @SubscribeEvent
   public static void onRegisterParticleProviders(RegisterParticleProvidersEvent evt) {
-    evt.registerSpriteSet(ParticleTypes.RANK_PARTICLE_TYPE.get(), RankParticle.RankFactory::new);
+    evt.registerSpriteSet(ParticleTypes.RANK_PARTICLE_TYPE.get(), RankParticle.Provider::new);
   }
 
   @SubscribeEvent

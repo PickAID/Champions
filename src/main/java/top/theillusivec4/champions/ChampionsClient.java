@@ -49,7 +49,7 @@ public class ChampionsClient {
 
     @SubscribeEvent
     public void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
-      event.registerSpriteSet(ParticleTypes.RANK_PARTICLE_TYPE.get(), RankParticle.RankFactory::new);
+      event.registerSpriteSet(ParticleTypes.RANK_PARTICLE_TYPE.get(), RankParticle.Provider::new);
     }
 
     @SubscribeEvent
