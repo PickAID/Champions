@@ -2,7 +2,6 @@ package top.theillusivec4.champions.champion;
 
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
@@ -146,12 +145,12 @@ public final class EntityEventListener {
         Vec3 position = entity.position();
         double x = position.x() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
         double y = position.y() + randomSource.nextDouble() * entity.getBbHeight();
-        double z = position.x() + (randomSource.nextDouble() + 0.5) * entity.getBbWidth();
+        double z = position.z() + (randomSource.nextDouble() + 0.5) * entity.getBbWidth();
         int color = handler.getColor();
-        float red = ARGB.red(color) / 255.0f;
-        float green = ARGB.green(color) / 255.0f;
-        float blue = ARGB.blue(color) / 255.0f;
-        entity.level().addParticle(ParticleTypes.RANK_PARTICLE_TYPE.get(), x, y, z, red, green, blue);
+//        float red = ARGB.red(color) / 255.0f;
+//        float green = ARGB.green(color) / 255.0f;
+//        float blue = ARGB.blue(color) / 255.0f;
+        entity.level().addParticle(ParticleTypes.rank(color), x, y, z, 1.0f, 1.0f, 1.0f);
       });
     }
   }
