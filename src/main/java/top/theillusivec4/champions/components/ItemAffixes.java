@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Deprecated
 public class ItemAffixes {
   public static final ItemAffixes EMPTY = new ItemAffixes(List.of());
   public static final Codec<ItemAffixes> CODEC = RecordCodecBuilder.create(instance -> instance.group(

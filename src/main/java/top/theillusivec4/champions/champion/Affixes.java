@@ -36,7 +36,7 @@ public class Affixes {
     this.affixes = List.of();
   }
 
-  private Affixes(List<Holder<Affix>> affixes) {
+  public Affixes(List<Holder<Affix>> affixes) {
     this.affixes = List.copyOf(affixes);
   }
 

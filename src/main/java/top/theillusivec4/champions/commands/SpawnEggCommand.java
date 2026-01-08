@@ -33,6 +33,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.components.DataComponents;
@@ -116,9 +117,9 @@ public final class SpawnEggCommand {
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
       if (isValidItem(itemStack.getItem())) {
-        ItemAffixes itemAffixes = itemStack.getOrDefault(DataComponents.AFFIXES, ItemAffixes.EMPTY);
+        Affixes itemAffixes = itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY);
         if (!itemAffixes.contains(affix)) {
-          ItemAffixes.Mutable mutable = itemAffixes.toMutable();
+          Affixes.Mutable mutable = itemAffixes.toMutable();
           mutable.add(affix);
           itemStack.set(DataComponents.AFFIXES, mutable.toMutable());
           itemStack.set(DataComponents.DISPLAY, true);
@@ -151,7 +152,7 @@ public final class SpawnEggCommand {
         if (handler != null) {
           try (Transaction transaction = Transaction.openRoot()) {
             ItemStack itemStack = new ItemStack(item);
-            itemStack.set(DataComponents.AFFIXES, new ItemAffixes(List.of(affix)));
+            itemStack.set(DataComponents.AFFIXES, new Affixes(List.of(affix)));
             itemStack.set(DataComponents.DISPLAY, true);
 
             if (handler.insert(ItemResource.of(itemStack), 1, transaction) == 1) {

@@ -8,10 +8,10 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.components.DataComponents;
-import top.theillusivec4.champions.components.ItemAffixes;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 
 import java.util.List;
@@ -60,10 +60,10 @@ public final class ItemEventListener {
       );
 
       // Affix
-      ItemAffixes itemAffixes = itemStack.get(DataComponents.AFFIXES);
-      if (itemAffixes != null) {
+      Affixes affixes = itemStack.get(DataComponents.AFFIXES);
+      if (affixes != null) {
         list.add(Component.translatable(LanguageKeys.TOOLTIP_AFFIXES_KEY).withStyle(ChatFormatting.GRAY));
-        for (Holder<Affix> affix : itemAffixes.affixes()) {
+        for (Holder<Affix> affix : affixes.getAffixes()) {
           list.add(CommonComponents.space().append(affix.value().description()));
         }
       }
