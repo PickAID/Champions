@@ -38,19 +38,26 @@ public record Rank(Component description, int level, int color) {
     private int color = -1;
 
     public Rank build(Identifier id) {
-      return new Rank(Component.translatable(Util.makeDescriptionId("rank", id)), this.level, this.color);
+      return new Rank(
+        Component.translatable(Util.makeDescriptionId("rank", id)),
+        this.level,
+        this.color
+      );
     }
 
     public Builder setLevel(int level) {
       this.level = level;
       return this;
     }
+
     public Builder setColor(String color) {
       this.color = TextColor.parseColor(color)
         .result()
-        .orElse(TextColor.fromRgb(-1)).getValue();;
+        .orElse(TextColor.fromRgb(-1)).getValue();
+      ;
       return this;
     }
+
     public Builder setColor(int color) {
       this.color = color;
       return this;

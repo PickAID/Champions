@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion;
+package top.theillusivec4.champions.entities;
 
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -12,8 +12,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import top.theillusivec4.champions.champion.Affixes;
+import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.affix.EntityAffixes;
 import top.theillusivec4.champions.particles.ParticleTypes;
 
 public final class EntityEventListener {
@@ -145,7 +146,7 @@ public final class EntityEventListener {
         Vec3 position = entity.position();
         double x = position.x() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
         double y = position.y() + randomSource.nextDouble() * entity.getBbHeight();
-        double z = position.z() + (randomSource.nextDouble() + 0.5) * entity.getBbWidth();
+        double z = position.z() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
         int color = handler.getColor();
 //        float red = ARGB.red(color) / 255.0f;
 //        float green = ARGB.green(color) / 255.0f;
@@ -179,10 +180,10 @@ public final class EntityEventListener {
       for (Mob child : event.getChildren()) {
         ChampionUtil.getHandler(child).ifPresent(childHandler -> {
           int level = parentHandler.getLevel();
-          EntityAffixes entityAffixes = parentHandler.getAllAffixes();
+          Affixes affixes = parentHandler.getAllAffixes();
           childHandler.setLevel(level - 1);
           childHandler.updateAffixes(mutable -> {
-            for (Holder<Affix> affix : entityAffixes.getAffixes()) {
+            for (Holder<Affix> affix : affixes.getAffixes()) {
               mutable.add(affix);
             }
           });

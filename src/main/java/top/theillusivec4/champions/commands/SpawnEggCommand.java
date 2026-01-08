@@ -22,26 +22,22 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.SpawnEggItem;
-import net.minecraft.world.item.component.TypedEntityData;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
+import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.components.DataComponents;
-import top.theillusivec4.champions.components.ItemAffixes;
 import top.theillusivec4.champions.registries.Registries;
 import top.theillusivec4.champions.util.Utils;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public final class SpawnEggCommand {
@@ -99,13 +95,10 @@ public final class SpawnEggCommand {
     int i = 0;
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
-      if (isValidItem(itemStack.getItem())) {
-        itemStack.set(DataComponents.RANK, rank);
-        itemStack.set(DataComponents.SHOW, true);
-//        itemStack.set(DataComponents.LEVEL, rank.value().level());
-//        itemStack.set(DataComponents.PREFIX_NAME, rank.value().description());
-//        itemStack.set(DataComponents.COLOR, rank.value().color());
-      }
+      ChampionUtil.getHandler(itemStack, source.getLevel()).ifPresent(handler -> {
+        handler.setRank(rank);
+        handler.setDisplay(true);
+      });
     }
     source.sendSuccess(() -> Component.translatable("commands.champions.rank.success", i), true);
     return i;
@@ -115,16 +108,11 @@ public final class SpawnEggCommand {
     int i = 0;
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
-      if (isValidItem(itemStack.getItem())) {
-        ItemAffixes itemAffixes = itemStack.getOrDefault(DataComponents.ITEM_AFFIXES, ItemAffixes.EMPTY);
-        if (!itemAffixes.contains(affix)) {
-          ItemAffixes.Mutable mutable = itemAffixes.toMutable();
-          mutable.add(affix);
-          itemStack.set(DataComponents.ITEM_AFFIXES, mutable.toMutable());
-          itemStack.set(DataComponents.SHOW, true);
-        }
-
-      }
+      ChampionUtil.getHandler(itemStack, source.getLevel())
+        .ifPresent(handler -> {
+          handler.updateAffixes(mutable -> mutable.add(affix));
+          handler.setDisplay(true);
+        });
     }
     source.sendSuccess(() -> Component.translatable("commands.champions.affix.success", i), true);
     return i;
@@ -134,10 +122,15 @@ public final class SpawnEggCommand {
     int i = 0;
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
-      if (isValidItem(itemStack.getItem())) {
-        itemStack.set(DataComponents.LEVEL, level);
-        itemStack.set(DataComponents.SHOW, true);
-      }
+      ChampionUtil.getHandler(itemStack, source.getLevel())
+        .ifPresent(handler -> {
+          handler.setLevel(level);
+          handler.setDisplay(true);
+        });
+//      if (isValidItem(itemStack.getItem())) {
+//        itemStack.set(DataComponents.LEVEL, level);
+//        itemStack.set(DataComponents.DISPLAY, true);
+//      }
     }
     source.sendSuccess(() -> Component.translatable("commands.champions.level.success", i), true);
     return i;
@@ -145,16 +138,20 @@ public final class SpawnEggCommand {
 
   private static int giveSpawnEgg(CommandSourceStack source, ItemInput itemInput, Collection<ServerPlayer> players, int level, Holder.Reference<Affix> affix) throws CommandSyntaxException {
     Item item = itemInput.getItem();
-    if (isValidItem(item) && item instanceof SpawnEggItem) {
+    if (isValidItem(item)) {
       for (Player player : players) {
-        ResourceHandler<ItemResource> handler = player.getCapability(Capabilities.Item.ENTITY);
-        if (handler != null) {
+        ResourceHandler<ItemResource> resourceHandler = player.getCapability(Capabilities.Item.ENTITY);
+        if (resourceHandler != null) {
           try (Transaction transaction = Transaction.openRoot()) {
             ItemStack itemStack = new ItemStack(item);
-            itemStack.set(DataComponents.ITEM_AFFIXES, new ItemAffixes(List.of(affix)));
-            itemStack.set(DataComponents.SHOW, true);
+            ChampionHandler championHandler = ChampionUtil.getHandler(itemStack, source.getLevel()).orElseThrow();
+            championHandler.updateAffixes(mutable -> mutable.add(affix));
+            championHandler.setDisplay(true);
 
-            if (handler.insert(ItemResource.of(itemStack), 1, transaction) == 1) {
+//            itemStack.set(DataComponents.AFFIXES, new Affixes(List.of(affix)));
+//            itemStack.set(DataComponents.DISPLAY, true);
+
+            if (resourceHandler.insert(ItemResource.of(itemStack), 1, transaction) == 1) {
               transaction.commit();
             } else {
               ItemEntity drop = player.drop(itemStack, false);
@@ -175,11 +172,13 @@ public final class SpawnEggCommand {
   }
 
   private static boolean isValidItem(Item item) {
-    if (item instanceof SpawnEggItem spawnEggItem) {
-      TypedEntityData<EntityType<?>> entityType = spawnEggItem.components().get(net.minecraft.core.component.DataComponents.ENTITY_DATA);
-      return entityType != null && top.theillusivec4.champions.capabilities.Capabilities.ChampionHandlers.isImplemented(entityType.type());
-    }
-    return false;
+//    if (item instanceof SpawnEggItem spawnEggItem) {
+//      TypedEntityData<EntityType<?>> entityType = spawnEggItem.components().get(net.minecraft.core.component.DataComponents.ENTITY_DATA);
+//      return entityType != null && top.theillusivec4.champions.capabilities.Capabilities.ChampionHandlers.isImplemented(entityType.type());
+//    }
+
+//    return false;
+    return top.theillusivec4.champions.capabilities.Capabilities.ChampionHandlers.isImplemented(item);
   }
 
   private SpawnEggCommand() {

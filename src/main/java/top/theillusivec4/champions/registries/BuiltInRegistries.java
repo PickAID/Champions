@@ -15,6 +15,8 @@ import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffec
 import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffect;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.FloatLootParamSource;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
+import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
+import top.theillusivec4.champions.champion.item.ChampionSpawnEggs;
 import top.theillusivec4.champions.champion.rank.Rank;
 
 import java.util.ArrayList;
@@ -40,6 +42,7 @@ public final class BuiltInRegistries {
     modEventBus.addListener(DataPackRegistryEvent.NewRegistry.class, event -> {
       event.dataPackRegistry(Registries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
       event.dataPackRegistry(Registries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
+      event.dataPackRegistry(Registries.CHAMPION_SPAWN_EGG, ChampionSpawnEgg.DIRECT_CODEC, ChampionSpawnEgg.DIRECT_CODEC);
     });
   }
 

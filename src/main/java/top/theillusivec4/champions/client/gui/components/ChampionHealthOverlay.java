@@ -4,6 +4,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -55,12 +56,15 @@ public final class ChampionHealthOverlay {
       Entity entity = getMouseEntity(this.getClient(), deltaTracker.getGameTimeDeltaTicks());
       if (entity instanceof LivingEntity livingEntity) {
         ChampionUtil.getHandler(entity).ifPresent(handler -> {
-          ChampionBossEvent event = new ChampionBossEvent(handler.getDisplayName());
-          event.setLevel(handler.getLevel());
-          event.setColor(handler.getColor());
-          event.setProgress(Math.clamp(livingEntity.getHealth() / livingEntity.getMaxHealth(), 0.0f, 1.0f));
-          handler.getAllAffixes().getAffixes().forEach(event::addAffix);
-          this.render(guiGraphics, event);
+          if (handler.isDisplay()) {
+            Component name = handler.getPrefixName().copy().append(CommonComponents.space().append(entity.getDisplayName()));
+            ChampionBossEvent event = new ChampionBossEvent(name);
+            event.setLevel(handler.getLevel());
+            event.setColor(handler.getColor());
+            event.setProgress(Math.clamp(livingEntity.getHealth() / livingEntity.getMaxHealth(), 0.0f, 1.0f));
+            handler.getAllAffixes().getAffixes().forEach(event::addAffix);
+            this.render(guiGraphics, event);
+          }
         });
       }
 
