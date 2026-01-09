@@ -23,7 +23,7 @@ public final class Stats {
     DEFERRED_REGISTER.register(modEventBus);
     modEventBus.addListener(FMLCommonSetupEvent.class, event -> {
       event.enqueueWork(() -> {
-        Objects.requireNonNull(customs).forEach(net.minecraft.stats.Stats.CUSTOM::get);
+        Objects.requireNonNull(customs, "统计信息容器异常为Null").forEach(net.minecraft.stats.Stats.CUSTOM::get);
         customs = null;
       });
     });

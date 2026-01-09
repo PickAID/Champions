@@ -26,7 +26,7 @@ import top.theillusivec4.champions.deprecated.common.network.SPacketSyncAffixDat
 import top.theillusivec4.champions.deprecated.common.network.SPacketSyncChampion;
 import top.theillusivec4.champions.deprecated.common.network.SyncAffixSettingPacket;
 import top.theillusivec4.champions.deprecated.common.rank.RankManager;
-import top.theillusivec4.champions.items.Items;
+import top.theillusivec4.champions.world.item.Items;
 import top.theillusivec4.champions.deprecated.common.stats.Stats;
 import top.theillusivec4.champions.deprecated.common.util.EntityManager;
 import top.theillusivec4.champions.util.Utils;

@@ -14,11 +14,15 @@ public final class LanguageKeys {
   public static final String TOOLTIP_COLOR_KEY = tooltipKey("color");
   public static final String TOOLTIP_PREFIX_NAME_KEY = tooltipKey("prefix_name");
   public static final String TOOLTIP_AFFIXES_KEY = tooltipKey("affixes");
+  public static final String TOOLTIP_BOSS_KEY = tooltipKey("boss");
+  public static final String TOOLTIP_IS_BOSS_KEY = tooltipKey("boss.is");
+  public static final String TOOLTIP_NOT_BOSS_KEY = tooltipKey("boss.not");
   // Commands
   public static final String COMMANDS_AFFIX_SUCCESS_KEY = commandsKey("affix.success");
   public static final String COMMANDS_LEVEL_SUCCESS_KEY = commandsKey("level.success");
   // CreativeModeTab
   public static final String ITEM_GROUP_CHAMPION_SPAWN_EGGS = itemGroup("champion_spawn_eggs");
+  public static final String ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS = itemGroup("custom_champion_spawn_eggs");
 
   public static Component getLevelComponent(int level) {
     return Component.translatable(tooltipLevelKey(level));

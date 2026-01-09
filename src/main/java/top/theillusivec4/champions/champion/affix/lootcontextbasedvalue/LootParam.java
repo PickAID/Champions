@@ -10,6 +10,7 @@ import java.util.Set;
 /**
  * 从战利品上下文参数映射值
  */
+@Deprecated
 public record LootParam(FloatLootParamSource<?> source) implements LootContextBasedValue {
   public static final MapCodec<LootParam> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
     FloatLootParamSource.CODEC.fieldOf("source").forGetter(LootParam::source)

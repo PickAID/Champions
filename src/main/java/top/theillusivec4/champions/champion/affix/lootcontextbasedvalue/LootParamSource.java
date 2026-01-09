@@ -6,6 +6,7 @@ import net.minecraft.world.level.storage.loot.LootContextUser;
 
 import java.util.Set;
 
+@Deprecated
 public interface LootParamSource<T> extends LootContextUser {
   ContextKey<?> key();
 

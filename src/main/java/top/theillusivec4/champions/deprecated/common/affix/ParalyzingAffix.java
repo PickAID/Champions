@@ -7,7 +7,7 @@ import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.api.data.AffixSetting;
 import top.theillusivec4.champions.deprecated.common.affix.core.CombatAffix;
 import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
-import top.theillusivec4.champions.effects.MobEffects;
+import top.theillusivec4.champions.world.effect.MobEffects;
 
 @Deprecated
 public class ParalyzingAffix extends CombatAffix {

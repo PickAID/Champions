@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.champions.components.DataComponents;
+import top.theillusivec4.champions.component.DataComponents;
 
 @Mixin(value = ItemStack.class)
 public abstract class ItemStackMixin implements DataComponentHolder, TypedInstance<Item>, net.neoforged.neoforge.common.MutableDataComponentHolder, net.neoforged.neoforge.common.extensions.IItemStackExtension {

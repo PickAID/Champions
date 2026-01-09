@@ -13,7 +13,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.Util;
-import top.theillusivec4.champions.registries.Registries;
+import top.theillusivec4.champions.registry.Registries;
 
 public record Rank(Component description, int level, int color) {
   public static final Codec<Rank> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(

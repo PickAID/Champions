@@ -15,7 +15,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
-import top.theillusivec4.champions.entities.BaseBulletEntity;
+import top.theillusivec4.champions.world.entity.BaseBulletEntity;
 import top.theillusivec4.champions.util.Utils;
 
 public class ColorizedBulletRenderer<T extends BaseBulletEntity, S extends BulletRenderState> extends EntityRenderer<T, S> {

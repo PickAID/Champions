@@ -3,7 +3,7 @@ package top.theillusivec4.champions.data.lang;
 import net.minecraft.data.PackOutput;
 import top.theillusivec4.champions.champion.affix.Affixes;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.commands.SpawnEggCommand;
+import top.theillusivec4.champions.command.SpawnEggCommand;
 
 public class ZhCn extends ChampionsLanguageProvider {
   public ZhCn(PackOutput output) {
@@ -20,6 +20,9 @@ public class ZhCn extends ChampionsLanguageProvider {
     add(LanguageKeys.TOOLTIP_COLOR_KEY, "颜色：");
     add(LanguageKeys.TOOLTIP_PREFIX_NAME_KEY, "前缀：");
     add(LanguageKeys.TOOLTIP_AFFIXES_KEY, "已有词缀：");
+    add(LanguageKeys.TOOLTIP_BOSS_KEY, "强敌：");
+    add(LanguageKeys.TOOLTIP_IS_BOSS_KEY, "是");
+    add(LanguageKeys.TOOLTIP_NOT_BOSS_KEY, "否");
     add(LanguageKeys.ITEM_GROUP_CHAMPION_SPAWN_EGGS, "冠军：强敌 | 刷怪蛋");
     add(LanguageKeys.tooltipLevelKey(1), "I");
     add(LanguageKeys.tooltipLevelKey(2), "II");

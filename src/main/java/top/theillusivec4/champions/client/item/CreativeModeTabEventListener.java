@@ -1,6 +1,5 @@
 package top.theillusivec4.champions.client.item;
 
-import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -12,14 +11,14 @@ import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import top.theillusivec4.champions.capabilities.Capabilities;
+import top.theillusivec4.champions.capability.Capabilities;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.components.DataComponents;
+import top.theillusivec4.champions.component.DataComponents;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
-import top.theillusivec4.champions.items.CreativeModeTabs;
-import top.theillusivec4.champions.registries.Registries;
-import top.theillusivec4.champions.tags.RankTags;
+import top.theillusivec4.champions.world.item.CreativeModeTabs;
+import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.tag.RankTags;
 
 public final class CreativeModeTabEventListener {
   public static void register(IEventBus modEventBus) {

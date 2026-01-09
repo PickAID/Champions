@@ -11,7 +11,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.entities.EntityTypes;
+import top.theillusivec4.champions.world.entity.EntityTypes;
 
 import java.util.concurrent.CompletableFuture;
 
