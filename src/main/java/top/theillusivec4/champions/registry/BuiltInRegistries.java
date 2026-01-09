@@ -16,6 +16,7 @@ import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffect;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.FloatLootParamSource;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
 import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
+import top.theillusivec4.champions.champion.provider.ChampionProvider;
 import top.theillusivec4.champions.champion.rank.Rank;
 
 import java.util.ArrayList;
@@ -31,10 +32,11 @@ public final class BuiltInRegistries {
   public static final Registry<MapCodec<? extends AffixEntityEffect>> AFFIX_ENTITY_EFFECT_TYPE = simple(Registries.AFFIX_ENTITY_EFFECT_TYPE);
   public static final Registry<MapCodec<? extends AffixLocationBasedEffect>> AFFIX_LOCATION_BASED_EFFECT_TYPE = simple(Registries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
   public static final Registry<FloatLootParamSource<?>> LOOT_PARAM_FLOAT_SOURCE = simple(Registries.FLOAT_LOOT_PARAM_SOURCE);
+  public static final Registry<ChampionProvider> CHAMPION_PROVIDER = simple(Registries.CHAMPION_PROVIDER);
 
   public static void register(IEventBus modEventBus) {
     modEventBus.addListener(NewRegistryEvent.class, event -> {
-      Objects.requireNonNull(registries).forEach(event::register);
+      Objects.requireNonNull(registries, "注册注册表时，注册表容器异常为Null").forEach(event::register);
       registries = null;
     });
 
@@ -57,7 +59,7 @@ public final class BuiltInRegistries {
     RegistryBuilder<T> builder = new RegistryBuilder<>(key);
     consumer.accept(builder);
     Registry<T> registry = builder.create();
-    registries.add(registry);
+    Objects.requireNonNull(registries, "创建注册表时，注册表容器异常为null").add(registry);
     return registry;
   }
 

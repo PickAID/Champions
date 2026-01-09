@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.command;
 
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
@@ -31,10 +32,10 @@ import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
 import top.theillusivec4.champions.champion.ChampionHandler;
-import top.theillusivec4.champions.champion.reference.ChampionLevel;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
+import top.theillusivec4.champions.champion.reference.ChampionLevel;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
@@ -85,6 +86,14 @@ public final class SpawnEggCommand {
           )
         )
       )
+      .then(Commands.literal("boss")
+        .then(Commands.argument("players", EntityArgument.players())
+          .then(Commands.argument("boss", BoolArgumentType.bool())
+            .executes(context -> boss(context.getSource(), EntityArgument.getPlayers(context, "players"), BoolArgumentType.getBool(context, "boss")))
+          )
+        )
+
+      )
     ;
   }
 
@@ -133,7 +142,21 @@ public final class SpawnEggCommand {
 //        itemStack.set(DataComponents.DISPLAY, true);
 //      }
     }
-    source.sendSuccess(() -> Component.translatable("commands.champions.level.success", i), true);
+
+    source.sendSuccess(() -> Component.translatable("commands.champions.level.success"), true);
+    return i;
+  }
+
+  private static int boss(CommandSourceStack source, Collection<ServerPlayer> players, boolean boss) {
+    int i = 0;
+    for (ServerPlayer player : players) {
+      ItemStack itemStack = player.getMainHandItem();
+      ChampionUtil.getHandler(itemStack, source.getLevel())
+        .ifPresent(handler -> handler.setBoss(boss));
+      i++;
+    }
+
+    source.sendSuccess(() -> Component.translatable("commands.champions.boss.success"), true);
     return i;
   }
 

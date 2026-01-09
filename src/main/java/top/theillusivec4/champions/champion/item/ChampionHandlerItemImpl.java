@@ -13,23 +13,22 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
-import top.theillusivec4.champions.champion.ChampionHandler;
-import top.theillusivec4.champions.champion.reference.ChampionLevel;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
+import top.theillusivec4.champions.champion.reference.ChampionLevel;
 import top.theillusivec4.champions.component.DataComponents;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ItemChampionHandler implements ChampionHandler {
+public class ChampionHandlerItemImpl implements ChampionHandlerItem {
   private final ItemStack itemStack;
   private final Level level;
 
-  public ItemChampionHandler(ItemStack itemStack, Level level) {
+  public ChampionHandlerItemImpl(ItemStack itemStack, Level level) {
     this.itemStack = itemStack;
     this.level = level;
   }
@@ -117,6 +116,10 @@ public class ItemChampionHandler implements ChampionHandler {
     if (holder.hasData(Attachments.COLOR)) {
       this.itemStack.set(DataComponents.COLOR, holder.getData(Attachments.COLOR));
     }
+
+    if (holder.hasData(Attachments.BOSS)) {
+      this.itemStack.set(DataComponents.BOSS, holder.getData(Attachments.BOSS));
+    }
   }
 
   @Override
@@ -140,6 +143,10 @@ public class ItemChampionHandler implements ChampionHandler {
 
     if (holder.has(DataComponents.COLOR)) {
       this.itemStack.set(DataComponents.COLOR, holder.getOrDefault(DataComponents.COLOR, -1));
+    }
+
+    if (holder.has(DataComponents.BOSS)) {
+      this.itemStack.set(DataComponents.BOSS, holder.getOrDefault(DataComponents.BOSS, false));
     }
   }
 
@@ -217,5 +224,20 @@ public class ItemChampionHandler implements ChampionHandler {
   @Override
   public void setPrefixName(Component name) {
     this.itemStack.set(DataComponents.PREFIX_NAME, name);
+  }
+
+  @Override
+  public boolean isBoss() {
+    return this.itemStack.getOrDefault(DataComponents.BOSS, false);
+  }
+
+  @Override
+  public void setBoss(boolean boss) {
+    this.itemStack.set(DataComponents.BOSS, true);
+  }
+
+  @Override
+  public ItemStack getItem() {
+    return this.itemStack.copy();
   }
 }

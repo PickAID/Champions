@@ -24,50 +24,51 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.champions.attachment.Attachments;
+import top.theillusivec4.champions.capability.Capabilities;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
-import top.theillusivec4.champions.champion.entity.EntityEventListener;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffects;
 import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffects;
 import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffects;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValues;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootParamSourceTypes;
-import top.theillusivec4.champions.attachment.Attachments;
-import top.theillusivec4.champions.capability.Capabilities;
+import top.theillusivec4.champions.champion.entity.EntityEventListener;
+import top.theillusivec4.champions.client.network.ClientGamePacketListener;
 import top.theillusivec4.champions.command.Commands;
 import top.theillusivec4.champions.component.DataComponents;
 import top.theillusivec4.champions.data.DataEventListener;
 import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
+import top.theillusivec4.champions.particle.ParticleTypes;
+import top.theillusivec4.champions.registry.BuiltInRegistries;
+import top.theillusivec4.champions.stats.Stats;
 import top.theillusivec4.champions.world.effect.MobEffects;
 import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
 import top.theillusivec4.champions.world.item.ItemEventListener;
 import top.theillusivec4.champions.world.item.Items;
 import top.theillusivec4.champions.world.loot.predicates.LootItemConditions;
-import top.theillusivec4.champions.particle.ParticleTypes;
-import top.theillusivec4.champions.registry.BuiltInRegistries;
-import top.theillusivec4.champions.stats.Stats;
 
 @Mod(Champions.MODID)
 public class Champions {
   public static final String MODID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
+  public static final String VERSION = "2.1.12.3";
   @Deprecated
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
   // champion instance
   @Deprecated
-  private static Champions INSTANCE;
-  @Deprecated
+  private static Champions instance;
   public final ModContainer modContainer;
 
   public static Champions getInstance() {
-    return INSTANCE;
+    return instance;
   }
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
 //    modEventBus.register(this);
     this.modContainer = modContainer;
-    INSTANCE = this;
+    instance = this;
 //    modEventBus.register(new ModEventHandler());
 
     Items.register(modEventBus);
@@ -92,16 +93,16 @@ public class Champions {
     LootParamSourceTypes.register(modEventBus);
     Attachments.register(modEventBus);
     LootItemConditions.register(modEventBus);
-
+    ClientGamePacketListener.register(modEventBus);
     DataEventListener.register(modEventBus);
     EntityEventListener.register();
     ItemEventListener.register();
     Commands.register();
 
     // register champions config
-//    modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
-//    modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
-//    modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
+//  modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
+//  modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
+//  modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
 
 
     // register GameStages compat config, if gameStages loaded

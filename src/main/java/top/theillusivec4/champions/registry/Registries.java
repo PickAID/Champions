@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceKey;
+import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffect;
@@ -11,6 +12,7 @@ import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffect;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.FloatLootParamSource;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
 import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
+import top.theillusivec4.champions.champion.provider.ChampionProvider;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.util.Utils;
 
@@ -24,6 +26,7 @@ public final class Registries {
   public static final ResourceKey<Registry<MapCodec<? extends AffixEntityEffect>>> AFFIX_ENTITY_EFFECT_TYPE = create("affix_entity_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixLocationBasedEffect>>> AFFIX_LOCATION_BASED_EFFECT_TYPE = create("affix_location_based_effect_type");
   public static final ResourceKey<Registry<FloatLootParamSource<?>>> FLOAT_LOOT_PARAM_SOURCE = create("float_loot_param_source");
+  public static final ResourceKey<Registry<ChampionProvider>> CHAMPION_PROVIDER = create("champion_provider");
 
   private static <T> ResourceKey<Registry<T>> create(String name) {
     return ResourceKey.createRegistryKey(Utils.id(name));

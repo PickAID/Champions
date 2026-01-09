@@ -2,23 +2,32 @@ package top.theillusivec4.champions.champion.entity;
 
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
+import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.particle.ParticleTypes;
+import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 
 import java.util.Optional;
 
 public final class EntityEventListener {
+  private static final double BOSS_EVENT_DISTANCE_SQR = 3025.0;
+
   public static void register() {
     NeoForge.EVENT_BUS.register(new EntityEventListener());
   }
@@ -111,7 +120,8 @@ public final class EntityEventListener {
    */
   @SubscribeEvent
   public void onLivingDamagePost(LivingDamageEvent.Post event) {
-    ChampionUtil.getHandler(event.getEntity()).ifPresent(handler -> {
+    Entity entity = event.getEntity();
+    ChampionUtil.getHandler(entity).ifPresent(handler -> {
       DamageSource damageSource = event.getSource();
       Holder<DamageType> damage = damageSource.typeHolder();
       handler.updateLatestDamage(mutable -> {
@@ -124,8 +134,12 @@ public final class EntityEventListener {
         mutable.setLatestTime(mutable.getLatestTime() + 1);
         mutable.setOriginalDamageAmount(mutable.getOriginalDamageAmount() + event.getOriginalDamage());
       });
+
+      // BossBar
+      handler.getEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
     });
   }
+
 
   /**
    * 处理 Tick 效果
@@ -138,7 +152,19 @@ public final class EntityEventListener {
     if (entity.level() instanceof ServerLevel serverLevel) {
       ChampionUtil.getHandler(event.getEntity()).ifPresent(handler -> {
         handler.tickEffects(serverLevel);
+        // BossBar
+        handler.getEvent().ifPresent(bossEvent -> {
+          for (ServerPlayer player : serverLevel.players()) {
+            if (player.blockPosition().distSqr(entity.blockPosition()) <= BOSS_EVENT_DISTANCE_SQR) {
+              bossEvent.addPlayer(player);
+            } else {
+              bossEvent.removePlayer(player);
+            }
+          }
+        });
+
       });
+
     } else {
       ChampionUtil.getHandler(entity).ifPresent(handler -> {
         RandomSource randomSource = entity.getRandom();
@@ -152,6 +178,15 @@ public final class EntityEventListener {
 //        float blue = ARGB.blue(color) / 255.0f;
         entity.level().addParticle(ParticleTypes.rank(color), x, y, z, 1.0f, 1.0f, 1.0f);
       });
+    }
+  }
+
+  @SubscribeEvent
+  public void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+    Level level = event.getLevel();
+    Entity entity = event.getEntity();
+    if (!level.isClientSide()) {
+      ChampionUtil.getHandler(entity).flatMap(ChampionHandlerEntity::getEvent).ifPresent(ServerChampionBossEvent::removeAllPlayers);
     }
   }
 
@@ -170,13 +205,13 @@ public final class EntityEventListener {
   /**
    * 处理实体分裂的数据复制
    *
-   * @param event
+   * @param event MobSplitEvent
    */
   @SubscribeEvent
   public void onMobSplit(MobSplitEvent event) {
     Entity parent = event.getParent();
     for (Mob child : event.getChildren()) {
-      Optional<ChampionHandler> optional = ChampionUtil.getHandler(child);
+      Optional<ChampionHandlerEntity> optional = ChampionUtil.getHandler(child);
       if (optional.isPresent()) {
         ChampionHandler handler = optional.get();
         handler.copyFrom(parent);
@@ -184,21 +219,36 @@ public final class EntityEventListener {
         break;
       }
     }
-//    Entity parent = event.getParent();
-//    ChampionUtil.getHandler(parent).ifPresent(parentHandler -> {
-//      for (Mob child : event.getChildren()) {
-//        ChampionUtil.getHandler(child).ifPresent(childHandler -> {
-//          int level = parentHandler.getLevel();
-//          Affixes affixes = parentHandler.getAllAffixes();
-//          childHandler.setLevel(level - 1);
-//          childHandler.updateAffixes(mutable -> {
-//            for (Holder<Affix> affix : affixes.getAffixes()) {
-//              mutable.add(affix);
-//            }
-//          });
-//        });
-//      }
-//    });
+  }
+
+  @SubscribeEvent
+  public void onEntityTravelToDimension(EntityTravelToDimensionEvent event) {
+    ChampionUtil.getHandler(event.getEntity()).ifPresent(handler -> handler.setSpawned(true));
+  }
+
+  @SubscribeEvent
+  public void onEntityJoinLevel(EntityJoinLevelEvent event) {
+    if (!event.getLevel().isClientSide() && !event.loadedFromDisk()) {
+      Entity entity = event.getEntity();
+
+      // 条件过滤
+      if (entity instanceof Mob mob) {
+        // 刷怪蛋已经处理了
+        if (mob.getSpawnType() == EntitySpawnReason.SPAWN_ITEM_USE) {
+          return;
+        }
+
+        // 维度穿梭已经处理了
+        if (mob.getSpawnType() == EntitySpawnReason.DIMENSION_TRAVEL) {
+          return;
+        }
+
+
+      } else {
+        // 真不知道非 Mob 如何搞定维度穿梭判断
+      }
+
+    }
   }
 
 }

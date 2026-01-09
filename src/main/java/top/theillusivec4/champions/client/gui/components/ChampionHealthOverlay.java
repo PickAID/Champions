@@ -4,65 +4,57 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.client.util.ClientUtil;
+import top.theillusivec4.champions.network.protocol.game.ClientboundChampionBossEventPacket;
 import top.theillusivec4.champions.util.Utils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public final class ChampionHealthOverlay {
   private static final Identifier BAR = Utils.id("textures/gui/bars.png");
   private static final Identifier STAR = Utils.id("textures/gui/staricon.png");
+  private final Map<UUID, ClientChampionBossEvent> events = new HashMap<>();
+  private final ChampionHealthOverlay.Handler handler = new Handler();
   private DisplayMode mode = DisplayMode.LOOK;
   private int x;
   private int y;
 
-  private static @Nullable Entity getMouseEntity(Minecraft client, float partialTicks) {
-    //noinspection ConstantValue
-    if (client != null) {
-      Entity cameraEntity = client.getCameraEntity();
-      if (cameraEntity != null) {
-        Vec3 from = cameraEntity.getEyePosition(partialTicks);
-        Vec3 direction = cameraEntity.getViewVector(partialTicks);
-        double maxDistance = 3.0;
-        double maxDistanceSqr = maxDistance * maxDistance;
-        Vec3 to = from.add(direction.x * maxDistance, direction.y * maxDistance, direction.z * maxDistance);
-        AABB box = cameraEntity.getBoundingBox().expandTowards(direction.scale(maxDistance)).inflate(1.0, 1.0, 1.0);
-        EntityHitResult entityHitResult = ProjectileUtil.getEntityHitResult(cameraEntity, from, to, box, EntitySelector.CAN_BE_PICKED, maxDistanceSqr);
-        return entityHitResult != null ? entityHitResult.getEntity() : null;
-      }
-
-    }
-    return null;
-  }
-
   public ChampionHealthOverlay() {
   }
 
+  public void update(ClientboundChampionBossEventPacket packet) {
+    packet.dispatch(
+      packet.getId(),
+      this.handler
+    );
+  }
+
   public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-    if (this.mode == DisplayMode.LOOK) {
+    if (this.isDisplayLookAt()) {
       /*
       LOOK 模式显示准星处实体
        */
-      Entity entity = getMouseEntity(this.getClient(), deltaTracker.getGameTimeDeltaTicks());
-      if (entity instanceof LivingEntity livingEntity) {
+      Entity entity = ClientUtil.getMouseEntity(deltaTracker.getGameTimeDeltaTicks());
+      if (entity != null) {
         ChampionUtil.getHandler(entity).ifPresent(handler -> {
-          if (handler.isDisplay()) {
-            Component name = handler.getPrefixName().copy().append(CommonComponents.space().append(entity.getDisplayName()));
-            ChampionBossEvent event = new ChampionBossEvent(name);
+          if (handler.isDisplay() && !handler.isBoss()) {
+            Component name = handler.getName();
+            ClientChampionBossEvent event = new ClientChampionBossEvent(entity.getUUID(), name);
             event.setLevel(handler.getLevel());
             event.setColor(handler.getColor());
-            event.setProgress(Math.clamp(livingEntity.getHealth() / livingEntity.getMaxHealth(), 0.0f, 1.0f));
-            handler.getAllAffixes().getAffixes().forEach(event::addAffix);
+            event.setProgress(Math.clamp(handler.getHealth() / handler.getMaxHealth(), 0.0f, 1.0f));
+            event.setAffixes(handler.getAllAffixes().getAffixes());
             this.render(guiGraphics, event);
           }
         });
@@ -70,6 +62,12 @@ public final class ChampionHealthOverlay {
 
     }
 
+    for (ClientChampionBossEvent event : this.events.values()) {
+      this.render(guiGraphics, event);
+      if (this.y >= guiGraphics.guiHeight() / 3) {
+        break;
+      }
+    }
   }
 
   public int getX() {
@@ -100,7 +98,11 @@ public final class ChampionHealthOverlay {
     this.mode = mode;
   }
 
-  private void render(GuiGraphics guiGraphics, ChampionBossEvent event) {
+  private boolean isDisplayLookAt() {
+    return this.mode == DisplayMode.LOOK;
+  }
+
+  private void render(GuiGraphics guiGraphics, ClientChampionBossEvent event) {
     Component name = event.getName();
     /*
     水平位置总是重新赋值
@@ -148,24 +150,24 @@ public final class ChampionHealthOverlay {
     this.y = startY;
   }
 
-  private void drawAffixes(GuiGraphics guiGraphics, int x, int y, ChampionBossEvent event) {
+  private void drawAffixes(GuiGraphics guiGraphics, int x, int y, ClientChampionBossEvent event) {
     Component name = event.getAffixesComponent();
     guiGraphics.drawString(this.getClient().font, name, x, y, -1, true);
   }
 
-  private void drawString(GuiGraphics guiGraphics, int x, int y, ChampionBossEvent event) {
+  private void drawString(GuiGraphics guiGraphics, int x, int y, ClientChampionBossEvent event) {
     Component name = event.getName();
     guiGraphics.drawString(this.getClient().font, name, x, y, event.getColor(), true);
   }
 
-  private void drawStar(GuiGraphics guiGraphics, int x, int y, ChampionBossEvent event) {
+  private void drawStar(GuiGraphics guiGraphics, int x, int y, ClientChampionBossEvent event) {
     for (int i = 0; i < event.getLevel(); i++) {
       guiGraphics.blit(RenderPipelines.GUI_TEXTURED, STAR, x, y, 0, 0, 9, 9, 9, 9, event.getColor());
       x += 10;
     }
   }
 
-  private void drawBar(GuiGraphics guiGraphics, int x, int y, ChampionBossEvent event) {
+  private void drawBar(GuiGraphics guiGraphics, int x, int y, ClientChampionBossEvent event) {
     guiGraphics.blit(RenderPipelines.GUI_TEXTURED, BAR, x, y, 0, 60, 182, 5, 256, 256, event.getColor());
     int width = Mth.lerpDiscrete(event.getProgress(), 0, 182);
     if (width > 0) {
@@ -177,5 +179,59 @@ public final class ChampionHealthOverlay {
     BROADCAST,
     LOOK,
     HIDE;
+  }
+
+  private class Handler implements ClientboundChampionBossEventPacket.Handler {
+
+    @Override
+    public void add(UUID id, Component name, float progress, int level, int color, List<Holder<Affix>> affixes) {
+      ClientChampionBossEvent event = new ClientChampionBossEvent(id, name, progress, level, color, affixes);
+      ChampionHealthOverlay.this.events.put(id, event);
+    }
+
+    @Override
+    public void remove(UUID id) {
+      ChampionHealthOverlay.this.events.remove(id);
+    }
+
+    @Override
+    public void updateProgress(UUID id, float progress) {
+      ClientChampionBossEvent event = ChampionHealthOverlay.this.events.get(id);
+      if (event != null) {
+        event.setProgress(progress);
+      }
+    }
+
+    @Override
+    public void updateLevel(UUID id, int level) {
+      ClientChampionBossEvent event = ChampionHealthOverlay.this.events.get(id);
+      if (event != null) {
+        event.setLevel(level);
+      }
+    }
+
+    @Override
+    public void updateColor(UUID id, int color) {
+      ClientChampionBossEvent event = ChampionHealthOverlay.this.events.get(id);
+      if (event != null) {
+        event.setColor(color);
+      }
+    }
+
+    @Override
+    public void updateName(UUID id, Component name) {
+      ClientChampionBossEvent event = ChampionHealthOverlay.this.events.get(id);
+      if (event != null) {
+        event.setName(name);
+      }
+    }
+
+    @Override
+    public void updateAffixes(UUID id, List<Holder<Affix>> affixes) {
+      ClientChampionBossEvent event = ChampionHealthOverlay.this.events.get(id);
+      if (event != null) {
+        event.setAffixes(affixes);
+      }
+    }
   }
 }

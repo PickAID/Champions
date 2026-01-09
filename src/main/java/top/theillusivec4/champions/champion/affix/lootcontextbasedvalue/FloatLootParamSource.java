@@ -7,6 +7,7 @@ import top.theillusivec4.champions.registry.BuiltInRegistries;
 
 import java.util.function.Function;
 
+@Deprecated
 public record FloatLootParamSource<T>(ContextKey<T> key, Function<T, Float> function, float defaultValue) implements LootParamSource<Float> {
   public static final Codec<FloatLootParamSource<?>> CODEC = Codec.lazyInitialized(BuiltInRegistries.LOOT_PARAM_FLOAT_SOURCE::byNameCodec);
 

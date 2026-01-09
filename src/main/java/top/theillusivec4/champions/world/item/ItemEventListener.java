@@ -18,7 +18,6 @@ import top.theillusivec4.champions.data.lang.LanguageKeys;
 import java.util.List;
 
 public final class ItemEventListener {
-
   public static void register() {
     NeoForge.EVENT_BUS.register(new ItemEventListener());
   }
@@ -60,6 +59,12 @@ public final class ItemEventListener {
           Component.translatable(LanguageKeys.TOOLTIP_PREFIX_NAME_KEY).withStyle(ChatFormatting.GRAY)
             .append(prefixName)
         );
+        //Boss
+        list.add(
+          Component.translatable(LanguageKeys.TOOLTIP_BOSS_KEY).withStyle(ChatFormatting.GRAY)
+            .append(handler.isBoss() ? Component.translatable(LanguageKeys.TOOLTIP_IS_BOSS_KEY) : Component.translatable(LanguageKeys.TOOLTIP_NOT_BOSS_KEY))
+        );
+
         // Affix
         Affixes affixes = handler.getAllAffixes();
         list.add(Component.translatable(LanguageKeys.TOOLTIP_AFFIXES_KEY).withStyle(ChatFormatting.GRAY));
@@ -109,4 +114,5 @@ public final class ItemEventListener {
 //    }
 
   }
+
 }

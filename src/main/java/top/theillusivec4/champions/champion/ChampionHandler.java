@@ -66,4 +66,8 @@ public interface ChampionHandler {
   Component getPrefixName();
 
   void setPrefixName(Component name);
+
+  boolean isBoss();
+
+  void setBoss(boolean boss);
 }

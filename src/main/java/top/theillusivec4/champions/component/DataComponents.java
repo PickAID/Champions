@@ -25,6 +25,7 @@ public class DataComponents {
   public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COLOR = register("color", DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
   public static final DeferredHolder<DataComponentType<?>, DataComponentType<Component>> PREFIX_NAME = register("prefix_name", DataComponentType.<Component>builder().persistent(ComponentSerialization.CODEC).networkSynchronized(ComponentSerialization.STREAM_CODEC));
   public static final DeferredHolder<DataComponentType<?>, DataComponentType<Component>> CUSTOM_NAME = register("custom_name", DataComponentType.<Component>builder().persistent(ComponentSerialization.CODEC).networkSynchronized(ComponentSerialization.STREAM_CODEC));
+  public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> BOSS = register("boss", DataComponentType.<Boolean>builder().persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
 
   public static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> register(String name, DataComponentType.Builder<T> builder) {
     return DEFERRED_REGISTER.register(name, builder::build);
