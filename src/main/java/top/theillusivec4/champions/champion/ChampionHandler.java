@@ -11,9 +11,11 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
-import top.theillusivec4.champions.champion.config.ChampionConfig;
+import top.theillusivec4.champions.server.champion.config.ChampionConfig;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.rank.Rank;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
@@ -117,29 +119,20 @@ public interface ChampionHandler {
   void updateAffixes(Consumer<Affixes.Mutable> consumer);
 
   /**
-   * 从数据附件持有者复制数据
+   * 从数据附件持有者复制数据 即将被配置数据取代
    *
    * @param holder 数据附件持有者 如实体
    */
+  @Deprecated
   void copyFrom(IAttachmentHolder holder);
 
   /**
-   * 从数据组件持有者复制数据
+   * 从数据组件持有者复制数据 即将被配置数据取代
    *
    * @param holder 数据组件持有者 如物品
    */
+  @Deprecated
   void copyFrom(DataComponentHolder holder);
-
-  /**
-   * 应用配置数据
-   */
-  default void applyConfig(ChampionConfig config) {
-    config.rank().ifPresent(this::setRank);
-    config.prefixName().ifPresent(this::setPrefixName);
-    config.level().ifPresent(this::setLevel);
-    config.color().ifPresent(this::setColor);
-    config.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
-  }
 
   /**
    * 获取全部词缀数据
@@ -201,7 +194,7 @@ public interface ChampionHandler {
    * 一般指该对象是否真的具有数据，如果所有数据均为空则为无效
    */
   default boolean isValid() {
-    return !this.getAffixes().isEmpty() || this.getRank().isPresent();
+    return !this.getAffixes().isEmpty() || this.getRank().isPresent() || this.getLevel() > ChampionDefaultConfigs.EMPTY_LEVEL || !Objects.equals(this.getColor(), ChampionDefaultConfigs.DEFAULT_COLOR) || this.isBoss();
   }
 
   /**
@@ -211,10 +204,21 @@ public interface ChampionHandler {
     return new ChampionConfig(
       this.getRank(),
       this.getPrefixName(),
-      this.getAffixes().isEmpty() ? Optional.empty() : Optional.of(this.getAffixes()),
-      this.getLevel() <= ChampionDefaultConfig.EMPTY_LEVEL ? Optional.empty() : Optional.of(this.getLevel()),
-      this.getColor() == ChampionDefaultConfig.DEFAULT_COLOR ? Optional.empty() : Optional.of(this.getColor()),
-      this.isBoss() ? Optional.of(Boolean.TRUE) : Optional.empty()
+      Optional.of(this.getAffixes()),
+      Optional.of(this.getLevel()),
+      Optional.of(this.getColor()),
+      Optional.of(this.isBoss())
     );
+  }
+
+  /**
+   * 应用配置数据
+   */
+  default void setConfig(ChampionConfig config) {
+    config.rank().ifPresent(this::setRank);
+    config.prefixName().ifPresent(this::setPrefixName);
+    config.level().ifPresent(this::setLevel);
+    config.color().ifPresent(this::setColor);
+    config.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
   }
 }

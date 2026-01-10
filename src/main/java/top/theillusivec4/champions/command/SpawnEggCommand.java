@@ -35,7 +35,7 @@ import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.item.ChampionHandlerItem;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.champion.ChampionDefaultConfig;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
@@ -74,7 +74,7 @@ public final class SpawnEggCommand {
       )
       .then(Commands.literal("level")
         .then(Commands.argument("players", EntityArgument.players())
-          .then(Commands.argument("level", IntegerArgumentType.integer(ChampionDefaultConfig.MIN_LEVEL, ChampionDefaultConfig.MAX_LEVEL))
+          .then(Commands.argument("level", IntegerArgumentType.integer(ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL))
             .executes(context -> level(context.getSource(), EntityArgument.getPlayers(context, "players"), IntegerArgumentType.getInteger(context, "level")))
           )
         )

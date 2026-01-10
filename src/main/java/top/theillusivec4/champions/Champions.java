@@ -19,9 +19,13 @@
 
 package top.theillusivec4.champions;
 
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.attachment.Attachments;
@@ -33,7 +37,6 @@ import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffects
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValues;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootParamSourceTypes;
 import top.theillusivec4.champions.champion.entity.EntityEventListener;
-import top.theillusivec4.champions.client.network.ClientGamePacketListener;
 import top.theillusivec4.champions.command.Commands;
 import top.theillusivec4.champions.component.DataComponents;
 import top.theillusivec4.champions.data.DataEventListener;
@@ -41,7 +44,9 @@ import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.particle.ParticleTypes;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
+import top.theillusivec4.champions.server.champion.config.ChampionConfigManager;
 import top.theillusivec4.champions.stats.Stats;
+import top.theillusivec4.champions.util.Utils;
 import top.theillusivec4.champions.world.effect.MobEffects;
 import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
@@ -57,9 +62,9 @@ public class Champions {
   @Deprecated
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
   // champion instance
-  @Deprecated
   private static Champions instance;
-  public final ModContainer modContainer;
+  private final ModContainer modContainer;
+  private ChampionConfigManager championConfigManager;
 
   public static Champions getInstance() {
     return instance;
@@ -67,8 +72,8 @@ public class Champions {
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
 //    modEventBus.register(this);
-    this.modContainer = modContainer;
     instance = this;
+    this.modContainer = modContainer;
 //    modEventBus.register(new ModEventHandler());
 
     Items.register(modEventBus);
@@ -96,8 +101,8 @@ public class Champions {
     DataEventListener.register(modEventBus);
     EntityEventListener.register();
     ItemEventListener.register();
+    ReloadEventListener.register();
     Commands.register();
-
     // register champions config
 //  modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
 //  modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
@@ -119,4 +124,26 @@ public class Champions {
 
   }
 
+  public ModContainer getModContainer() {
+    return modContainer;
+  }
+
+  public static final class ReloadEventListener {
+    public static final Identifier CHAMPION_CONFIG_MANAGER = Utils.id("champion_config_manager");
+
+    private static void register() {
+      NeoForge.EVENT_BUS.register(new ReloadEventListener());
+    }
+
+    private ReloadEventListener() {
+    }
+
+    @SubscribeEvent
+    public void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
+      ChampionConfigManager manager = new ChampionConfigManager(event.getRegistryAccess());
+      event.addListener(CHAMPION_CONFIG_MANAGER, manager);
+      Champions.instance.championConfigManager = manager;
+    }
+
+  }
 }

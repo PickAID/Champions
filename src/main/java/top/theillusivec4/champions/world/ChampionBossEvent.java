@@ -4,7 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.ChampionDefaultConfig;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +26,7 @@ public abstract class ChampionBossEvent {
     this.id = id;
     this.name = name;
     this.progress = Math.clamp(progress, 0.0f, 1.0f);
-    this.level = Math.clamp(level, ChampionDefaultConfig.MIN_LEVEL, ChampionDefaultConfig.MAX_LEVEL);
+    this.level = Math.clamp(level, ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL);
     this.color = ARGB.opaque(color);
     this.affixes = List.copyOf(affixes);
   }
@@ -64,7 +64,7 @@ public abstract class ChampionBossEvent {
   }
 
   public void setLevel(int level) {
-    this.level = Math.clamp(level, ChampionDefaultConfig.MIN_LEVEL, ChampionDefaultConfig.MAX_LEVEL);
+    this.level = Math.clamp(level, ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL);
   }
 
   public int getColor() {

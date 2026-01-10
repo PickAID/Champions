@@ -164,8 +164,8 @@ public final class Affixes {
           AffixTarget.VICTIM,
           AllOf.entityEffects(
             AffixEntityEffects.damageEntity(
-              LootContextBasedValues.lootParam(LootParamSourceTypes.Floats.LATEST_ORIGINAL_DAMAGE_AMOUNT),
-              LootContextBasedValues.lootParam(LootParamSourceTypes.Floats.LATEST_ORIGINAL_DAMAGE_AMOUNT),
+              LootContextBasedValues.lootParam(LootParamSourceTypes.Floats.LATEST_DAMAGE_AMOUNT),
+              LootContextBasedValues.lootParam(LootParamSourceTypes.Floats.LATEST_DAMAGE_AMOUNT),
               damageTypes.getOrThrow(DamageTypes.IN_FIRE)
             ),
             AffixEntityEffects.ignite(

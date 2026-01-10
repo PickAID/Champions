@@ -9,13 +9,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public record LatestDamage(Optional<Holder<DamageType>> damageType, int damageCount, int latestTime, float originalDamageAmount) {
+public record LatestDamage(Optional<Holder<DamageType>> damageType, int damageCount, int latestTime, float damageAmount) {
   public static final LatestDamage EMPTY = new LatestDamage(Optional.empty(), 0, 0, 0);
   public static final MapCodec<LatestDamage> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
     DamageType.CODEC.optionalFieldOf("damage_type").forGetter(LatestDamage::damageType),
     Codec.intRange(0, 99).fieldOf("damage_count").forGetter(LatestDamage::damageCount),
     Codec.INT.fieldOf("latest_time").forGetter(LatestDamage::latestTime),
-    Codec.FLOAT.fieldOf("original_damage_amount").forGetter(LatestDamage::originalDamageAmount)
+    Codec.FLOAT.fieldOf("damage_amount").forGetter(LatestDamage::damageAmount)
   ).apply(instance, LatestDamage::new));
 
   public LatestDamage.Mutable toMutable() {
@@ -45,9 +45,8 @@ public record LatestDamage(Optional<Holder<DamageType>> damageType, int damageCo
       return originalDamageAmount;
     }
 
-    public Mutable setOriginalDamageAmount(float originalDamageAmount) {
+    public void setOriginalDamageAmount(float originalDamageAmount) {
       this.originalDamageAmount = originalDamageAmount;
-      return this;
     }
 
     public @Nullable Holder<DamageType> getDamageType() {
@@ -63,18 +62,16 @@ public record LatestDamage(Optional<Holder<DamageType>> damageType, int damageCo
       return latestTime;
     }
 
-    public Mutable setLatestTime(int latestTime) {
+    public void setLatestTime(int latestTime) {
       this.latestTime = latestTime;
-      return this;
     }
 
     public int getDamageCount() {
       return damageCount;
     }
 
-    public Mutable setDamageCount(int damageCount) {
+    public void setDamageCount(int damageCount) {
       this.damageCount = damageCount;
-      return this;
     }
   }
 }

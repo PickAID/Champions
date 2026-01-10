@@ -13,7 +13,7 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
-import top.theillusivec4.champions.champion.ChampionDefaultConfig;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
@@ -159,18 +159,18 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
   @Override
   public int getLevel() {
     if (this.itemStack.has(DataComponents.LEVEL)) {
-      return this.itemStack.getOrDefault(DataComponents.LEVEL, ChampionDefaultConfig.EMPTY_LEVEL);
+      return this.itemStack.getOrDefault(DataComponents.LEVEL, ChampionDefaultConfigs.EMPTY_LEVEL);
     }
 
-    return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultConfig.EMPTY_LEVEL);
+    return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultConfigs.EMPTY_LEVEL);
   }
 
   @Override
   public void setLevel(int level) {
-    if (level <= ChampionDefaultConfig.EMPTY_LEVEL) {
+    if (level <= ChampionDefaultConfigs.EMPTY_LEVEL) {
       this.itemStack.remove(DataComponents.LEVEL);
     } else {
-      this.itemStack.set(DataComponents.LEVEL, Math.clamp(level, ChampionDefaultConfig.MIN_LEVEL, ChampionDefaultConfig.MAX_LEVEL));
+      this.itemStack.set(DataComponents.LEVEL, Math.clamp(level, ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL));
     }
   }
 
@@ -194,12 +194,12 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
       return this.itemStack.getOrDefault(DataComponents.COLOR, -1);
     }
 
-    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultConfig.DEFAULT_COLOR);
+    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultConfigs.DEFAULT_COLOR);
   }
 
   @Override
   public void setColor(int color) {
-    if (color == ChampionDefaultConfig.DEFAULT_COLOR) {
+    if (color == ChampionDefaultConfigs.DEFAULT_COLOR) {
       this.itemStack.remove(DataComponents.COLOR);
     } else {
       this.itemStack.set(DataComponents.COLOR, ARGB.opaque(color));

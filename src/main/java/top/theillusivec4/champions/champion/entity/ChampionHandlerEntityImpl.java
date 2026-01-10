@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
-import top.theillusivec4.champions.champion.ChampionDefaultConfig;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
@@ -189,7 +189,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
       }
 
       if (holder.has(DataComponents.LEVEL)) {
-        this.setLevel(holder.getOrDefault(DataComponents.LEVEL, ChampionDefaultConfig.MIN_LEVEL));
+        this.setLevel(holder.getOrDefault(DataComponents.LEVEL, ChampionDefaultConfigs.MIN_LEVEL));
       }
 
       if (holder.has(DataComponents.COLOR)) {
@@ -211,16 +211,16 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
     if (this.entity.hasData(Attachments.LEVEL)) {
       return this.entity.getData(Attachments.LEVEL);
     } else {
-      return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultConfig.EMPTY_LEVEL);
+      return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultConfigs.EMPTY_LEVEL);
     }
   }
 
   @Override
   public void setLevel(int level) {
-    if (level <= ChampionDefaultConfig.EMPTY_LEVEL) {
+    if (level <= ChampionDefaultConfigs.EMPTY_LEVEL) {
       this.entity.removeData(Attachments.LEVEL);
     } else {
-      this.entity.setData(Attachments.LEVEL, Math.clamp(level, ChampionDefaultConfig.MIN_LEVEL, ChampionDefaultConfig.MAX_LEVEL));
+      this.entity.setData(Attachments.LEVEL, Math.clamp(level, ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL));
     }
   }
 
@@ -253,12 +253,12 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
       return this.entity.getData(Attachments.COLOR);
     }
 
-    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultConfig.DEFAULT_COLOR);
+    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultConfigs.DEFAULT_COLOR);
   }
 
   @Override
   public void setColor(int color) {
-    if (color == ChampionDefaultConfig.DEFAULT_COLOR) {
+    if (color == ChampionDefaultConfigs.DEFAULT_COLOR) {
       this.entity.removeData(Attachments.COLOR);
     } else {
       this.entity.setData(Attachments.COLOR, ARGB.opaque(color));

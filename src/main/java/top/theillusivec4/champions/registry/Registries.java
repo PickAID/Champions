@@ -10,16 +10,13 @@ import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffec
 import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffect;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.FloatLootParamSource;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
-import top.theillusivec4.champions.champion.affix.provider.AffixProvider;
+import top.theillusivec4.champions.server.champion.config.ChampionConfigSelector;
 import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
-import top.theillusivec4.champions.champion.config.ChampionConfigProvider;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.util.Utils;
 
 public final class Registries {
   public static final ResourceKey<Registry<Affix>> AFFIX = create("affix");
-  public static final ResourceKey<Registry<Affix>> AFFIX_PROVIDER = create("affix_provider");
-  public static final ResourceKey<Registry<MapCodec<? extends AffixProvider>>> AFFIX_PROVIDER_TYPE = create("affix_provider_type");
   public static final ResourceKey<Registry<Rank>> RANK = create("rank");
   public static final ResourceKey<Registry<ChampionSpawnEgg>> CHAMPION_SPAWN_EGG = create("champion_spawn_egg");
   public static final ResourceKey<Registry<DataComponentType<?>>> AFFIX_EFFECT_COMPONENT_TYPE = create("affix_effect_component_type");
@@ -28,7 +25,8 @@ public final class Registries {
   public static final ResourceKey<Registry<MapCodec<? extends AffixEntityEffect>>> AFFIX_ENTITY_EFFECT_TYPE = create("affix_entity_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixLocationBasedEffect>>> AFFIX_LOCATION_BASED_EFFECT_TYPE = create("affix_location_based_effect_type");
   public static final ResourceKey<Registry<FloatLootParamSource<?>>> FLOAT_LOOT_PARAM_SOURCE = create("float_loot_param_source");
-  public static final ResourceKey<Registry<ChampionConfigProvider>> CHAMPION_PROVIDER = create("champion_provider");
+  // 非Registry
+  public static final ResourceKey<Registry<ChampionConfigSelector>> CHAMPION_CONFIG_SELECTOR = create("champion_config_selector");
 
   private static <T> ResourceKey<Registry<T>> create(String name) {
     return ResourceKey.createRegistryKey(Utils.id(name));

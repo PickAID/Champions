@@ -8,7 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import top.theillusivec4.champions.capability.Capabilities;
-import top.theillusivec4.champions.champion.ChampionDefaultConfig;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
 
@@ -32,7 +32,7 @@ public final class CreativeModeTabEventListener {
         for (Item item : Capabilities.ChampionHandlers.getImplementedItems()) {
           ItemStack itemStack = new ItemStack(item);
           ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
-            handler.setLevel(ChampionDefaultConfig.MIN_LEVEL);
+            handler.setLevel(ChampionDefaultConfigs.MIN_LEVEL);
 //            itemStack.set(
 //              DataComponents.CUSTOM_NAME,
 //              Component.translatable(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG)

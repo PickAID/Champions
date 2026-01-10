@@ -53,7 +53,7 @@ public class Utils {
 
   public static void createServerConfig(ModConfigSpec spec, String suffix) {
     String fileName = "champions-" + suffix + ".toml";
-    Champions.getInstance().modContainer.registerConfig(ModConfig.Type.SERVER, spec, fileName);
+    Champions.getInstance().getModContainer().registerConfig(ModConfig.Type.SERVER, spec, fileName);
     File defaults = FMLPaths.GAMEDIR.get().resolve("defaultconfigs").resolve(fileName).toFile();
 
     if (!defaults.exists()) {

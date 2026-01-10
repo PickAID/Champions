@@ -13,18 +13,18 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.Util;
-import top.theillusivec4.champions.champion.ChampionDefaultConfig;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.registry.Registries;
 
 public record Rank(Component description, int level, int color) {
   public static final Codec<Rank> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Rank::description),
-    Codec.intRange(ChampionDefaultConfig.MIN_LEVEL, ChampionDefaultConfig.MAX_LEVEL).fieldOf("level").forGetter(Rank::level),
+    Codec.intRange(ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL).fieldOf("level").forGetter(Rank::level),
     Codec.INT.fieldOf("color").forGetter(Rank::color)
   ).apply(instance, Rank::new));
   public static final MapCodec<Rank> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Rank::description),
-    Codec.intRange(ChampionDefaultConfig.MIN_LEVEL, ChampionDefaultConfig.MAX_LEVEL).fieldOf("level").forGetter(Rank::level),
+    Codec.intRange(ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL).fieldOf("level").forGetter(Rank::level),
     Codec.INT.fieldOf("color").forGetter(Rank::color)
   ).apply(instance, Rank::new));
   public static final Codec<Holder<Rank>> REFERENCE_CODEC = RegistryFileCodec.create(Registries.RANK, DIRECT_CODEC);
