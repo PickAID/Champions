@@ -1,8 +1,16 @@
 package top.theillusivec4.champions.champion.item;
 
-import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.champions.champion.ChampionHandler;
 
+/**
+ * 专用于物品的冠军处理程序
+ */
 public interface ChampionHandlerItem extends ChampionHandler {
-  ItemStack getItem();
+  default boolean isDisplayHoverName() {
+    return this.isValid();
+  }
+
+  default boolean isDisplayTooltip() {
+    return this.isValid();
+  }
 }

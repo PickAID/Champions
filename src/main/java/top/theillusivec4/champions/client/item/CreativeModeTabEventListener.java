@@ -1,10 +1,6 @@
 package top.theillusivec4.champions.client.item;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderSet;
-import net.minecraft.core.Registry;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -12,13 +8,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import top.theillusivec4.champions.capability.Capabilities;
+import top.theillusivec4.champions.champion.ChampionDefaultProperties;
 import top.theillusivec4.champions.champion.ChampionUtil;
-import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.component.DataComponents;
-import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
-import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.tag.RankTags;
 
 public final class CreativeModeTabEventListener {
   public static void register(IEventBus modEventBus) {
@@ -33,20 +25,20 @@ public final class CreativeModeTabEventListener {
     if (event.getTab() == CreativeModeTabs.CHAMPION_SPAWN_EGGS.get()) {
       Level level = Minecraft.getInstance().level;
       if (level != null) {
-        Registry<Rank> ranks = level.registryAccess().lookupOrThrow(Registries.RANK);
+//        Registry<Rank> ranks = level.registryAccess().lookupOrThrow(Registries.RANK);
 
-        HolderSet.Named<Rank> holders = ranks.getOrThrow(RankTags.ORDER);
-        Holder<Rank> rank = holders.get(ranks.size() - 1);
+//        HolderSet.Named<Rank> holders = ranks.getOrThrow(RankTags.ORDER);
+//        Holder<Rank> rank = holders.get(ranks.size() - 1);
         for (Item item : Capabilities.ChampionHandlers.getImplementedItems()) {
           ItemStack itemStack = new ItemStack(item);
-          ChampionUtil.getHandler(itemStack, level).ifPresent(handler -> {
-            itemStack.set(
-              DataComponents.CUSTOM_NAME,
-              Component.translatable(LanguageKeys.PREFIX_NAME_ITEM_CHAMPION_SPAWN_EGG)
-                .append(item.getName())
-            );
-            handler.setDisplay(true);
-            handler.setRank(rank);
+          ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
+            handler.setLevel(ChampionDefaultProperties.MIN_LEVEL);
+//            itemStack.set(
+//              DataComponents.CUSTOM_NAME,
+//              Component.translatable(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG)
+//                .append(item.getName())
+//            );
+//            handler.setRank(rank);
           });
 
           event.accept(itemStack);

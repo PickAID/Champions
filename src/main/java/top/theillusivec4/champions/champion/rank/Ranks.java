@@ -6,6 +6,7 @@ import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
 public final class Ranks {
+  public static final ResourceKey<Rank> EMPTY = register("empty");
   public static final ResourceKey<Rank> COMMON = register("common");
   public static final ResourceKey<Rank> SKILLED = register("skilled");
   public static final ResourceKey<Rank> ELITE = register("elite");
@@ -17,6 +18,13 @@ public final class Ranks {
   }
 
   public static void bootstrap(BootstrapContext<Rank> context) {
+    register(
+      context,
+      EMPTY,
+      Rank.builder()
+        .setLevel(1)
+        .setColor("#000000")
+    );
     register(
       context,
       COMMON,

@@ -2,6 +2,7 @@ package top.theillusivec4.champions.world.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -13,7 +14,9 @@ import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
+import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
+import top.theillusivec4.champions.registry.Registries;
 
 import java.util.List;
 
@@ -32,20 +35,22 @@ public final class ItemEventListener {
     Level level = event.getContext().level();
     if (level == null) return;
 
-    ChampionUtil.getHandler(itemStack, level).ifPresent(handler -> {
-      if (handler.isDisplay()) {
+    HolderGetter<Rank> ranks = level.holderLookup(Registries.RANK);
+
+    ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
+      if (handler.isDisplayTooltip()) {
         // Rank
-        Holder<Rank> rank = handler.getRank();
+        Holder<Rank> rank = handler.getRank().orElse(ranks.getOrThrow(Ranks.EMPTY));
         list.add(
           Component.translatable(LanguageKeys.TOOLTIP_RANK_KEY)
             .withStyle(ChatFormatting.GRAY)
             .append(rank.value().description())
         );
         // Level
-        int levelNum = handler.getLevel();
+        int lvl = handler.getLevel();
         list.add(
           Component.translatable(LanguageKeys.TOOLTIP_LEVEL_KEY).withStyle(ChatFormatting.GRAY)
-            .append(LanguageKeys.getLevelComponent(levelNum))
+            .append(LanguageKeys.getLevelComponent(lvl))
         );
         // Color
         int color = handler.getColor();
@@ -54,7 +59,7 @@ public final class ItemEventListener {
             .append(LanguageKeys.getColorComponent(color))
         );
         // Prefix
-        Component prefixName = handler.getPrefixName();
+        Component prefixName = handler.getPrefixName().orElse(Component.empty());
         list.add(
           Component.translatable(LanguageKeys.TOOLTIP_PREFIX_NAME_KEY).withStyle(ChatFormatting.GRAY)
             .append(prefixName)

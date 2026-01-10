@@ -6,68 +6,189 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
 
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public interface ChampionHandler {
-  void runInitializeEffects(ServerLevel serverLevel, int level, Entity victim, Vec3 origin);
 
-  void stopInitializeEffects(ServerLevel serverLevel, int level, Entity victim, Vec3 origin);
+  /***
+   * 运行初始化词缀效果
+   * @param serverLevel 服务端维度
+   * @param entity 实体
+   * @param origin 位置
+   */
+  void runInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin);
 
+  /**
+   * 停止初始化词缀效果
+   *
+   * @param serverLevel 服务端维度
+   * @param entity      实体
+   * @param origin      位置
+   */
+  void stopInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin);
+
+  /**
+   * 是否免疫伤害
+   *
+   * @param serverLevel  服务端维度
+   * @param damageSource 伤害源
+   * @return 是 | 否
+   */
   boolean isImmuneToDamage(ServerLevel serverLevel, DamageSource damageSource);
 
-  float getDamageProtection(ServerLevel level, DamageSource source);
+  /**
+   * 获取伤害减免值，允许返回负数以实现受到更多伤害
+   *
+   * @param serverLevel  服务端维度
+   * @param damageSource 伤害源
+   * @return 伤害减免值
+   */
+  float getDamageProtection(ServerLevel serverLevel, DamageSource damageSource);
 
-  float modifyKnockback(ServerLevel level, DamageSource source, float knockback);
+  /**
+   * 修改击退值
+   *
+   * @param serverLevel  服务端维度
+   * @param damageSource 伤害源
+   * @param knockback    原始击退值
+   * @return 修改后的击退值
+   */
+  float modifyKnockback(ServerLevel serverLevel, DamageSource damageSource, float knockback);
 
-  float modifyDamage(ServerLevel level, Entity victim, DamageSource damageSource, float amount);
+  /**
+   * 修改伤害值
+   *
+   * @param serverLevel  服务端维度
+   * @param target       攻击目标
+   * @param damageSource 伤害源
+   * @param amount       原始伤害量
+   * @return 修改后的伤害量
+   */
+  float modifyDamage(ServerLevel serverLevel, Entity target, DamageSource damageSource, float amount);
 
-  float modifyHeal(ServerLevel level, float amount);
+  /**
+   * 修改治疗值
+   *
+   * @param serverLevel 服务端维度
+   * @param amount      原始治疗值
+   * @return 修改后的治疗值
+   */
+  float modifyHeal(ServerLevel serverLevel, float amount);
 
-  void doPostAttackEffects(ServerLevel level, AffixTarget target, Entity victim, DamageSource source);
+  /**
+   * 执行攻击后的效果
+   *
+   * @param serverLevel  服务端维度
+   * @param targetType   作用目标类型，对受伤者 | 攻击者 | 直接攻击者 依次触发
+   * @param victim       受伤者
+   * @param damageSource 伤害源
+   */
+  void doPostAttackEffects(ServerLevel serverLevel, AffixTarget targetType, Entity victim, DamageSource damageSource);
 
-  void tickEffects(ServerLevel level);
+  /**
+   * 执行每个刻度的效果
+   *
+   * @param serverLevel 服务端维度
+   */
+  void tickEffects(ServerLevel serverLevel);
 
+  /**
+   * 迭代词缀以执行方法
+   *
+   * @param consumer 执行的方法
+   */
   void runIteration(Consumer<Holder<Affix>> consumer);
 
+  /**
+   * 更新词缀
+   * 为了确保更新词缀后再进行序列化与网络同步等操作，以及确保数据对象的不可变性，故采用此法
+   *
+   * @param consumer 更新
+   */
   void updateAffixes(Consumer<Affixes.Mutable> consumer);
 
+  /**
+   * 从数据附件持有者复制数据
+   *
+   * @param holder 数据附件持有者 如实体
+   */
   void copyFrom(IAttachmentHolder holder);
 
+  /**
+   * 从数据组件持有者复制数据
+   *
+   * @param holder 数据组件持有者 如物品
+   */
   void copyFrom(DataComponentHolder holder);
 
-  void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer);
-
-  boolean isDisplay();
-
-  void setDisplay(boolean display);
-
+  /**
+   * 获取全部词缀数据
+   */
   Affixes getAllAffixes();
 
+  /**
+   * 获得当前等级
+   */
   int getLevel();
 
+  /**
+   * 设置当前等级
+   * 等级会钳制在{@link ChampionDefaultProperties.MIN_LEVEL}到{@link ChampionDefaultProperties.MAX_LEVEL}
+   */
   void setLevel(int level);
 
-  int getColor();
-
-  void setColor(int color);
-
-  Holder<Rank> getRank();
-
-  void setRank(Holder<Rank> rank);
-
-  Component getPrefixName();
-
-  void setPrefixName(Component name);
-
+  /**
+   * 是否为Boss 如果是，当作为刷怪蛋生成生物时会为其设置服务端BossBar数据
+   */
   boolean isBoss();
 
+  /**
+   * 设置是否为 Boss
+   */
   void setBoss(boolean boss);
+
+  /**
+   * 获取颜色值
+   */
+  int getColor();
+
+  /**
+   * 设置颜色值，内部自动调用ARGB.opaque(color)
+   */
+  void setColor(int color);
+
+  /**
+   * 获取头衔 返回{@link top.theillusivec4.champions.champion.rank.Ranks.EMPTY}表示空
+   */
+  Optional<Holder<Rank>> getRank();
+
+  /**
+   * 设置头衔，如果头衔是{@link top.theillusivec4.champions.champion.rank.Ranks.EMPTY} 则无效果
+   */
+  void setRank(Holder<Rank> rank);
+
+  /**
+   * 获取前缀名
+   */
+  Optional<Component> getPrefixName();
+
+  /**
+   * 设置前缀名
+   */
+  void setPrefixName(@Nullable Component name);
+
+  /**
+   * 一般指该对象是否真的具有数据，如果所有数据均为空则为无效
+   */
+  default boolean isValid() {
+    return !this.getAllAffixes().isEmpty() || this.getRank().isPresent() || this.getLevel() > ChampionDefaultProperties.DEFAULT_LEVEL;
+  }
 }

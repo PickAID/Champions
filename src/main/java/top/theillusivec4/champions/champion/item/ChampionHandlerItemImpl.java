@@ -8,38 +8,38 @@ import net.minecraft.util.ARGB;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
+import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
+import top.theillusivec4.champions.champion.ChampionDefaultProperties;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.champion.reference.ChampionLevel;
 import top.theillusivec4.champions.component.DataComponents;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * 物品的实现，许多方法为空实现有些怪异，我或许应该将某一个数据组件或附件与方法绑定
+ */
 public class ChampionHandlerItemImpl implements ChampionHandlerItem {
   private final ItemStack itemStack;
-  private final Level level;
 
-  public ChampionHandlerItemImpl(ItemStack itemStack, Level level) {
+  public ChampionHandlerItemImpl(ItemStack itemStack) {
     this.itemStack = itemStack;
-    this.level = level;
   }
 
   @Override
-  public void runInitializeEffects(ServerLevel serverLevel, int level, Entity victim, Vec3 origin) {
+  public void runInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin) {
 
   }
 
   @Override
-  public void stopInitializeEffects(ServerLevel serverLevel, int level, Entity victim, Vec3 origin) {
+  public void stopInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin) {
 
   }
 
@@ -49,32 +49,32 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
   }
 
   @Override
-  public float getDamageProtection(ServerLevel level, DamageSource source) {
+  public float getDamageProtection(ServerLevel serverLevel, DamageSource damageSource) {
     return 0;
   }
 
   @Override
-  public float modifyKnockback(ServerLevel level, DamageSource source, float knockback) {
+  public float modifyKnockback(ServerLevel serverLevel, DamageSource damageSource, float knockback) {
     return 0;
   }
 
   @Override
-  public float modifyDamage(ServerLevel level, Entity victim, DamageSource damageSource, float amount) {
+  public float modifyDamage(ServerLevel serverLevel, Entity target, DamageSource damageSource, float amount) {
     return 0;
   }
 
   @Override
-  public float modifyHeal(ServerLevel level, float amount) {
+  public float modifyHeal(ServerLevel serverLevel, float amount) {
     return 0;
   }
 
   @Override
-  public void doPostAttackEffects(ServerLevel level, AffixTarget target, Entity victim, DamageSource source) {
+  public void doPostAttackEffects(ServerLevel serverLevel, AffixTarget targetType, Entity victim, DamageSource damageSource) {
 
   }
 
   @Override
-  public void tickEffects(ServerLevel level) {
+  public void tickEffects(ServerLevel serverLevel) {
 
   }
 
@@ -106,7 +106,7 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
     }
 
     if (holder.hasData(Attachments.PREFIX_NAME)) {
-      this.itemStack.set(DataComponents.PREFIX_NAME, holder.getData(Attachments.PREFIX_NAME).copy());
+      holder.getData(Attachments.PREFIX_NAME).ifPresent(this::setPrefixName);
     }
 
     if (holder.hasData(Attachments.LEVEL)) {
@@ -129,7 +129,7 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
     }
 
     if (holder.has(DataComponents.RANK)) {
-      Holder<Rank> rank = holder.getOrDefault(DataComponents.RANK, this.level.registryAccess().getOrThrow(Ranks.COMMON));
+      Holder<Rank> rank = holder.get(DataComponents.RANK);
       this.itemStack.set(DataComponents.RANK, rank);
     }
 
@@ -148,25 +148,7 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
     if (holder.has(DataComponents.BOSS)) {
       this.itemStack.set(DataComponents.BOSS, holder.getOrDefault(DataComponents.BOSS, false));
     }
-  }
 
-  @Override
-  public void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer) {
-
-  }
-
-  @Override
-  public boolean isDisplay() {
-    return this.itemStack.getOrDefault(DataComponents.DISPLAY, false);
-  }
-
-  @Override
-  public void setDisplay(boolean display) {
-    if (!display) {
-      this.itemStack.remove(DataComponents.DISPLAY);
-    } else {
-      this.itemStack.set(DataComponents.DISPLAY, true);
-    }
   }
 
   @Override
@@ -180,12 +162,12 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
       return this.itemStack.getOrDefault(DataComponents.LEVEL, 1);
     }
 
-    return this.getRank().value().level();
+    return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultProperties.DEFAULT_LEVEL);
   }
 
   @Override
   public void setLevel(int level) {
-    this.itemStack.set(DataComponents.LEVEL, Math.clamp(level, ChampionLevel.MIN_LEVEL, ChampionLevel.MAX_LEVEL));
+    this.itemStack.set(DataComponents.LEVEL, Math.clamp(level, ChampionDefaultProperties.MIN_LEVEL, ChampionDefaultProperties.MAX_LEVEL));
   }
 
   @Override
@@ -194,7 +176,7 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
       return this.itemStack.getOrDefault(DataComponents.COLOR, -1);
     }
 
-    return this.getRank().value().color();
+    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultProperties.DEFAULT_COLOR);
   }
 
   @Override
@@ -203,27 +185,33 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
   }
 
   @Override
-  public Holder<Rank> getRank() {
-    return this.itemStack.getOrDefault(DataComponents.RANK, this.level.registryAccess().getOrThrow(Ranks.COMMON));
+  public Optional<Holder<Rank>> getRank() {
+    return Optional.ofNullable(this.itemStack.get(DataComponents.RANK));
   }
 
   @Override
   public void setRank(Holder<Rank> rank) {
-    this.itemStack.set(DataComponents.RANK, rank);
+    if (!rank.is(Ranks.EMPTY)) {
+      this.itemStack.set(DataComponents.RANK, rank);
+    }
   }
 
   @Override
-  public Component getPrefixName() {
+  public Optional<Component> getPrefixName() {
     if (this.itemStack.has(DataComponents.PREFIX_NAME)) {
-      return this.itemStack.getOrDefault(DataComponents.PREFIX_NAME, Component.empty());
+      return Optional.ofNullable(this.itemStack.get(DataComponents.PREFIX_NAME));
     }
 
-    return this.getRank().value().description();
+    return this.getRank().map(rank -> rank.value().description());
   }
 
   @Override
-  public void setPrefixName(Component name) {
-    this.itemStack.set(DataComponents.PREFIX_NAME, name);
+  public void setPrefixName(@Nullable Component name) {
+    if (name == null) {
+      this.itemStack.remove(DataComponents.PREFIX_NAME);
+    } else {
+      this.itemStack.set(DataComponents.PREFIX_NAME, name);
+    }
   }
 
   @Override
@@ -236,8 +224,4 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
     this.itemStack.set(DataComponents.BOSS, true);
   }
 
-  @Override
-  public ItemStack getItem() {
-    return this.itemStack.copy();
-  }
 }
