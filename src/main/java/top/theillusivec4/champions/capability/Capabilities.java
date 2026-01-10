@@ -14,9 +14,8 @@ import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jspecify.annotations.Nullable;
-import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.entity.ChampionHandlerEntity;
-import top.theillusivec4.champions.champion.entity.EntityChampionHandler;
+import top.theillusivec4.champions.champion.entity.ChampionHandlerEntityImpl;
 import top.theillusivec4.champions.champion.item.ChampionHandlerItem;
 import top.theillusivec4.champions.champion.item.ChampionHandlerItemImpl;
 import top.theillusivec4.champions.util.Utils;
@@ -52,8 +51,8 @@ public final class Capabilities {
   }
 
   public static final class ChampionHandlers {
-    public static final EntityCapability<ChampionHandlerEntity, @Nullable Void> ENTITY = EntityCapability.create(Utils.id("champion_handler"), ChampionHandlerEntity.class, Void.class);
-    public static final ItemCapability<ChampionHandlerItem, Level> ITEM = ItemCapability.create(Utils.id("champion_handler"), ChampionHandlerItem.class, Level.class);
+    public static final EntityCapability<ChampionHandlerEntity, @Nullable Void> ENTITY = EntityCapability.createVoid(Utils.id("champion_handler"), ChampionHandlerEntity.class);
+    public static final ItemCapability<ChampionHandlerItem, @Nullable Void> ITEM = ItemCapability.createVoid(Utils.id("champion_handler"), ChampionHandlerItem.class);
 
     private static final Set<EntityType<?>> IMPLEMENTED_ENTITY_TYPES = new HashSet<>();
     private static final Set<Item> IMPLEMENTED_ITEMS = new HashSet<>();
@@ -80,8 +79,8 @@ public final class Capabilities {
     }
 
     public static final class Providers {
-      public static final ICapabilityProvider<Entity, Void, ChampionHandlerEntity> ENTITY = (entity, context) -> new EntityChampionHandler(entity);
-      public static final ICapabilityProvider<ItemStack, Level, ChampionHandlerItem> ITEM = ChampionHandlerItemImpl::new;
+      public static final ICapabilityProvider<Entity, @Nullable Void, ChampionHandlerEntity> ENTITY = (entity, context) -> new ChampionHandlerEntityImpl(entity);
+      public static final ICapabilityProvider<ItemStack, @Nullable Void, ChampionHandlerItem> ITEM = (itemStack, context) -> new ChampionHandlerItemImpl(itemStack);
 
       private Providers() {
       }

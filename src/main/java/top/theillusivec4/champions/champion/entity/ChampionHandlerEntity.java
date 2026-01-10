@@ -1,31 +1,58 @@
 package top.theillusivec4.champions.champion.entity;
 
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
-import org.jspecify.annotations.Nullable;
+import net.minecraft.world.item.ItemStack;
 import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 
-import java.awt.*;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
- * 受不了了我说实话，必须需要有一个统一接口来帮助判断它需不需要被生成事件监听器处理
+ * 专用于实体的冠军处理程序
  */
 public interface ChampionHandlerEntity extends ChampionHandler {
-  Component getName();
+  /**
+   * 更新最近一次受伤的数据，用于作为战利品表上下文参数传递
+   */
+  void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer);
 
-  Optional<ServerChampionBossEvent> getEvent();
+  /**
+   * 获取服务端的 BossBar
+   */
+  Optional<ServerChampionBossEvent> getBossEvent();
 
-  void setEvent(@Nullable ServerChampionBossEvent event);
+  /**
+   * 获取冠军实体的刷怪蛋，可能为EMPTY
+   */
+  ItemStack getSpawnEgg();
 
+  /**
+   * 冠军实体是否已经经过生成处理
+   * 这个方法命名不太好 也许会改动
+   */
   boolean isSpawned();
 
+  /**
+   * 设置冠军实体的生成处理标记
+   * 这个方法命名不太好 也许会改动
+   */
   void setSpawned(boolean spawned);
 
-  Entity getEntity();
-
+  /**
+   * 返回该实体的当前生命值
+   */
   float getHealth();
 
+  /**
+   * 返回该实体的最大生命值，用于BossBar
+   */
   float getMaxHealth();
+
+  /**
+   * 是否应该在视线触及时显示生命值覆盖层
+   */
+  default boolean isDisplayHealthOverlay() {
+    return this.isValid() && !this.isBoss();
+  }
 }

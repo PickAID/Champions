@@ -7,7 +7,7 @@ import top.theillusivec4.champions.util.Utils;
 
 public final class LanguageKeys {
   // Item
-  public static final String PREFIX_NAME_ITEM_CHAMPION_SPAWN_EGG = "prefix.item.champion_spawn_egg";
+  public static final String SUFFIX_ITEM_CHAMPION_SPAWN_EGG = "suffix.item.champion_spawn_egg";
   // ToolTip
   public static final String TOOLTIP_RANK_KEY = tooltipKey("rank");
   public static final String TOOLTIP_LEVEL_KEY = tooltipKey("level");

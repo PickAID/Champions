@@ -47,8 +47,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Holder<Rank> rank, Optional<Co
 
   public ItemStack getSpawnEgg(Level level) {
     ItemStack itemStack = new ItemStack(this.item);
-    ChampionUtil.getHandler(itemStack, level).ifPresent(handler -> {
-      handler.setDisplay(true);
+    ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
       handler.setRank(this.rank);
       this.prefix.ifPresent(handler::setPrefixName);
       this.level.ifPresent(handler::setLevel);
@@ -80,7 +79,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Holder<Rank> rank, Optional<Co
       HolderGetter<Rank> ranks = context.lookup(Registries.RANK);
       return new ChampionSpawnEgg(
         this.item,
-        this.rank != null ? this.rank : ranks.getOrThrow(Ranks.COMMON),
+        this.rank != null ? this.rank : ranks.getOrThrow(Ranks.EMPTY),
         Optional.ofNullable(this.prefix),
         Optional.ofNullable(this.level),
         Optional.ofNullable(this.color),

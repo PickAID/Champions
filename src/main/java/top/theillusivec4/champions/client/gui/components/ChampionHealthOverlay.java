@@ -5,11 +5,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.client.util.ClientUtil;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@SuppressWarnings("unused")
 public final class ChampionHealthOverlay {
   private static final Identifier BAR = Utils.id("textures/gui/bars.png");
   private static final Identifier STAR = Utils.id("textures/gui/staricon.png");
@@ -48,8 +49,12 @@ public final class ChampionHealthOverlay {
       Entity entity = ClientUtil.getMouseEntity(deltaTracker.getGameTimeDeltaTicks());
       if (entity != null) {
         ChampionUtil.getHandler(entity).ifPresent(handler -> {
-          if (handler.isDisplay() && !handler.isBoss()) {
-            Component name = handler.getName();
+          if (handler.isDisplayHealthOverlay()) {
+            Component name = handler.getPrefixName().map(component ->
+              (Component) component.copy()
+                .append(CommonComponents.space())
+                .append(entity.getDisplayName())
+            ).orElse(entity.getDisplayName());
             ClientChampionBossEvent event = new ClientChampionBossEvent(entity.getUUID(), name);
             event.setLevel(handler.getLevel());
             event.setColor(handler.getColor());
@@ -178,7 +183,7 @@ public final class ChampionHealthOverlay {
   public enum DisplayMode {
     BROADCAST,
     LOOK,
-    HIDE;
+    HIDE
   }
 
   private class Handler implements ClientboundChampionBossEventPacket.Handler {

@@ -136,7 +136,7 @@ public final class EntityEventListener {
       });
 
       // BossBar
-      handler.getEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
+      handler.getBossEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
     });
   }
 
@@ -153,7 +153,7 @@ public final class EntityEventListener {
       ChampionUtil.getHandler(event.getEntity()).ifPresent(handler -> {
         handler.tickEffects(serverLevel);
         // BossBar
-        handler.getEvent().ifPresent(bossEvent -> {
+        handler.getBossEvent().ifPresent(bossEvent -> {
           for (ServerPlayer player : serverLevel.players()) {
             if (player.blockPosition().distSqr(entity.blockPosition()) <= BOSS_EVENT_DISTANCE_SQR) {
               bossEvent.addPlayer(player);
@@ -186,7 +186,7 @@ public final class EntityEventListener {
     Level level = event.getLevel();
     Entity entity = event.getEntity();
     if (!level.isClientSide()) {
-      ChampionUtil.getHandler(entity).flatMap(ChampionHandlerEntity::getEvent).ifPresent(ServerChampionBossEvent::removeAllPlayers);
+      ChampionUtil.getHandler(entity).flatMap(ChampionHandlerEntity::getBossEvent).ifPresent(ServerChampionBossEvent::removeAllPlayers);
     }
   }
 

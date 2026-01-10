@@ -93,7 +93,6 @@ public class Champions {
     LootParamSourceTypes.register(modEventBus);
     Attachments.register(modEventBus);
     LootItemConditions.register(modEventBus);
-    ClientGamePacketListener.register(modEventBus);
     DataEventListener.register(modEventBus);
     EntityEventListener.register();
     ItemEventListener.register();

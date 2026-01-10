@@ -14,7 +14,6 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.affix.LatestDamage;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.client.gui.components.ClientChampionBossEvent;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 
 import java.util.Optional;
@@ -24,7 +23,7 @@ public final class Attachments {
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<LatestDamage>> LATEST_DAMAGE = register("latest_damage", AttachmentType.builder(() -> LatestDamage.EMPTY).serialize(LatestDamage.MAP_CODEC));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Affixes>> AFFIXES = register("entity_affixes", AttachmentType.builder(() -> Affixes.EMPTY).serialize(Affixes.MAP_CODEC).sync(Affixes.STREAM_CODEC));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Optional<Holder<Rank>>>> RANK = register("rank", AttachmentType.<Optional<Holder<Rank>>>builder(Optional::empty).serialize(Rank.REFERENCE_CODEC.optionalFieldOf("rank")).sync(Rank.STREAM_CODEC.apply(ByteBufCodecs::optional)));
-  public static final DeferredHolder<AttachmentType<?>, AttachmentType<Component>> PREFIX_NAME = register("prefix_name", AttachmentType.<Component>builder(Component::empty).serialize(ComponentSerialization.CODEC.fieldOf("prefix_name")).sync(ComponentSerialization.STREAM_CODEC));
+  public static final DeferredHolder<AttachmentType<?>, AttachmentType<Optional<Component>>> PREFIX_NAME = register("prefix_name", AttachmentType.<Optional<Component>>builder(Optional::empty).serialize(ComponentSerialization.CODEC.optionalFieldOf("prefix_name")).sync(ComponentSerialization.STREAM_CODEC.apply(ByteBufCodecs::optional)));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> LEVEL = register("level", AttachmentType.builder(() -> 1).serialize(Codec.intRange(1, 99).fieldOf("level")).sync(ByteBufCodecs.INT));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Integer>> COLOR = register("color", AttachmentType.builder(() -> -1).serialize(Codec.INT.fieldOf("color")).sync(ByteBufCodecs.INT));
   public static final DeferredHolder<AttachmentType<?>, AttachmentType<Boolean>> SPAWNED = register("spawned", AttachmentType.builder(() -> false).serialize(Codec.BOOL.fieldOf("spawned")));

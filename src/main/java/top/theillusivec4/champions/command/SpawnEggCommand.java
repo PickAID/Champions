@@ -31,11 +31,11 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.transaction.Transaction;
-import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.champion.item.ChampionHandlerItem;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.champion.reference.ChampionLevel;
+import top.theillusivec4.champions.champion.ChampionDefaultProperties;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
@@ -74,7 +74,7 @@ public final class SpawnEggCommand {
       )
       .then(Commands.literal("level")
         .then(Commands.argument("players", EntityArgument.players())
-          .then(Commands.argument("level", IntegerArgumentType.integer(ChampionLevel.MIN_LEVEL, ChampionLevel.MAX_LEVEL))
+          .then(Commands.argument("level", IntegerArgumentType.integer(ChampionDefaultProperties.MIN_LEVEL, ChampionDefaultProperties.MAX_LEVEL))
             .executes(context -> level(context.getSource(), EntityArgument.getPlayers(context, "players"), IntegerArgumentType.getInteger(context, "level")))
           )
         )
@@ -105,9 +105,8 @@ public final class SpawnEggCommand {
     int i = 0;
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
-      ChampionUtil.getHandler(itemStack, source.getLevel()).ifPresent(handler -> {
+      ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
         handler.setRank(rank);
-        handler.setDisplay(true);
       });
     }
     source.sendSuccess(() -> Component.translatable("commands.champions.rank.success", i), true);
@@ -118,10 +117,9 @@ public final class SpawnEggCommand {
     int i = 0;
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
-      ChampionUtil.getHandler(itemStack, source.getLevel())
+      ChampionUtil.getHandler(itemStack)
         .ifPresent(handler -> {
           handler.updateAffixes(mutable -> mutable.add(affix));
-          handler.setDisplay(true);
         });
     }
     source.sendSuccess(() -> Component.translatable("commands.champions.affix.success", i), true);
@@ -132,10 +130,9 @@ public final class SpawnEggCommand {
     int i = 0;
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
-      ChampionUtil.getHandler(itemStack, source.getLevel())
+      ChampionUtil.getHandler(itemStack)
         .ifPresent(handler -> {
           handler.setLevel(level);
-          handler.setDisplay(true);
         });
 //      if (isValidItem(itemStack.getItem())) {
 //        itemStack.set(DataComponents.LEVEL, level);
@@ -151,7 +148,7 @@ public final class SpawnEggCommand {
     int i = 0;
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
-      ChampionUtil.getHandler(itemStack, source.getLevel())
+      ChampionUtil.getHandler(itemStack)
         .ifPresent(handler -> handler.setBoss(boss));
       i++;
     }
@@ -168,12 +165,9 @@ public final class SpawnEggCommand {
         if (resourceHandler != null) {
           try (Transaction transaction = Transaction.openRoot()) {
             ItemStack itemStack = new ItemStack(item);
-            ChampionHandler championHandler = ChampionUtil.getHandler(itemStack, source.getLevel()).orElseThrow();
-            championHandler.updateAffixes(mutable -> mutable.add(affix));
-            championHandler.setDisplay(true);
-
-//            itemStack.set(DataComponents.AFFIXES, new Affixes(List.of(affix)));
-//            itemStack.set(DataComponents.DISPLAY, true);
+            ChampionHandlerItem handlerItem = ChampionUtil.getHandler(itemStack).orElseThrow();
+            handlerItem.updateAffixes(mutable -> mutable.add(affix));
+            handlerItem.setLevel(level);
 
             if (resourceHandler.insert(ItemResource.of(itemStack), 1, transaction) == 1) {
               transaction.commit();

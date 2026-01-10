@@ -12,8 +12,13 @@ import top.theillusivec4.champions.champion.affix.Affix;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 记录拥有的词缀数据
+ * 内含容器对象，不宜作为记录
+ */
+@SuppressWarnings({"ClassCanBeRecord", "unused"})
 public class Affixes {
-  public static final Affixes EMPTY = new Affixes();
+  public static final Affixes EMPTY = new Affixes(List.of());
   public static final StreamCodec<RegistryFriendlyByteBuf, Affixes> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.collection(ArrayList::new, Affix.STREAM_CODEC), Affixes::getAffixes,
     Affixes::new
@@ -32,11 +37,7 @@ public class Affixes {
     return new Mutable();
   }
 
-  public Affixes() {
-    this.affixes = List.of();
-  }
-
-  public Affixes(List<Holder<Affix>> affixes) {
+  private Affixes(List<Holder<Affix>> affixes) {
     this.affixes = List.copyOf(affixes);
   }
 

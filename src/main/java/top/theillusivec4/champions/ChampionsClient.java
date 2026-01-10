@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.client.event.ClientModEventListener;
 import top.theillusivec4.champions.client.gui.Gui;
 import top.theillusivec4.champions.client.item.CreativeModeTabEventListener;
+import top.theillusivec4.champions.client.network.ClientGamePacketListener;
 
 import java.util.Objects;
 
@@ -26,6 +27,7 @@ public class ChampionsClient {
     instance = this;
     CreativeModeTabEventListener.register(modEventBus);
     ClientModEventListener.register(modEventBus);
+    ClientGamePacketListener.register(modEventBus);
   }
 
   public Gui getGui() {
