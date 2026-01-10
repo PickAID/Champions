@@ -25,7 +25,7 @@ import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
-import top.theillusivec4.champions.champion.ChampionDefaultProperties;
+import top.theillusivec4.champions.champion.ChampionDefaultConfig;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
@@ -64,7 +64,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
   @Override
   public boolean isImmuneToDamage(ServerLevel serverLevel, DamageSource damageSource) {
     LootContext context = LootContextParamSets.damageImmunity(serverLevel, this.entity, this.getLevel(), damageSource, this.getLatestDamage(), damageSource.getDirectEntity(), damageSource.getEntity());
-    for (Holder<Affix> affix : this.getAllAffixes().getAffixes()) {
+    for (Holder<Affix> affix : this.getAffixes().getAffixes()) {
       for (ConditionalEffect<DamageImmunity> effect : affix.value().getEffects(AffixEffectComponents.DAMAGE_IMMUNITY)) {
         if (effect.matches(context)) {
           return true;
@@ -114,7 +114,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
 
   @Override
   public void runIteration(Consumer<Holder<Affix>> consumer) {
-    for (Holder<Affix> affix : this.getAllAffixes().getAffixes()) {
+    for (Holder<Affix> affix : this.getAffixes().getAffixes()) {
       consumer.accept(affix);
     }
   }
@@ -189,7 +189,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
       }
 
       if (holder.has(DataComponents.LEVEL)) {
-        this.setLevel(holder.getOrDefault(DataComponents.LEVEL, ChampionDefaultProperties.MIN_LEVEL));
+        this.setLevel(holder.getOrDefault(DataComponents.LEVEL, ChampionDefaultConfig.MIN_LEVEL));
       }
 
       if (holder.has(DataComponents.COLOR)) {
@@ -202,7 +202,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
     }
   }
 
-  public Affixes getAllAffixes() {
+  public Affixes getAffixes() {
     return this.entity.getData(Attachments.AFFIXES);
   }
 
@@ -211,13 +211,40 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
     if (this.entity.hasData(Attachments.LEVEL)) {
       return this.entity.getData(Attachments.LEVEL);
     } else {
-      return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultProperties.DEFAULT_LEVEL);
+      return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultConfig.EMPTY_LEVEL);
     }
   }
 
   @Override
   public void setLevel(int level) {
-    this.entity.setData(Attachments.LEVEL, Math.clamp(level, ChampionDefaultProperties.MIN_LEVEL, ChampionDefaultProperties.MAX_LEVEL));
+    if (level <= ChampionDefaultConfig.EMPTY_LEVEL) {
+      this.entity.removeData(Attachments.LEVEL);
+    } else {
+      this.entity.setData(Attachments.LEVEL, Math.clamp(level, ChampionDefaultConfig.MIN_LEVEL, ChampionDefaultConfig.MAX_LEVEL));
+    }
+  }
+
+  @Override
+  public boolean isBoss() {
+    return this.entity.getExistingData(Attachments.BOSS).orElse(false);
+  }
+
+  @Override
+  public void setBoss(boolean boss) {
+    // 对客户端来说，该数据是只读的
+    if (!this.entity.level().isClientSide()) {
+      if (boss) {
+        Component name = this.getPrefixName().map(component -> (Component) component.copy()
+          .append(CommonComponents.space())
+          .append(this.entity.getDisplayName())
+        ).orElse(this.entity.getDisplayName());
+        this.setBossEvent(new ServerChampionBossEvent(Mth.createInsecureUUID(this.entity.getRandom()), name, this.getHealth() / this.getMaxHealth(), this.getLevel(), this.getColor(), this.getAffixes().getAffixes()));
+        this.entity.setData(Attachments.BOSS, true);
+      } else {
+        this.setBossEvent(null);
+        this.entity.setData(Attachments.BOSS, false);
+      }
+    }
   }
 
   @Override
@@ -226,12 +253,16 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
       return this.entity.getData(Attachments.COLOR);
     }
 
-    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultProperties.DEFAULT_COLOR);
+    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultConfig.DEFAULT_COLOR);
   }
 
   @Override
   public void setColor(int color) {
-    this.entity.setData(Attachments.COLOR, ARGB.opaque(color));
+    if (color == ChampionDefaultConfig.DEFAULT_COLOR) {
+      this.entity.removeData(Attachments.COLOR);
+    } else {
+      this.entity.setData(Attachments.COLOR, ARGB.opaque(color));
+    }
   }
 
   @Override
@@ -292,31 +323,6 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
       }
     } else {
       this.entity.setData(Attachments.SERVER_CHAMPION_BOSS_EVENT, Optional.of(event));
-    }
-  }
-
-  @Override
-  public boolean isBoss() {
-    return this.entity.getExistingData(Attachments.BOSS).orElse(false);
-  }
-
-  @Override
-  public void setBoss(boolean boss) {
-    // 对客户端来说，该数据是只读的
-    if (!this.entity.level().isClientSide()) {
-      if (boss) {
-        Component name = this.getPrefixName().map(component -> (Component) component.copy()
-          .append(CommonComponents.space())
-          .append(this.entity.getDisplayName())
-        ).orElse(this.entity.getDisplayName());
-        this.setBossEvent(new ServerChampionBossEvent(Mth.createInsecureUUID(this.entity.getRandom()), name, this.getHealth() / this.getMaxHealth(), this.getLevel(), this.getColor(), this.getAllAffixes().getAffixes()));
-        this.entity.setData(Attachments.BOSS, true);
-      } else {
-        this.setBossEvent(null);
-        this.entity.setData(Attachments.BOSS, false);
-      }
-    } else {
-      LOGGER.warn("当前认为客户端不应该使用 SetBoss");
     }
   }
 

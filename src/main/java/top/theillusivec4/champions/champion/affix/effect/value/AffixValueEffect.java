@@ -9,7 +9,7 @@ import top.theillusivec4.champions.registry.BuiltInRegistries;
 import java.util.function.Function;
 
 public interface AffixValueEffect extends LootContextUser {
-  Codec<AffixValueEffect> CODEC = Codec.lazyInitialized(() -> BuiltInRegistries.AFFIX_VALUE_EFFECT_TYPE.byNameCodec().dispatch(AffixValueEffect::codec, Function.identity()));
+  Codec<AffixValueEffect> CODEC = BuiltInRegistries.AFFIX_VALUE_EFFECT_TYPE.byNameCodec().dispatch(AffixValueEffect::codec, Function.identity());
 
   float process(LootContext context, int level, float inputValue);
 

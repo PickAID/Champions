@@ -11,6 +11,7 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
+import top.theillusivec4.champions.champion.config.ChampionConfig;
 import top.theillusivec4.champions.champion.rank.Rank;
 
 import java.util.Optional;
@@ -130,18 +131,29 @@ public interface ChampionHandler {
   void copyFrom(DataComponentHolder holder);
 
   /**
-   * 获取全部词缀数据
+   * 应用配置数据
    */
-  Affixes getAllAffixes();
+  default void applyConfig(ChampionConfig config) {
+    config.rank().ifPresent(this::setRank);
+    config.prefixName().ifPresent(this::setPrefixName);
+    config.level().ifPresent(this::setLevel);
+    config.color().ifPresent(this::setColor);
+    config.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
+  }
 
   /**
-   * 获得当前等级
+   * 获取全部词缀数据
+   */
+  Affixes getAffixes();
+
+  /**
+   * 获得当前等级 如果未设置会返回默认值
    */
   int getLevel();
 
   /**
    * 设置当前等级
-   * 等级会钳制在{@link ChampionDefaultProperties.MIN_LEVEL}到{@link ChampionDefaultProperties.MAX_LEVEL}
+   * 等级会钳制在默认最小最大值之间
    */
   void setLevel(int level);
 
@@ -166,12 +178,12 @@ public interface ChampionHandler {
   void setColor(int color);
 
   /**
-   * 获取头衔 返回{@link top.theillusivec4.champions.champion.rank.Ranks.EMPTY}表示空
+   * 获取头衔
    */
   Optional<Holder<Rank>> getRank();
 
   /**
-   * 设置头衔，如果头衔是{@link top.theillusivec4.champions.champion.rank.Ranks.EMPTY} 则无效果
+   * 设置头衔，如果头衔是EMPTY则无效果
    */
   void setRank(Holder<Rank> rank);
 
@@ -189,6 +201,20 @@ public interface ChampionHandler {
    * 一般指该对象是否真的具有数据，如果所有数据均为空则为无效
    */
   default boolean isValid() {
-    return !this.getAllAffixes().isEmpty() || this.getRank().isPresent() || this.getLevel() > ChampionDefaultProperties.DEFAULT_LEVEL;
+    return !this.getAffixes().isEmpty() || this.getRank().isPresent();
+  }
+
+  /**
+   * 返回当前对象的冠军配置数据
+   */
+  default ChampionConfig getConfig() {
+    return new ChampionConfig(
+      this.getRank(),
+      this.getPrefixName(),
+      this.getAffixes().isEmpty() ? Optional.empty() : Optional.of(this.getAffixes()),
+      this.getLevel() <= ChampionDefaultConfig.EMPTY_LEVEL ? Optional.empty() : Optional.of(this.getLevel()),
+      this.getColor() == ChampionDefaultConfig.DEFAULT_COLOR ? Optional.empty() : Optional.of(this.getColor()),
+      this.isBoss() ? Optional.of(Boolean.TRUE) : Optional.empty()
+    );
   }
 }

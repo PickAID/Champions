@@ -59,7 +59,7 @@ public final class ChampionHealthOverlay {
             event.setLevel(handler.getLevel());
             event.setColor(handler.getColor());
             event.setProgress(Math.clamp(handler.getHealth() / handler.getMaxHealth(), 0.0f, 1.0f));
-            event.setAffixes(handler.getAllAffixes().getAffixes());
+            event.setAffixes(handler.getAffixes().getAffixes());
             this.render(guiGraphics, event);
           }
         });

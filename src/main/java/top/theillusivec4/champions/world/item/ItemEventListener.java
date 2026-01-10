@@ -71,7 +71,7 @@ public final class ItemEventListener {
         );
 
         // Affix
-        Affixes affixes = handler.getAllAffixes();
+        Affixes affixes = handler.getAffixes();
         list.add(Component.translatable(LanguageKeys.TOOLTIP_AFFIXES_KEY).withStyle(ChatFormatting.GRAY));
         for (Holder<Affix> affix : affixes.getAffixes()) {
           list.add(CommonComponents.space().append(affix.value().description()));

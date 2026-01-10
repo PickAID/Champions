@@ -17,6 +17,10 @@ import top.theillusivec4.champions.champion.ChampionUtil;
 
 import java.util.function.Consumer;
 
+/**
+ * 实现了使用刷怪蛋生成时从物品读取冠军数据的功能
+ * @param <T>
+ */
 @Mixin(EntityType.class)
 public abstract class EntityTypeMixin<T extends Entity> implements EntityTypeTest<Entity, T>, FeatureElement {
   @Inject(method = "appendCustomEntityStackConfig", at = @At(value = "RETURN"), cancellable = true)
