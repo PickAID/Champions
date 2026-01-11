@@ -12,7 +12,6 @@ import top.theillusivec4.champions.mixin.BossHealthOverlayAccessor;
  * 由于加载机制，这里并不能使用从构造函数注入依赖的优雅方式
  */
 public final class Gui {
-  private static final Logger LOGGER = LogManager.getLogger();
   private final ChampionHealthOverlay championHealthOverlay = new ChampionHealthOverlay();
 
   public Gui() {

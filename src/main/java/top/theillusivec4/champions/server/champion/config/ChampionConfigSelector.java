@@ -13,6 +13,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.conditions.ConditionalOps;
 import net.neoforged.neoforge.common.conditions.WithConditions;
 import org.jetbrains.annotations.Nullable;
+import top.theillusivec4.champions.champion.ChampionConfig;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.List;

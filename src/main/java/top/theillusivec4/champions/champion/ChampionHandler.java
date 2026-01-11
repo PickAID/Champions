@@ -1,31 +1,30 @@
 package top.theillusivec4.champions.champion;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.server.champion.config.ChampionConfig;
 import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * 冠军处理程序
+ */
 public interface ChampionHandler {
-
-  /***
+  /**
    * 运行初始化词缀效果
+   *
    * @param serverLevel 服务端维度
-   * @param entity 实体
-   * @param origin 位置
+   * @param entity      实体
+   * @param origin      位置
    */
   void runInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin);
 
@@ -119,23 +118,7 @@ public interface ChampionHandler {
   void updateAffixes(Consumer<Affixes.Mutable> consumer);
 
   /**
-   * 从数据附件持有者复制数据 即将被配置数据取代
-   *
-   * @param holder 数据附件持有者 如实体
-   */
-  @Deprecated
-  void copyFrom(IAttachmentHolder holder);
-
-  /**
-   * 从数据组件持有者复制数据 即将被配置数据取代
-   *
-   * @param holder 数据组件持有者 如物品
-   */
-  @Deprecated
-  void copyFrom(DataComponentHolder holder);
-
-  /**
-   * 应用配置数据
+   * 对当前处理程序应用冠军配置数据。
    */
   default void applyConfig(ChampionConfig config) {
     config.rank().ifPresent(this::setRank);
@@ -146,14 +129,33 @@ public interface ChampionHandler {
   }
 
   /**
-   * 获取全部词缀数据
+   * 派生当前处理程序的冠军配置数据。
    */
-  Affixes getAffixes();
+  default ChampionConfig deriveConfig() {
+    return new ChampionConfig(
+      this.getRank(),
+      this.getPrefixName(),
+      Optional.of(this.getAffixesOrDefault()),
+      Optional.of(this.getLevelOrDefault()),
+      this.getColor(),
+      Optional.of(this.isBoss())
+    );
+  }
 
   /**
-   * 获得当前等级 如果未设置会返回默认值
+   * 获取全部词缀数据
    */
-  int getLevel();
+  Optional<Affixes> getAffixes();
+
+  /**
+   * 获取全部词缀数据
+   */
+  Affixes getAffixesOrDefault();
+
+  /**
+   * 获取等级
+   */
+  Optional<Integer> getLevel();
 
   /**
    * 设置当前等级
@@ -162,24 +164,36 @@ public interface ChampionHandler {
   void setLevel(int level);
 
   /**
-   * 是否为Boss 如果是，当作为刷怪蛋生成生物时会为其设置服务端BossBar数据
+   * 获得当前等级 如果未设置会返回默认值
+   */
+  int getLevelOrDefault();
+
+  /**
+   * 是否为首领怪物，如果是，当作为刷怪蛋生成生物时会为其设置服务端BossBar数据。
    */
   boolean isBoss();
 
   /**
-   * 设置是否为 Boss
+   * 设置是否为首领怪物。
    */
   void setBoss(boolean boss);
 
   /**
    * 获取颜色值
    */
-  int getColor();
+  Optional<Integer> getColor();
 
   /**
    * 设置颜色值，内部自动调用ARGB.opaque(color)
    */
   void setColor(int color);
+
+  /**
+   * 获取可能为默认值的颜色
+   */
+  default int getColorOrDefault() {
+    return getColor().orElse(ChampionDefaultConfigs.DEFAULT_COLOR);
+  }
 
   /**
    * 获取头衔
@@ -205,20 +219,6 @@ public interface ChampionHandler {
    * 一般指该对象是否真的具有数据，如果所有数据均为空则为无效
    */
   default boolean isValid() {
-    return !this.getAffixes().isEmpty() || this.getRank().isPresent() || this.getLevel() > ChampionDefaultConfigs.EMPTY_LEVEL || !Objects.equals(this.getColor(), ChampionDefaultConfigs.DEFAULT_COLOR) || this.isBoss();
-  }
-
-  /**
-   * 返回当前对象的冠军配置数据
-   */
-  default ChampionConfig getConfig() {
-    return new ChampionConfig(
-      this.getRank(),
-      this.getPrefixName(),
-      Optional.of(this.getAffixes()),
-      Optional.of(this.getLevel()),
-      Optional.of(this.getColor()),
-      Optional.of(this.isBoss())
-    );
+    return !this.getAffixesOrDefault().isEmpty() || this.getLevelOrDefault() > ChampionDefaultConfigs.DEFAULT_LEVEL || this.getColor().isPresent() || this.isBoss();
   }
 }

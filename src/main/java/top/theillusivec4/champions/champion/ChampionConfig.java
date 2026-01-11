@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.server.champion.config;
+package top.theillusivec4.champions.champion;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -6,9 +6,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 
 import java.util.Optional;
 
@@ -22,8 +22,21 @@ import java.util.Optional;
  * @param color
  * @param boss
  */
-public record ChampionConfig(Optional<Holder<Rank>> rank, Optional<Component> prefixName, Optional<Affixes> affixes, Optional<Integer> level, Optional<Integer> color, Optional<Boolean> boss) {
-  public static final Codec<ChampionConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(Rank.REFERENCE_CODEC.optionalFieldOf("rank").forGetter(ChampionConfig::rank), ComponentSerialization.CODEC.optionalFieldOf("prefix_name").forGetter(ChampionConfig::prefixName), Affixes.CODEC.optionalFieldOf("affixes").forGetter(ChampionConfig::affixes), Codec.intRange(ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL).optionalFieldOf("level").forGetter(ChampionConfig::level), Codec.INT.optionalFieldOf("color").forGetter(ChampionConfig::color), Codec.BOOL.optionalFieldOf("boss").forGetter(ChampionConfig::boss)).apply(instance, ChampionConfig::new));
+public record ChampionConfig(
+  Optional<Holder<Rank>> rank,
+  Optional<Component> prefixName,
+  Optional<Affixes> affixes,
+  Optional<Integer> level,
+  Optional<Integer> color,
+  Optional<Boolean> boss
+) {
+  public static final Codec<ChampionConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    Rank.REFERENCE_CODEC.optionalFieldOf("rank").forGetter(ChampionConfig::rank),
+    ComponentSerialization.CODEC.optionalFieldOf("prefix_name").forGetter(ChampionConfig::prefixName),
+    Affixes.CODEC.optionalFieldOf("affixes").forGetter(ChampionConfig::affixes),
+    Codec.intRange(ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL).optionalFieldOf("level").forGetter(ChampionConfig::level),
+    Codec.INT.optionalFieldOf("color").forGetter(ChampionConfig::color), Codec.BOOL.optionalFieldOf("boss").forGetter(ChampionConfig::boss)
+  ).apply(instance, ChampionConfig::new));
 
   public static Builder builder() {
     return new Builder();

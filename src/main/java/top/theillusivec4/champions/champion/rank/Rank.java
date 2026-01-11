@@ -16,6 +16,12 @@ import net.minecraft.util.Util;
 import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.registry.Registries;
 
+/**
+ * 类似物品的稀有度，意味着某种等级，它能提供一些基础数据，但可以被优先级更高的数据组件覆盖。
+ * @param description
+ * @param level
+ * @param color
+ */
 public record Rank(Component description, int level, int color) {
   public static final Codec<Rank> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Rank::description),

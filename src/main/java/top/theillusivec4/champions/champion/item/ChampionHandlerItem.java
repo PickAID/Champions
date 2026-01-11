@@ -1,16 +1,81 @@
 package top.theillusivec4.champions.champion.item;
 
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentGetter;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipProvider;
+import net.minecraft.world.item.component.TypedEntityData;
+import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.data.lang.LanguageKeys;
+import top.theillusivec4.champions.data.lang.LanguageUtil;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 /**
  * 专用于物品的冠军处理程序
  */
-public interface ChampionHandlerItem extends ChampionHandler {
-  default boolean isDisplayHoverName() {
-    return this.isValid();
+public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
+  ItemStack itemStack();
+
+  @Override
+  default void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
+    // 等级
+    Optional<Integer> optional = this.getLevel();
+    optional.ifPresent(level -> consumer.accept(
+      Component.translatable(LanguageKeys.TOOLTIP_LEVEL_KEY).withStyle(ChatFormatting.GRAY)
+        .append(LanguageUtil.getLevelComponent(level).withColor(this.getColorOrDefault()))
+    ));
+    // 颜色
+    Optional<Integer> optional1 = this.getColor();
+    optional1.ifPresent(color -> consumer.accept(
+      Component.translatable(LanguageKeys.TOOLTIP_COLOR_KEY).withStyle(ChatFormatting.GRAY)
+        .append(LanguageUtil.getColorComponent(color))
+    ));
+    // 前缀
+    Optional<Component> optional2 = this.getPrefixName();
+    optional2.ifPresent(component -> consumer.accept(
+      Component.translatable(LanguageKeys.TOOLTIP_PREFIX_NAME_KEY).withStyle(ChatFormatting.GRAY)
+        .append(component.copy().withColor(this.getColorOrDefault()))
+    ));
+    // 已有词缀
+    Optional<Affixes> optional3 = this.getAffixes();
+    optional3.ifPresent(affixes -> {
+      if (!affixes.isEmpty()) {
+        consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_AFFIXES_KEY).withStyle(ChatFormatting.GRAY));
+        for (Holder<Affix> affix : affixes.getAffixes()) {
+          consumer.accept(CommonComponents.space().append(affix.value().description()));
+        }
+      }
+    });
   }
 
-  default boolean isDisplayTooltip() {
-    return this.isValid();
+  default Optional<Component> getDisplayName() {
+    if (this.isValid()) {
+      TypedEntityData<EntityType<?>> data = this.itemStack().get(DataComponents.ENTITY_DATA);
+      if (this.itemStack().has(DataComponents.CUSTOM_NAME)) {
+        return Optional.empty();
+      }
+
+      if (data == null) {
+        return Optional.empty();
+      }
+
+      return this.getPrefixName().map(component -> component.copy()
+        .append(CommonComponents.space())
+        .append(Component.translatable(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, data.type().getDescription()).withStyle(ChatFormatting.WHITE)));
+    }
+
+
+    return Optional.empty();
   }
 }

@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.client.item;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -20,33 +21,23 @@ public final class CreativeModeTabEventListener {
   private CreativeModeTabEventListener() {
   }
 
+  /**
+   * 展示实现了冠军能力接口的实体类型刷怪蛋
+   */
   @SubscribeEvent
   public void onBuildCreativeModeTabContents(BuildCreativeModeTabContentsEvent event) {
     if (event.getTab() == CreativeModeTabs.CHAMPION_SPAWN_EGGS.get()) {
       Level level = Minecraft.getInstance().level;
       if (level != null) {
-//        Registry<Rank> ranks = level.registryAccess().lookupOrThrow(Registries.RANK);
 
-//        HolderSet.Named<Rank> holders = ranks.getOrThrow(RankTags.ORDER);
-//        Holder<Rank> rank = holders.get(ranks.size() - 1);
         for (Item item : Capabilities.ChampionHandlers.getImplementedItems()) {
           ItemStack itemStack = new ItemStack(item);
-          ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
-            handler.setLevel(ChampionDefaultConfigs.MIN_LEVEL);
-//            itemStack.set(
-//              DataComponents.CUSTOM_NAME,
-//              Component.translatable(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG)
-//                .append(item.getName())
-//            );
-//            handler.setRank(rank);
-          });
+          ChampionUtil.getHandler(itemStack)
+            .ifPresent(handler -> handler.setLevel(ChampionDefaultConfigs.MIN_LEVEL));
 
           event.accept(itemStack);
         }
-//        for (ChampionSpawnEgg championSpawnEgg : level.registryAccess().lookupOrThrow(Registries.CHAMPION_SPAWN_EGG)) {
-//          ItemStack itemStack = championSpawnEgg.getSpawnEgg(level);
-//          event.accept(itemStack);
-//        }
+
       }
     }
   }

@@ -166,13 +166,13 @@ public final class EntityEventListener {
 
     } else {
       ChampionUtil.getHandler(entity).ifPresent(handler -> {
-        if (handler.shouldDisplayParticles()) {
+        if (handler.spawnParticles()) {
           RandomSource randomSource = entity.getRandom();
           Vec3 position = entity.position();
           double x = position.x() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
           double y = position.y() + randomSource.nextDouble() * entity.getBbHeight();
           double z = position.z() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
-          int color = handler.getColor();
+          int color = handler.getColorOrDefault();
 //        float red = ARGB.red(color) / 255.0f;
 //        float green = ARGB.green(color) / 255.0f;
 //        float blue = ARGB.blue(color) / 255.0f;
@@ -200,7 +200,7 @@ public final class EntityEventListener {
   public void onLivingConversionPost(LivingConversionEvent.Post event) {
     Entity entity = event.getEntity();
     Entity newEntity = event.getOutcome();
-    ChampionUtil.getHandler(newEntity).ifPresent(handler -> ChampionUtil.getHandler(entity).ifPresent(handler1 -> handler.applyConfig(handler1.getConfig())));
+    ChampionUtil.getHandler(newEntity).ifPresent(handler -> ChampionUtil.getHandler(entity).ifPresent(handler1 -> handler.applyConfig(handler1.deriveConfig())));
   }
 
   /**
@@ -213,42 +213,53 @@ public final class EntityEventListener {
     Entity parent = event.getParent();
     ChampionUtil.getHandler(parent).ifPresent(handler -> {
       for (Mob child : event.getChildren()) {
-        ChampionUtil.getHandler(child).ifPresent(handler1 -> handler1.applyConfig(handler.getConfig()));
+        ChampionUtil.getHandler(child).ifPresent(handler1 -> handler1.applyConfig(handler.deriveConfig()));
       }
     });
   }
 
+  /**
+   * 使用进入维度事件来执行实体初始化
+   */
   @SubscribeEvent
   public void onEntityJoinLevel(EntityJoinLevelEvent event) {
     if (event.getLevel() instanceof ServerLevel serverLevel && !event.loadedFromDisk()) {
       Entity entity = event.getEntity();
       ChampionUtil.getHandler(entity).ifPresent(handler -> {
-        Identifier id = EntityType.getKey(entity.getType());
-        ChampionConfigSelectorHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byId(id);
-        if (selectorHolder != null) {
-          selectorHolder.value().select(serverLevel, entity, entity instanceof Mob mob ? mob.getSpawnType() : null)
-            .ifPresent(handler::applyConfig);
+        if (handler.finalizeSpawn()) {
+          Identifier id = EntityType.getKey(entity.getType());
+          ChampionConfigSelectorHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byId(id);
+          if (selectorHolder != null) {
+            selectorHolder.value().select(serverLevel, entity, entity instanceof Mob mob ? mob.getSpawnType() : null)
+              .ifPresent(handler::applyConfig);
+          }
         }
       });
 
-//      // 条件过滤
-//      if (entity instanceof Mob mob) {
-//        // 刷怪蛋已经处理了
-//        if (mob.getSpawnType() == EntitySpawnReason.SPAWN_ITEM_USE) {
-//          return;
-//        }
-//
-//        // 维度穿梭已经处理了
-//        if (mob.getSpawnType() == EntitySpawnReason.DIMENSION_TRAVEL) {
-//          return;
-//        }
-//
-//
-//      } else {
-//        // 真不知道非 Mob 如何搞定维度穿梭判断
-//      }
-
     }
   }
+
+  /**
+   * 注入到Mob初始化过程。
+   * 对于刷怪蛋，如果刷怪蛋不附带实体数据，会触发FinalizeSpawnEvent事件，我不知道这是否合乎预期。
+   */
+//  @SubscribeEvent
+//  public void onFinalizeSpawn(FinalizeSpawnEvent event) {
+//    if (event.getLevel() instanceof ServerLevel serverLevel) {
+//      Entity entity = event.getEntity();
+//      ChampionUtil.getHandler(entity).ifPresent(handler -> {
+//        if (handler.shouldApplyConfigOnSpawn()) {
+//          Identifier id = EntityType.getKey(entity.getType());
+//          ChampionConfigSelectorHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byId(id);
+//          if (selectorHolder != null) {
+//            selectorHolder.value().select(serverLevel, entity, entity instanceof Mob mob ? mob.getSpawnType() : null)
+//              .ifPresent(handler::applyConfig);
+//          }
+//        }
+//      });
+//
+//    }
+//  }
+
 
 }
