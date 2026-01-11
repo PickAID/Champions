@@ -24,6 +24,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import org.apache.logging.log4j.LogManager;
@@ -37,14 +38,16 @@ import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffects
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValues;
 import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootParamSourceTypes;
 import top.theillusivec4.champions.champion.entity.EntityEventListener;
+import top.theillusivec4.champions.network.protocol.ClientGamePacketListener;
 import top.theillusivec4.champions.command.Commands;
 import top.theillusivec4.champions.component.DataComponents;
+import top.theillusivec4.champions.config.CommonConfig;
 import top.theillusivec4.champions.data.DataEventListener;
 import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.particle.ParticleTypes;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
-import top.theillusivec4.champions.server.champion.config.ChampionConfigManager;
+import top.theillusivec4.champions.server.champion.config.ChampionConfigSelectorManager;
 import top.theillusivec4.champions.stats.Stats;
 import top.theillusivec4.champions.util.Utils;
 import top.theillusivec4.champions.world.effect.MobEffects;
@@ -53,6 +56,8 @@ import top.theillusivec4.champions.world.item.CreativeModeTabs;
 import top.theillusivec4.champions.world.item.ItemEventListener;
 import top.theillusivec4.champions.world.item.Items;
 import top.theillusivec4.champions.world.loot.predicates.LootItemConditions;
+
+import java.util.Objects;
 
 @Mod(Champions.MODID)
 public class Champions {
@@ -64,7 +69,8 @@ public class Champions {
   // champion instance
   private static Champions instance;
   private final ModContainer modContainer;
-  private ChampionConfigManager championConfigManager;
+  private final CommonConfig commonConfig;
+  private ChampionConfigSelectorManager championConfigSelectorManager;
 
   public static Champions getInstance() {
     return instance;
@@ -74,6 +80,8 @@ public class Champions {
 //    modEventBus.register(this);
     instance = this;
     this.modContainer = modContainer;
+    this.commonConfig = new CommonConfig();
+    modContainer.registerConfig(ModConfig.Type.COMMON, this.commonConfig.getConfigSpec());
 //    modEventBus.register(new ModEventHandler());
 
     Items.register(modEventBus);
@@ -99,6 +107,7 @@ public class Champions {
     Attachments.register(modEventBus);
     LootItemConditions.register(modEventBus);
     DataEventListener.register(modEventBus);
+    ClientGamePacketListener.register(modEventBus);
     EntityEventListener.register();
     ItemEventListener.register();
     ReloadEventListener.register();
@@ -128,6 +137,14 @@ public class Champions {
     return modContainer;
   }
 
+  public CommonConfig getCommonConfig() {
+    return commonConfig;
+  }
+
+  public ChampionConfigSelectorManager getChampionConfigSelectorManager() {
+    return Objects.requireNonNull(championConfigSelectorManager, "过早的访问配置选择管理器，至少应该在世界加载后");
+  }
+
   public static final class ReloadEventListener {
     public static final Identifier CHAMPION_CONFIG_MANAGER = Utils.id("champion_config_manager");
 
@@ -140,9 +157,9 @@ public class Champions {
 
     @SubscribeEvent
     public void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
-      ChampionConfigManager manager = new ChampionConfigManager(event.getRegistryAccess());
+      ChampionConfigSelectorManager manager = new ChampionConfigSelectorManager(event.getRegistryAccess());
       event.addListener(CHAMPION_CONFIG_MANAGER, manager);
-      Champions.instance.championConfigManager = manager;
+      Champions.instance.championConfigSelectorManager = manager;
     }
 
   }

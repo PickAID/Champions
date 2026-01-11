@@ -5,13 +5,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.util.context.ContextKeySet;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.Validatable;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.champion.Affixes;
+import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.Optional;
 
@@ -25,38 +22,63 @@ import java.util.Optional;
  * @param color
  * @param boss
  */
-public record ChampionConfig(
-  Optional<Holder<Rank>> rank,
-  Optional<Component> prefixName,
-  Optional<Affixes> affixes,
-  Optional<Integer> level,
-  Optional<Integer> color,
-  Optional<Boolean> boss
-) {
-  public static final Codec<ChampionConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-    Rank.REFERENCE_CODEC.optionalFieldOf("rank").forGetter(ChampionConfig::rank),
-    ComponentSerialization.CODEC.optionalFieldOf("prefix_name").forGetter(ChampionConfig::prefixName),
-    Affixes.CODEC.optionalFieldOf("affixes").forGetter(ChampionConfig::affixes),
-    Codec.intRange(ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL).optionalFieldOf("level").forGetter(ChampionConfig::level),
-    Codec.INT.optionalFieldOf("color").forGetter(ChampionConfig::color),
-    Codec.BOOL.optionalFieldOf("boss").forGetter(ChampionConfig::boss)
-  ).apply(instance, ChampionConfig::new));
+public record ChampionConfig(Optional<Holder<Rank>> rank, Optional<Component> prefixName, Optional<Affixes> affixes, Optional<Integer> level, Optional<Integer> color, Optional<Boolean> boss) {
+  public static final Codec<ChampionConfig> CODEC = RecordCodecBuilder.create(instance -> instance.group(Rank.REFERENCE_CODEC.optionalFieldOf("rank").forGetter(ChampionConfig::rank), ComponentSerialization.CODEC.optionalFieldOf("prefix_name").forGetter(ChampionConfig::prefixName), Affixes.CODEC.optionalFieldOf("affixes").forGetter(ChampionConfig::affixes), Codec.intRange(ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL).optionalFieldOf("level").forGetter(ChampionConfig::level), Codec.INT.optionalFieldOf("color").forGetter(ChampionConfig::color), Codec.BOOL.optionalFieldOf("boss").forGetter(ChampionConfig::boss)).apply(instance, ChampionConfig::new));
 
-  private static Codec<LootItemCondition> validateConditionCodec(ContextKeySet contextKeySet) {
-    return LootItemCondition.DIRECT_CODEC.validate(Validatable.validatorForContext(contextKeySet));
+  public static Builder builder() {
+    return new Builder();
   }
 
+  public static class Builder {
+    private @Nullable Holder<Rank> rank;
+    private @Nullable Component prefixName;
+    private @Nullable Affixes.Mutable affixes;
+    private @Nullable Integer level;
+    private @Nullable Integer color;
+    private @Nullable Boolean boss;
 
-  public record Entry(Optional<LootItemCondition> requirements, ChampionConfig config, int weight) {
-    public static final Codec<Entry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-      validateConditionCodec(LootContextParamSets.SPAWN).optionalFieldOf("requirements").forGetter(Entry::requirements),
-      ChampionConfig.CODEC.fieldOf("config").forGetter(Entry::config),
-      Codec.intRange(1, Integer.MAX_VALUE).fieldOf("weight").forGetter(Entry::weight)
-    ).apply(instance, Entry::new));
+    public Builder addAffix(Holder<Affix> affix) {
+      if (this.affixes == null) {
+        this.affixes = new Affixes.Mutable();
+      }
+      this.affixes.add(affix);
+      return this;
+    }
 
+    public ChampionConfig build() {
+      return new ChampionConfig(
+        Optional.ofNullable(this.rank),
+        Optional.ofNullable(this.prefixName),
+        this.affixes != null ? Optional.of(this.affixes.toImmutable()) : Optional.empty(),
+        Optional.ofNullable(this.level),
+        Optional.ofNullable(this.color),
+        Optional.ofNullable(this.boss)
+      );
+    }
 
-    public boolean matches(LootContext lootContext) {
-      return this.requirements.isEmpty() || this.requirements.get().test(lootContext);
+    public Builder setRank(@Nullable Holder<Rank> rank) {
+      this.rank = rank;
+      return this;
+    }
+
+    public Builder setPrefixName(@Nullable Component prefixName) {
+      this.prefixName = prefixName;
+      return this;
+    }
+
+    public Builder setLevel(@Nullable Integer level) {
+      this.level = level;
+      return this;
+    }
+
+    public Builder setColor(@Nullable Integer color) {
+      this.color = color;
+      return this;
+    }
+
+    public Builder setBoss(@Nullable Boolean boss) {
+      this.boss = boss;
+      return this;
     }
   }
 }

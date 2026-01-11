@@ -6,6 +6,7 @@ import net.minecraft.data.PackOutput;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
+import top.theillusivec4.champions.data.champion.config.selector.ChampionConfigSelectorProvider;
 import top.theillusivec4.champions.data.lang.LanguageHelper;
 import top.theillusivec4.champions.data.registry.ChampionsRegistries;
 import top.theillusivec4.champions.data.tag.RankTagsProvider;
@@ -34,5 +35,6 @@ public final class DataEventListener {
     CompletableFuture<HolderLookup.Provider> registries = event.getLookupProvider();
     event.addProvider(new RankTagsProvider(output, registries));
     event.addProvider(LanguageHelper.zhCn(output));
+    event.addProvider(new ChampionConfigSelectorProvider.Internal(output, registries));
   }
 }

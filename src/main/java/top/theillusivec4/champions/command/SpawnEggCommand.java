@@ -53,18 +53,7 @@ public final class SpawnEggCommand {
   }
 
   public static void register(LiteralArgumentBuilder<CommandSourceStack> builder, CommandBuildContext buildContext) {
-    builder.then(Commands.literal("egg")
-        .then(Commands.argument("players", EntityArgument.players())
-          .then(Commands.argument("spawn_egg", ItemArgument.item(buildContext)).suggests(SPAWN_EGGS)
-            .then(Commands.argument("level", IntegerArgumentType.integer(1, 255))
-              .then(Commands.argument("affix", ResourceArgument.resource(buildContext, Registries.AFFIX))
-                .executes(context -> giveSpawnEgg(context.getSource(), ItemArgument.getItem(context, "spawn_egg"), EntityArgument.getPlayers(context, "players"), IntegerArgumentType.getInteger(context, "level"), ResourceArgument.getResource(context, "affix", Registries.AFFIX))
-                )
-              )
-            )
-          )
-        )
-      )
+    builder
       .then(Commands.literal("affix")
         .then(Commands.argument("players", EntityArgument.players())
           .then(Commands.argument("affix", ResourceArgument.resource(buildContext, Registries.AFFIX))
@@ -105,9 +94,7 @@ public final class SpawnEggCommand {
     int i = 0;
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
-      ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
-        handler.setRank(rank);
-      });
+      ChampionUtil.getHandler(itemStack).ifPresent(handler -> handler.setRank(rank));
     }
     source.sendSuccess(() -> Component.translatable("commands.champions.rank.success", i), true);
     return i;
@@ -118,9 +105,7 @@ public final class SpawnEggCommand {
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
       ChampionUtil.getHandler(itemStack)
-        .ifPresent(handler -> {
-          handler.updateAffixes(mutable -> mutable.add(affix));
-        });
+        .ifPresent(handler -> handler.updateAffixes(mutable -> mutable.add(affix)));
     }
     source.sendSuccess(() -> Component.translatable("commands.champions.affix.success", i), true);
     return i;
@@ -131,13 +116,7 @@ public final class SpawnEggCommand {
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
       ChampionUtil.getHandler(itemStack)
-        .ifPresent(handler -> {
-          handler.setLevel(level);
-        });
-//      if (isValidItem(itemStack.getItem())) {
-//        itemStack.set(DataComponents.LEVEL, level);
-//        itemStack.set(DataComponents.DISPLAY, true);
-//      }
+        .ifPresent(handler -> handler.setLevel(level));
     }
 
     source.sendSuccess(() -> Component.translatable("commands.champions.level.success"), true);
@@ -190,12 +169,6 @@ public final class SpawnEggCommand {
   }
 
   private static boolean isValidItem(Item item) {
-//    if (item instanceof SpawnEggItem spawnEggItem) {
-//      TypedEntityData<EntityType<?>> entityType = spawnEggItem.components().get(net.minecraft.core.component.DataComponents.ENTITY_DATA);
-//      return entityType != null && top.theillusivec4.champions.capabilities.Capabilities.ChampionHandlers.isImplemented(entityType.type());
-//    }
-
-//    return false;
     return top.theillusivec4.champions.capability.Capabilities.ChampionHandlers.isImplemented(item);
   }
 

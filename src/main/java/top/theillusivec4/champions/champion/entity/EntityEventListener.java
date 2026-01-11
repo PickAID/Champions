@@ -1,13 +1,14 @@
 package top.theillusivec4.champions.champion.entity;
 
 import net.minecraft.core.Holder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -15,15 +16,13 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
-import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
-import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.particle.ParticleTypes;
+import top.theillusivec4.champions.server.champion.config.ChampionConfigSelectorHolder;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
-
-import java.util.Optional;
 
 public final class EntityEventListener {
   private static final double BOSS_EVENT_DISTANCE_SQR = 3025.0;
@@ -167,16 +166,18 @@ public final class EntityEventListener {
 
     } else {
       ChampionUtil.getHandler(entity).ifPresent(handler -> {
-        RandomSource randomSource = entity.getRandom();
-        Vec3 position = entity.position();
-        double x = position.x() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
-        double y = position.y() + randomSource.nextDouble() * entity.getBbHeight();
-        double z = position.z() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
-        int color = handler.getColor();
+        if (handler.shouldDisplayParticles()) {
+          RandomSource randomSource = entity.getRandom();
+          Vec3 position = entity.position();
+          double x = position.x() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
+          double y = position.y() + randomSource.nextDouble() * entity.getBbHeight();
+          double z = position.z() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
+          int color = handler.getColor();
 //        float red = ARGB.red(color) / 255.0f;
 //        float green = ARGB.green(color) / 255.0f;
 //        float blue = ARGB.blue(color) / 255.0f;
-        entity.level().addParticle(ParticleTypes.rank(color), x, y, z, 1.0f, 1.0f, 1.0f);
+          entity.level().addParticle(ParticleTypes.rank(color), x, y, z, 1.0f, 1.0f, 1.0f);
+        }
       });
     }
   }
@@ -199,7 +200,7 @@ public final class EntityEventListener {
   public void onLivingConversionPost(LivingConversionEvent.Post event) {
     Entity entity = event.getEntity();
     Entity newEntity = event.getOutcome();
-    ChampionUtil.getHandler(newEntity).ifPresent(handler -> handler.copyFrom(entity));
+    ChampionUtil.getHandler(newEntity).ifPresent(handler -> ChampionUtil.getHandler(entity).ifPresent(handler1 -> handler.applyConfig(handler1.getConfig())));
   }
 
   /**
@@ -210,43 +211,42 @@ public final class EntityEventListener {
   @SubscribeEvent
   public void onMobSplit(MobSplitEvent event) {
     Entity parent = event.getParent();
-    for (Mob child : event.getChildren()) {
-      Optional<ChampionHandlerEntity> optional = ChampionUtil.getHandler(child);
-      if (optional.isPresent()) {
-        ChampionHandler handler = optional.get();
-        handler.copyFrom(parent);
-      } else {
-        break;
+    ChampionUtil.getHandler(parent).ifPresent(handler -> {
+      for (Mob child : event.getChildren()) {
+        ChampionUtil.getHandler(child).ifPresent(handler1 -> handler1.applyConfig(handler.getConfig()));
       }
-    }
-  }
-
-  @SubscribeEvent
-  public void onEntityTravelToDimension(EntityTravelToDimensionEvent event) {
-    ChampionUtil.getHandler(event.getEntity()).ifPresent(handler -> handler.setSpawned(true));
+    });
   }
 
   @SubscribeEvent
   public void onEntityJoinLevel(EntityJoinLevelEvent event) {
-    if (!event.getLevel().isClientSide() && !event.loadedFromDisk()) {
+    if (event.getLevel() instanceof ServerLevel serverLevel && !event.loadedFromDisk()) {
       Entity entity = event.getEntity();
-
-      // 条件过滤
-      if (entity instanceof Mob mob) {
-        // 刷怪蛋已经处理了
-        if (mob.getSpawnType() == EntitySpawnReason.SPAWN_ITEM_USE) {
-          return;
+      ChampionUtil.getHandler(entity).ifPresent(handler -> {
+        Identifier id = EntityType.getKey(entity.getType());
+        ChampionConfigSelectorHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byId(id);
+        if (selectorHolder != null) {
+          selectorHolder.value().select(serverLevel, entity, entity instanceof Mob mob ? mob.getSpawnType() : null)
+            .ifPresent(handler::applyConfig);
         }
+      });
 
-        // 维度穿梭已经处理了
-        if (mob.getSpawnType() == EntitySpawnReason.DIMENSION_TRAVEL) {
-          return;
-        }
-
-
-      } else {
-        // 真不知道非 Mob 如何搞定维度穿梭判断
-      }
+//      // 条件过滤
+//      if (entity instanceof Mob mob) {
+//        // 刷怪蛋已经处理了
+//        if (mob.getSpawnType() == EntitySpawnReason.SPAWN_ITEM_USE) {
+//          return;
+//        }
+//
+//        // 维度穿梭已经处理了
+//        if (mob.getSpawnType() == EntitySpawnReason.DIMENSION_TRAVEL) {
+//          return;
+//        }
+//
+//
+//      } else {
+//        // 真不知道非 Mob 如何搞定维度穿梭判断
+//      }
 
     }
   }

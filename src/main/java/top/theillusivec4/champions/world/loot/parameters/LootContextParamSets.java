@@ -224,13 +224,14 @@ public final class LootContextParamSets {
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext spawn(ServerLevel serverLevel, Entity entity, @Nullable EntitySpawnReason spawnReason, Identifier randomSequenceKey) {
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  public static LootContext spawn(ServerLevel serverLevel, Entity entity, @Nullable EntitySpawnReason spawnReason, Optional<Identifier> randomSequenceKey) {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.SPAWN_REASON, spawnReason)
       .create(SPAWN);
-    return new LootContext.Builder(params).create(Optional.of(randomSequenceKey));
+    return new LootContext.Builder(params).create(randomSequenceKey);
   }
 
   private static ContextKeySet register(String name, ContextKeySet.Builder builder) {

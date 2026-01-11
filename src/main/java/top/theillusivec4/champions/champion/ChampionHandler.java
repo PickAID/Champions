@@ -11,9 +11,9 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
+import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.server.champion.config.ChampionConfig;
 import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
-import top.theillusivec4.champions.champion.rank.Rank;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -135,6 +135,17 @@ public interface ChampionHandler {
   void copyFrom(DataComponentHolder holder);
 
   /**
+   * 应用配置数据
+   */
+  default void applyConfig(ChampionConfig config) {
+    config.rank().ifPresent(this::setRank);
+    config.prefixName().ifPresent(this::setPrefixName);
+    config.level().ifPresent(this::setLevel);
+    config.color().ifPresent(this::setColor);
+    config.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
+  }
+
+  /**
    * 获取全部词缀数据
    */
   Affixes getAffixes();
@@ -209,16 +220,5 @@ public interface ChampionHandler {
       Optional.of(this.getColor()),
       Optional.of(this.isBoss())
     );
-  }
-
-  /**
-   * 应用配置数据
-   */
-  default void setConfig(ChampionConfig config) {
-    config.rank().ifPresent(this::setRank);
-    config.prefixName().ifPresent(this::setPrefixName);
-    config.level().ifPresent(this::setLevel);
-    config.color().ifPresent(this::setColor);
-    config.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
   }
 }

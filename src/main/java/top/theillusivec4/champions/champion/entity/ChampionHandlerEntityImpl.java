@@ -340,26 +340,12 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
     if (item != null && item != Items.AIR) {
       ItemStack itemStack = new ItemStack(item);
 
-      ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handlerItem.copyFrom(this.entity));
+      ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handlerItem.applyConfig(this.getConfig()));
 
       return itemStack;
     }
 
     return ItemStack.EMPTY;
-  }
-
-  @Override
-  public boolean isSpawned() {
-    return this.entity.getExistingData(Attachments.SPAWNED).orElse(false);
-  }
-
-  @Override
-  public void setSpawned(boolean spawned) {
-    if (!spawned) {
-      this.entity.removeData(Attachments.SPAWNED);
-    }
-
-    this.entity.setData(Attachments.SPAWNED, spawned);
   }
 
   @Override

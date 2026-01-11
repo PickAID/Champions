@@ -39,10 +39,7 @@ public abstract class EntityTypeMixin<T extends Entity> implements EntityTypeTes
 
   @Unique
   private static <T extends Entity> Consumer<T> champion$appendChampionConfig(ItemStack itemStack, Consumer<T> consumer) {
-    return consumer.andThen(entity -> ChampionUtil.getHandler(entity).ifPresent(handler -> {
-      handler.setSpawned(true);
-      handler.copyFrom(itemStack);
-    }));
+    return consumer.andThen(entity -> ChampionUtil.getHandler(entity).ifPresent(handler -> ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handler.applyConfig(handlerItem.getConfig()))));
   }
 
 //  @Unique
