@@ -1,14 +1,15 @@
 package top.theillusivec4.champions.data.lang;
 
-import net.minecraft.network.chat.Component;
 import net.minecraft.util.Util;
-import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.util.Utils;
 
+/**
+ * 翻译键
+ */
 public final class LanguageKeys {
-  // Item
-  public static final String SUFFIX_ITEM_CHAMPION_SPAWN_EGG_KEY = "suffix.item.champion_spawn_egg";
-  // ToolTip
+  // 物品
+  public static final String ITEM_CHAMPION_SPAWN_EGG_KEY = "suffix.item.champion_spawn_egg";
+  // 物品工具栏
   public static final String TOOLTIP_RANK_KEY = tooltipKey("rank");
   public static final String TOOLTIP_LEVEL_KEY = tooltipKey("level");
   public static final String TOOLTIP_COLOR_KEY = tooltipKey("color");
@@ -17,40 +18,70 @@ public final class LanguageKeys {
   public static final String TOOLTIP_BOSS_KEY = tooltipKey("boss");
   public static final String TOOLTIP_IS_BOSS_KEY = tooltipKey("boss.is");
   public static final String TOOLTIP_NOT_BOSS_KEY = tooltipKey("boss.not");
-  // Commands
-  public static final String COMMANDS_AFFIX_SUCCESS_KEY = commandsKey("affix.success");
-  public static final String COMMANDS_LEVEL_SUCCESS_KEY = commandsKey("level.success");
-  public static final String COMMANDS_ERROR_NO_CONFIG_SELECTOR_ON_CLIENT_KEY = commandsKey("error.no_config_selector_on_client");
-  public static final String COMMANDS_ERROR_INVALID_CONFIG_SELECTOR_KEY = commandsKey("error.invalid_config_selector");
-  public static final String COMMANDS_CONFIG_SELECTOR_SUCCESS_KEY = commandsKey("config_selector.success");
-  // CreativeModeTab
+  // 命令
+  public static final String COMMANDS_AFFIX_SUCCESS_KEY = commandsKey("affix", CommandsKeyType.SUCCESS);
+  public static final String COMMANDS_RANK_SUCCESS_KEY = commandsKey("rank", CommandsKeyType.SUCCESS);
+  public static final String COMMANDS_LEVEL_SUCCESS_KEY = commandsKey("level", CommandsKeyType.SUCCESS);
+  public static final String COMMANDS_BOSS_SUCCESS_KEY = commandsKey("boss", CommandsKeyType.SUCCESS);
+  public static final String COMMANDS_COLOR_SUCCESS_KEY = commandsKey("color", CommandsKeyType.SUCCESS);
+  public static final String COMMANDS_CONFIG_SELECTOR_SUCCESS_KEY = commandsKey("config_selector", CommandsKeyType.SUCCESS);
+  public static final String COMMANDS_ERROR_NO_CONFIG_SELECTOR_ON_CLIENT_KEY = commandsErrorKey("no_config_selector_on_client");
+  public static final String COMMANDS_ERROR_INVALID_CONFIG_SELECTOR_KEY = commandsErrorKey("invalid_config_selector");
+  public static final String COMMANDS_ERROR_INVALID_CHAMPION_ENTITY_KEY = commandsErrorKey("invalid_champion_entity");
+  // 创造模式物品栏
   public static final String ITEM_GROUP_CHAMPION_SPAWN_EGGS = itemGroup("champion_spawn_eggs");
   public static final String ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS = itemGroup("custom_champion_spawn_eggs");
+  // 配置
+  public static final String CONFIG_DISPLAY_HEALTH_OVERLAY = configKey("display_health_overlay");
 
-  public static Component getLevelComponent(int level) {
-    return Component.translatable(tooltipLevelKey(level));
+  static String itemGroup(String name) {
+    return Util.makeDescriptionId("itemGroup", Utils.id(name));
   }
 
-  public static Component getColorComponent(int color) {
-    return Component.literal("■").withColor(color);
-  }
-
-  static String tooltipLevelKey(int level) {
-    return tooltipKey("champions.level." + level);
-  }
-
-  private static String itemGroup(String name) {
-    return "itemGroup." + Champions.MODID + "." + name;
-  }
-
-  private static String tooltipKey(String name) {
+  static String tooltipKey(String name) {
     return Util.makeDescriptionId("tooltip", Utils.id(name));
   }
 
-  private static String commandsKey(String name) {
-    return Util.makeDescriptionId("commands", Utils.id(name));
+  static String commandsErrorKey(String name) {
+    return Util.makeDescriptionId("error", Utils.id(name));
+  }
+
+  static String commandsKey(String name, CommandsKeyType type) {
+    return Util.makeDescriptionId("commands", Utils.id(name)) + "." + type.getName();
+  }
+
+  static String commandsKey(String name, CommandsKeyType type, String message) {
+    return commandsKey(name, type) + "." + message;
+  }
+
+  static String configKey(String name) {
+    return Util.makeDescriptionId("configuration", Utils.id(name));
   }
 
   private LanguageKeys() {
+  }
+
+  public enum CommandsKeyType {
+    SUCCESS("success"),
+    FAILED("failed"),
+    ERROR("error");
+    private final String name;
+
+    CommandsKeyType(String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return name;
+    }
+  }
+
+  public enum ConfigKeyType {
+    CLIENT("client");
+    private final String name;
+
+    ConfigKeyType(String name) {
+      this.name = name;
+    }
   }
 }

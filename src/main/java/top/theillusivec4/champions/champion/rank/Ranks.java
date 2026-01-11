@@ -20,13 +20,6 @@ public final class Ranks {
   public static void bootstrap(BootstrapContext<Rank> context) {
     register(
       context,
-      EMPTY,
-      Rank.builder()
-        .setLevel(1)
-        .setColor("#000000")
-    );
-    register(
-      context,
       COMMON,
       Rank.builder()
         .setLevel(1)

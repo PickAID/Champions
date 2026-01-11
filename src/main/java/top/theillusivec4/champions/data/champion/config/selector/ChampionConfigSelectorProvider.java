@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.conditions.WithConditions;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.server.champion.config.ChampionConfig;
+import top.theillusivec4.champions.champion.ChampionConfig;
 import top.theillusivec4.champions.server.champion.config.ChampionConfigSelector;
 import top.theillusivec4.champions.server.champion.config.ChampionConfigSelectorHolder;
 

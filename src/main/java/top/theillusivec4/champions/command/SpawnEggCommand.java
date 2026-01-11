@@ -1,56 +1,27 @@
 package top.theillusivec4.champions.command;
 
-import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
-import com.mojang.brigadier.suggestion.Suggestions;
-import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceArgument;
-import net.minecraft.commands.arguments.item.ItemArgument;
-import net.minecraft.commands.arguments.item.ItemInput;
-import net.minecraft.commands.synchronization.SuggestionProviders;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.transfer.ResourceHandler;
-import net.neoforged.neoforge.transfer.item.ItemResource;
-import net.neoforged.neoforge.transfer.transaction.Transaction;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.item.ChampionHandlerItem;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
+import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 
 import java.util.Collection;
-import java.util.concurrent.CompletableFuture;
 
 public final class SpawnEggCommand {
-  public static final String SUCCESS_KEY = "commands.champions_egg.success";
-  public static final String FAILED_KEY = "commands.champions_egg.failed";
-  public static final SuggestionProvider<CommandSourceStack> SPAWN_EGGS = SuggestionProviders.register(Utils.id("spawn_eggs"), SpawnEggCommand::suggest);
-  private static final DynamicCommandExceptionType NOT_SPAWN_EGG = new DynamicCommandExceptionType(item -> Component.translatable(FAILED_KEY, item));
-
-  public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
-    dispatcher.register(Commands.literal("champions_egg").requires(Commands.hasPermission(Commands.LEVEL_ADMINS)).then(Commands.argument("players", EntityArgument.players()).then(Commands.argument("spawn_egg", ItemArgument.item(buildContext)).suggests(SPAWN_EGGS).then(Commands.argument("level", IntegerArgumentType.integer(1, 255)).then(Commands.argument("affixes", ResourceArgument.resource(buildContext, Registries.AFFIX)).executes(context -> giveSpawnEgg(context.getSource(), ItemArgument.getItem(context, "spawn_egg"), EntityArgument.getPlayers(context, "players"), IntegerArgumentType.getInteger(context, "level"), ResourceArgument.getResource(context, "affixes", Registries.AFFIX))))))));
-  }
 
   public static void register(LiteralArgumentBuilder<CommandSourceStack> builder, CommandBuildContext buildContext) {
     builder
@@ -81,13 +52,15 @@ public final class SpawnEggCommand {
             .executes(context -> boss(context.getSource(), EntityArgument.getPlayers(context, "players"), BoolArgumentType.getBool(context, "boss")))
           )
         )
-
+      )
+      .then(Commands.literal("color")
+        .then(Commands.argument("players", EntityArgument.players())
+          .then(Commands.argument("color", IntegerArgumentType.integer())
+            .executes(context -> color(context.getSource(), EntityArgument.getPlayers(context, "players"), IntegerArgumentType.getInteger(context, "color")))
+          )
+        )
       )
     ;
-  }
-
-  private static CompletableFuture<Suggestions> suggest(final CommandContext<SharedSuggestionProvider> context, final SuggestionsBuilder builder) {
-    return SharedSuggestionProvider.suggestResource(BuiltInRegistries.ITEM.stream().filter(SpawnEggCommand::isValidItem), builder, BuiltInRegistries.ITEM::getKey, Item::getName);
   }
 
   private static int rank(CommandSourceStack source, Collection<ServerPlayer> players, Holder.Reference<Rank> rank) {
@@ -96,7 +69,7 @@ public final class SpawnEggCommand {
       ItemStack itemStack = player.getMainHandItem();
       ChampionUtil.getHandler(itemStack).ifPresent(handler -> handler.setRank(rank));
     }
-    source.sendSuccess(() -> Component.translatable("commands.champions.rank.success", i), true);
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_RANK_SUCCESS_KEY, i), true);
     return i;
   }
 
@@ -107,7 +80,7 @@ public final class SpawnEggCommand {
       ChampionUtil.getHandler(itemStack)
         .ifPresent(handler -> handler.updateAffixes(mutable -> mutable.add(affix)));
     }
-    source.sendSuccess(() -> Component.translatable("commands.champions.affix.success", i), true);
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_AFFIX_SUCCESS_KEY, i), true);
     return i;
   }
 
@@ -117,9 +90,11 @@ public final class SpawnEggCommand {
       ItemStack itemStack = player.getMainHandItem();
       ChampionUtil.getHandler(itemStack)
         .ifPresent(handler -> handler.setLevel(level));
+      i++;
     }
 
-    source.sendSuccess(() -> Component.translatable("commands.champions.level.success"), true);
+    int finalI = i;
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_LEVEL_SUCCESS_KEY, finalI), true);
     return i;
   }
 
@@ -132,44 +107,23 @@ public final class SpawnEggCommand {
       i++;
     }
 
-    source.sendSuccess(() -> Component.translatable("commands.champions.boss.success"), true);
+    int finalI = i;
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_BOSS_SUCCESS_KEY, finalI), true);
     return i;
   }
 
-  private static int giveSpawnEgg(CommandSourceStack source, ItemInput itemInput, Collection<ServerPlayer> players, int level, Holder.Reference<Affix> affix) throws CommandSyntaxException {
-    Item item = itemInput.getItem();
-    if (isValidItem(item)) {
-      for (Player player : players) {
-        ResourceHandler<ItemResource> resourceHandler = player.getCapability(Capabilities.Item.ENTITY);
-        if (resourceHandler != null) {
-          try (Transaction transaction = Transaction.openRoot()) {
-            ItemStack itemStack = new ItemStack(item);
-            ChampionHandlerItem handlerItem = ChampionUtil.getHandler(itemStack).orElseThrow();
-            handlerItem.updateAffixes(mutable -> mutable.add(affix));
-            handlerItem.setLevel(level);
-
-            if (resourceHandler.insert(ItemResource.of(itemStack), 1, transaction) == 1) {
-              transaction.commit();
-            } else {
-              ItemEntity drop = player.drop(itemStack, false);
-              if (drop != null) {
-                drop.setNoPickUpDelay();
-                drop.setTarget(player.getUUID());
-              }
-            }
-          }
-        }
-        source.sendSuccess(() -> Component.translatable(SUCCESS_KEY, player.getDisplayName()), true);
-      }
-    } else {
-      throw NOT_SPAWN_EGG.create(item.getName());
+  private static int color(CommandSourceStack source, Collection<ServerPlayer> players, int color) {
+    int i = 0;
+    for (ServerPlayer player : players) {
+      ItemStack itemStack = player.getMainHandItem();
+      ChampionUtil.getHandler(itemStack)
+        .ifPresent(handler -> handler.setColor(color));
+      i++;
     }
 
-    return players.size();
-  }
-
-  private static boolean isValidItem(Item item) {
-    return top.theillusivec4.champions.capability.Capabilities.ChampionHandlers.isImplemented(item);
+    int finalI = i;
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_COLOR_SUCCESS_KEY, finalI), true);
+    return i;
   }
 
   private SpawnEggCommand() {

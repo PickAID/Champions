@@ -1,7 +1,6 @@
 package top.theillusivec4.champions.champion.item;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ARGB;
@@ -9,16 +8,14 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jspecify.annotations.Nullable;
-import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.component.DataComponents;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -26,12 +23,7 @@ import java.util.function.Consumer;
 /**
  * 物品的实现，许多方法为空实现有些怪异，我或许应该将某一个数据组件或附件与方法绑定
  */
-public class ChampionHandlerItemImpl implements ChampionHandlerItem {
-  private final ItemStack itemStack;
-
-  public ChampionHandlerItemImpl(ItemStack itemStack) {
-    this.itemStack = itemStack;
-  }
+public record ChampionHandlerItemImpl(ItemStack itemStack) implements ChampionHandlerItem {
 
   @Override
   public void runInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin) {
@@ -95,79 +87,32 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
   }
 
   @Override
-  public void copyFrom(IAttachmentHolder holder) {
-    if (holder.hasData(Attachments.AFFIXES)) {
-      this.itemStack.set(DataComponents.AFFIXES, holder.getData(Attachments.AFFIXES).copy());
-    }
-
-    if (holder.hasData(Attachments.RANK)) {
-      Optional<Holder<Rank>> optional = holder.getData(Attachments.RANK);
-      optional.ifPresent(rank -> this.itemStack.set(DataComponents.RANK, rank));
-    }
-
-    if (holder.hasData(Attachments.PREFIX_NAME)) {
-      holder.getData(Attachments.PREFIX_NAME).ifPresent(this::setPrefixName);
-    }
-
-    if (holder.hasData(Attachments.LEVEL)) {
-      this.itemStack.set(DataComponents.LEVEL, holder.getData(Attachments.LEVEL));
-    }
-
-    if (holder.hasData(Attachments.COLOR)) {
-      this.itemStack.set(DataComponents.COLOR, holder.getData(Attachments.COLOR));
-    }
-
-    if (holder.hasData(Attachments.BOSS)) {
-      this.itemStack.set(DataComponents.BOSS, holder.getData(Attachments.BOSS));
-    }
-  }
-
-  @Override
-  public void copyFrom(DataComponentHolder holder) {
-    if (holder.has(DataComponents.AFFIXES)) {
-      this.itemStack.set(DataComponents.AFFIXES, holder.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY).copy());
-    }
-
-    if (holder.has(DataComponents.RANK)) {
-      Holder<Rank> rank = holder.get(DataComponents.RANK);
-      this.itemStack.set(DataComponents.RANK, rank);
-    }
-
-    if (holder.has(DataComponents.PREFIX_NAME)) {
-      this.itemStack.set(DataComponents.PREFIX_NAME, holder.getOrDefault(DataComponents.PREFIX_NAME, Component.empty()).copy());
-    }
-
-    if (holder.has(DataComponents.LEVEL)) {
-      this.itemStack.set(DataComponents.LEVEL, holder.getOrDefault(DataComponents.LEVEL, 1));
-    }
-
-    if (holder.has(DataComponents.COLOR)) {
-      this.itemStack.set(DataComponents.COLOR, holder.getOrDefault(DataComponents.COLOR, -1));
-    }
-
-    if (holder.has(DataComponents.BOSS)) {
-      this.itemStack.set(DataComponents.BOSS, holder.getOrDefault(DataComponents.BOSS, false));
-    }
-
-  }
-
-  @Override
-  public Affixes getAffixes() {
+  public Affixes getAffixesOrDefault() {
     return this.itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY);
   }
 
   @Override
-  public int getLevel() {
+  public Optional<Affixes> getAffixes() {
+    return Optional.empty();
+  }
+
+  @Override
+  public Optional<Integer> getLevel() {
     if (this.itemStack.has(DataComponents.LEVEL)) {
-      return this.itemStack.getOrDefault(DataComponents.LEVEL, ChampionDefaultConfigs.EMPTY_LEVEL);
+      return Optional.ofNullable(this.itemStack.get(DataComponents.LEVEL));
     }
 
-    return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultConfigs.EMPTY_LEVEL);
+    return this.getRank().map(rank -> rank.value().level());
+  }
+
+  @Override
+  public int getLevelOrDefault() {
+    return this.getLevel().orElse(ChampionDefaultConfigs.DEFAULT_LEVEL);
   }
 
   @Override
   public void setLevel(int level) {
-    if (level <= ChampionDefaultConfigs.EMPTY_LEVEL) {
+    if (level <= ChampionDefaultConfigs.DEFAULT_LEVEL) {
       this.itemStack.remove(DataComponents.LEVEL);
     } else {
       this.itemStack.set(DataComponents.LEVEL, Math.clamp(level, ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL));
@@ -189,12 +134,12 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
   }
 
   @Override
-  public int getColor() {
+  public Optional<Integer> getColor() {
     if (this.itemStack.has(DataComponents.COLOR)) {
-      return this.itemStack.getOrDefault(DataComponents.COLOR, -1);
+      return Optional.ofNullable(this.itemStack.get(DataComponents.COLOR));
     }
 
-    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultConfigs.DEFAULT_COLOR);
+    return this.getRank().map(rank -> rank.value().color());
   }
 
   @Override
@@ -213,9 +158,7 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
 
   @Override
   public void setRank(Holder<Rank> rank) {
-    if (!rank.is(Ranks.EMPTY)) {
-      this.itemStack.set(DataComponents.RANK, rank);
-    }
+    this.itemStack.set(DataComponents.RANK, rank);
   }
 
   @Override

@@ -1,7 +1,6 @@
 package top.theillusivec4.champions.champion.entity;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentHolder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -18,14 +17,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.apache.commons.lang3.mutable.MutableFloat;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
@@ -36,35 +31,29 @@ import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
 import top.theillusivec4.champions.champion.affix.event.ChampionEventHooks;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.component.DataComponents;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
-  private static final Logger LOGGER = LogManager.getLogger();
-  private final Entity entity;
-
-  public ChampionHandlerEntityImpl(Entity entity) {
-    this.entity = entity;
-  }
+public record ChampionHandlerEntityImpl(Entity entity) implements ChampionHandlerEntity {
 
   @Override
   public void runInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin) {
-    this.runIteration(affix -> affix.value().runInitialize(serverLevel, this.getLevel(), entity, origin));
+    this.runIteration(affix -> affix.value().runInitialize(serverLevel, this.getLevelOrDefault(), entity, origin));
   }
 
   @Override
   public void stopInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin) {
-    this.runIteration(affix -> affix.value().stopInitialized(serverLevel, this.getLevel(), entity, origin));
+    this.runIteration(affix -> affix.value().stopInitialized(serverLevel, this.getLevelOrDefault(), entity, origin));
   }
 
   @Override
   public boolean isImmuneToDamage(ServerLevel serverLevel, DamageSource damageSource) {
-    LootContext context = LootContextParamSets.damageImmunity(serverLevel, this.entity, this.getLevel(), damageSource, this.getLatestDamage(), damageSource.getDirectEntity(), damageSource.getEntity());
-    for (Holder<Affix> affix : this.getAffixes().getAffixes()) {
+    LootContext context = LootContextParamSets.damageImmunity(serverLevel, this.entity, this.getLevelOrDefault(), damageSource, this.getLatestDamage(), damageSource.getDirectEntity(), damageSource.getEntity());
+    for (Holder<Affix> affix : this.getAffixesOrDefault().getAffixes()) {
       for (ConditionalEffect<DamageImmunity> effect : affix.value().getEffects(AffixEffectComponents.DAMAGE_IMMUNITY)) {
         if (effect.matches(context)) {
           return true;
@@ -77,44 +66,44 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
   @Override
   public float getDamageProtection(ServerLevel serverLevel, DamageSource damageSource) {
     MutableFloat mutableFloat = new MutableFloat(0.0f);
-    this.runIteration(affix -> affix.value().modifyDamageProtection(serverLevel, this.getLevel(), this.entity, damageSource, this.getLatestDamage(), mutableFloat));
+    this.runIteration(affix -> affix.value().modifyDamageProtection(serverLevel, this.getLevelOrDefault(), this.entity, damageSource, this.getLatestDamage(), mutableFloat));
     return mutableFloat.floatValue();
   }
 
   @Override
   public float modifyKnockback(ServerLevel serverLevel, DamageSource damageSource, float knockback) {
     MutableFloat mutableFloat = new MutableFloat(knockback);
-    this.runIteration(affix -> affix.value().modifyKnockback(serverLevel, this.getLevel(), this.entity, damageSource, this.getLatestDamage(), mutableFloat));
+    this.runIteration(affix -> affix.value().modifyKnockback(serverLevel, this.getLevelOrDefault(), this.entity, damageSource, this.getLatestDamage(), mutableFloat));
     return mutableFloat.floatValue();
   }
 
   @Override
   public float modifyDamage(ServerLevel serverLevel, Entity target, DamageSource damageSource, float amount) {
     MutableFloat mutableFloat = new MutableFloat(amount);
-    this.runIteration(affix -> affix.value().modifyDamage(serverLevel, this.getLevel(), this.entity, damageSource, this.getLatestDamage(), mutableFloat));
+    this.runIteration(affix -> affix.value().modifyDamage(serverLevel, this.getLevelOrDefault(), this.entity, damageSource, this.getLatestDamage(), mutableFloat));
     return mutableFloat.floatValue();
   }
 
   @Override
   public float modifyHeal(ServerLevel serverLevel, float amount) {
     MutableFloat mutableFloat = new MutableFloat(amount);
-    this.runIteration(affix -> affix.value().modifyHeal(serverLevel, this.getLevel(), this.entity, this.getLatestDamage(), mutableFloat));
+    this.runIteration(affix -> affix.value().modifyHeal(serverLevel, this.getLevelOrDefault(), this.entity, this.getLatestDamage(), mutableFloat));
     return mutableFloat.floatValue();
   }
 
   @Override
   public void doPostAttackEffects(ServerLevel serverLevel, AffixTarget targetType, Entity victim, DamageSource damageSource) {
-    this.runIteration(affix -> affix.value().doPostAttack(serverLevel, this.getLevel(), targetType, victim, damageSource, this.getLatestDamage()));
+    this.runIteration(affix -> affix.value().doPostAttack(serverLevel, this.getLevelOrDefault(), targetType, victim, damageSource, this.getLatestDamage()));
   }
 
   @Override
   public void tickEffects(ServerLevel serverLevel) {
-    this.runIteration(affix -> affix.value().tick(serverLevel, this.getLevel(), this.entity, this.getLatestDamage()));
+    this.runIteration(affix -> affix.value().tick(serverLevel, this.getLevelOrDefault(), this.entity, this.getLatestDamage()));
   }
 
   @Override
   public void runIteration(Consumer<Holder<Affix>> consumer) {
-    for (Holder<Affix> affix : this.getAffixes().getAffixes()) {
+    for (Holder<Affix> affix : this.getAffixesOrDefault().getAffixes()) {
       consumer.accept(affix);
     }
   }
@@ -137,91 +126,35 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
   }
 
   @Override
-  public void copyFrom(IAttachmentHolder holder) {
-    if (this.entity != holder && !this.entity.level().isClientSide()) {
-      if (holder.hasData(Attachments.AFFIXES)) {
-        this.updateAffixes(mutable -> {
-          for (Holder<Affix> affix : holder.getData(Attachments.AFFIXES).getAffixes()) {
-            mutable.add(affix);
-          }
-        });
-      }
+  public Optional<Affixes> getAffixes() {
+    return this.entity.getExistingData(Attachments.AFFIXES);
+  }
 
-      if (holder.hasData(Attachments.RANK)) {
-        holder.getData(Attachments.RANK).ifPresent(this::setRank);
-      }
-
-      if (holder.hasData(Attachments.PREFIX_NAME)) {
-        holder.getData(Attachments.PREFIX_NAME).ifPresent(this::setPrefixName);
-      }
-
-      if (holder.hasData(Attachments.LEVEL)) {
-        this.setLevel(holder.getData(Attachments.LEVEL));
-      }
-
-      if (holder.hasData(Attachments.COLOR)) {
-        this.setColor(holder.getData(Attachments.COLOR));
-      }
-
-      if (holder.hasData(Attachments.BOSS)) {
-        this.setBoss(holder.getData(Attachments.BOSS));
-      }
-    }
+  public Affixes getAffixesOrDefault() {
+    return this.getAffixes().orElse(Affixes.EMPTY);
   }
 
   @Override
-  public void copyFrom(DataComponentHolder holder) {
-    if (this.entity.level() instanceof ServerLevel serverLevel) {
-      if (holder.has(DataComponents.AFFIXES)) {
-        ChampionEventHooks.onUpdateAffixesPre(this.entity, serverLevel, this);
-        this.stopInitializeEffects(serverLevel, this.entity, this.entity.position());
-        this.entity.setData(Attachments.AFFIXES, holder.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY).copy());
-        ChampionEventHooks.onUpdateAffixesPost(this.entity, serverLevel, this);
-        this.runInitializeEffects(serverLevel, this.entity, this.entity.position());
-      }
-
-      if (holder.has(DataComponents.RANK)) {
-        this.setRank(holder.getOrDefault(DataComponents.RANK, serverLevel.registryAccess().getOrThrow(Ranks.EMPTY)));
-      }
-
-      if (holder.has(DataComponents.PREFIX_NAME)) {
-        this.setPrefixName(holder.getOrDefault(DataComponents.PREFIX_NAME, Component.empty()));
-      }
-
-      if (holder.has(DataComponents.LEVEL)) {
-        this.setLevel(holder.getOrDefault(DataComponents.LEVEL, ChampionDefaultConfigs.MIN_LEVEL));
-      }
-
-      if (holder.has(DataComponents.COLOR)) {
-        this.setColor(holder.getOrDefault(DataComponents.COLOR, -1));
-      }
-
-      if (holder.has(DataComponents.BOSS)) {
-        this.setBoss(holder.getOrDefault(DataComponents.BOSS, false));
-      }
-    }
-  }
-
-  public Affixes getAffixes() {
-    return this.entity.getData(Attachments.AFFIXES);
-  }
-
-  @Override
-  public int getLevel() {
+  public Optional<Integer> getLevel() {
     if (this.entity.hasData(Attachments.LEVEL)) {
-      return this.entity.getData(Attachments.LEVEL);
+      return Optional.of(this.entity.getData(Attachments.LEVEL));
     } else {
-      return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultConfigs.EMPTY_LEVEL);
+      return this.getRank().map(rank -> rank.value().level());
     }
   }
 
   @Override
   public void setLevel(int level) {
-    if (level <= ChampionDefaultConfigs.EMPTY_LEVEL) {
+    if (level <= ChampionDefaultConfigs.DEFAULT_LEVEL) {
       this.entity.removeData(Attachments.LEVEL);
     } else {
       this.entity.setData(Attachments.LEVEL, Math.clamp(level, ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL));
     }
+  }
+
+  @Override
+  public int getLevelOrDefault() {
+    return this.getLevel().orElse(ChampionDefaultConfigs.DEFAULT_LEVEL);
   }
 
   @Override
@@ -238,7 +171,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
           .append(CommonComponents.space())
           .append(this.entity.getDisplayName())
         ).orElse(this.entity.getDisplayName());
-        this.setBossEvent(new ServerChampionBossEvent(Mth.createInsecureUUID(this.entity.getRandom()), name, this.getHealth() / this.getMaxHealth(), this.getLevel(), this.getColor(), this.getAffixes().getAffixes()));
+        this.setBossEvent(new ServerChampionBossEvent(Mth.createInsecureUUID(this.entity.getRandom()), name, this.getHealth() / this.getMaxHealth(), this.getLevelOrDefault(), this.getColorOrDefault(), this.getAffixesOrDefault().getAffixes()));
         this.entity.setData(Attachments.BOSS, true);
       } else {
         this.setBossEvent(null);
@@ -248,12 +181,12 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
   }
 
   @Override
-  public int getColor() {
+  public Optional<Integer> getColor() {
     if (this.entity.hasData(Attachments.COLOR)) {
-      return this.entity.getData(Attachments.COLOR);
+      return Optional.of(this.entity.getData(Attachments.COLOR));
     }
 
-    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultConfigs.DEFAULT_COLOR);
+    return this.getRank().map(rank -> rank.value().color());
   }
 
   @Override
@@ -272,9 +205,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
 
   @Override
   public void setRank(Holder<Rank> rank) {
-    if (!rank.is(Ranks.EMPTY)) {
-      this.entity.setData(Attachments.RANK, Optional.of(rank));
-    }
+    this.entity.setData(Attachments.RANK, Optional.of(rank));
   }
 
   @Override
@@ -297,6 +228,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
 
   @Override
   public void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer) {
+    // 对于客户端，该数据只读。
     if (!this.entity.level().isClientSide()) {
       LatestDamage latestDamage = this.entity.getData(Attachments.LATEST_DAMAGE);
       LatestDamage.Mutable mutable = latestDamage.toMutable();
@@ -307,6 +239,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
 
   @Override
   public Optional<ServerChampionBossEvent> getBossEvent() {
+    // 对于客户端，该数据不可见。
     if (!this.entity.level().isClientSide()) {
       return this.entity.getExistingData(Attachments.SERVER_CHAMPION_BOSS_EVENT).orElse(Optional.empty());
     }
@@ -340,7 +273,7 @@ public class ChampionHandlerEntityImpl implements ChampionHandlerEntity {
     if (item != null && item != Items.AIR) {
       ItemStack itemStack = new ItemStack(item);
 
-      ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handlerItem.applyConfig(this.getConfig()));
+      ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handlerItem.applyConfig(this.deriveConfig()));
 
       return itemStack;
     }

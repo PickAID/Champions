@@ -26,7 +26,7 @@ import top.theillusivec4.champions.registry.Registries;
 import java.util.Optional;
 import java.util.function.Function;
 
-public record ChampionSpawnEgg(Holder<Item> item, Holder<Rank> rank, Optional<Component> prefix, Optional<Integer> level, Optional<Integer> color, HolderSet<Affix> affixes) {
+public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, Optional<Component> prefix, Optional<Integer> level, Optional<Integer> color, HolderSet<Affix> affixes) {
   private static final Codec<Integer> STRING_COLOR_CODEC = Codec.STRING.comapFlatMap(string -> TextColor.parseColor(string).map(TextColor::getValue), integer -> TextColor.fromRgb(integer).serialize());
   private static final Codec<Integer> INT_COLOR_CODEC = Codec.INT.xmap(ARGB::opaque, Function.identity());
   private static final Codec<Integer> COLOR_CODEC = Codec.withAlternative(STRING_COLOR_CODEC, INT_COLOR_CODEC);
@@ -34,7 +34,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Holder<Rank> rank, Optional<Co
 
   public static final Codec<ChampionSpawnEgg> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     Item.CODEC.fieldOf("item").forGetter(ChampionSpawnEgg::item),
-    Rank.REFERENCE_CODEC.fieldOf("rank").forGetter(ChampionSpawnEgg::rank),
+    Rank.REFERENCE_CODEC.optionalFieldOf("rank").forGetter(ChampionSpawnEgg::rank),
     ComponentSerialization.CODEC.optionalFieldOf("prefix").forGetter(ChampionSpawnEgg::prefix),
     Codec.intRange(1, 5).optionalFieldOf("level").forGetter(ChampionSpawnEgg::level),
     COLOR_CODEC.optionalFieldOf("color").forGetter(ChampionSpawnEgg::color),
@@ -48,7 +48,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Holder<Rank> rank, Optional<Co
   public ItemStack getSpawnEgg(Level level) {
     ItemStack itemStack = new ItemStack(this.item);
     ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
-      handler.setRank(this.rank);
+      this.rank.ifPresent(handler::setRank);
       this.prefix.ifPresent(handler::setPrefixName);
       this.level.ifPresent(handler::setLevel);
       this.level.ifPresent(handler::setColor);
@@ -79,7 +79,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Holder<Rank> rank, Optional<Co
       HolderGetter<Rank> ranks = context.lookup(Registries.RANK);
       return new ChampionSpawnEgg(
         this.item,
-        this.rank != null ? this.rank : ranks.getOrThrow(Ranks.EMPTY),
+        Optional.ofNullable(this.rank),
         Optional.ofNullable(this.prefix),
         Optional.ofNullable(this.level),
         Optional.ofNullable(this.color),

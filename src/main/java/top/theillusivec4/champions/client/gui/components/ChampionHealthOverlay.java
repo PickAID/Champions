@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import top.theillusivec4.champions.ChampionsClient;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.client.util.ClientUtil;
@@ -21,13 +22,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-@SuppressWarnings("unused")
 public final class ChampionHealthOverlay {
   private static final Identifier BAR = Utils.id("textures/gui/bars.png");
   private static final Identifier STAR = Utils.id("textures/gui/staricon.png");
   private final Map<UUID, ClientChampionBossEvent> events = new HashMap<>();
   private final ChampionHealthOverlay.Handler handler = new Handler();
-  private DisplayMode mode = DisplayMode.LOOK;
   private int x;
   private int y;
 
@@ -42,24 +41,24 @@ public final class ChampionHealthOverlay {
   }
 
   public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-    if (this.isDisplayLookAt()) {
+    if (ChampionsClient.getInstance().displayHealthOverlay()) {
       /*
       LOOK 模式显示准星处实体
        */
       Entity entity = ClientUtil.getMouseEntity(deltaTracker.getGameTimeDeltaTicks());
       if (entity != null) {
         ChampionUtil.getHandler(entity).ifPresent(handler -> {
-          if (handler.shouldDisplayHealthOverlay()) {
+          if (handler.displayHealthOverlay()) {
             Component name = handler.getPrefixName().map(component ->
               (Component) component.copy()
                 .append(CommonComponents.space())
                 .append(entity.getDisplayName())
             ).orElse(entity.getDisplayName());
             ClientChampionBossEvent event = new ClientChampionBossEvent(entity.getUUID(), name);
-            event.setLevel(handler.getLevel());
-            event.setColor(handler.getColor());
+            event.setLevel(handler.getLevelOrDefault());
+            event.setColor(handler.getColorOrDefault());
             event.setProgress(Math.clamp(handler.getHealth() / handler.getMaxHealth(), 0.0f, 1.0f));
-            event.setAffixes(handler.getAffixes().getAffixes());
+            event.setAffixes(handler.getAffixesOrDefault().getAffixes());
             this.render(guiGraphics, event);
           }
         });
@@ -93,18 +92,6 @@ public final class ChampionHealthOverlay {
 
   private Minecraft getClient() {
     return Minecraft.getInstance();
-  }
-
-  public DisplayMode getMode() {
-    return mode;
-  }
-
-  public void setMode(DisplayMode mode) {
-    this.mode = mode;
-  }
-
-  private boolean isDisplayLookAt() {
-    return this.mode == DisplayMode.LOOK;
   }
 
   private void render(GuiGraphics guiGraphics, ClientChampionBossEvent event) {
@@ -178,12 +165,6 @@ public final class ChampionHealthOverlay {
     if (width > 0) {
       guiGraphics.blit(RenderPipelines.GUI_TEXTURED, BAR, x, y, 0, 65, width, 5, 256, 256, event.getColor());
     }
-  }
-
-  public enum DisplayMode {
-    BROADCAST,
-    LOOK,
-    HIDE
   }
 
   private class Handler implements ClientboundChampionBossEventPacket.Handler {

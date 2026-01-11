@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.Validatable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import top.theillusivec4.champions.champion.ChampionConfig;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.Optional;
