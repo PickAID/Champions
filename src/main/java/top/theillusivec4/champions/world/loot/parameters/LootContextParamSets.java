@@ -1,9 +1,11 @@
 package top.theillusivec4.champions.world.loot.parameters;
 
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -16,6 +18,16 @@ import top.theillusivec4.champions.util.Utils;
 import java.util.Optional;
 
 public final class LootContextParamSets {
+  /**
+   * 用于实体生成选择配置
+   */
+  public static final ContextKeySet SPAWN = register(
+    "spawn",
+    builder()
+      .required(LootContextParams.THIS_ENTITY)
+      .required(LootContextParams.ORIGIN)
+      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.SPAWN_REASON)
+  );
   public static final ContextKeySet LOCATION = register(
     "location",
     builder()
@@ -98,13 +110,6 @@ public final class LootContextParamSets {
       .required(LootContextParams.ORIGIN)
       .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
       .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
-  );
-
-  public static final ContextKeySet SPAWN = register("spawn",
-    builder()
-      .required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
   );
 
   public static LootContext attributes(ServerLevel serverLevel, Entity entity, int level) {
@@ -219,13 +224,14 @@ public final class LootContextParamSets {
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext spawn(ServerLevel serverLevel, Entity entity, int level) {
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+  public static LootContext spawn(ServerLevel serverLevel, Entity entity, @Nullable EntitySpawnReason spawnReason, Optional<Identifier> randomSequenceKey) {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
+      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.SPAWN_REASON, spawnReason)
       .create(SPAWN);
-    return new LootContext.Builder(params).create(Optional.empty());
+    return new LootContext.Builder(params).create(randomSequenceKey);
   }
 
   private static ContextKeySet register(String name, ContextKeySet.Builder builder) {

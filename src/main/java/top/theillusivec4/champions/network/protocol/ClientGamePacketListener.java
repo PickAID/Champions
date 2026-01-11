@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.client.network;
+package top.theillusivec4.champions.network.protocol;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -7,9 +7,11 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.ChampionsClient;
-import top.theillusivec4.champions.network.protocol.CustomPacketPayloads;
 import top.theillusivec4.champions.network.protocol.game.ClientboundChampionBossEventPacket;
 
+/**
+ * Common
+ */
 public final class ClientGamePacketListener {
 
   public static void register(IEventBus modEventBus) {

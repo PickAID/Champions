@@ -10,11 +10,12 @@ import net.minecraft.network.codec.StreamCodec;
 import top.theillusivec4.champions.champion.affix.Affix;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * 记录拥有的词缀数据
- * 内含容器对象，不宜作为记录
+ * 内含容器对象，不宜作为记录类
  */
 @SuppressWarnings({"ClassCanBeRecord", "unused"})
 public class Affixes {
@@ -23,18 +24,25 @@ public class Affixes {
     ByteBufCodecs.collection(ArrayList::new, Affix.STREAM_CODEC), Affixes::getAffixes,
     Affixes::new
   );
-  private static final Codec<List<Holder<Affix>>> AFFIXES_CODEC = Affix.REFERENCE_CODEC.listOf();
   public static final Codec<Affixes> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-    AFFIXES_CODEC.fieldOf("affixes").forGetter(Affixes::getAffixes)
-  ).apply(instance, Affixes::new));
+    Affix.REFERENCE_CODEC.listOf().fieldOf("affixes").forGetter(Affixes::getAffixes)
+  ).apply(instance, Affixes::createOrEmpty));
 
   public static final MapCodec<Affixes> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    AFFIXES_CODEC.fieldOf("affixes").forGetter(Affixes::getAffixes)
+    Affix.REFERENCE_CODEC.listOf().fieldOf("affixes").forGetter(Affixes::getAffixes)
   ).apply(instance, Affixes::new));
   private final List<Holder<Affix>> affixes;
 
   public static Affixes.Mutable mutable() {
     return new Mutable();
+  }
+
+  public static Affixes createOrEmpty(List<Holder<Affix>> affixes) {
+    if (affixes.isEmpty()) {
+      return EMPTY;
+    } else {
+      return new Affixes(affixes);
+    }
   }
 
   private Affixes(List<Holder<Affix>> affixes) {
@@ -91,16 +99,28 @@ public class Affixes {
       this.affixes = new ArrayList<>();
     }
 
+    public void addAll(Collection<? extends Holder<Affix>> affixes) {
+      for (Holder<Affix> affix : affixes) {
+        this.add(affix);
+      }
+    }
+
     public void add(Holder<Affix> affix) {
-      affixes.add(affix);
+      if (!this.affixes.contains(affix)) {
+        this.affixes.add(affix);
+      }
+    }
+
+    public void clear() {
+      this.affixes.clear();
     }
 
     public boolean contains(Holder<Affix> affix) {
-      return affixes.contains(affix);
+      return this.affixes.contains(affix);
     }
 
     public void remove(Holder<Affix> affix) {
-      affixes.remove(affix);
+      this.affixes.remove(affix);
     }
 
     public Affixes toImmutable() {

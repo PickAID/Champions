@@ -43,10 +43,12 @@ public final class LootContextBasedValues {
     return new Product(multiplicand, multiplier);
   }
 
+  @Deprecated
   public static <T> LootContextBasedValue lootParam(Supplier<FloatLootParamSource<T>> sourceSupplier) {
     return lootParam(sourceSupplier.get());
   }
 
+  @Deprecated
   public static <T> LootContextBasedValue lootParam(FloatLootParamSource<T> source) {
     return new LootParam(source);
   }

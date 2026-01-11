@@ -18,7 +18,28 @@ public interface ChampionHandlerEntity extends ChampionHandler {
   void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer);
 
   /**
-   * 获取服务端的 BossBar
+   * 是否应该在视线触及时显示生命值覆盖层
+   */
+  default boolean shouldDisplayHealthOverlay() {
+    return this.isValid() && !this.isBoss();
+  }
+
+  /**
+   * 应该生成粒子效果吗
+   */
+  default boolean shouldDisplayParticles() {
+    return this.isValid();
+  }
+
+  /**
+   * 应该在生成时应用配置吗
+   */
+  default boolean shouldApplyConfigOnSpawn() {
+    return !this.isValid();
+  }
+
+  /**
+   * 获取BossBar，仅服务端有效。
    */
   Optional<ServerChampionBossEvent> getBossEvent();
 
@@ -26,18 +47,6 @@ public interface ChampionHandlerEntity extends ChampionHandler {
    * 获取冠军实体的刷怪蛋，可能为EMPTY
    */
   ItemStack getSpawnEgg();
-
-  /**
-   * 冠军实体是否已经经过生成处理
-   * 这个方法命名不太好 也许会改动
-   */
-  boolean isSpawned();
-
-  /**
-   * 设置冠军实体的生成处理标记
-   * 这个方法命名不太好 也许会改动
-   */
-  void setSpawned(boolean spawned);
 
   /**
    * 返回该实体的当前生命值
@@ -48,11 +57,6 @@ public interface ChampionHandlerEntity extends ChampionHandler {
    * 返回该实体的最大生命值，用于BossBar
    */
   float getMaxHealth();
-
-  /**
-   * 是否应该在视线触及时显示生命值覆盖层
-   */
-  default boolean isDisplayHealthOverlay() {
-    return this.isValid() && !this.isBoss();
-  }
 }
+
+

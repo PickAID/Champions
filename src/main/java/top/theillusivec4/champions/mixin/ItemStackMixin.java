@@ -10,7 +10,6 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.TypedEntityData;
-import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,11 +44,11 @@ public abstract class ItemStackMixin implements DataComponentHolder, TypedInstan
         // 高效的复制到临时变量
         Component finalBase = base;
         handlerItem.getPrefixName().ifPresentOrElse(component -> {
-          Component component1 = component.copy().append(CommonComponents.space()).append(finalBase).append(Component.translatable(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG));
+          Component component1 = component.copy().append(CommonComponents.space()).append(finalBase).append(Component.translatable(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG_KEY));
           cir.setReturnValue(component1);
         }, () -> {
           // 烈焰人强敌蛋
-          Component component1 = finalBase.copy().append(Component.translatable(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG));
+          Component component1 = finalBase.copy().append(Component.translatable(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG_KEY));
           cir.setReturnValue(component1);
         });
       }

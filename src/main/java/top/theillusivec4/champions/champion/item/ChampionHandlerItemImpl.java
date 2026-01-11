@@ -13,7 +13,7 @@ import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
-import top.theillusivec4.champions.champion.ChampionDefaultProperties;
+import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
@@ -152,22 +152,40 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
   }
 
   @Override
-  public Affixes getAllAffixes() {
+  public Affixes getAffixes() {
     return this.itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY);
   }
 
   @Override
   public int getLevel() {
     if (this.itemStack.has(DataComponents.LEVEL)) {
-      return this.itemStack.getOrDefault(DataComponents.LEVEL, 1);
+      return this.itemStack.getOrDefault(DataComponents.LEVEL, ChampionDefaultConfigs.EMPTY_LEVEL);
     }
 
-    return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultProperties.DEFAULT_LEVEL);
+    return this.getRank().map(rank -> rank.value().level()).orElse(ChampionDefaultConfigs.EMPTY_LEVEL);
   }
 
   @Override
   public void setLevel(int level) {
-    this.itemStack.set(DataComponents.LEVEL, Math.clamp(level, ChampionDefaultProperties.MIN_LEVEL, ChampionDefaultProperties.MAX_LEVEL));
+    if (level <= ChampionDefaultConfigs.EMPTY_LEVEL) {
+      this.itemStack.remove(DataComponents.LEVEL);
+    } else {
+      this.itemStack.set(DataComponents.LEVEL, Math.clamp(level, ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL));
+    }
+  }
+
+  @Override
+  public boolean isBoss() {
+    return this.itemStack.getOrDefault(DataComponents.BOSS, false);
+  }
+
+  @Override
+  public void setBoss(boolean boss) {
+    if (boss) {
+      this.itemStack.set(DataComponents.BOSS, true);
+    } else {
+      this.itemStack.remove(DataComponents.BOSS);
+    }
   }
 
   @Override
@@ -176,12 +194,16 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
       return this.itemStack.getOrDefault(DataComponents.COLOR, -1);
     }
 
-    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultProperties.DEFAULT_COLOR);
+    return this.getRank().map(rank -> rank.value().color()).orElse(ChampionDefaultConfigs.DEFAULT_COLOR);
   }
 
   @Override
   public void setColor(int color) {
-    this.itemStack.set(DataComponents.COLOR, ARGB.opaque(color));
+    if (color == ChampionDefaultConfigs.DEFAULT_COLOR) {
+      this.itemStack.remove(DataComponents.COLOR);
+    } else {
+      this.itemStack.set(DataComponents.COLOR, ARGB.opaque(color));
+    }
   }
 
   @Override
@@ -212,16 +234,6 @@ public class ChampionHandlerItemImpl implements ChampionHandlerItem {
     } else {
       this.itemStack.set(DataComponents.PREFIX_NAME, name);
     }
-  }
-
-  @Override
-  public boolean isBoss() {
-    return this.itemStack.getOrDefault(DataComponents.BOSS, false);
-  }
-
-  @Override
-  public void setBoss(boolean boss) {
-    this.itemStack.set(DataComponents.BOSS, true);
   }
 
 }

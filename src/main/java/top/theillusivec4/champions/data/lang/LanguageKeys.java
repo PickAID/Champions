@@ -7,7 +7,7 @@ import top.theillusivec4.champions.util.Utils;
 
 public final class LanguageKeys {
   // Item
-  public static final String SUFFIX_ITEM_CHAMPION_SPAWN_EGG = "suffix.item.champion_spawn_egg";
+  public static final String SUFFIX_ITEM_CHAMPION_SPAWN_EGG_KEY = "suffix.item.champion_spawn_egg";
   // ToolTip
   public static final String TOOLTIP_RANK_KEY = tooltipKey("rank");
   public static final String TOOLTIP_LEVEL_KEY = tooltipKey("level");
@@ -20,6 +20,9 @@ public final class LanguageKeys {
   // Commands
   public static final String COMMANDS_AFFIX_SUCCESS_KEY = commandsKey("affix.success");
   public static final String COMMANDS_LEVEL_SUCCESS_KEY = commandsKey("level.success");
+  public static final String COMMANDS_ERROR_NO_CONFIG_SELECTOR_ON_CLIENT_KEY = commandsKey("error.no_config_selector_on_client");
+  public static final String COMMANDS_ERROR_INVALID_CONFIG_SELECTOR_KEY = commandsKey("error.invalid_config_selector");
+  public static final String COMMANDS_CONFIG_SELECTOR_SUCCESS_KEY = commandsKey("config_selector.success");
   // CreativeModeTab
   public static final String ITEM_GROUP_CHAMPION_SPAWN_EGGS = itemGroup("champion_spawn_eggs");
   public static final String ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS = itemGroup("custom_champion_spawn_eggs");

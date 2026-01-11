@@ -11,7 +11,7 @@ import top.theillusivec4.champions.registry.BuiltInRegistries;
 import java.util.function.Function;
 
 public interface AffixLocationBasedEffect extends LootContextUser {
-  Codec<AffixLocationBasedEffect> CODEC = Codec.lazyInitialized(() -> BuiltInRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE.byNameCodec().dispatch(AffixLocationBasedEffect::codec, Function.identity()));
+  Codec<AffixLocationBasedEffect> CODEC = BuiltInRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE.byNameCodec().dispatch(AffixLocationBasedEffect::codec, Function.identity());
 
   void onChangedBlock(LootContext context, int level, Entity entity, Vec3 origin, boolean becameActive);
 

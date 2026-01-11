@@ -12,7 +12,7 @@ public class ZhCn extends ChampionsLanguageProvider {
 
   @Override
   protected void addTranslations() {
-    add(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG, "强敌蛋");
+    add(LanguageKeys.SUFFIX_ITEM_CHAMPION_SPAWN_EGG_KEY, "强敌蛋");
     add(SpawnEggCommand.SUCCESS_KEY, "已给予%s物品");
     add(SpawnEggCommand.FAILED_KEY, "物品%s不是一个刷怪蛋");
     add(LanguageKeys.TOOLTIP_RANK_KEY, "头衔：");

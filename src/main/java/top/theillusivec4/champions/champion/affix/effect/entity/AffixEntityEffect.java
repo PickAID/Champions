@@ -11,7 +11,7 @@ import top.theillusivec4.champions.registry.BuiltInRegistries;
 import java.util.function.Function;
 
 public interface AffixEntityEffect extends AffixLocationBasedEffect {
-  Codec<AffixEntityEffect> CODEC = Codec.lazyInitialized(() -> BuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE.byNameCodec().dispatch(AffixEntityEffect::codec, Function.identity()));
+  Codec<AffixEntityEffect> CODEC = BuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE.byNameCodec().dispatch(AffixEntityEffect::codec, Function.identity());
 
   void apply(LootContext context, int level, Entity entity, Vec3 origin);
 
