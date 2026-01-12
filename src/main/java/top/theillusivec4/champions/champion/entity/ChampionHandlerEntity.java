@@ -23,7 +23,7 @@ public interface ChampionHandlerEntity extends ChampionHandler {
    * 是否应该在视线触及时显示生命值覆盖层
    */
   default boolean displayHealthOverlay() {
-    return this.isValid() && !this.isBoss();
+    return this.isValid() && !this.isBossOrDefault();
   }
 
   /**

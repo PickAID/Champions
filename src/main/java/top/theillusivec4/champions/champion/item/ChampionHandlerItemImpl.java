@@ -13,7 +13,6 @@ import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.component.DataComponents;
 import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 
@@ -87,13 +86,13 @@ public record ChampionHandlerItemImpl(ItemStack itemStack) implements ChampionHa
   }
 
   @Override
-  public Affixes getAffixesOrDefault() {
-    return this.itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY);
+  public Optional<Affixes> getAffixes() {
+    return Optional.ofNullable(this.itemStack.get(DataComponents.AFFIXES));
   }
 
   @Override
-  public Optional<Affixes> getAffixes() {
-    return Optional.empty();
+  public Affixes getAffixesOrDefault() {
+    return this.itemStack.getOrDefault(DataComponents.AFFIXES, Affixes.EMPTY);
   }
 
   @Override
@@ -106,11 +105,6 @@ public record ChampionHandlerItemImpl(ItemStack itemStack) implements ChampionHa
   }
 
   @Override
-  public int getLevelOrDefault() {
-    return this.getLevel().orElse(ChampionDefaultConfigs.DEFAULT_LEVEL);
-  }
-
-  @Override
   public void setLevel(int level) {
     if (level <= ChampionDefaultConfigs.DEFAULT_LEVEL) {
       this.itemStack.remove(DataComponents.LEVEL);
@@ -120,8 +114,18 @@ public record ChampionHandlerItemImpl(ItemStack itemStack) implements ChampionHa
   }
 
   @Override
-  public boolean isBoss() {
-    return this.itemStack.getOrDefault(DataComponents.BOSS, false);
+  public int getLevelOrDefault() {
+    return this.getLevel().orElse(ChampionDefaultConfigs.DEFAULT_LEVEL);
+  }
+
+  @Override
+  public Optional<Boolean> isBoss() {
+    return Optional.ofNullable(this.itemStack.get(DataComponents.BOSS));
+  }
+
+  @Override
+  public boolean isBossOrDefault() {
+    return this.isBoss().orElse(false);
   }
 
   @Override

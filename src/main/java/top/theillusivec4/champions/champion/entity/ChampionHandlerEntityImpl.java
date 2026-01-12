@@ -30,7 +30,6 @@ import top.theillusivec4.champions.champion.affix.effect.ConditionalEffect;
 import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
 import top.theillusivec4.champions.champion.affix.event.ChampionEventHooks;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
@@ -158,8 +157,13 @@ public record ChampionHandlerEntityImpl(Entity entity) implements ChampionHandle
   }
 
   @Override
-  public boolean isBoss() {
-    return this.entity.getExistingData(Attachments.BOSS).orElse(false);
+  public Optional<Boolean> isBoss() {
+    return this.entity.getExistingData(Attachments.BOSS);
+  }
+
+  @Override
+  public boolean isBossOrDefault() {
+    return this.isBoss().orElse(false);
   }
 
   @Override
