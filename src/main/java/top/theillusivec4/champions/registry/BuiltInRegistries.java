@@ -41,7 +41,7 @@ public final class BuiltInRegistries {
     modEventBus.addListener(DataPackRegistryEvent.NewRegistry.class, event -> {
       event.dataPackRegistry(Registries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
       event.dataPackRegistry(Registries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
-      event.dataPackRegistry(Registries.CHAMPION_SPAWN_EGG, ChampionSpawnEgg.DIRECT_CODEC, ChampionSpawnEgg.DIRECT_CODEC);
+      event.dataPackRegistry(Registries.SPAWN_EGG, ChampionSpawnEgg.DIRECT_CODEC, ChampionSpawnEgg.DIRECT_CODEC);
     });
   }
 

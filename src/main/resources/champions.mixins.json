@@ -25,6 +25,7 @@
     "ShulkerBulletMixin",
     "SlimeMixin",
     "SmallFireballMixin",
+    "WitherBossMixin",
     "WitherSkullMixin"
   ],
   "client": [

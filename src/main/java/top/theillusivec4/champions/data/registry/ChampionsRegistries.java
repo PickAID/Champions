@@ -10,7 +10,7 @@ public final class ChampionsRegistries {
   public static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()
     .add(Registries.AFFIX, Affixes::bootstrap)
     .add(Registries.RANK, Ranks::bootstrap)
-    .add(Registries.CHAMPION_SPAWN_EGG, ChampionSpawnEggs::bootstrap);
+    .add(Registries.SPAWN_EGG, ChampionSpawnEggs::bootstrap);
 
   private ChampionsRegistries() {
   }

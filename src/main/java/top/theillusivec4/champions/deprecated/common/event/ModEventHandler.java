@@ -147,7 +147,7 @@ public class ModEventHandler {
 
   @SubscribeEvent
   private void onClientSetup(final FMLClientSetupEvent event) {
-    Champions.getInstance().getModContainer().registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+//    Champions.getInstance().getModContainer().registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
   }
 
   @SubscribeEvent

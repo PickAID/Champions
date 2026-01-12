@@ -41,10 +41,9 @@ public final class ChampionHealthOverlay {
   }
 
   public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    // 准星处的实体。
     if (ChampionsClient.getInstance().displayHealthOverlay()) {
-      /*
-      LOOK 模式显示准星处实体
-       */
+
       Entity entity = ClientUtil.getMouseEntity(deltaTracker.getGameTimeDeltaTicks());
       if (entity != null) {
         ChampionUtil.getHandler(entity).ifPresent(handler -> {
@@ -63,9 +62,9 @@ public final class ChampionHealthOverlay {
           }
         });
       }
-
     }
 
+    // 独立的BossBar。
     for (ClientChampionBossEvent event : this.events.values()) {
       this.render(guiGraphics, event);
       if (this.y >= guiGraphics.guiHeight() / 3) {
@@ -97,15 +96,12 @@ public final class ChampionHealthOverlay {
   private void render(GuiGraphics guiGraphics, ClientChampionBossEvent event) {
     Component name = event.getName();
     /*
-    水平位置总是重新赋值
-    垂直位置总是递增
+    minecraft.font.lineHeight = 9
+    Y坐标：先渲染，然后向下偏移自身所占的Y大小
      */
     int startX;
     int startY = y;
-
-    /*
-    等级显示
-     */
+    // 显示等级
     if (event.getLevel() <= 5) {
       // 小于5的等级⭐⭐⭐⭐⭐
       startX = guiGraphics.guiWidth() / 2 - 5 - 5 * (event.getLevel() - 1);
@@ -118,28 +114,19 @@ public final class ChampionHealthOverlay {
       startX = startX + 10 - this.getClient().font.width(msg) / 2;
       guiGraphics.drawString(this.getClient().font, msg, startX, startY, 16777215, true);
     }
-
-    /*
-    名称显示
-     */
     startX = guiGraphics.guiWidth() / 2 - this.getClient().font.width(name) / 2;
-    startY += 12;
+    startY += 12; // 星星的
+    // 显示名称
     this.drawString(guiGraphics, startX, startY, event);
-
     startX = guiGraphics.guiWidth() / 2 - 91;
-    startY += 9;
-    // 血量条显示
+    startY += 9; // 名称的
+    // 显示BossBar。
     this.drawBar(guiGraphics, startX, startY, event);
-
-    /*
-    词缀显示
-     */
     startX = guiGraphics.guiWidth() / 2 - this.getClient().font.width(event.getAffixesComponent()) / 2;
-    startY += 6;
+    startY += 6; // BossBar的
+    // 显示词缀
     this.drawAffixes(guiGraphics, startX, startY, event);
-
-    // 用于可能的后续渲染
-    this.y = startY;
+    this.y = startY += 9 + 3; // 词缀的 基础的
   }
 
   private void drawAffixes(GuiGraphics guiGraphics, int x, int y, ClientChampionBossEvent event) {

@@ -18,7 +18,7 @@ import java.util.Objects;
 
 @Mod(value = Champions.MODID, dist = Dist.CLIENT)
 public class ChampionsClient {
-  public static final Logger LOGGER = LogManager.getLogger();
+  private static final Logger LOGGER = LogManager.getLogger();
   private static ChampionsClient instance;
   private final Gui gui = new Gui();
   private final ClientConfig clientConfig;

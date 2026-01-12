@@ -33,7 +33,7 @@ public class ZhCn extends ChampionsLanguageProvider {
     add(LanguageKeys.ITEM_GROUP_CHAMPION_SPAWN_EGGS, "冠军：强敌 | 刷怪蛋");
     add(LanguageKeys.ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS, "冠军：强敌 | 自定义刷怪蛋");
 
-    add(LanguageKeys.CONFIG_DISPLAY_HEALTH_OVERLAY, "显示生命值覆盖层");
+    add(LanguageKeys.CONFIG_DISPLAY_CHAMPION_OVERLAY_KEY, "显示生命值覆盖层");
 
     add(LanguageUtil.getLevelKey(0), "无");
     add(LanguageUtil.getLevelKey(1), "⭐");
@@ -41,6 +41,8 @@ public class ZhCn extends ChampionsLanguageProvider {
     add(LanguageUtil.getLevelKey(3), "⭐⭐⭐");
     add(LanguageUtil.getLevelKey(4), "⭐⭐⭐⭐");
     add(LanguageUtil.getLevelKey(5), "⭐⭐⭐⭐⭐");
+
+    add(LanguageKeys.STAT_CHAMPION_MOBS_KILLED_KEY, "冠军生物击杀数");
 
     addRank(Ranks.COMMON, "普通");
     addRank(Ranks.SKILLED, "稀有");
