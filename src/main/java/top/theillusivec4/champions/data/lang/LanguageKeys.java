@@ -1,6 +1,8 @@
 package top.theillusivec4.champions.data.lang;
 
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
+import top.theillusivec4.champions.stats.Stats;
 import top.theillusivec4.champions.util.Utils;
 
 /**
@@ -32,7 +34,9 @@ public final class LanguageKeys {
   public static final String ITEM_GROUP_CHAMPION_SPAWN_EGGS = itemGroup("champion_spawn_eggs");
   public static final String ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS = itemGroup("custom_champion_spawn_eggs");
   // 配置
-  public static final String CONFIG_DISPLAY_HEALTH_OVERLAY = configKey("display_health_overlay");
+  public static final String CONFIG_DISPLAY_CHAMPION_OVERLAY_KEY = configKey("display_champion_overlay");
+  // 统计信息
+  public static final String STAT_CHAMPION_MOBS_KILLED_KEY = statKey(Stats.CHAMPION_MOBS_KILLED.getId());
 
   static String itemGroup(String name) {
     return Util.makeDescriptionId("itemGroup", Utils.id(name));
@@ -56,6 +60,10 @@ public final class LanguageKeys {
 
   static String configKey(String name) {
     return Util.makeDescriptionId("configuration", Utils.id(name));
+  }
+
+  static String statKey(Identifier id) {
+    return Util.makeDescriptionId("stat", id);
   }
 
   private LanguageKeys() {

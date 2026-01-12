@@ -84,21 +84,21 @@ public final class AffixEntityEffects {
     );
   }
 
-  public static AffixEntityEffect iterationEntity(double horizontalScale, double verticalScale, boolean inflate, AffixEntityEffect effect) {
-    return new IterationEntity(horizontalScale, verticalScale, inflate, Optional.empty(), effect);
-  }
-
-  public static AffixEntityEffect iterationEntity(double horizontalScale, double verticalScale, boolean inflate, EntityPredicate.Builder predicate, AffixEntityEffect effect) {
-    return new IterationEntity(horizontalScale, verticalScale, inflate, Optional.of(predicate.build()), effect);
-  }
+//  public static AffixEntityEffect iterationEntity(double horizontalScale, double verticalScale, boolean inflate, AffixEntityEffect effect) {
+//    return new IterationEntity(horizontalScale, verticalScale, inflate, Optional.empty(), effect);
+//  }
+//
+//  public static AffixEntityEffect iterationEntity(double horizontalScale, double verticalScale, boolean inflate, EntityPredicate.Builder predicate, AffixEntityEffect effect) {
+//    return new IterationEntity(horizontalScale, verticalScale, inflate, Optional.of(predicate.build()), effect);
+//  }
 
 
   public static AffixEntityEffect iterationEntity(double horizontalScale, double verticalScale, AffixEntityEffect effect) {
-    return new IterationEntity(horizontalScale, verticalScale, true, Optional.empty(), effect);
+    return new IterationEntity(horizontalScale, verticalScale, Optional.empty(), effect);
   }
 
   public static AffixEntityEffect iterationEntity(double horizontalScale, double verticalScale, EntityPredicate.Builder predicate, AffixEntityEffect effect) {
-    return new IterationEntity(horizontalScale, verticalScale, true, Optional.of(predicate.build()), effect);
+    return new IterationEntity(horizontalScale, verticalScale, Optional.of(predicate.build()), effect);
   }
 
   public static AffixEntityEffect playSound(List<Holder<SoundEvent>> soundEvents, FloatProvider volume, FloatProvider pitch) {

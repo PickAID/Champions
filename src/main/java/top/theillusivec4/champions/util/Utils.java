@@ -52,17 +52,17 @@ public class Utils {
   }
 
   public static void createServerConfig(ModConfigSpec spec, String suffix) {
-    String fileName = "champions-" + suffix + ".toml";
-    Champions.getInstance().getModContainer().registerConfig(ModConfig.Type.SERVER, spec, fileName);
-    File defaults = FMLPaths.GAMEDIR.get().resolve("defaultconfigs").resolve(fileName).toFile();
-
-    if (!defaults.exists()) {
-      try {
-        FileUtils.copyInputStreamToFile(Objects.requireNonNull(Champions.class.getClassLoader().getResourceAsStream(fileName)), defaults);
-      } catch (IOException e) {
-        Champions.LOGGER.error("Error creating default config for {}", fileName);
-      }
-    }
+//    String fileName = "champions-" + suffix + ".toml";
+//    Champions.getInstance().getModContainer().registerConfig(ModConfig.Type.SERVER, spec, fileName);
+//    File defaults = FMLPaths.GAMEDIR.get().resolve("defaultconfigs").resolve(fileName).toFile();
+//
+//    if (!defaults.exists()) {
+//      try {
+//        FileUtils.copyInputStreamToFile(Objects.requireNonNull(Champions.class.getClassLoader().getResourceAsStream(fileName)), defaults);
+//      } catch (IOException e) {
+//        Champions.LOGGER.error("Error creating default config for {}", fileName);
+//      }
+//    }
   }
 
   public static Identifier id(final String path) {

@@ -25,7 +25,7 @@ public final class ChampionSpawnEggs {
   }
 
   private static ResourceKey<ChampionSpawnEgg> register(String name) {
-    return ResourceKey.create(Registries.CHAMPION_SPAWN_EGG, Utils.id(name));
+    return ResourceKey.create(Registries.SPAWN_EGG, Utils.id(name));
   }
 
   private static void register(BootstrapContext<ChampionSpawnEgg> context, ResourceKey<ChampionSpawnEgg> key, ChampionSpawnEgg.Builder builder) {

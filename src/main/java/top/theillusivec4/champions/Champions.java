@@ -48,6 +48,7 @@ import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.particle.ParticleTypes;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
 import top.theillusivec4.champions.server.champion.config.ChampionConfigSelectorManager;
+import top.theillusivec4.champions.server.config.ServerConfig;
 import top.theillusivec4.champions.stats.Stats;
 import top.theillusivec4.champions.util.Utils;
 import top.theillusivec4.champions.world.effect.MobEffects;
@@ -55,6 +56,7 @@ import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
 import top.theillusivec4.champions.world.item.ItemEventListener;
 import top.theillusivec4.champions.world.item.Items;
+import top.theillusivec4.champions.world.loot.modifier.LootModifiers;
 import top.theillusivec4.champions.world.loot.predicates.LootItemConditions;
 
 import java.util.Objects;
@@ -68,8 +70,8 @@ public class Champions {
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
   // champion instance
   private static Champions instance;
-  private final ModContainer modContainer;
   private final CommonConfig commonConfig;
+  private final ServerConfig serverConfig;
   private ChampionConfigSelectorManager championConfigSelectorManager;
 
   public static Champions getInstance() {
@@ -77,26 +79,19 @@ public class Champions {
   }
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
-//    modEventBus.register(this);
     instance = this;
-    this.modContainer = modContainer;
     this.commonConfig = new CommonConfig();
+    this.serverConfig = new ServerConfig();
     modContainer.registerConfig(ModConfig.Type.COMMON, this.commonConfig.getConfigSpec());
-//    modEventBus.register(new ModEventHandler());
-
+    modContainer.registerConfig(ModConfig.Type.SERVER, this.serverConfig.getConfigSpec());
     Items.register(modEventBus);
     ParticleTypes.register(modEventBus);
     MobEffects.register(modEventBus);
     EntityTypes.register(modEventBus);
-//    LootModifiers.register(modEventBus);
     Stats.register(modEventBus);
     DataComponents.register(modEventBus);
     CreativeModeTabs.register(modEventBus);
-//    Stats.register(modEventBus);
     Capabilities.register(modEventBus);
-
-//    ChampionsRegistry.register(modEventBus);
-
     BuiltInRegistries.register(modEventBus);
     AffixEffectComponents.register(modEventBus);
     LootContextBasedValues.register(modEventBus);
@@ -106,17 +101,23 @@ public class Champions {
     LootParamSourceTypes.register(modEventBus);
     Attachments.register(modEventBus);
     LootItemConditions.register(modEventBus);
+    LootModifiers.register(modEventBus);
     DataEventListener.register(modEventBus);
     ClientGamePacketListener.register(modEventBus);
     EntityEventListener.register();
     ItemEventListener.register();
     ReloadEventListener.register();
     Commands.register();
+
+//    modEventBus.register(this);
+//    modEventBus.register(new ModEventHandler());
+//    LootModifiers.register(modEventBus);
+//    Stats.register(modEventBus);
+//    ChampionsRegistry.register(modEventBus);
     // register champions config
 //  modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
 //  modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
 //  modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
-
 
     // register GameStages compat config, if gameStages loaded
 
@@ -133,12 +134,12 @@ public class Champions {
 
   }
 
-  public ModContainer getModContainer() {
-    return modContainer;
-  }
-
   public CommonConfig getCommonConfig() {
     return commonConfig;
+  }
+
+  public ServerConfig getServerConfig() {
+    return serverConfig;
   }
 
   public ChampionConfigSelectorManager getChampionConfigSelectorManager() {
