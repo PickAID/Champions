@@ -23,10 +23,11 @@ import java.util.Optional;
  * @param predicate
  * @param effect
  */
-public record IterationEntity(double horizontalScale, double verticalScale, Optional<EntityPredicate> predicate, AffixEntityEffect effect) implements AffixEntityEffect {
+public record IterationEntity(double horizontalScale, double verticalScale, boolean inflate, Optional<EntityPredicate> predicate, AffixEntityEffect effect) implements AffixEntityEffect {
   public static final MapCodec<IterationEntity> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
     Codec.doubleRange(1.0, 1024.0).fieldOf("horizontal_scale").forGetter(IterationEntity::horizontalScale),
     Codec.doubleRange(1.0, 1024.0).fieldOf("vertical_scale").forGetter(IterationEntity::verticalScale),
+    Codec.BOOL.optionalFieldOf("inflate", true).forGetter(IterationEntity::inflate),
     EntityPredicate.CODEC.optionalFieldOf("predicate").forGetter(IterationEntity::predicate),
     AffixEntityEffect.CODEC.fieldOf("effect").forGetter(IterationEntity::effect)
   ).apply(instance, IterationEntity::new));
@@ -34,8 +35,20 @@ public record IterationEntity(double horizontalScale, double verticalScale, Opti
   @Override
   public void apply(LootContext context, int level, Entity entity, Vec3 origin) {
     ServerLevel serverLevel = context.getLevel();
-    AABB inflated = entity.getBoundingBox().inflate(this.horizontalScale, this.horizontalScale, this.verticalScale);
-    for (Entity target : serverLevel.getEntities(entity, inflated)) {
+    AABB aabb;
+    if (this.inflate){
+      aabb = entity.getBoundingBox().inflate(this.horizontalScale, this.verticalScale, this.horizontalScale);
+    }else {
+      aabb = new AABB(
+        entity.getX() - this.horizontalScale,
+        entity.getY() - this.verticalScale,
+        entity.getZ() - this.horizontalScale,
+        entity.getX() + this.horizontalScale,
+        entity.getY() + this.verticalScale,
+        entity.getZ() + this.horizontalScale
+      );
+    }
+    for (Entity target : serverLevel.getEntities(entity, aabb)) {
       if (this.predicate.map(entityPredicate -> entityPredicate.matches(serverLevel, origin, target)).orElse(true)) {
         this.effect.apply(context, level, target, target.position());
       }

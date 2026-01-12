@@ -125,6 +125,7 @@ public interface ChampionHandler {
     config.prefixName().ifPresent(this::setPrefixName);
     config.level().ifPresent(this::setLevel);
     config.color().ifPresent(this::setColor);
+    config.boss().ifPresent(this::setBoss);
     config.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
   }
 
@@ -135,10 +136,10 @@ public interface ChampionHandler {
     return new ChampionConfig(
       this.getRank(),
       this.getPrefixName(),
-      Optional.of(this.getAffixesOrDefault()),
-      Optional.of(this.getLevelOrDefault()),
+      this.getAffixes(),
+      this.getLevel(),
       this.getColor(),
-      Optional.of(this.isBoss())
+      this.isBoss()
     );
   }
 
@@ -169,9 +170,14 @@ public interface ChampionHandler {
   int getLevelOrDefault();
 
   /**
+   * 是否为首领怪物
+   */
+  Optional<Boolean> isBoss();
+
+  /**
    * 是否为首领怪物，如果是，当作为刷怪蛋生成生物时会为其设置服务端BossBar数据。
    */
-  boolean isBoss();
+  boolean isBossOrDefault();
 
   /**
    * 设置是否为首领怪物。
@@ -219,6 +225,6 @@ public interface ChampionHandler {
    * 一般指该对象是否真的具有数据，如果所有数据均为空则为无效
    */
   default boolean isValid() {
-    return !this.getAffixesOrDefault().isEmpty() || this.getLevelOrDefault() > ChampionDefaultConfigs.DEFAULT_LEVEL || this.getColor().isPresent() || this.isBoss();
+    return !this.getAffixesOrDefault().isEmpty() || this.getLevel().isPresent() || this.getColor().isPresent() || this.isBoss().isPresent();
   }
 }

@@ -235,7 +235,7 @@ public final class Affixes {
             ),
             AffixEntityEffects.iterationEntity(
               5.0,
-              1.0,
+              0.0,
               AffixEntityEffects.applyMobEffect(
                 MobEffects.POISON,
                 LootContextBasedValues.constant(5),

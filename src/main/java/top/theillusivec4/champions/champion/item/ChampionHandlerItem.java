@@ -47,9 +47,15 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
       Component.translatable(LanguageKeys.TOOLTIP_PREFIX_NAME_KEY).withStyle(ChatFormatting.GRAY)
         .append(component.copy().withColor(this.getColorOrDefault()))
     ));
+    // 首领
+    Optional<Boolean> optional3 = this.isBoss();
+    optional3.ifPresent(boss -> consumer.accept(
+      Component.translatable(LanguageKeys.TOOLTIP_BOSS_KEY).withStyle(ChatFormatting.GRAY)
+      .append(boss ? Component.translatable(LanguageKeys.TOOLTIP_IS_BOSS_KEY) : Component.translatable(LanguageKeys.TOOLTIP_NOT_BOSS_KEY))
+    ));
     // 已有词缀
-    Optional<Affixes> optional3 = this.getAffixes();
-    optional3.ifPresent(affixes -> {
+    Optional<Affixes> optional4 = this.getAffixes();
+    optional4.ifPresent(affixes -> {
       if (!affixes.isEmpty()) {
         consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_AFFIXES_KEY).withStyle(ChatFormatting.GRAY));
         for (Holder<Affix> affix : affixes.getAffixes()) {
@@ -74,7 +80,6 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
         .append(CommonComponents.space())
         .append(Component.translatable(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, data.type().getDescription()).withStyle(ChatFormatting.WHITE)));
     }
-
 
     return Optional.empty();
   }
