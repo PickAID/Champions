@@ -7,7 +7,7 @@ import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import top.theillusivec4.champions.champion.affix.LatestDamage;
+import top.theillusivec4.champions.champion.affix.Damage;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParams;
 
 import java.util.Optional;
@@ -39,9 +39,9 @@ public record LatestDamageCondition(Optional<MinMaxBounds.Ints> count, Optional<
 
   @Override
   public boolean test(LootContext context) {
-    DamageSource damageSource = context.getOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DAMAGE_SOURCE);
-    LatestDamage latestDamage = context.getOptionalParameter(LootContextParams.LATEST_DAMAGE);
-    return damageSource != null && latestDamage != null && latestDamage.damageType().map(damageTypeHolder -> damageTypeHolder == damageSource.typeHolder()).orElse(true) && count.map(ints -> ints.matches(latestDamage.damageCount())).orElse(true);
+    DamageSource source = context.getOptionalParameter(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DAMAGE_SOURCE);
+    Damage damage = context.getOptionalParameter(LootContextParams.LATEST_DAMAGE);
+    return source != null && damage != null && damage.damageType() == source.typeHolder() && count.map(ints -> ints.matches(damage.damageCount())).orElse(true);
   }
 
   @Override

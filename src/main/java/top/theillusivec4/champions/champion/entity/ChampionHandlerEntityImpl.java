@@ -24,11 +24,11 @@ import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
-import top.theillusivec4.champions.champion.affix.LatestDamage;
+import top.theillusivec4.champions.champion.affix.Damage;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.affix.effect.ConditionalEffect;
 import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
-import top.theillusivec4.champions.champion.affix.event.ChampionEventHooks;
+import top.theillusivec4.champions.champion.event.ChampionEventHooks;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
@@ -230,39 +230,6 @@ public record ChampionHandlerEntityImpl(Entity entity) implements ChampionHandle
     }
   }
 
-  @Override
-  public void updateLatestDamage(Consumer<LatestDamage.Mutable> consumer) {
-    // 对于客户端，该数据只读。
-    if (!this.entity.level().isClientSide()) {
-      LatestDamage latestDamage = this.entity.getData(Attachments.LATEST_DAMAGE);
-      LatestDamage.Mutable mutable = latestDamage.toMutable();
-      consumer.accept(mutable);
-      this.entity.setData(Attachments.LATEST_DAMAGE, mutable.toImmutable());
-    }
-  }
-
-  @Override
-  public Optional<ServerChampionBossEvent> getBossEvent() {
-    // 对于客户端，该数据不可见。
-    if (!this.entity.level().isClientSide()) {
-      return this.entity.getExistingData(Attachments.SERVER_CHAMPION_BOSS_EVENT).orElse(Optional.empty());
-    }
-
-    return Optional.empty();
-  }
-
-  private void setBossEvent(@Nullable ServerChampionBossEvent event) {
-    if (event == null) {
-      Optional<ServerChampionBossEvent> optional = this.entity.removeData(Attachments.SERVER_CHAMPION_BOSS_EVENT);
-      if (optional != null && optional.isPresent()) {
-        ServerChampionBossEvent event1 = optional.get();
-        event1.removeAllPlayers();
-      }
-    } else {
-      this.entity.setData(Attachments.SERVER_CHAMPION_BOSS_EVENT, Optional.of(event));
-    }
-  }
-
   /**
    * 获取该冠军实体的刷怪蛋，只有在该实体的冠军配置不为空时才该返回具有数据的刷怪蛋
    *
@@ -300,9 +267,5 @@ public record ChampionHandlerEntityImpl(Entity entity) implements ChampionHandle
       return livingEntity.getMaxHealth();
     }
     return 1.0f;
-  }
-
-  private LatestDamage getLatestDamage() {
-    return this.entity.getData(Attachments.LATEST_DAMAGE);
   }
 }

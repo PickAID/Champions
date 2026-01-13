@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.Validatable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
-import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
+import top.theillusivec4.champions.champion.value.based.lootcontext.LootContextBasedValue;
 
 public record SubtractValue(LootContextBasedValue value) implements AffixValueEffect {
   public static final MapCodec<SubtractValue> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

@@ -1,10 +1,10 @@
-package top.theillusivec4.champions.champion.affix.lootcontextbasedvalue;
+package top.theillusivec4.champions.champion.value.based.lootcontext;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.champion.affix.LatestDamage;
+import top.theillusivec4.champions.champion.affix.Damage;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParams;
 import top.theillusivec4.champions.registry.Registries;
 
@@ -23,8 +23,8 @@ public final class LootParamSourceTypes {
   public static final class Floats {
     private static final DeferredRegister<FloatLootParamSource<?>> DEFERRED_REGISTER = DeferredRegister.create(Registries.FLOAT_LOOT_PARAM_SOURCE, Champions.MODID);
     //  public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<DamageSource>> DAMAGE_AMOUNT = register("damage_amount", new FloatLootParamSource<>(net.minecraft.world.level.storage.loot.parameters.LootContextParams.DAMAGE_SOURCE, damageSource -> damageSource.));
-    public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<LatestDamage>> LATEST_DAMAGE_COUNT = register("latest_damage_count", new FloatLootParamSource<>(LootContextParams.LATEST_DAMAGE, latestDamage -> (float) latestDamage.damageCount(), 0.0f));
-    public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<LatestDamage>> LATEST_DAMAGE_AMOUNT = register("latest_original_damage_amount", new FloatLootParamSource<>(LootContextParams.LATEST_DAMAGE, LatestDamage::damageAmount, 0.0f));
+    public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<Damage>> LATEST_DAMAGE_COUNT = register("latest_damage_count", new FloatLootParamSource<>(LootContextParams.LATEST_DAMAGE, latestDamage -> (float) latestDamage.damageCount(), 0.0f));
+    public static final DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<Damage>> LATEST_DAMAGE_AMOUNT = register("latest_original_damage_amount", new FloatLootParamSource<>(LootContextParams.LATEST_DAMAGE, Damage::damageAmount, 0.0f));
 
     private static <T> DeferredHolder<FloatLootParamSource<?>, FloatLootParamSource<T>> register(String name, FloatLootParamSource<T> floatLootParamSource) {
       return register(name, () -> floatLootParamSource);

@@ -23,10 +23,13 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
-import top.theillusivec4.champions.champion.affix.effect.*;
+import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffect;
+import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
+import top.theillusivec4.champions.champion.affix.effect.ConditionalEffect;
+import top.theillusivec4.champions.champion.affix.effect.TargetedConditionalEffect;
 import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffect;
-import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -52,12 +55,12 @@ public record Affix(Component description, DataComponentMap effects) {
     return new Builder();
   }
 
-  public void modifyKnockback(ServerLevel serverLevel, int level, Entity victim, DamageSource source, LatestDamage latestDamage, MutableFloat knockback) {
-    LootContext context = LootContextParamSets.knockback(serverLevel, victim, level, source, latestDamage, source.getDirectEntity(), source.getEntity());
+  public void modifyKnockback(ServerLevel serverLevel, int level, Entity victim, DamageSource source, Damage damage, MutableFloat knockback) {
+    LootContext context = LootContextParamSets.knockback(serverLevel, victim, level, source, damage, source.getDirectEntity(), source.getEntity());
     applyConditionalEffects(this.getEffects(AffixEffectComponents.KNOCKBACK), context, effect -> knockback.setValue(effect.process(context, level, knockback.floatValue())));
   }
 
-  public void modifyDamage(ServerLevel serverLevel, int level, Entity victim, DamageSource source, LatestDamage latestDamage, MutableFloat damage) {
+  public void modifyDamage(ServerLevel serverLevel, int level, Entity victim, DamageSource source, Damage latestDamage, MutableFloat damage) {
     LootContext context = LootContextParamSets.damage(serverLevel, victim, level, source, latestDamage, source.getDirectEntity(), source.getEntity());
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE), context, effect -> damage.setValue(effect.process(context, level, damage.floatValue())));
 
@@ -72,26 +75,26 @@ public record Affix(Component description, DataComponentMap effects) {
 //    }
   }
 
-  public void runInitialize(ServerLevel serverLevel, int level, Entity victim, Vec3 origin) {
-    LootContext lootContext = LootContextParamSets.location(serverLevel, victim, level, origin);
+  public void runInitialize(ServerLevel serverLevel, int level, Entity entity, Vec3 origin) {
+    LootContext lootContext = LootContextParamSets.location(serverLevel, entity, level, origin);
     for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.INITIALIZE)) {
-      effect.onChangedBlock(lootContext, level, victim, origin, true);
+      effect.onChangedBlock(lootContext, level, entity, origin, true);
     }
   }
 
-  public void stopInitialized(ServerLevel serverLevel, int level, Entity victim, Vec3 origin) {
-    LootContext lootContext = LootContextParamSets.location(serverLevel, victim, level, origin);
+  public void stopInitialized(ServerLevel serverLevel, int level, Entity entity, Vec3 origin) {
+    LootContext lootContext = LootContextParamSets.location(serverLevel, entity, level, origin);
     for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.INITIALIZE)) {
-      effect.onDeactivated(lootContext, level, victim, origin);
+      effect.onDeactivated(lootContext, level, entity, origin);
     }
   }
 
-  public void modifyHeal(ServerLevel serverLevel, int level, Entity victim, LatestDamage latestDamage, MutableFloat heal) {
-    LootContext lootContext = LootContextParamSets.heal(serverLevel, victim, level, latestDamage);
+  public void modifyHeal(ServerLevel serverLevel, int level, Entity victim, Damage damage, MutableFloat heal) {
+    LootContext lootContext = LootContextParamSets.heal(serverLevel, victim, level, damage);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.HEAL), lootContext, effect -> heal.setValue(effect.process(lootContext, level, heal.floatValue())));
   }
 
-  public void doPostAttack(ServerLevel serverLevel, int level, AffixTarget target, Entity victim, DamageSource source, LatestDamage latestDamage) {
+  public void doPostAttack(ServerLevel serverLevel, int level, AffixTarget target, Entity victim, DamageSource source, Damage damage) {
     for (TargetedConditionalEffect<AffixEntityEffect> effect : this.getEffects(AffixEffectComponents.POST_ATTACK)) {
       if (target == effect.enchanted()) {
         Entity targetEntity = switch (effect.affected()) {
@@ -101,7 +104,7 @@ public record Affix(Component description, DataComponentMap effects) {
         };
 
         if (targetEntity != null) {
-          LootContext lootContext = LootContextParamSets.postAttack(serverLevel, targetEntity, level, source, latestDamage, source.getEntity(), source.getDirectEntity());
+          LootContext lootContext = LootContextParamSets.postAttack(serverLevel, targetEntity, level, source, damage, source.getEntity(), source.getDirectEntity());
 
           if (effect.match(lootContext)) {
             effect.effect().apply(lootContext, level, targetEntity, targetEntity.position());
@@ -112,13 +115,13 @@ public record Affix(Component description, DataComponentMap effects) {
     }
   }
 
-  public void tick(ServerLevel serverLevel, int level, Entity entity, LatestDamage latestDamage) {
-    LootContext context = LootContextParamSets.tick(serverLevel, entity, level, latestDamage);
+  public void tick(ServerLevel serverLevel, int level, Entity entity, Damage damage) {
+    LootContext context = LootContextParamSets.tick(serverLevel, entity, level, damage);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TICK), context, effect -> effect.apply(context, level, entity, entity.position()));
   }
 
-  public void modifyDamageProtection(ServerLevel serverLevel, int level, Entity victim, DamageSource source, LatestDamage latestDamage, MutableFloat protection) {
-    LootContext context = LootContextParamSets.damageProtection(serverLevel, victim, level, source, latestDamage, source.getDirectEntity(), source.getEntity());
+  public void modifyDamageProtection(ServerLevel serverLevel, int level, Entity victim, DamageSource source, Damage damage, MutableFloat protection) {
+    LootContext context = LootContextParamSets.damageProtection(serverLevel, victim, level, source, damage, source.getDirectEntity(), source.getEntity());
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE_PROTECTION), context, effect -> protection.setValue(effect.process(context, level, protection.floatValue())));
   }
 

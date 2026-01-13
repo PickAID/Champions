@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion.affix.lootcontextbasedvalue;
+package top.theillusivec4.champions.champion.value.based.lootcontext;
 
 import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.level.storage.loot.LootContext;

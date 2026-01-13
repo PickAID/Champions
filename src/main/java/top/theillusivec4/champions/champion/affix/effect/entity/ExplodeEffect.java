@@ -24,7 +24,7 @@ import net.minecraft.world.level.storage.loot.Validatable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.Nullable;
-import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
+import top.theillusivec4.champions.champion.value.based.lootcontext.LootContextBasedValue;
 
 import java.util.Optional;
 

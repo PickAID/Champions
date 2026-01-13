@@ -7,7 +7,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.Validatable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.phys.Vec3;
-import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
+import top.theillusivec4.champions.champion.value.based.lootcontext.LootContextBasedValue;
 
 public record Ignite(LootContextBasedValue duration) implements AffixEntityEffect {
   public static final MapCodec<Ignite> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

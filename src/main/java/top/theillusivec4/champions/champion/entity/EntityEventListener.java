@@ -16,7 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -89,11 +88,6 @@ public final class EntityEventListener {
       float modifiedDamage = ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, damageSource, event.getOriginalDamage())).orElse(event.getOriginalDamage());
       damage = Math.max(modifiedDamage, 0.0f);
     }
-//    // 受害者
-//    float finalDamage = damage;
-//    damage = Utils.getChampionHandler(victim)
-//      .map(handler -> handler.modifyDamage((ServerLevel) victim.level(), AffixTarget.VICTIM, victim, damageSource, finalDamage))
-//      .orElse(damage);
 
     /*
     伤害减免
@@ -126,17 +120,8 @@ public final class EntityEventListener {
     Entity entity = event.getEntity();
     ChampionUtil.getHandler(entity).ifPresent(handler -> {
       DamageSource damageSource = event.getSource();
-      Holder<DamageType> damage = damageSource.typeHolder();
-      handler.updateLatestDamage(mutable -> {
-        if (mutable.getDamageType() == damageSource.typeHolder()) {
-          mutable.setDamageCount(mutable.getDamageCount() + 1);
-        } else {
-          mutable.setDamageType(damage).setDamageCount(1);
-        }
-
-        mutable.setLatestTime(mutable.getLatestTime() + 1);
-        mutable.setOriginalDamageAmount(mutable.getOriginalDamageAmount() + event.getOriginalDamage());
-      });
+      Holder<DamageType> damageType = damageSource.typeHolder();
+      handler.updateLatestDamage(damageType, event.getOriginalDamage());
 
       // BossBar
       handler.getBossEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
@@ -177,9 +162,6 @@ public final class EntityEventListener {
           double y = position.y() + randomSource.nextDouble() * entity.getBbHeight();
           double z = position.z() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
           int color = handler.getColorOrDefault();
-//        float red = ARGB.red(color) / 255.0f;
-//        float green = ARGB.green(color) / 255.0f;
-//        float blue = ARGB.blue(color) / 255.0f;
           entity.level().addParticle(ParticleTypes.rank(color), x, y, z, 1.0f, 1.0f, 1.0f);
         }
       });
@@ -203,7 +185,7 @@ public final class EntityEventListener {
     Level level = victim.level();
     boolean flag = ChampionUtil.getHandler(victim).map(ChampionHandler::isValid).orElse(false);
     if (!level.isClientSide() && flag && attacker != null && attacker.getType() == EntityType.PLAYER) {
-      ((Player)attacker).awardStat(Stats.CHAMPION_MOBS_KILLED.get());
+      ((Player) attacker).awardStat(Stats.CHAMPION_MOBS_KILLED.get());
     }
   }
 
@@ -234,12 +216,13 @@ public final class EntityEventListener {
     });
   }
 
-  /**
-   * 使用进入维度事件来执行实体初始化
+  /*
+   * 注入到Mob初始化过程。
+   * 对于刷怪蛋，如果刷怪蛋不附带实体数据，会触发FinalizeSpawnEvent事件，我不知道这是否合乎预期。
    */
-  @SubscribeEvent(receiveCanceled = true)
-  public void onEntityJoinLevel(EntityJoinLevelEvent event) {
-    if (event.getLevel() instanceof ServerLevel serverLevel && !event.loadedFromDisk()) {
+  @SubscribeEvent
+  public void onFinalizeSpawn(FinalizeSpawnEvent event) {
+    if (event.getLevel() instanceof ServerLevel serverLevel) {
       Entity entity = event.getEntity();
       ChampionUtil.getHandler(entity).ifPresent(handler -> {
         if (handler.finalizeSpawn()) {
@@ -254,28 +237,6 @@ public final class EntityEventListener {
 
     }
   }
-
-  /**
-   * 注入到Mob初始化过程。
-   * 对于刷怪蛋，如果刷怪蛋不附带实体数据，会触发FinalizeSpawnEvent事件，我不知道这是否合乎预期。
-   */
-//  @SubscribeEvent
-//  public void onFinalizeSpawn(FinalizeSpawnEvent event) {
-//    if (event.getLevel() instanceof ServerLevel serverLevel) {
-//      Entity entity = event.getEntity();
-//      ChampionUtil.getHandler(entity).ifPresent(handler -> {
-//        if (handler.shouldApplyConfigOnSpawn()) {
-//          Identifier id = EntityType.getKey(entity.getType());
-//          ChampionConfigSelectorHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byId(id);
-//          if (selectorHolder != null) {
-//            selectorHolder.value().select(serverLevel, entity, entity instanceof Mob mob ? mob.getSpawnType() : null)
-//              .ifPresent(handler::applyConfig);
-//          }
-//        }
-//      });
-//
-//    }
-//  }
 
 
 }

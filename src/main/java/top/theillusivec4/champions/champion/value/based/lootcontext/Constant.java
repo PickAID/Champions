@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion.affix.lootcontextbasedvalue;
+package top.theillusivec4.champions.champion.value.based.lootcontext;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
