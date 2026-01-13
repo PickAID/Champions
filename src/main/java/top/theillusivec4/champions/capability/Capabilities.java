@@ -7,7 +7,6 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
@@ -35,8 +34,7 @@ public final class Capabilities {
           ChampionHandlers.IMPLEMENTED_ENTITY_TYPES.add(entityType);
 
           Item item = BuiltInRegistries.ITEM.getValue(EntityType.getKey(entityType).withSuffix("_spawn_egg"));
-          //noinspection ConstantValue
-          if (item != null && item != Items.AIR) {
+          if (item != Items.AIR) {
             ChampionHandlers.IMPLEMENTED_ITEMS.add(item);
             event.registerItem(ChampionHandlers.ITEM, ChampionHandlers.Providers.ITEM, item);
           }
@@ -79,8 +77,8 @@ public final class Capabilities {
     }
 
     public static final class Providers {
-      public static final ICapabilityProvider<Entity, @Nullable Void, ChampionHandlerEntity> ENTITY = (entity, context) -> new ChampionHandlerEntityImpl(entity);
-      public static final ICapabilityProvider<ItemStack, @Nullable Void, ChampionHandlerItem> ITEM = (itemStack, context) -> new ChampionHandlerItemImpl(itemStack);
+      public static final ICapabilityProvider<Entity, @Nullable Void, ChampionHandlerEntity> ENTITY = (entity, _) -> new ChampionHandlerEntityImpl(entity);
+      public static final ICapabilityProvider<ItemStack, @Nullable Void, ChampionHandlerItem> ITEM = (itemStack, _) -> new ChampionHandlerItemImpl(itemStack);
 
       private Providers() {
       }

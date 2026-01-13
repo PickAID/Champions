@@ -207,7 +207,7 @@ public interface ChampionHandler {
   Optional<Holder<Rank>> getRank();
 
   /**
-   * 设置头衔，如果头衔是EMPTY则无效果
+   * 设置头衔
    */
   void setRank(Holder<Rank> rank);
 

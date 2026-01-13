@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion.affix.event;
+package top.theillusivec4.champions.champion.event;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;

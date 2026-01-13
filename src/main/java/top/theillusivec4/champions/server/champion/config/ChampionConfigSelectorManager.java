@@ -18,7 +18,6 @@ import java.util.Set;
  * 从数据包加载冠军配置数据，便于为实体应用
  */
 public class ChampionConfigSelectorManager extends SimpleJsonResourceReloadListener<ChampionConfigSelector> {
-  // 需保证数据不可变性 原子性
   private Map<Identifier, ChampionConfigSelectorHolder> map = Map.of();
 
   public ChampionConfigSelectorManager(HolderLookup.Provider registries) {

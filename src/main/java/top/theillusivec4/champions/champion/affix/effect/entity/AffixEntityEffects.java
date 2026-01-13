@@ -20,7 +20,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.affix.effect.AllOf;
-import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
+import top.theillusivec4.champions.champion.value.based.lootcontext.LootContextBasedValue;
 import top.theillusivec4.champions.registry.Registries;
 
 import java.util.Arrays;

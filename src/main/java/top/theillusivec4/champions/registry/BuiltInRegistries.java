@@ -13,8 +13,8 @@ import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffect;
 import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffect;
-import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.FloatLootParamSource;
-import top.theillusivec4.champions.champion.affix.lootcontextbasedvalue.LootContextBasedValue;
+import top.theillusivec4.champions.champion.value.based.lootcontext.FloatLootParamSource;
+import top.theillusivec4.champions.champion.value.based.lootcontext.LootContextBasedValue;
 import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
 import top.theillusivec4.champions.champion.rank.Rank;
 
