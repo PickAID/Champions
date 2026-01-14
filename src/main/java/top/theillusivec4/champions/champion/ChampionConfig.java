@@ -8,7 +8,6 @@ import net.minecraft.network.chat.ComponentSerialization;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
 
 import java.util.Optional;
 

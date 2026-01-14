@@ -23,7 +23,7 @@ import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Damage;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 
 import java.util.Optional;

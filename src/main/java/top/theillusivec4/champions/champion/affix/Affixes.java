@@ -52,8 +52,9 @@ public interface Affixes {
     HolderGetter<DamageType> damageTypes = context.lookup(net.minecraft.core.registries.Registries.DAMAGE_TYPE);
     /*
       适应
-      旧：伤害减免 = 0.15*伤害次数
-      新：每一级提供0.15伤害减免
+      旧：当伤害类型与上一次所受伤害类型相同时，伤害减免 = 0.15*所受同一伤害类型的伤害次数
+
+      新：当伤害类型与上一次所受伤害类型相同时，每一级提供0.15伤害减免
      */
     register(
       context,
@@ -71,8 +72,9 @@ public interface Affixes {
         ));
     /*
       抑制
-      旧：对直接伤害具有0.8伤害减免
-      新：每一级对直接伤害具有0.2伤害减免
+        旧：对直接伤害具有0.8伤害减免
+
+        新：每一级对直接伤害具有0.2伤害减免
      */
     register(
       context,
@@ -413,9 +415,9 @@ public interface Affixes {
     );
     /*
       创伤
-        旧：受到治疗时，如果自身存在MobEffects.WOUND_EFFECT_TYPE状态效果，则治疗量减半
-        受到攻击时，如果自身存在MobEffects.WOUND_EFFECT_TYPE状态效果，则受到1.5倍的伤害
-        受到攻击后，有0.4的几率使自身获得20秒0级的MobEffects.WOUND_EFFECT_TYPE状态效果
+        旧：受到治疗时，如果自身存在MobEffects.WOUND_EFFECT_TYPE（创伤）状态效果，则治疗量减半
+        受到攻击时，如果自身存在MobEffects.WOUND_EFFECT_TYPE（创伤）状态效果，则受到1.5倍的伤害
+        受到攻击后，有0.4的几率使自身获得20秒0级的MobEffects.WOUND_EFFECT_TYPE（创伤）状态效果
 
         新：受到攻击后，有0.5的几率使自身获得等级*2秒与等级同级的创伤状态效果
         其他行为迁移至该状态效果

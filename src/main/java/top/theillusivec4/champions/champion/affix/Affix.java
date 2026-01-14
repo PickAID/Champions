@@ -36,9 +36,10 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-public record Affix(Component description, DataComponentMap effects) {
+public record Affix(Component description, HolderSet<Affix> exclusiveSet, DataComponentMap effects) {
   public static final Codec<Affix> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Affix::description),
+    RegistryCodecs.homogeneousList(Registries.AFFIX).optionalFieldOf("exclusive_set", HolderSet.empty()).forGetter(Affix::exclusiveSet),
     AffixEffectComponents.CODEC.fieldOf("effects").forGetter(Affix::effects)
   ).apply(instance, Affix::new));
   public static final Codec<Holder<Affix>> REFERENCE_CODEC = RegistryFileCodec.create(Registries.AFFIX, DIRECT_CODEC);
@@ -143,9 +144,15 @@ public record Affix(Component description, DataComponentMap effects) {
   public static class Builder {
     private final DataComponentMap.Builder builder = DataComponentMap.builder();
     private final Map<DataComponentType<?>, List<?>> effects = new HashMap<>();
+    private HolderSet<Affix> exclusiveSet = HolderSet.empty();
     private UnaryOperator<MutableComponent> nameFactory = UnaryOperator.identity();
 
     private Builder() {
+    }
+
+    public Builder exclusiveWith(HolderSet<Affix> set) {
+      this.exclusiveSet = set;
+      return this;
     }
 
     public Builder withCustomName(UnaryOperator<MutableComponent> nameFactory) {
@@ -206,6 +213,7 @@ public record Affix(Component description, DataComponentMap effects) {
     public Affix build(Identifier identifier) {
       return new Affix(
         this.nameFactory.apply(Component.translatable(Util.makeDescriptionId("affix", identifier))),
+        this.exclusiveSet,
         this.builder.build()
       );
     }

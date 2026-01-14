@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.server.champion.config;
+package top.theillusivec4.champions.champion;
 
 public final class ChampionDefaultConfigs {
   public static final int MIN_LEVEL = 1; // 最小的冠军等级

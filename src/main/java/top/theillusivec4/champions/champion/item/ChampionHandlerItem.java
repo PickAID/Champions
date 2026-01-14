@@ -19,7 +19,7 @@ import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.data.lang.LanguageUtil;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 
 import java.util.Optional;
 import java.util.function.Consumer;

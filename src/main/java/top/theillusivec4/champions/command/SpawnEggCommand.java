@@ -18,7 +18,7 @@ import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.data.lang.LanguageUtil;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 
 import java.util.Collection;
 

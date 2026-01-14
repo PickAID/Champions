@@ -103,15 +103,15 @@ public final class DifficultyBasedValues {
     }
   }
 
-  public record Linear(float base, float perDifficultAbovePeaceful) implements DifficultyBasedValue {
+  public record Linear(float base, float perEffectiveDifficultyAboveEasy) implements DifficultyBasedValue {
     public static final MapCodec<Linear> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
       Codec.FLOAT.fieldOf("base").forGetter(Linear::base),
-      Codec.FLOAT.fieldOf("per_difficult_above_peaceful").forGetter(Linear::perDifficultAbovePeaceful)
+      Codec.FLOAT.fieldOf("per_effective_difficulty_above_easy").forGetter(Linear::perEffectiveDifficultyAboveEasy)
     ).apply(instance, Linear::new));
 
     @Override
     public float calculate(DifficultyInstance instance) {
-      return this.base + this.perDifficultAbovePeaceful * (instance.getDifficulty().getId() - 1);
+      return this.base + this.perEffectiveDifficultyAboveEasy * Math.max(instance.getEffectiveDifficulty() - 1.5f, 0.0f);
     }
 
     @Override
