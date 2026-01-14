@@ -16,7 +16,6 @@ import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffec
 import top.theillusivec4.champions.champion.affix.effect.AffixValueEffect;
 import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.champion.value.based.lootcontext.FloatLootParamSource;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
 
 import java.util.ArrayList;
@@ -32,7 +31,6 @@ public final class BuiltInRegistries {
   public static final Registry<MapCodec<? extends AffixValueEffect>> AFFIX_VALUE_EFFECT_TYPE = simple(Registries.AFFIX_VALUE_EFFECT_TYPE);
   public static final Registry<MapCodec<? extends AffixEntityEffect>> AFFIX_ENTITY_EFFECT_TYPE = simple(Registries.AFFIX_ENTITY_EFFECT_TYPE);
   public static final Registry<MapCodec<? extends AffixLocationBasedEffect>> AFFIX_LOCATION_BASED_EFFECT_TYPE = simple(Registries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
-  public static final Registry<FloatLootParamSource<?>> LOOT_PARAM_FLOAT_SOURCE = simple(Registries.FLOAT_LOOT_PARAM_SOURCE);
 
   public static void register(IEventBus modEventBus) {
     modEventBus.addListener(NewRegistryEvent.class, event -> {
