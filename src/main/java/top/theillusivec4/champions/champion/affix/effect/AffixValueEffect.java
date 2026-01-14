@@ -2,7 +2,7 @@ package top.theillusivec4.champions.champion.affix.effect;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.util.RandomSource;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
 
@@ -40,7 +40,7 @@ public interface AffixValueEffect  {
     return new AffixValueEffects.ScaleExponentially(base, exponent);
   }
 
-	float process(LootContext context, int level, float inputValue);
+	float process(int affixLevel, RandomSource random, float inputValue);
 
   MapCodec<? extends AffixValueEffect> codec();
 }

@@ -16,9 +16,11 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.Util;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -29,6 +31,7 @@ import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -52,40 +55,44 @@ public record Affix(Component description, DataComponentMap effects) {
     return new Builder();
   }
 
-  public void modifyKnockback(ServerLevel level, int affixLevel, Entity victim, DamageSource source, Damage damage, MutableFloat knockback) {
-    LootContext context = LootContextParamSets.knockback(level, victim, affixLevel, source, damage, source.getDirectEntity(), source.getEntity());
-    applyConditionalEffects(this.getEffects(AffixEffectComponents.KNOCKBACK), context, effect -> knockback.setValue(effect.process(context, affixLevel, knockback.floatValue())));
+  public void modifyKnockback(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat knockback) {
+    LootContext context = LootContextParamSets.knockback(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    RandomSource random = level.getRandom();
+    applyConditionalEffects(this.getEffects(AffixEffectComponents.KNOCKBACK), context, effect -> knockback.setValue(effect.process(affixLevel, random, knockback.floatValue())));
   }
 
-  public void modifyDamage(ServerLevel level, int affixLevel, Entity victim, DamageSource source, Damage latestDamage, MutableFloat damage) {
-    LootContext context = LootContextParamSets.damage(level, victim, affixLevel, source, latestDamage, source.getDirectEntity(), source.getEntity());
-    applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE), context, effect -> damage.setValue(effect.process(context, affixLevel, damage.floatValue())));
+  public void modifyDamage(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat damage) {
+    LootContext context = LootContextParamSets.damage(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    RandomSource random = level.getRandom();
+    applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE), context, effect -> damage.setValue(effect.process(affixLevel, random, damage.floatValue())));
   }
 
-  public void forEachModifier(int affixLevel, Consumer<AttributeModifier> consumer) {
+  public void forEachModifier(int affixLevel, BiConsumer<Holder<Attribute>, AttributeModifier> action) {
     for (AffixAttributeEffect effect : this.getEffects(AffixEffectComponents.ATTRIBUTES)) {
-      consumer.accept(effect.getModifier(affixLevel));
+      action.accept(effect.attribute(), effect.getModifier(affixLevel));
     }
   }
 
-  public void runInitialize(ServerLevel level, int affixLevel, Entity entity, Vec3 origin) {
+  public void runLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity, Vec3 origin, boolean becameActive) {
     for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.INITIALIZE)) {
-      effect.onChangedBlock(level, affixLevel, entity, origin, true);
+      effect.onChangedBlock(level, affixLevel, entity, origin, becameActive);
     }
   }
 
-  public void stopInitialized(ServerLevel level, int affixLevel, Entity entity, Vec3 origin) {
+  public void stopLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity, Vec3 origin) {
     for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.INITIALIZE)) {
       effect.onDeactivated(level, affixLevel, entity, origin);
     }
   }
 
-  public void modifyHeal(ServerLevel level, int affixLevel, Entity victim, Damage damage, MutableFloat heal) {
-    LootContext lootContext = LootContextParamSets.heal(level, victim, affixLevel, damage);
-    applyConditionalEffects(this.getEffects(AffixEffectComponents.HEAL), lootContext, effect -> heal.setValue(effect.process(lootContext, affixLevel, heal.floatValue())));
+  public void modifyHeal(ServerLevel level, int affixLevel, Entity victim, MutableFloat heal) {
+    LootContext lootContext = LootContextParamSets.heal(level, victim, affixLevel, null);
+    RandomSource random = level.getRandom();
+    applyConditionalEffects(this.getEffects(AffixEffectComponents.HEAL), lootContext, effect -> heal.setValue(effect.process(affixLevel, random, heal.floatValue())));
+
   }
 
-  public void doPostAttack(ServerLevel level, int affixLevel, AffixTarget target, Entity victim, DamageSource source, Damage damage) {
+  public void doPostAttack(ServerLevel level, int affixLevel, AffixTarget target, Entity victim, DamageSource source) {
     for (TargetedConditionalEffect<AffixEntityEffect> effect : this.getEffects(AffixEffectComponents.POST_ATTACK)) {
       if (target == effect.enchanted()) {
         Entity targetEntity = switch (effect.affected()) {
@@ -95,7 +102,7 @@ public record Affix(Component description, DataComponentMap effects) {
         };
 
         if (targetEntity != null) {
-          LootContext lootContext = LootContextParamSets.postAttack(level, targetEntity, affixLevel, source, damage, source.getEntity(), source.getDirectEntity());
+          LootContext lootContext = LootContextParamSets.postAttack(level, targetEntity, affixLevel, source, null, source.getEntity(), source.getDirectEntity());
 
           if (effect.match(lootContext)) {
             effect.effect().apply(level, affixLevel, targetEntity, victim, targetEntity.position());
@@ -106,14 +113,15 @@ public record Affix(Component description, DataComponentMap effects) {
     }
   }
 
-  public void tick(ServerLevel level, int affixLevel, Entity entity, Damage damage) {
-    LootContext context = LootContextParamSets.tick(level, entity, affixLevel, damage);
+  public void tick(ServerLevel level, int affixLevel, Entity entity) {
+    LootContext context = LootContextParamSets.tick(level, entity, affixLevel, null);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TICK), context, effect -> effect.apply(level, affixLevel, entity, entity, entity.position()));
   }
 
-  public void modifyDamageProtection(ServerLevel level, int affixLevel, Entity victim, DamageSource source, Damage damage, MutableFloat protection) {
-    LootContext context = LootContextParamSets.damageProtection(level, victim, affixLevel, source, damage, source.getDirectEntity(), source.getEntity());
-    applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE_PROTECTION), context, effect -> protection.setValue(effect.process(context, affixLevel, protection.floatValue())));
+  public void modifyDamageProtection(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat protection) {
+    LootContext context = LootContextParamSets.damageProtection(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    RandomSource random = level.getRandom();
+    applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE_PROTECTION), context, effect -> protection.setValue(effect.process(affixLevel, random, protection.floatValue())));
   }
 
   public <T> Optional<T> getSpecialEffect(Supplier<DataComponentType<T>> componentTypeSupplier) {
@@ -145,57 +153,53 @@ public record Affix(Component description, DataComponentMap effects) {
       return this;
     }
 
-    public <E> Builder withSpecialEffect(DataComponentType<E> dataComponentType, E effect) {
-      this.builder.set(dataComponentType, effect);
+    public <E> Builder withSpecialEffect(DataComponentType<E> effectComponent, E effect) {
+      this.builder.set(effectComponent, effect);
       return this;
     }
 
-    public <E> Builder withEffects(Supplier<DataComponentType<List<E>>> dataComponentTypeSupplier, E effect) {
-      return this.withEffects(dataComponentTypeSupplier.get(), effect);
+    public <E> Builder withEffects(Supplier<DataComponentType<List<E>>> effectComponent, E effect) {
+      return this.withEffects(effectComponent.get(), effect);
     }
 
-    public <E> Builder withEffects(DataComponentType<List<E>> dataComponentType, E effect) {
-      this.getEffects(dataComponentType).add(effect);
+    public <E> Builder withEffects(DataComponentType<List<E>> effectComponent, E effect) {
+      this.getEffects(effectComponent).add(effect);
       return this;
     }
 
-    public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> dataComponentTypeSupplier, AffixTarget enchanted, AffixTarget affected, E effect) {
-      return this.withTargetedConditionalEffects(dataComponentTypeSupplier.get(), enchanted, affected, effect);
+    public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect) {
+      return this.withTargetedConditionalEffects(effectComponent.get(), enchanted, affected, effect);
     }
 
-    public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> dataComponentType, AffixTarget enchanted, AffixTarget affected, E effect) {
-      this.getEffects(dataComponentType).add(TargetedConditionalEffect.create(enchanted, affected, effect));
+    public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect) {
+      this.getEffects(effectComponent).add(TargetedConditionalEffect.create(enchanted, affected, effect));
       return this;
     }
 
-    public <E> Builder withEnchantedTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> dataComponentTypeSupplier, AffixTarget enchanted, E effect, LootItemCondition.Builder builder) {
-      return this.withTargetedConditionalEffects(dataComponentTypeSupplier.get(), enchanted, AffixTarget.VICTIM, effect, builder);
+    public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
+      return this.withTargetedConditionalEffects(effectComponent.get(), enchanted, affected, effect, builder);
     }
 
-    public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> dataComponentTypeSupplier, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
-      return this.withTargetedConditionalEffects(dataComponentTypeSupplier.get(), enchanted, affected, effect, builder);
-    }
-
-    public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> dataComponentType, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
-      this.getEffects(dataComponentType).add(TargetedConditionalEffect.create(enchanted, affected, effect, builder));
+    public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
+      this.getEffects(effectComponent).add(TargetedConditionalEffect.create(enchanted, affected, effect, builder));
       return this;
     }
 
-    public <E> Builder withConditionalEffects(Supplier<DataComponentType<List<ConditionalEffect<E>>>> dataComponentTypeSupplier, E effect, LootItemCondition.Builder builder) {
-      return this.withConditionalEffects(dataComponentTypeSupplier.get(), effect, builder);
+    public <E> Builder withConditionalEffects(Supplier<DataComponentType<List<ConditionalEffect<E>>>> effectComponent, E effect, LootItemCondition.Builder builder) {
+      return this.withConditionalEffects(effectComponent.get(), effect, builder);
     }
 
-    public <E> Builder withConditionalEffects(DataComponentType<List<ConditionalEffect<E>>> dataComponentType, E effect, LootItemCondition.Builder builder) {
-      this.getEffects(dataComponentType).add(ConditionalEffect.create(effect, builder));
+    public <E> Builder withConditionalEffects(DataComponentType<List<ConditionalEffect<E>>> effectComponent, E effect, LootItemCondition.Builder builder) {
+      this.getEffects(effectComponent).add(ConditionalEffect.create(effect, builder));
       return this;
     }
 
-    public <E> Builder withConditionalEffects(Supplier<DataComponentType<List<ConditionalEffect<E>>>> dataComponentTypeSupplier, E effect) {
-      return this.withConditionalEffects(dataComponentTypeSupplier.get(), effect);
+    public <E> Builder withConditionalEffects(Supplier<DataComponentType<List<ConditionalEffect<E>>>> effectComponent, E effect) {
+      return this.withConditionalEffects(effectComponent.get(), effect);
     }
 
-    public <E> Builder withConditionalEffects(DataComponentType<List<ConditionalEffect<E>>> dataComponentType, E effect) {
-      this.getEffects(dataComponentType).add(ConditionalEffect.create(effect));
+    public <E> Builder withConditionalEffects(DataComponentType<List<ConditionalEffect<E>>> effectComponent, E effect) {
+      this.getEffects(effectComponent).add(ConditionalEffect.create(effect));
       return this;
     }
 
@@ -206,11 +210,11 @@ public record Affix(Component description, DataComponentMap effects) {
       );
     }
 
-    private <E> List<E> getEffects(DataComponentType<List<E>> dataComponentType) {
+    private <E> List<E> getEffects(DataComponentType<List<E>> effectComponent) {
       //noinspection unchecked
-      return (List<E>) this.effects.computeIfAbsent(dataComponentType, _ -> {
+      return (List<E>) this.effects.computeIfAbsent(effectComponent, _ -> {
         List<E> list = new ArrayList<>();
-        builder.set(dataComponentType, list);
+        builder.set(effectComponent, list);
         return list;
       });
     }

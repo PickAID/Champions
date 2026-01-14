@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.Arrays;
@@ -31,9 +31,9 @@ public interface AllOf {
     public static final MapCodec<ValueEffects> MAP_CODEC = AllOf.codec(AffixValueEffect.CODEC, ValueEffects::new, ValueEffects::effects);
 
     @Override
-    public float process(LootContext context, int level, float inputValue) {
+    public float process(int affixLevel, RandomSource random, float inputValue) {
       for (AffixValueEffect effect : this.effects) {
-        inputValue = effect.process(context, level, inputValue);
+        inputValue = effect.process(affixLevel, random, inputValue);
       }
 
       return inputValue;

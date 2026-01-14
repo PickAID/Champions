@@ -22,6 +22,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
@@ -50,22 +51,24 @@ public final class EntityEventListener {
   @SubscribeEvent
   public void onLivingHeal(LivingHealEvent event) {
     Entity entity = event.getEntity();
-    float amount = event.getAmount();
-    if (entity instanceof LivingEntity livingEntity) {
-      MobEffectInstance instance = livingEntity.getEffect(MobEffects.WOUND);
-      if (instance != null) {
-        amount -= amount * 0.1f * instance.getAmplifier();
+    MutableFloat heal = new MutableFloat(event.getAmount());
+    if (entity.level() instanceof ServerLevel level) {
+      if (entity instanceof LivingEntity livingEntity) {
+        MobEffectInstance instance = livingEntity.getEffect(MobEffects.WOUND);
+        if (instance != null) {
+          heal.setValue(heal.floatValue() - heal.floatValue() * 0.1f * instance.getAmplifier());
+        }
       }
+
+      ChampionUtil.getHandler(entity).ifPresent(handler -> {
+        float result = handler.modifyHeal(level, entity, heal.floatValue());
+        // 治疗不应该出现负数
+        event.setAmount(Math.max(result, 0.0f));
+        // BossBar
+        handler.getBossEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
+      });
     }
 
-    float finalAmount = amount;
-    ChampionUtil.getHandler(entity).ifPresent(handler -> {
-      float result = handler.modifyHeal((ServerLevel) entity.level(), finalAmount);
-      // 治疗不应该出现负数
-      event.setAmount(Math.max(result, 0.0f));
-      // BossBar
-      handler.getBossEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
-    });
   }
 
   /**
@@ -89,7 +92,7 @@ public final class EntityEventListener {
     }
 
     ChampionUtil.getHandler(victim).ifPresent(handler -> {
-      boolean invulnerable = handler.isImmuneToDamage((ServerLevel) victim.level(), damageSource);
+      boolean invulnerable = handler.isImmuneToDamage((ServerLevel) victim.level(), victim, damageSource);
       if (invulnerable) {
         event.setCanceled(true);
       }
@@ -104,45 +107,51 @@ public final class EntityEventListener {
   @SubscribeEvent
   public void onLivingDamagePre(LivingDamageEvent.Pre event) {
     Entity victim = event.getEntity();
-    float amount = event.getOriginalDamage();
-    DamageSource damageSource = event.getSource();
-    /*
+    MutableFloat damage = new MutableFloat(event.getOriginalDamage());
+    DamageSource source = event.getSource();
+
+    if (victim.level() instanceof ServerLevel level) {
+      /*
       MobEffect
      */
-    if (victim instanceof LivingEntity livingEntity) {
-      MobEffectInstance mobEffectInstance = livingEntity.getEffect(MobEffects.WOUND);
-      if (mobEffectInstance != null) {
-        amount += amount * 0.1f * mobEffectInstance.getAmplifier();
+      if (victim instanceof LivingEntity livingEntity) {
+        MobEffectInstance mobEffectInstance = livingEntity.getEffect(MobEffects.WOUND);
+        if (mobEffectInstance != null) {
+          damage.setValue(damage.floatValue() * 0.1f * mobEffectInstance.getAmplifier());
+        }
       }
-    }
 
     /*
       伤害增幅
      */
-    if (damageSource.getEntity() != null) {
-      Entity attacker = damageSource.getEntity();
-      float modifiedDamage = ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, damageSource, event.getOriginalDamage())).orElse(event.getOriginalDamage());
-      amount = Math.max(modifiedDamage, 0.0f);
-    }
+      if (source.getEntity() != null) {
+        Entity attacker = source.getEntity();
+        damage.setValue(
+          ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, source, damage.floatValue())).orElse(damage.floatValue())
+        );
+      }
 
     /*
       伤害减免
       伤害值 = 原值 - 原值*减免比例
       减免比例取值范围: [-1024.0f, 1.0]
      */
-    if (amount > 0.0f) {
-      float protection = ChampionUtil.getHandler(victim).map(handler -> {
-        float damageProtection = handler.getDamageProtection((ServerLevel) event.getEntity().level(), event.getSource());
-        return Math.clamp(damageProtection, -1024.0f, 1.0f);
-      }).orElse(0.0f);
 
-      amount = amount - amount * protection;
-    }
+      if (damage.floatValue() > 0.0f) {
+        float protection = ChampionUtil.getHandler(victim).map(handler -> {
+          float originProtection = handler.getDamageProtection(level, victim, event.getSource());
+          return Math.clamp(originProtection, -1024.0f, 1.0f);
+        }).orElse(0.0f);
+
+        damage.setValue(damage.floatValue() * (1.0f - protection));
+      }
 
     /*
     防止造成负伤害，预期外的行为
      */
-    event.setNewDamage(Math.max(amount, 0.0f));
+      event.setNewDamage(Math.max(damage.floatValue(), 0.0f));
+    }
+
   }
 
   /**
@@ -173,12 +182,12 @@ public final class EntityEventListener {
   @SubscribeEvent
   public void onEntityTickPre(EntityTickEvent.Pre event) {
     Entity entity = event.getEntity();
-    if (entity.level() instanceof ServerLevel serverLevel) {
-      ChampionUtil.getHandler(event.getEntity()).ifPresent(handler -> {
-        handler.tickEffects(serverLevel);
+    if (entity.level() instanceof ServerLevel level) {
+      ChampionUtil.getHandler(entity).ifPresent(handler -> {
+        handler.tickEffects(level, entity);
         // BossBar
         handler.getBossEvent().ifPresent(bossEvent -> {
-          for (ServerPlayer player : serverLevel.players()) {
+          for (ServerPlayer player : level.players()) {
             if (player.blockPosition().distSqr(entity.blockPosition()) <= BOSS_EVENT_DISTANCE_SQR) {
               bossEvent.addPlayer(player);
             } else {

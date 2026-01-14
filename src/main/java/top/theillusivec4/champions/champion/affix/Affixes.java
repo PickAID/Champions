@@ -168,7 +168,7 @@ public interface Affixes {
         )
     );
     /*
-      活性
+      活力
         旧：每60刻，实体获得1刻治疗状态效果
 
         新：每60刻，实体获得自身等级的生命恢复状态1-3秒
@@ -180,7 +180,7 @@ public interface Affixes {
         .withConditionalEffects(
           AffixEffectComponents.TICK,
           AffixEntityEffect.applyMobEffect(
-            HolderSet.direct(MobEffects.INSTANT_HEALTH),
+            HolderSet.direct(MobEffects.REGENERATION),
             LevelBasedValue.linear(
               LevelBasedValue.constant(1),
               LevelBasedValue.constant(3)

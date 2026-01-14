@@ -70,7 +70,7 @@ public final class SpawnEggCommand {
       ItemStack itemStack = player.getMainHandItem();
       ChampionUtil.getHandler(itemStack).ifPresent(handler -> handler.setRank(rank));
     }
-    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_RANK_SUCCESS_KEY, i), true);
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_RANK_SUCCESS_KEY, rank.value().description()), true);
     return i;
   }
 

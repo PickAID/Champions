@@ -5,14 +5,21 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
+import top.theillusivec4.champions.champion.affix.effect.ConditionalEffect;
+import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
+import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -20,102 +27,168 @@ import java.util.function.Consumer;
  */
 public interface ChampionHandler {
   /**
-   * 运行初始化词缀效果
-   *
-   * @param serverLevel 服务端维度
-   * @param entity      实体
-   * @param origin      位置
+   * 是否为首领怪物
    */
-  void runInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin);
+  Optional<Boolean> isBoss();
+
+  /**
+   * 删除头衔
+   *
+   */
+  void removeRank();
+
+  /**
+   * 删除前缀名
+   *
+   */
+  void removePrefixName();
+
+  /**
+   * 更新词缀
+   *
+   * @param updater 更新
+   */
+  default void updateAffixes(Consumer<Affixes.Mutable> updater) {
+    Affixes.Mutable mutable = this.getAffixesOrDefault().toMutable();
+    updater.accept(mutable);
+    this.setAffixes(mutable.toImmutable());
+  }
 
   /**
    * 停止初始化词缀效果
    *
-   * @param serverLevel 服务端维度
-   * @param entity      实体
-   * @param origin      位置
+   * @param level  服务端维度
+   * @param entity 实体
+   * @param origin 位置
    */
-  void stopInitializeEffects(ServerLevel serverLevel, Entity entity, Vec3 origin);
+  default void stopLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin) {
+    this.runIteration(affix -> affix.value().stopLocationChangedEffects(level, this.getLevelOrDefault(), entity, origin));
+  }
+
+  /**
+   * 运行初始化词缀效果
+   *
+   * @param level        服务端维度
+   * @param entity       实体
+   * @param origin       位置
+   * @param becameActive
+   */
+  default void runLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin, boolean becameActive) {
+    this.runIteration(affix -> affix.value().runLocationChangedEffects(level, this.getLevelOrDefault(), entity, origin, becameActive));
+  }
+
+  default void forEachModifier(ServerLevel level, BiConsumer<Holder<Attribute>, AttributeModifier> action) {
+    this.runIteration(affix -> affix.value().forEachModifier(this.getLevelOrDefault(), action));
+  }
 
   /**
    * 是否免疫伤害
    *
-   * @param serverLevel  服务端维度
-   * @param damageSource 伤害源
+   * @param serverLevel 服务端维度
+   * @param victim      受伤实体
+   * @param source      伤害源
    * @return 是 | 否
    */
-  boolean isImmuneToDamage(ServerLevel serverLevel, DamageSource damageSource);
+  default boolean isImmuneToDamage(ServerLevel serverLevel, Entity victim, DamageSource source) {
+    for (Holder<Affix> affix : this.getAffixesOrDefault().getAffixes()) {
+      LootContext context = LootContextParamSets.damageImmunity(serverLevel, victim, this.getLevelOrDefault(), source, null, null, null);
+      for (ConditionalEffect<DamageImmunity> effect : affix.value().getEffects(AffixEffectComponents.DAMAGE_IMMUNITY)) {
+        if (effect.matches(context)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 
   /**
    * 获取伤害减免值，允许返回负数以实现受到更多伤害
    *
-   * @param serverLevel  服务端维度
-   * @param damageSource 伤害源
+   * @param level  服务端维度
+   * @param victim 受伤实体
+   * @param source 伤害源
    * @return 伤害减免值
    */
-  float getDamageProtection(ServerLevel serverLevel, DamageSource damageSource);
+  default float getDamageProtection(ServerLevel level, Entity victim, DamageSource source) {
+    MutableFloat mutableFloat = new MutableFloat(0.0f);
+    this.runIteration(affix -> affix.value().modifyDamageProtection(level, this.getLevelOrDefault(), victim, source, mutableFloat));
+    return mutableFloat.floatValue();
+  }
 
   /**
    * 修改击退值
    *
-   * @param serverLevel  服务端维度
-   * @param damageSource 伤害源
-   * @param knockback    原始击退值
+   * @param level     服务端维度
+   * @param victim    受伤实体
+   * @param source    伤害源
+   * @param knockback 原始击退值
    * @return 修改后的击退值
    */
-  float modifyKnockback(ServerLevel serverLevel, DamageSource damageSource, float knockback);
+  default float modifyKnockback(ServerLevel level, Entity victim, DamageSource source, float knockback) {
+    MutableFloat mutableFloat = new MutableFloat(knockback);
+    this.runIteration(affix -> affix.value().modifyKnockback(level, this.getLevelOrDefault(), victim, source, mutableFloat));
+    return mutableFloat.floatValue();
+  }
 
   /**
    * 修改伤害值
    *
-   * @param serverLevel  服务端维度
-   * @param target       攻击目标
-   * @param damageSource 伤害源
-   * @param amount       原始伤害量
+   * @param level  服务端维度
+   * @param victim 受伤实体
+   * @param source 伤害源
+   * @param amount 原始伤害量
    * @return 修改后的伤害量
    */
-  float modifyDamage(ServerLevel serverLevel, Entity target, DamageSource damageSource, float amount);
+  default float modifyDamage(ServerLevel level, Entity victim, DamageSource source, float amount) {
+    MutableFloat mutableFloat = new MutableFloat(amount);
+    this.runIteration(affix -> affix.value().modifyDamage(level, this.getLevelOrDefault(), victim, source, mutableFloat));
+    return mutableFloat.floatValue();
+  }
 
   /**
    * 修改治疗值
    *
    * @param serverLevel 服务端维度
+   * @param victim      受伤的实体
    * @param amount      原始治疗值
    * @return 修改后的治疗值
    */
-  float modifyHeal(ServerLevel serverLevel, float amount);
+  default float modifyHeal(ServerLevel serverLevel, Entity victim, float amount) {
+    MutableFloat mutableFloat = new MutableFloat(amount);
+    this.runIteration(affix -> affix.value().modifyHeal(serverLevel, this.getLevelOrDefault(), victim, mutableFloat));
+    return mutableFloat.floatValue();
+  }
 
   /**
    * 执行攻击后的效果
    *
-   * @param serverLevel  服务端维度
-   * @param targetType   作用目标类型，对受伤者 | 攻击者 | 直接攻击者 依次触发
-   * @param victim       受伤者
-   * @param damageSource 伤害源
+   * @param level  服务端维度
+   * @param target 作用目标类型：受伤者 | 攻击者 | 直接攻击者
+   * @param victim 受伤者
+   * @param source 伤害源
    */
-  void doPostAttackEffects(ServerLevel serverLevel, AffixTarget targetType, Entity victim, DamageSource damageSource);
+  default void doPostAttackEffects(ServerLevel level, AffixTarget target, Entity victim, DamageSource source) {
+    this.runIteration(affix -> affix.value().doPostAttack(level, this.getLevelOrDefault(), target, victim, source));
+  }
 
   /**
    * 执行每个刻度的效果
    *
-   * @param serverLevel 服务端维度
+   * @param level  服务端维度
+   * @param entity
    */
-  void tickEffects(ServerLevel serverLevel);
+  default void tickEffects(ServerLevel level, Entity entity) {
+    this.runIteration(affix -> affix.value().tick(level, this.getLevelOrDefault(), entity));
+  }
 
   /**
    * 迭代词缀以执行方法
    *
    * @param consumer 执行的方法
    */
-  void runIteration(Consumer<Holder<Affix>> consumer);
-
-  /**
-   * 更新词缀
-   * 为了确保更新词缀后再进行序列化与网络同步等操作，以及确保数据对象的不可变性，故采用此法
-   *
-   * @param consumer 更新
-   */
-  void updateAffixes(Consumer<Affixes.Mutable> consumer);
+  default void runIteration(Consumer<Holder<Affix>> consumer) {
+    this.getAffixes().ifPresent(affixes -> affixes.getAffixes().forEach(consumer));
+  }
 
   /**
    * 对当前处理程序应用冠军配置数据。
@@ -125,8 +198,8 @@ public interface ChampionHandler {
     config.prefixName().ifPresent(this::setPrefixName);
     config.level().ifPresent(this::setLevel);
     config.color().ifPresent(this::setColor);
-    config.boss().ifPresent(this::setBoss);
     config.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
+    config.boss().ifPresent(this::setBoss); // 这里需要用到词条数据
   }
 
   /**
@@ -149,9 +222,16 @@ public interface ChampionHandler {
   Optional<Affixes> getAffixes();
 
   /**
+   * 设置词缀对象
+   */
+  void setAffixes(Affixes affixes);
+
+  /**
    * 获取全部词缀数据
    */
-  Affixes getAffixesOrDefault();
+  default Affixes getAffixesOrDefault() {
+    return this.getAffixes().orElse(Affixes.EMPTY);
+  }
 
   /**
    * 获取等级
@@ -167,22 +247,16 @@ public interface ChampionHandler {
   /**
    * 获得当前等级 如果未设置会返回默认值
    */
-  int getLevelOrDefault();
-
-  /**
-   * 是否为首领怪物
-   */
-  Optional<Boolean> isBoss();
+  default int getLevelOrDefault() {
+    return this.getLevel().orElse(1);
+  }
 
   /**
    * 是否为首领怪物，如果是，当作为刷怪蛋生成生物时会为其设置服务端BossBar数据。
    */
-  boolean isBossOrDefault();
-
-  /**
-   * 设置是否为首领怪物。
-   */
-  void setBoss(boolean boss);
+  default boolean isBossOrDefault() {
+    return this.isBoss().orElse(false);
+  }
 
   /**
    * 获取颜色值
@@ -198,7 +272,7 @@ public interface ChampionHandler {
    * 获取可能为默认值的颜色
    */
   default int getColorOrDefault() {
-    return getColor().orElse(ChampionDefaultConfigs.DEFAULT_COLOR);
+    return getColor().orElse(-1);
   }
 
   /**
@@ -227,4 +301,9 @@ public interface ChampionHandler {
   default boolean isValid() {
     return !this.getAffixesOrDefault().isEmpty() || this.getLevel().isPresent() || this.getColor().isPresent() || this.isBoss().isPresent();
   }
+
+  /**
+   * 设置是否为首领怪物。
+   */
+  void setBoss(boolean boss);
 }

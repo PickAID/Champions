@@ -3,7 +3,6 @@ package top.theillusivec4.champions.champion.affix.effect;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
@@ -39,8 +38,8 @@ public final class AffixValueEffects {
     ).apply(instance, AddValue::new));
 
     @Override
-    public float process(LootContext context, int level, float inputValue) {
-      return inputValue + value.calculate(level);
+    public float process(int affixLevel, RandomSource random, float inputValue) {
+      return inputValue + value.calculate(affixLevel);
     }
 
     @Override
@@ -56,8 +55,8 @@ public final class AffixValueEffects {
     ).apply(instance, MultiplyValue::new));
 
     @Override
-    public float process(LootContext context, int level, float inputValue) {
-      return inputValue * value.calculate(level);
+    public float process(int affixLevel, RandomSource random, float inputValue) {
+      return inputValue * value.calculate(affixLevel);
     }
 
     @Override
@@ -73,9 +72,8 @@ public final class AffixValueEffects {
     ).apply(instance, RemoveBinomial::new));
 
     @Override
-    public float process(LootContext context, int level, float inputValue) {
-      RandomSource random = context.getRandom();
-      float p = this.chance.calculate(level);
+    public float process(int affixLevel, RandomSource random, float inputValue) {
+      float p = this.chance.calculate(affixLevel);
       int drop = 0;
       if (!(inputValue <= 128.0F) && !(inputValue * p < 20.0F) && !(inputValue * (1.0F - p) < 20.0F)) {
         double miu = Math.floor(inputValue * p);
@@ -106,8 +104,8 @@ public final class AffixValueEffects {
     ).apply(instance, ScaleExponentially::new));
 
     @Override
-    public float process(LootContext context, int level, float inputValue) {
-      return (float) (inputValue * Math.pow(this.base.calculate(level), this.exponent.calculate(level)));
+    public float process(int affixLevel, RandomSource random, float inputValue) {
+      return (float) (inputValue * Math.pow(this.base.calculate(affixLevel), this.exponent.calculate(affixLevel)));
     }
 
     @Override
@@ -122,8 +120,8 @@ public final class AffixValueEffects {
     ).apply(instance, SubtractValue::new));
 
     @Override
-    public float process(LootContext context, int level, float inputValue) {
-      return value.calculate(level);
+    public float process(int affixLevel, RandomSource random, float inputValue) {
+      return value.calculate(affixLevel);
     }
 
     @Override
@@ -139,8 +137,8 @@ public final class AffixValueEffects {
     ).apply(instance, SetValue::new));
 
     @Override
-    public float process(LootContext context, int level, float inputValue) {
-      return value.calculate(level);
+    public float process(int affixLevel, RandomSource random, float inputValue) {
+      return value.calculate(affixLevel);
     }
 
     @Override

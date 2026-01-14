@@ -14,9 +14,9 @@ import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.champion.entity.ChampionHandlerEntity;
-import top.theillusivec4.champions.champion.entity.ChampionHandlerEntityImpl;
+import top.theillusivec4.champions.champion.entity.CommonEntity;
 import top.theillusivec4.champions.champion.item.ChampionHandlerItem;
-import top.theillusivec4.champions.champion.item.ChampionHandlerItemImpl;
+import top.theillusivec4.champions.champion.item.CommonItem;
 import top.theillusivec4.champions.util.Utils;
 
 import java.util.Collections;
@@ -77,8 +77,8 @@ public final class Capabilities {
     }
 
     public static final class Providers {
-      public static final ICapabilityProvider<Entity, @Nullable Void, ChampionHandlerEntity> ENTITY = (entity, _) -> new ChampionHandlerEntityImpl(entity);
-      public static final ICapabilityProvider<ItemStack, @Nullable Void, ChampionHandlerItem> ITEM = (itemStack, _) -> new ChampionHandlerItemImpl(itemStack);
+      public static final ICapabilityProvider<Entity, @Nullable Void, ChampionHandlerEntity> ENTITY = (entity, _) -> new CommonEntity(entity);
+      public static final ICapabilityProvider<ItemStack, @Nullable Void, ChampionHandlerItem> ITEM = (itemStack, _) -> new CommonItem(itemStack);
 
       private Providers() {
       }
