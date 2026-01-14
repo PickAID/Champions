@@ -21,14 +21,14 @@ public class ZhCn extends ChampionsLanguageProvider {
     add(LanguageKeys.TOOLTIP_IS_BOSS_KEY, "是");
     add(LanguageKeys.TOOLTIP_NOT_BOSS_KEY, "否");
 
-    add(LanguageKeys.COMMANDS_AFFIX_SUCCESS_KEY, "成功设置词缀%s");
-    add(LanguageKeys.COMMANDS_RANK_SUCCESS_KEY, "成功设置头衔%s");
-    add(LanguageKeys.COMMANDS_LEVEL_SUCCESS_KEY, "成功设置等级%s");
-    add(LanguageKeys.COMMANDS_BOSS_SUCCESS_KEY, "成功设置首领%s");
-    add(LanguageKeys.COMMANDS_COLOR_SUCCESS_KEY, "成功设置颜色%s");
-    add(LanguageKeys.COMMANDS_CONFIG_SELECTOR_SUCCESS_KEY, "成功应用配置%s");
-    add(LanguageKeys.COMMANDS_ERROR_INVALID_CONFIG_SELECTOR_KEY, "无效的配置选择器%s");
-    add(LanguageKeys.COMMANDS_ERROR_INVALID_CHAMPION_ENTITY_KEY, "无效的冠军实体%s");
+    add(LanguageKeys.COMMANDS_AFFIX_SUCCESS_KEY, "成功设置词缀：%s");
+    add(LanguageKeys.COMMANDS_RANK_SUCCESS_KEY, "成功设置头衔：%s");
+    add(LanguageKeys.COMMANDS_LEVEL_SUCCESS_KEY, "成功设置等级：%s");
+    add(LanguageKeys.COMMANDS_BOSS_SUCCESS_KEY, "成功设置首领：%s");
+    add(LanguageKeys.COMMANDS_COLOR_SUCCESS_KEY, "成功设置颜色：%s");
+    add(LanguageKeys.COMMANDS_CONFIG_SELECTOR_SUCCESS_KEY, "成功应用配置：%s");
+    add(LanguageKeys.COMMANDS_ERROR_INVALID_CONFIG_SELECTOR_KEY, "无效的配置选择器：%s");
+    add(LanguageKeys.COMMANDS_ERROR_INVALID_CHAMPION_ENTITY_KEY, "无效的冠军实体：%s");
 
     add(LanguageKeys.ITEM_GROUP_CHAMPION_SPAWN_EGGS, "冠军：强敌 | 刷怪蛋");
     add(LanguageKeys.ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS, "冠军：强敌 | 自定义刷怪蛋");

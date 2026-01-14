@@ -195,11 +195,7 @@ public record ChampionHandlerEntityImpl(Entity entity) implements ChampionHandle
 
   @Override
   public void setColor(int color) {
-    if (color == ChampionDefaultConfigs.DEFAULT_COLOR) {
-      this.entity.removeData(Attachments.COLOR);
-    } else {
-      this.entity.setData(Attachments.COLOR, ARGB.opaque(color));
-    }
+    this.entity.setData(Attachments.COLOR, ARGB.opaque(color));
   }
 
   @Override
@@ -222,12 +218,8 @@ public record ChampionHandlerEntityImpl(Entity entity) implements ChampionHandle
   }
 
   @Override
-  public void setPrefixName(@Nullable Component name) {
-    if (name == null) {
-      this.entity.removeData(Attachments.PREFIX_NAME);
-    } else {
-      this.entity.setData(Attachments.PREFIX_NAME, Optional.of(name));
-    }
+  public void setPrefixName(Component name) {
+    this.entity.setData(Attachments.PREFIX_NAME, Optional.of(name));
   }
 
   /**

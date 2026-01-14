@@ -219,7 +219,7 @@ public interface ChampionHandler {
   /**
    * 设置前缀名
    */
-  void setPrefixName(@Nullable Component name);
+  void setPrefixName(Component name);
 
   /**
    * 一般指该对象是否真的具有数据，如果所有数据均为空则为无效

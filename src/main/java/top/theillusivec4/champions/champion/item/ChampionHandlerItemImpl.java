@@ -8,7 +8,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import org.jspecify.annotations.Nullable;
 import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
@@ -148,11 +147,7 @@ public record ChampionHandlerItemImpl(ItemStack itemStack) implements ChampionHa
 
   @Override
   public void setColor(int color) {
-    if (color == ChampionDefaultConfigs.DEFAULT_COLOR) {
-      this.itemStack.remove(DataComponents.COLOR);
-    } else {
-      this.itemStack.set(DataComponents.COLOR, ARGB.opaque(color));
-    }
+    this.itemStack.set(DataComponents.COLOR, ARGB.opaque(color));
   }
 
   @Override
@@ -175,12 +170,8 @@ public record ChampionHandlerItemImpl(ItemStack itemStack) implements ChampionHa
   }
 
   @Override
-  public void setPrefixName(@Nullable Component name) {
-    if (name == null) {
-      this.itemStack.remove(DataComponents.PREFIX_NAME);
-    } else {
-      this.itemStack.set(DataComponents.PREFIX_NAME, name);
-    }
+  public void setPrefixName(Component name) {
+    this.itemStack.set(DataComponents.PREFIX_NAME, name);
   }
 
 }
