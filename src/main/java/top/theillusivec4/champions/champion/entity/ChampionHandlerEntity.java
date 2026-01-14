@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.champion.entity;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -8,8 +9,10 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -19,13 +22,18 @@ import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.Affixes;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.Damage;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
+import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -168,11 +176,33 @@ public interface ChampionHandlerEntity extends ChampionHandler {
     return this.isValid();
   }
 
-  /**
-   * 应该在生成时选择冠军配置数据并应用吗
-   */
-  default boolean finalizeSpawn() {
-    return !this.isValid();
+  default void doFinalizeSpawn(ServerLevel level, double x, double y, double z, DifficultyInstance difficultyInstance, EntitySpawnReason reason) {
+    if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
+      return;
+    }
+
+    if (!this.isValid()) {
+      // 等级
+      int championLevel = (int) Math.clamp(difficultyInstance.getEffectiveDifficulty(), 1, 5);
+      this.setLevel(championLevel);
+      //  词缀
+      Registry<Affix> affixes = level.registryAccess().lookupOrThrow(Registries.AFFIX);
+      List<Holder<Affix>> list = new ArrayList<>();
+      affixes.asHolderIdMap().forEach(list::add);
+      Collections.shuffle(list);
+      this.updateAffixes(mutable -> {
+        int i = 0;
+        for (Holder<Affix> affix : list) {
+          i++;
+          mutable.add(affix);
+          if (i >= championLevel){
+            break;
+          }
+        }
+      });
+
+
+    }
   }
 
   /**

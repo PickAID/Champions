@@ -267,19 +267,9 @@ public final class EntityEventListener {
    */
   @SubscribeEvent
   public void onFinalizeSpawn(FinalizeSpawnEvent event) {
-    if (event.getLevel() instanceof ServerLevel serverLevel) {
+    if (event.getLevel() instanceof ServerLevel level) {
       Entity entity = event.getEntity();
-      ChampionUtil.getHandler(entity).ifPresent(handler -> {
-        if (handler.finalizeSpawn()) {
-          Identifier id = EntityType.getKey(entity.getType());
-          EntitySettingHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byId(id);
-          if (selectorHolder != null) {
-            selectorHolder.value().select(serverLevel, entity, entity instanceof Mob mob ? mob.getSpawnType() : null)
-              .ifPresent(handler::applyConfig);
-          }
-        }
-      });
-
+      ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doFinalizeSpawn(level, event.getX(), event.getY(), event.getZ(), level.getCurrentDifficultyAt(entity.blockPosition()), event.getSpawnType()));
     }
   }
 

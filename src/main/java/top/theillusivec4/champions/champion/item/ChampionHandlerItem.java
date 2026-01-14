@@ -14,15 +14,17 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
 import net.minecraft.world.item.component.TypedEntityData;
 import top.theillusivec4.champions.champion.Affixes;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.data.lang.LanguageUtil;
-import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * 专用于物品的冠军处理程序
@@ -169,9 +171,10 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
         return Optional.empty();
       }
 
-      return this.getPrefixName().map(component -> component.copy()
-        .append(CommonComponents.space())
-        .append(Component.translatable(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, data.type().getDescription()).withStyle(ChatFormatting.WHITE)));
+      return this.getPrefixName().map((Function<Component, Component>) component -> component.copy()
+          .append(CommonComponents.space())
+          .append(Component.translatable(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, data.type().getDescription()).withStyle(ChatFormatting.WHITE)))
+        .or((Supplier<Optional<Component>>) () -> (Optional<Component>) Optional.of((Component) Component.translatable(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, data.type().getDescription()).withStyle(ChatFormatting.WHITE)));
     }
 
     return Optional.empty();
