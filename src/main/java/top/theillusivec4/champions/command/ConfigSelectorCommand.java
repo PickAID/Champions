@@ -24,8 +24,8 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.server.champion.config.ChampionConfigSelector;
-import top.theillusivec4.champions.server.champion.config.ChampionConfigSelectorHolder;
+import top.theillusivec4.champions.server.champion.config.EntitySetting;
+import top.theillusivec4.champions.server.champion.config.EntitySettingHolder;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -36,7 +36,7 @@ public final class ConfigSelectorCommand {
 
   public static void register(LiteralArgumentBuilder<CommandSourceStack> builder, CommandBuildContext buildContext) {
     builder.then(Commands.literal("config_selector")
-      .then(Commands.argument("config_selector", ResourceKeyArgument.key(Registries.CHAMPION_CONFIG_SELECTOR))
+      .then(Commands.argument("config_selector", ResourceKeyArgument.key(Registries.ENTITY_SETTING))
         .suggests(ConfigSelectorCommand::configSelectorSuggestion)
         .then(Commands.argument("target", EntityArgument.entity())
           .executes(context -> applyConfig(context.getSource(), getConfigSelector(context, "config_selector"), EntityArgument.getEntity(context, "target"), null))
@@ -107,12 +107,12 @@ public final class ConfigSelectorCommand {
     return SharedSuggestionProvider.suggestResource(Champions.getInstance().getChampionConfigSelectorManager().getKeys(), builder);
   }
 
-  private static ChampionConfigSelector getConfigSelector(CommandContext<CommandSourceStack> context, String name) throws CommandSyntaxException {
+  private static EntitySetting getConfigSelector(CommandContext<CommandSourceStack> context, String name) throws CommandSyntaxException {
     if (context.getSource().getUnsidedLevel().isClientSide()) {
       throw ERROR_NO_CONFIG_SELECTOR_ON_CLIENT.create();
     } else {
-      ResourceKey<ChampionConfigSelector> key = ResourceKeyArgument.getRegistryKey(context, name, Registries.CHAMPION_CONFIG_SELECTOR, ERROR_INVALID_CONFIG_SELECTOR);
-      ChampionConfigSelectorHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byKey(key);
+      ResourceKey<EntitySetting> key = ResourceKeyArgument.getRegistryKey(context, name, Registries.ENTITY_SETTING, ERROR_INVALID_CONFIG_SELECTOR);
+      EntitySettingHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byKey(key);
       if (selectorHolder == null) {
         throw ERROR_INVALID_CONFIG_SELECTOR.create(key.identifier().toString());
       } else {
@@ -121,7 +121,7 @@ public final class ConfigSelectorCommand {
     }
   }
 
-  private static int applyConfig(CommandSourceStack source, ChampionConfigSelector configSelector, Entity target, @Nullable EntitySpawnReason entitySpawnReason) throws CommandSyntaxException {
+  private static int applyConfig(CommandSourceStack source, EntitySetting configSelector, Entity target, @Nullable EntitySpawnReason entitySpawnReason) throws CommandSyntaxException {
     return ChampionUtil.getHandler(target).map(handler -> {
       ServerLevel serverLevel = source.getLevel();
       configSelector.select(serverLevel, target, entitySpawnReason).ifPresent(handler::applyConfig);

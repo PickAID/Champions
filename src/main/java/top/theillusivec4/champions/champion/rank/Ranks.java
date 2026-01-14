@@ -5,19 +5,18 @@ import net.minecraft.resources.ResourceKey;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
-public final class Ranks {
-  public static final ResourceKey<Rank> EMPTY = register("empty");
-  public static final ResourceKey<Rank> COMMON = register("common");
-  public static final ResourceKey<Rank> SKILLED = register("skilled");
-  public static final ResourceKey<Rank> ELITE = register("elite");
-  public static final ResourceKey<Rank> LEGENDARY = register("legendary");
-  public static final ResourceKey<Rank> ULTIMATE = register("ultimate");
+public interface Ranks {
+  ResourceKey<Rank> COMMON = register("common");
+  ResourceKey<Rank> SKILLED = register("skilled");
+  ResourceKey<Rank> ELITE = register("elite");
+  ResourceKey<Rank> LEGENDARY = register("legendary");
+  ResourceKey<Rank> ULTIMATE = register("ultimate");
 
-  public static ResourceKey<Rank> register(String name) {
+  static ResourceKey<Rank> register(String name) {
     return ResourceKey.create(Registries.RANK, Utils.id(name));
   }
 
-  public static void bootstrap(BootstrapContext<Rank> context) {
+  static void bootstrap(BootstrapContext<Rank> context) {
     register(
       context,
       COMMON,
@@ -57,8 +56,5 @@ public final class Ranks {
 
   private static void register(BootstrapContext<Rank> context, ResourceKey<Rank> key, Rank.Builder builder) {
     context.register(key, builder.build(key.identifier()));
-  }
-
-  private Ranks() {
   }
 }

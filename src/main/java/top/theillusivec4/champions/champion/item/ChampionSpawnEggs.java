@@ -10,10 +10,10 @@ import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Utils;
 
-public final class ChampionSpawnEggs {
-  public static final ResourceKey<ChampionSpawnEgg> ZOMBIE = register("zombie");
+public interface ChampionSpawnEggs {
+  ResourceKey<ChampionSpawnEgg> ZOMBIE = register("zombie");
 
-  public static void bootstrap(BootstrapContext<ChampionSpawnEgg> context) {
+  static void bootstrap(BootstrapContext<ChampionSpawnEgg> context) {
     HolderGetter<Rank> ranks = context.lookup(Registries.RANK);
     register(
       context,
@@ -34,8 +34,5 @@ public final class ChampionSpawnEggs {
       key,
       builder.build(context)
     );
-  }
-
-  private ChampionSpawnEggs() {
   }
 }

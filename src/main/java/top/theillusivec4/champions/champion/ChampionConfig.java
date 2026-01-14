@@ -13,7 +13,8 @@ import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs
 import java.util.Optional;
 
 /**
- * 将冠军数据组织进一个配置对象应该对数据转移有所帮助
+ * 一个冠军数据快照对象。
+ * 将冠军数据组织进一个配置对象应该对数据转移有所帮助，事实上也确实如此。
  *
  * @param rank
  * @param prefixName

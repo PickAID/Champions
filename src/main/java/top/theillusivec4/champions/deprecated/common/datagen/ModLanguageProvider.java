@@ -14,8 +14,8 @@ import static top.theillusivec4.champions.deprecated.common.registries.AffixType
 import static top.theillusivec4.champions.deprecated.common.damagesource.DamageTypes.REFLECTION_DAMAGE;
 import static top.theillusivec4.champions.world.entity.EntityTypes.ARCTIC_BULLET;
 import static top.theillusivec4.champions.world.item.Items.CHAMPION_EGG_ITEM;
-import static top.theillusivec4.champions.world.effect.MobEffects.PARALYSIS_EFFECT_TYPE;
-import static top.theillusivec4.champions.world.effect.MobEffects.WOUND_EFFECT_TYPE;
+import static top.theillusivec4.champions.world.effect.MobEffects.PARALYSIS;
+import static top.theillusivec4.champions.world.effect.MobEffects.WOUND;
 
 @Deprecated
 public class ModLanguageProvider extends LanguageProvider {
@@ -93,8 +93,8 @@ public class ModLanguageProvider extends LanguageProvider {
     add(EntityTypes.ENKINDLING_BULLET.get(), "Projétil Incendiário");
     add(ARCTIC_BULLET.get(), "Projétil Ártico");
     // Effect
-    add(PARALYSIS_EFFECT_TYPE.get(), "Paralisia");
-    add(WOUND_EFFECT_TYPE.get(), "Ferimento");
+    add(PARALYSIS.value(), "Paralisia");
+    add(WOUND.value(), "Ferimento");
     // Damage Type
     addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s foi atingido por chamas", "%1$s foi atingido por chamas enquanto lutava contra %2$s");
     addDamageType(REFLECTION_DAMAGE, "%1$s provou do próprio veneno", "");
@@ -149,8 +149,8 @@ public class ModLanguageProvider extends LanguageProvider {
     add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
-    add(PARALYSIS_EFFECT_TYPE.get(), "Параліч");
-    add(WOUND_EFFECT_TYPE.get(), "Поранення");
+    add(PARALYSIS.value(), "Параліч");
+    add(WOUND.value(), "Поранення");
     // Damage Type
     addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s був охоплений полум'ям", "%1$s був охоплений полум'ям під час бою %2$s");
     addDamageType(REFLECTION_DAMAGE, "%1$s відчули смак власних ліків", "");
@@ -204,8 +204,8 @@ public class ModLanguageProvider extends LanguageProvider {
     add(EntityTypes.ENKINDLING_BULLET.get(), "火焰弹");
     add(ARCTIC_BULLET.get(), "寒冰弹");
     // 状态效果
-    add(PARALYSIS_EFFECT_TYPE.get(), "麻痹");
-    add(WOUND_EFFECT_TYPE.get(), "创伤");
+    add(PARALYSIS.value(), "麻痹");
+    add(WOUND.value(), "创伤");
     // 伤害类型
     addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s被火焰击中", "%1$s在与%2$s的战斗中被火焰击中");
     addDamageType(REFLECTION_DAMAGE, "%1$s遭报应了!", "");
@@ -260,8 +260,8 @@ public class ModLanguageProvider extends LanguageProvider {
     add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
-    add(PARALYSIS_EFFECT_TYPE.get(), "Paralysis");
-    add(WOUND_EFFECT_TYPE.get(), "Wound");
+    add(PARALYSIS.value(), "Paralysis");
+    add(WOUND.value(), "Wound");
     // Damage Type
     addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s was struck by flames", "%1$s was struck by flames whilst fighting %2$s");
     addDamageType(REFLECTION_DAMAGE, "%1$s got a taste of their own medicine", "");
@@ -315,8 +315,8 @@ public class ModLanguageProvider extends LanguageProvider {
     add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
-    add(PARALYSIS_EFFECT_TYPE.get(), "Felç");
-    add(WOUND_EFFECT_TYPE.get(), "Yaralanma");
+    add(PARALYSIS.value(), "Felç");
+    add(WOUND.value(), "Yaralanma");
     // Damage Type
     addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s yandı", "%1$s ,  %2$s ile savaşırken yandı.");
     addDamageType(REFLECTION_DAMAGE, "%1$s kendi ilacının tadına baktı", "");
@@ -370,8 +370,8 @@ public class ModLanguageProvider extends LanguageProvider {
     add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
-    add(PARALYSIS_EFFECT_TYPE.get(), "Паралич");
-    add(WOUND_EFFECT_TYPE.get(), "Ранение");
+    add(PARALYSIS.value(), "Паралич");
+    add(WOUND.value(), "Ранение");
     // Damage Type
     addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s was struck by flames", "%1$s was struck by flames whilst fighting %2$s");
     addDamageType(REFLECTION_DAMAGE, "%1$s попробовал на вкус собственное лекарство", "");
@@ -425,8 +425,8 @@ public class ModLanguageProvider extends LanguageProvider {
     add(EntityTypes.ENKINDLING_BULLET.get(), "Enkindling bullet");
     add(ARCTIC_BULLET.get(), "Arctic bullet");
     // Effect
-    add(PARALYSIS_EFFECT_TYPE.get(), "마비");
-    add(WOUND_EFFECT_TYPE.get(), "상처");
+    add(PARALYSIS.value(), "마비");
+    add(WOUND.value(), "상처");
     // Damage Type
     addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s은(는) 불타올랐습니다", "%1$s은(는) %2$s과(와) 싸우다가 불타올랐습니다");
     addDamageType(REFLECTION_DAMAGE, "%1$s은(는) 자기 꾀에 자기가 넘어갔습니다", "");

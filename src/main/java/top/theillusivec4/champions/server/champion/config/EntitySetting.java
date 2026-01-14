@@ -47,12 +47,12 @@ import java.util.Optional;
  * @param entries
  * @param randomSequence
  */
-public record ChampionConfigSelector(List<ChampionConfigEntry> entries, Optional<Identifier> randomSequence) {
-  public static final Codec<ChampionConfigSelector> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-    ChampionConfigEntry.CODEC.listOf().fieldOf("entries").forGetter(ChampionConfigSelector::entries),
-    Identifier.CODEC.optionalFieldOf("random_sequence").forGetter(ChampionConfigSelector::randomSequence)
-  ).apply(instance, ChampionConfigSelector::new));
-  public static final Codec<Optional<WithConditions<ChampionConfigSelector>>> WITH_CONDITIONS_CODEC = ConditionalOps.createConditionalCodecWithConditions(CODEC);
+public record EntitySetting(List<ChampionConfigEntry> entries, Optional<Identifier> randomSequence) {
+  public static final Codec<EntitySetting> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    ChampionConfigEntry.CODEC.listOf().fieldOf("entries").forGetter(EntitySetting::entries),
+    Identifier.CODEC.optionalFieldOf("random_sequence").forGetter(EntitySetting::randomSequence)
+  ).apply(instance, EntitySetting::new));
+  public static final Codec<Optional<WithConditions<EntitySetting>>> WITH_CONDITIONS_CODEC = ConditionalOps.createConditionalCodecWithConditions(CODEC);
 
   public static Builder builder() {
     return new Builder();
@@ -91,8 +91,16 @@ public record ChampionConfigSelector(List<ChampionConfigEntry> entries, Optional
       return this;
     }
 
-    public ChampionConfigSelector build(@Nullable Identifier id) {
-      return new ChampionConfigSelector(this.builder.build(), Optional.ofNullable(id));
+    public EntitySetting build(@Nullable Identifier id) {
+      return new EntitySetting(this.builder.build(), Optional.ofNullable(id));
     }
+  }
+
+  public record ChampionConfigProvider(DifficultBasedLevel difficultBasedLevel) {
+
+    public record DifficultBasedLevel(int base, int perDifficulty) {
+
+    }
+
   }
 }
