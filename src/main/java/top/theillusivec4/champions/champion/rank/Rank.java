@@ -13,7 +13,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.Util;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.registry.Registries;
 
 /**

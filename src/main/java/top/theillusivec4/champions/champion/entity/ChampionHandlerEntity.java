@@ -1,15 +1,39 @@
 package top.theillusivec4.champions.champion.entity;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
+import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.attachment.Attachments;
+import top.theillusivec4.champions.champion.Affixes;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionHandler;
+import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.Damage;
+import top.theillusivec4.champions.champion.rank.Rank;
+import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -17,6 +41,126 @@ import java.util.Optional;
  */
 public interface ChampionHandlerEntity extends ChampionHandler {
   Entity entity();
+
+  @Override
+  default Optional<Boolean> isBoss() {
+    return this.entity().getExistingData(Attachments.BOSS);
+  }
+
+  @Override
+  default void removeRank() {
+    this.entity().removeData(Attachments.RANK);
+  }
+
+  @Override
+  default void removePrefixName() {
+    this.entity().removeData(Attachments.PREFIX_NAME);
+  }
+
+  @Override
+  default Optional<Affixes> getAffixes() {
+    return this.entity().getData(Attachments.AFFIXES);
+  }
+
+  @Override
+  default void setAffixes(Affixes affixes) {
+    if (this.entity().level() instanceof ServerLevel level) {
+      if (this.entity() instanceof LivingEntity livingEntity) {
+        this.forEachModifier(level, (attribute, modifier) -> {
+          AttributeInstance attributeModifier = livingEntity.getAttribute(attribute);
+          if (attributeModifier != null) {
+            attributeModifier.removeModifier(modifier);
+          }
+        });
+      }
+      this.stopLocationChangedEffects(level, this.entity(), this.entity().position());
+      this.entity().setData(Attachments.AFFIXES, Optional.of(affixes));
+      if (this.entity() instanceof LivingEntity livingEntity) {
+        this.forEachModifier(level, (attribute, modifier) -> {
+          AttributeInstance attributeModifier = livingEntity.getAttribute(attribute);
+          if (attributeModifier != null) {
+            attributeModifier.addTransientModifier(modifier);
+          }
+        });
+      }
+      this.runLocationChangedEffects(level, entity(), entity().position(), true);
+    }
+  }
+
+  @Override
+  default Optional<Integer> getLevel() {
+    if (this.entity().hasData(Attachments.LEVEL)) {
+      return Optional.of(this.entity().getData(Attachments.LEVEL));
+    } else {
+      return this.getRank().map(rank -> rank.value().level());
+    }
+  }
+
+  @Override
+  default void setLevel(int level) {
+    if (level <= ChampionDefaultConfigs.DEFAULT_LEVEL) {
+      this.entity().removeData(Attachments.LEVEL);
+    } else {
+      this.entity().setData(Attachments.LEVEL, Math.clamp(level, ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL));
+    }
+  }
+
+  @Override
+  default Optional<Integer> getColor() {
+    if (this.entity().hasData(Attachments.COLOR)) {
+      return Optional.of(this.entity().getData(Attachments.COLOR));
+    }
+
+    return this.getRank().map(rank -> rank.value().color());
+  }
+
+  @Override
+  default void setColor(int color) {
+    this.entity().setData(Attachments.COLOR, ARGB.opaque(color));
+  }
+
+  @Override
+  default Optional<Holder<Rank>> getRank() {
+    return this.entity().getData(Attachments.RANK);
+  }
+
+  @Override
+  default void setRank(Holder<Rank> rank) {
+    this.entity().setData(Attachments.RANK, Optional.of(rank));
+  }
+
+  @Override
+  default Optional<Component> getPrefixName() {
+    if (this.entity().hasData(Attachments.PREFIX_NAME)) {
+      return this.entity().getData(Attachments.PREFIX_NAME);
+    }
+
+    return this.getRank().map(rank -> rank.value().description());
+  }
+
+  @Override
+  default void setPrefixName(Component name) {
+    this.entity().setData(Attachments.PREFIX_NAME, Optional.of(name));
+  }
+
+  @Override
+  default void setBoss(boolean boss) {
+    // 对客户端来说，该数据是只读的
+    if (!this.entity().level().isClientSide()) {
+      if (boss) {
+        Component name = this.getPrefixName()
+          .map(component -> (Component) component.copy()
+            .append(CommonComponents.space())
+            .append(this.entity().getDisplayName())
+          ).orElse(this.entity().getDisplayName());
+        this.setBossEvent(new ServerChampionBossEvent(Mth.createInsecureUUID(this.entity().getRandom()), name, this.getHealth() / this.getMaxHealth(), this.getLevelOrDefault(), this.getColorOrDefault(), this.getAffixesOrDefault().getAffixes()));
+      } else {
+        this.setBossEvent(null);
+      }
+
+      this.entity().setData(Attachments.BOSS, boss);
+    }
+  }
 
   /**
    * 是否应该在视线触及时显示生命值覆盖层
@@ -32,11 +176,33 @@ public interface ChampionHandlerEntity extends ChampionHandler {
     return this.isValid();
   }
 
-  /**
-   * 应该在生成时选择冠军配置数据并应用吗
-   */
-  default boolean finalizeSpawn() {
-    return !this.isValid();
+  default void doFinalizeSpawn(ServerLevel level, double x, double y, double z, DifficultyInstance difficultyInstance, EntitySpawnReason reason) {
+    if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
+      return;
+    }
+
+    if (!this.isValid()) {
+      // 等级
+      int championLevel = (int) Math.clamp(difficultyInstance.getEffectiveDifficulty(), 1, 5);
+      this.setLevel(championLevel);
+      //  词缀
+      Registry<Affix> affixes = level.registryAccess().lookupOrThrow(Registries.AFFIX);
+      List<Holder<Affix>> list = new ArrayList<>();
+      affixes.asHolderIdMap().forEach(list::add);
+      Collections.shuffle(list);
+      this.updateAffixes(mutable -> {
+        int i = 0;
+        for (Holder<Affix> affix : list) {
+          i++;
+          mutable.add(affix);
+          if (i >= championLevel){
+            break;
+          }
+        }
+      });
+
+
+    }
   }
 
   /**
@@ -156,19 +322,39 @@ public interface ChampionHandlerEntity extends ChampionHandler {
   }
 
   /**
-   * 获取冠军实体的刷怪蛋，可能为EMPTY
+   * 获取该冠军实体的刷怪蛋，只有在该实体的冠军配置不为空时才该返回具有数据的刷怪蛋
+   *
+   * @return 刷怪蛋
    */
-  ItemStack getSpawnEgg();
+  default ItemStack getSpawnEgg() {
+    EntityType<?> entityType = this.entity().getType();
+    Identifier id = EntityType.getKey(entityType).withSuffix("_spawn_egg");
+    Item item = BuiltInRegistries.ITEM.getValue(id);
+    //noinspection ConstantValue
+    if (item != null && item != Items.AIR) {
+      ItemStack itemStack = new ItemStack(item);
+
+      ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handlerItem.applyConfig(this.deriveConfig()));
+
+      return itemStack;
+    }
+
+    return ItemStack.EMPTY;
+  }
 
   /**
    * 返回该实体的当前生命值
    */
-  float getHealth();
+  default float getHealth() {
+    return this.entity() instanceof LivingEntity livingEntity ? livingEntity.getHealth() : 1.0f;
+  }
 
   /**
    * 返回该实体的最大生命值，用于BossBar
    */
-  float getMaxHealth();
+  default float getMaxHealth() {
+    return this.entity() instanceof LivingEntity livingEntity ? livingEntity.getMaxHealth() : 1.0f;
+  }
 }
 
 

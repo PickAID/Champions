@@ -1,12 +1,15 @@
-package top.theillusivec4.champions.champion.entity;
+package top.theillusivec4.champions.world.entity;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -19,13 +22,16 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.entity.ChampionHandlerEntity;
 import top.theillusivec4.champions.particle.ParticleTypes;
-import top.theillusivec4.champions.server.champion.config.ChampionConfigSelectorHolder;
+import top.theillusivec4.champions.server.champion.config.EntitySettingHolder;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 import top.theillusivec4.champions.stats.Stats;
+import top.theillusivec4.champions.world.effect.MobEffects;
 
 public final class EntityEventListener {
   private static final double BOSS_EVENT_DISTANCE_SQR = 3025.0;
@@ -45,11 +51,24 @@ public final class EntityEventListener {
   @SubscribeEvent
   public void onLivingHeal(LivingHealEvent event) {
     Entity entity = event.getEntity();
-    ChampionUtil.getHandler(entity).ifPresent(handler -> {
-      float amount = handler.modifyHeal((ServerLevel) entity.level(), event.getAmount());
-      // 治疗理应不应该出现负数
-      event.setAmount(Math.max(amount, 0.0f));
-    });
+    MutableFloat heal = new MutableFloat(event.getAmount());
+    if (entity.level() instanceof ServerLevel level) {
+      if (entity instanceof LivingEntity livingEntity) {
+        MobEffectInstance instance = livingEntity.getEffect(MobEffects.WOUND);
+        if (instance != null) {
+          heal.setValue(heal.floatValue() - heal.floatValue() * 0.1f * instance.getAmplifier());
+        }
+      }
+
+      ChampionUtil.getHandler(entity).ifPresent(handler -> {
+        float result = handler.modifyHeal(level, entity, heal.floatValue());
+        // 治疗不应该出现负数
+        event.setAmount(Math.max(result, 0.0f));
+        // BossBar
+        handler.getBossEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
+      });
+    }
+
   }
 
   /**
@@ -61,8 +80,19 @@ public final class EntityEventListener {
   public void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
     Entity victim = event.getEntity();
     DamageSource damageSource = event.getSource();
+
+    if (victim instanceof LivingEntity livingEntity) {
+      MobEffectInstance mobEffectInstance = livingEntity.getEffect(MobEffects.SHIELD);
+      if (mobEffectInstance != null) {
+        livingEntity.level().playSound(null, livingEntity.blockPosition(), SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.AMBIENT, 1.0f, 1.0f);
+        livingEntity.removeEffect(MobEffects.SHIELD);
+        event.setCanceled(true);
+        return;
+      }
+    }
+
     ChampionUtil.getHandler(victim).ifPresent(handler -> {
-      boolean invulnerable = handler.isImmuneToDamage((ServerLevel) victim.level(), damageSource);
+      boolean invulnerable = handler.isImmuneToDamage((ServerLevel) victim.level(), victim, damageSource);
       if (invulnerable) {
         event.setCanceled(true);
       }
@@ -77,36 +107,51 @@ public final class EntityEventListener {
   @SubscribeEvent
   public void onLivingDamagePre(LivingDamageEvent.Pre event) {
     Entity victim = event.getEntity();
-    float damage = event.getOriginalDamage();
-    DamageSource damageSource = event.getSource();
-    /*
-    伤害修改
+    MutableFloat damage = new MutableFloat(event.getOriginalDamage());
+    DamageSource source = event.getSource();
+
+    if (victim.level() instanceof ServerLevel level) {
+      /*
+      MobEffect
      */
-    // 攻击者
-    if (damageSource.getEntity() != null) {
-      Entity attacker = damageSource.getEntity();
-      float modifiedDamage = ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, damageSource, event.getOriginalDamage())).orElse(event.getOriginalDamage());
-      damage = Math.max(modifiedDamage, 0.0f);
-    }
+      if (victim instanceof LivingEntity livingEntity) {
+        MobEffectInstance mobEffectInstance = livingEntity.getEffect(MobEffects.WOUND);
+        if (mobEffectInstance != null) {
+          damage.setValue(damage.floatValue() * 0.1f * mobEffectInstance.getAmplifier());
+        }
+      }
 
     /*
-    伤害减免
-    伤害值 = 原值 - 原值*减免比例
-    减免比例取值范围: [-1024.0f, 1.0]
+      伤害增幅
      */
-    if (damage > 0.0f) {
-      float protection = ChampionUtil.getHandler(victim).map(handler -> {
-        float damageProtection = handler.getDamageProtection((ServerLevel) event.getEntity().level(), event.getSource());
-        return Math.clamp(damageProtection, -1024.0f, 1.0f);
-      }).orElse(0.0f);
+      if (source.getEntity() != null) {
+        Entity attacker = source.getEntity();
+        damage.setValue(
+          ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, source, damage.floatValue())).orElse(damage.floatValue())
+        );
+      }
 
-      damage = damage - damage * protection;
-    }
+    /*
+      伤害减免
+      伤害值 = 原值 - 原值*减免比例
+      减免比例取值范围: [-1024.0f, 1.0]
+     */
+
+      if (damage.floatValue() > 0.0f) {
+        float protection = ChampionUtil.getHandler(victim).map(handler -> {
+          float originProtection = handler.getDamageProtection(level, victim, event.getSource());
+          return Math.clamp(originProtection, -1024.0f, 1.0f);
+        }).orElse(0.0f);
+
+        damage.setValue(damage.floatValue() * (1.0f - protection));
+      }
 
     /*
     防止造成负伤害，预期外的行为
      */
-    event.setNewDamage(Math.max(damage, 0.0f));
+      event.setNewDamage(Math.max(damage.floatValue(), 0.0f));
+    }
+
   }
 
   /**
@@ -137,12 +182,12 @@ public final class EntityEventListener {
   @SubscribeEvent
   public void onEntityTickPre(EntityTickEvent.Pre event) {
     Entity entity = event.getEntity();
-    if (entity.level() instanceof ServerLevel serverLevel) {
-      ChampionUtil.getHandler(event.getEntity()).ifPresent(handler -> {
-        handler.tickEffects(serverLevel);
+    if (entity.level() instanceof ServerLevel level) {
+      ChampionUtil.getHandler(entity).ifPresent(handler -> {
+        handler.tickEffects(level, entity);
         // BossBar
         handler.getBossEvent().ifPresent(bossEvent -> {
-          for (ServerPlayer player : serverLevel.players()) {
+          for (ServerPlayer player : level.players()) {
             if (player.blockPosition().distSqr(entity.blockPosition()) <= BOSS_EVENT_DISTANCE_SQR) {
               bossEvent.addPlayer(player);
             } else {
@@ -222,19 +267,9 @@ public final class EntityEventListener {
    */
   @SubscribeEvent
   public void onFinalizeSpawn(FinalizeSpawnEvent event) {
-    if (event.getLevel() instanceof ServerLevel serverLevel) {
+    if (event.getLevel() instanceof ServerLevel level) {
       Entity entity = event.getEntity();
-      ChampionUtil.getHandler(entity).ifPresent(handler -> {
-        if (handler.finalizeSpawn()) {
-          Identifier id = EntityType.getKey(entity.getType());
-          ChampionConfigSelectorHolder selectorHolder = Champions.getInstance().getChampionConfigSelectorManager().byId(id);
-          if (selectorHolder != null) {
-            selectorHolder.value().select(serverLevel, entity, entity instanceof Mob mob ? mob.getSpawnType() : null)
-              .ifPresent(handler::applyConfig);
-          }
-        }
-      });
-
+      ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doFinalizeSpawn(level, event.getX(), event.getY(), event.getZ(), level.getCurrentDifficultyAt(entity.blockPosition()), event.getSpawnType()));
     }
   }
 

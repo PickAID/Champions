@@ -16,8 +16,9 @@ import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
+import top.theillusivec4.champions.data.lang.LanguageUtil;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 
 import java.util.Collection;
 
@@ -69,7 +70,7 @@ public final class SpawnEggCommand {
       ItemStack itemStack = player.getMainHandItem();
       ChampionUtil.getHandler(itemStack).ifPresent(handler -> handler.setRank(rank));
     }
-    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_RANK_SUCCESS_KEY, i), true);
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_RANK_SUCCESS_KEY, rank.value().description()), true);
     return i;
   }
 
@@ -80,7 +81,7 @@ public final class SpawnEggCommand {
       ChampionUtil.getHandler(itemStack)
         .ifPresent(handler -> handler.updateAffixes(mutable -> mutable.add(affix)));
     }
-    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_AFFIX_SUCCESS_KEY, i), true);
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_AFFIX_SUCCESS_KEY, affix.value().description()), true);
     return i;
   }
 
@@ -93,8 +94,7 @@ public final class SpawnEggCommand {
       i++;
     }
 
-    int finalI = i;
-    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_LEVEL_SUCCESS_KEY, finalI), true);
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_LEVEL_SUCCESS_KEY, level), true);
     return i;
   }
 
@@ -107,8 +107,7 @@ public final class SpawnEggCommand {
       i++;
     }
 
-    int finalI = i;
-    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_BOSS_SUCCESS_KEY, finalI), true);
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_BOSS_SUCCESS_KEY, boss), true);
     return i;
   }
 
@@ -121,8 +120,7 @@ public final class SpawnEggCommand {
       i++;
     }
 
-    int finalI = i;
-    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_COLOR_SUCCESS_KEY, finalI), true);
+    source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_COLOR_SUCCESS_KEY, LanguageUtil.getColorComponent(color)), true);
     return i;
   }
 

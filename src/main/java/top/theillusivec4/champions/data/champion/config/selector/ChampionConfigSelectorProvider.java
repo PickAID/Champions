@@ -13,8 +13,8 @@ import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.champion.ChampionConfig;
-import top.theillusivec4.champions.server.champion.config.ChampionConfigSelector;
-import top.theillusivec4.champions.server.champion.config.ChampionConfigSelectorHolder;
+import top.theillusivec4.champions.server.champion.config.EntitySetting;
+import top.theillusivec4.champions.server.champion.config.EntitySettingHolder;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -25,11 +25,11 @@ import java.util.function.Consumer;
 public abstract class ChampionConfigSelectorProvider implements DataProvider {
   private final PackOutput.PathProvider pathProvider;
   private final CompletableFuture<HolderLookup.Provider> registries;
-  private final List<WithConditions<ChampionConfigSelectorHolder>> selectors = new ArrayList<>();
+  private final List<WithConditions<EntitySettingHolder>> selectors = new ArrayList<>();
 
   public ChampionConfigSelectorProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
     this.registries = registries;
-    this.pathProvider = output.createRegistryElementsPathProvider(Registries.CHAMPION_CONFIG_SELECTOR);
+    this.pathProvider = output.createRegistryElementsPathProvider(Registries.ENTITY_SETTING);
   }
 
   protected abstract void addConfigSelectors(HolderLookup.Provider registries);
@@ -39,21 +39,21 @@ public abstract class ChampionConfigSelectorProvider implements DataProvider {
     return this.registries.thenCompose(lookup -> {
       Set<Identifier> allSelectors = new HashSet<>();
       List<CompletableFuture<?>> tasks = new ArrayList<>();
-      Consumer<WithConditions<ChampionConfigSelectorHolder>> consumer = withConditionsHolder -> {
-        ChampionConfigSelectorHolder holder = withConditionsHolder.carrier();
+      Consumer<WithConditions<EntitySettingHolder>> consumer = withConditionsHolder -> {
+        EntitySettingHolder holder = withConditionsHolder.carrier();
         List<ICondition> conditions = withConditionsHolder.conditions();
-        ChampionConfigSelector selector = holder.value();
+        EntitySetting selector = holder.value();
         if (!allSelectors.add(holder.id())) {
           throw new IllegalStateException("Duplicate champion config selector " + holder.id());
         } else {
           Path path = this.pathProvider.json(holder.id());
 
-          tasks.add(DataProvider.saveStable(cache, lookup, ChampionConfigSelector.WITH_CONDITIONS_CODEC, Optional.of(new WithConditions<>(conditions, selector)), path));
+          tasks.add(DataProvider.saveStable(cache, lookup, EntitySetting.WITH_CONDITIONS_CODEC, Optional.of(new WithConditions<>(conditions, selector)), path));
         }
       };
 
       this.addConfigSelectors(lookup);
-      for (WithConditions<ChampionConfigSelectorHolder> selector : this.selectors) {
+      for (WithConditions<EntitySettingHolder> selector : this.selectors) {
         consumer.accept(selector);
       }
 
@@ -66,12 +66,12 @@ public abstract class ChampionConfigSelectorProvider implements DataProvider {
     return "ChampionConfigSelector";
   }
 
-  protected void add(Identifier id, ChampionConfigSelector.Builder selector) {
+  protected void add(Identifier id, EntitySetting.Builder selector) {
     this.add(id, selector, List.of());
   }
 
-  protected void add(Identifier id, ChampionConfigSelector.Builder selector, List<ICondition> conditions) {
-    this.selectors.add(new WithConditions<>(conditions, new ChampionConfigSelectorHolder(id, selector.build(id))));
+  protected void add(Identifier id, EntitySetting.Builder selector, List<ICondition> conditions) {
+    this.selectors.add(new WithConditions<>(conditions, new EntitySettingHolder(id, selector.build(id))));
   }
 
   public static final class Internal extends ChampionConfigSelectorProvider {
@@ -85,7 +85,7 @@ public abstract class ChampionConfigSelectorProvider implements DataProvider {
       Holder<Rank> rank = registries.holderOrThrow(Ranks.COMMON);
       this.add(
         EntityType.getKey(EntityType.ZOMBIE),
-        ChampionConfigSelector.builder()
+        EntitySetting.builder()
           .add(
             ChampionConfig.builder()
               .setRank(rank)

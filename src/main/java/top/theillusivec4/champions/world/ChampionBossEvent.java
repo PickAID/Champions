@@ -4,7 +4,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.server.champion.config.ChampionDefaultConfigs;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 
 import java.util.List;
 import java.util.UUID;

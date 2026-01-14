@@ -31,23 +31,23 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.capability.Capabilities;
+import top.theillusivec4.champions.champion.DifficultyBasedValues;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
+import top.theillusivec4.champions.champion.affix.effect.AffixEntityEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffects;
-import top.theillusivec4.champions.champion.affix.effect.entity.AffixEntityEffects;
-import top.theillusivec4.champions.champion.affix.effect.value.AffixValueEffects;
-import top.theillusivec4.champions.champion.value.based.lootcontext.LootContextBasedValues;
-import top.theillusivec4.champions.champion.value.based.lootcontext.LootParamSourceTypes;
-import top.theillusivec4.champions.champion.entity.EntityEventListener;
-import top.theillusivec4.champions.network.protocol.ClientGamePacketListener;
+import top.theillusivec4.champions.champion.affix.effect.AffixValueEffects;
+import top.theillusivec4.champions.world.entity.EntityEventListener;
+import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValues;
 import top.theillusivec4.champions.command.Commands;
 import top.theillusivec4.champions.component.DataComponents;
 import top.theillusivec4.champions.config.CommonConfig;
 import top.theillusivec4.champions.data.DataEventListener;
 import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
+import top.theillusivec4.champions.network.protocol.ClientGamePacketListener;
 import top.theillusivec4.champions.particle.ParticleTypes;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
-import top.theillusivec4.champions.server.champion.config.ChampionConfigSelectorManager;
+import top.theillusivec4.champions.server.champion.config.EntitySettingManager;
 import top.theillusivec4.champions.server.config.ServerConfig;
 import top.theillusivec4.champions.stats.Stats;
 import top.theillusivec4.champions.util.Utils;
@@ -72,7 +72,7 @@ public class Champions {
   private static Champions instance;
   private final CommonConfig commonConfig;
   private final ServerConfig serverConfig;
-  private ChampionConfigSelectorManager championConfigSelectorManager;
+  private EntitySettingManager entitySettingManager;
 
   public static Champions getInstance() {
     return instance;
@@ -94,11 +94,11 @@ public class Champions {
     Capabilities.register(modEventBus);
     BuiltInRegistries.register(modEventBus);
     AffixEffectComponents.register(modEventBus);
-    LootContextBasedValues.register(modEventBus);
+    LevelBasedValues.register(modEventBus);
+    DifficultyBasedValues.register(modEventBus);
     AffixValueEffects.register(modEventBus);
     AffixEntityEffects.register(modEventBus);
     AffixLocationBasedEffects.register(modEventBus);
-    LootParamSourceTypes.register(modEventBus);
     Attachments.register(modEventBus);
     LootItemConditions.register(modEventBus);
     LootModifiers.register(modEventBus);
@@ -142,8 +142,8 @@ public class Champions {
     return serverConfig;
   }
 
-  public ChampionConfigSelectorManager getChampionConfigSelectorManager() {
-    return Objects.requireNonNull(championConfigSelectorManager, "过早的访问配置选择管理器，至少应该在世界加载后");
+  public EntitySettingManager getChampionConfigSelectorManager() {
+    return Objects.requireNonNull(entitySettingManager, "过早的访问配置选择管理器，至少应该在世界加载后");
   }
 
   public static final class ReloadEventListener {
@@ -158,9 +158,9 @@ public class Champions {
 
     @SubscribeEvent
     public void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
-      ChampionConfigSelectorManager manager = new ChampionConfigSelectorManager(event.getRegistryAccess());
+      EntitySettingManager manager = new EntitySettingManager(event.getRegistryAccess());
       event.addListener(CHAMPION_CONFIG_MANAGER, manager);
-      Champions.instance.championConfigSelectorManager = manager;
+      Champions.instance.entitySettingManager = manager;
     }
 
   }

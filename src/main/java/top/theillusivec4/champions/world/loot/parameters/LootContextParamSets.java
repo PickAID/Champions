@@ -141,12 +141,12 @@ public final class LootContextParamSets {
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext heal(ServerLevel serverLevel, Entity entity, int level, Damage damage) {
+  public static LootContext heal(ServerLevel serverLevel, Entity entity, int level,@Nullable Damage damage) {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
       .create(HEAL);
     return new LootContext.Builder(params).create(Optional.empty());
   }
@@ -190,12 +190,12 @@ public final class LootContextParamSets {
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext tick(ServerLevel serverLevel, Entity entity, int level, Damage damage) {
+  public static LootContext tick(ServerLevel serverLevel, Entity entity, int level,@Nullable Damage damage) {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
       .create(TICK);
     return new LootContext.Builder(params).create(Optional.empty());
   }

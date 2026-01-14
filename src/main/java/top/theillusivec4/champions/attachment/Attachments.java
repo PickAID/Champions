@@ -26,7 +26,7 @@ public final class Attachments {
   public static final Supplier<AttachmentType<Optional<Integer>>> DAMAGE_TIME = register("damage_time", AttachmentType.<Optional<Integer>>builder(Optional::empty).serialize(Codec.INT.optionalFieldOf("damage_time")));
   public static final Supplier<AttachmentType<Optional<Float>>> DAMAGE_AMOUNT = register("damage_amount", AttachmentType.<Optional<Float>>builder(Optional::empty).serialize(Codec.FLOAT.optionalFieldOf("damage_amount")));
   // Champion Common
-  public static final Supplier<AttachmentType<Affixes>> AFFIXES = register("affixes", AttachmentType.builder(() -> Affixes.EMPTY).serialize(Affixes.MAP_CODEC).sync(Affixes.STREAM_CODEC));
+  public static final Supplier<AttachmentType<Optional<Affixes>>> AFFIXES = register("affixes", AttachmentType.<Optional<Affixes>>builder(Optional::empty).serialize(Affixes.CODEC.optionalFieldOf("affix")).sync(Affixes.STREAM_CODEC.apply(ByteBufCodecs::optional)));
   public static final Supplier<AttachmentType<Optional<Holder<Rank>>>> RANK = register("rank", AttachmentType.<Optional<Holder<Rank>>>builder(Optional::empty).serialize(Rank.REFERENCE_CODEC.optionalFieldOf("rank")).sync(Rank.STREAM_CODEC.apply(ByteBufCodecs::optional)));
   public static final Supplier<AttachmentType<Optional<Component>>> PREFIX_NAME = register("prefix_name", AttachmentType.<Optional<Component>>builder(Optional::empty).serialize(ComponentSerialization.CODEC.optionalFieldOf("prefix_name")).sync(ComponentSerialization.STREAM_CODEC.apply(ByteBufCodecs::optional)));
   public static final Supplier<AttachmentType<Integer>> LEVEL = register("level", AttachmentType.builder(() -> 1).serialize(Codec.INT.fieldOf("level")).sync(ByteBufCodecs.INT));

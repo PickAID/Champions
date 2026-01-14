@@ -17,7 +17,7 @@ public class ClientAffixEventsHandler {
   @SubscribeEvent
   public static void handleJailing(MovementInputUpdateEvent event) {
     var player = event.getEntity();
-    if (player.hasEffect(MobEffects.PARALYSIS_EFFECT_TYPE)) {
+    if (player.hasEffect(MobEffects.PARALYSIS)) {
       ClientInput input = event.getInput();
       input.moveVector = Vec2.ZERO;
       input.keyPresses = Input.EMPTY;
