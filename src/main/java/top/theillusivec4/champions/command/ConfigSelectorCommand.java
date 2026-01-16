@@ -124,7 +124,7 @@ public final class ConfigSelectorCommand {
   private static int applyConfig(CommandSourceStack source, EntitySetting configSelector, Entity target, @Nullable EntitySpawnReason entitySpawnReason) throws CommandSyntaxException {
     return ChampionUtil.getHandler(target).map(handler -> {
       ServerLevel serverLevel = source.getLevel();
-      configSelector.select(serverLevel, target, entitySpawnReason).ifPresent(handler::applyConfig);
+      configSelector.select(serverLevel, target, entitySpawnReason).ifPresent(handler::applyData);
       source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_CONFIG_SELECTOR_SUCCESS_KEY), true);
       return 1;
     }).orElseThrow(() -> COMMANDS_ERROR_INVALID_CHAMPION_ENTITY.create(EntityType.getKey(target.getType()).toString()));

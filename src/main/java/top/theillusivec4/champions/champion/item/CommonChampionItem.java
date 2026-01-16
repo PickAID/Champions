@@ -6,6 +6,6 @@ import net.minecraft.world.item.ItemStack;
  * 物品的通用实现
  * @param itemStack 物品
  */
-public record CommonItem(ItemStack itemStack) implements ChampionHandlerItem {
+public record CommonChampionItem(ItemStack itemStack) implements ChampionHandlerItem {
 
 }

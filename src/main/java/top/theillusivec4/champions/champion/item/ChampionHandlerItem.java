@@ -59,11 +59,12 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
 
   @Override
   default Optional<Integer> getLevel() {
-    if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.LEVEL)) {
-      return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.LEVEL));
-    }
-
-    return this.getRank().map(rank -> rank.value().level());
+//    if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.LEVEL)) {
+//      return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.LEVEL));
+//    }
+//
+//    return this.getRank().map(rank -> rank.value().level());
+    return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.LEVEL));
   }
 
   @Override
@@ -77,11 +78,12 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
 
   @Override
   default Optional<Integer> getColor() {
-    if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.COLOR)) {
-      return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.COLOR));
-    }
-
-    return this.getRank().map(rank -> rank.value().color());
+//    if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.COLOR)) {
+//      return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.COLOR));
+//    }
+//
+//    return this.getRank().map(rank -> rank.value().color());
+    return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.COLOR));
   }
 
   @Override

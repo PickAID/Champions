@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.conditions.WithConditions;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.champion.ChampionConfig;
+import top.theillusivec4.champions.champion.ChampionData;
 import top.theillusivec4.champions.server.champion.config.EntitySetting;
 import top.theillusivec4.champions.server.champion.config.EntitySettingHolder;
 
@@ -87,7 +87,7 @@ public abstract class ChampionConfigSelectorProvider implements DataProvider {
         EntityType.getKey(EntityType.ZOMBIE),
         EntitySetting.builder()
           .add(
-            ChampionConfig.builder()
+            ChampionData.builder()
               .setRank(rank)
           )
       );

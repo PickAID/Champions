@@ -13,7 +13,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.conditions.ConditionalOps;
 import net.neoforged.neoforge.common.conditions.WithConditions;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.champion.ChampionConfig;
+import top.theillusivec4.champions.champion.ChampionData;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.List;
@@ -58,7 +58,7 @@ public record EntitySetting(List<ChampionConfigEntry> entries, Optional<Identifi
     return new Builder();
   }
 
-  public Optional<ChampionConfig> select(ServerLevel serverLevel, Entity entity, @Nullable EntitySpawnReason entitySpawnReason) {
+  public Optional<ChampionData> select(ServerLevel serverLevel, Entity entity, @Nullable EntitySpawnReason entitySpawnReason) {
     LootContext lootContext = LootContextParamSets.spawn(serverLevel, entity, entitySpawnReason, this.randomSequence);
     RandomSource randomSource = lootContext.getRandom();
     List<ChampionConfigEntry> entries = this.entries().stream().filter(entry -> entry.matches(lootContext)).toList();
@@ -78,15 +78,15 @@ public record EntitySetting(List<ChampionConfigEntry> entries, Optional<Identifi
   public static class Builder {
     private ImmutableList.Builder<ChampionConfigEntry> builder = new ImmutableList.Builder<>();
 
-    public Builder add(ChampionConfig.Builder config) {
+    public Builder add(ChampionData.Builder config) {
       return this.add(null, config, 5);
     }
 
-    public Builder add(ChampionConfig.Builder config, int weight) {
+    public Builder add(ChampionData.Builder config, int weight) {
       return this.add(null, config, weight);
     }
 
-    public Builder add(@Nullable LootItemCondition requirements, ChampionConfig.Builder config, int weight) {
+    public Builder add(@Nullable LootItemCondition requirements, ChampionData.Builder config, int weight) {
       this.builder.add(new ChampionConfigEntry(Optional.ofNullable(requirements), config.build(), Math.clamp(weight, 1, Integer.MAX_VALUE)));
       return this;
     }

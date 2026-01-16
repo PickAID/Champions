@@ -193,20 +193,20 @@ public interface ChampionHandler {
   /**
    * 对当前处理程序应用冠军配置数据。
    */
-  default void applyConfig(ChampionConfig config) {
-    config.rank().ifPresent(this::setRank);
-    config.prefixName().ifPresent(this::setPrefixName);
-    config.level().ifPresent(this::setLevel);
-    config.color().ifPresent(this::setColor);
-    config.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
-    config.boss().ifPresent(this::setBoss); // 这里需要用到词条数据
+  default void applyData(ChampionData data) {
+    data.rank().ifPresent(this::setRank);
+    data.prefixName().ifPresent(this::setPrefixName);
+    data.level().ifPresent(this::setLevel);
+    data.color().ifPresent(this::setColor);
+    data.affixes().ifPresent(affixes -> this.updateAffixes(mutable -> mutable.addAll(affixes.getAffixes())));
+    data.boss().ifPresent(this::setBoss); // 这里需要用到词条数据
   }
 
   /**
    * 派生当前处理程序的冠军配置数据。
    */
-  default ChampionConfig deriveConfig() {
-    return new ChampionConfig(
+  default ChampionData deriveData() {
+    return new ChampionData(
       this.getRank(),
       this.getPrefixName(),
       this.getAffixes(),
