@@ -1,5 +1,6 @@
 package top.theillusivec4.champions.champion.rank;
 
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import top.theillusivec4.champions.registry.Registries;
@@ -21,36 +22,33 @@ public interface Ranks {
       context,
       COMMON,
       Rank.builder()
-        .setLevel(1)
-        .setColor("#FFFFFF")
+        .setLevel(MinMaxBounds.Ints.between(1, 2))
     );
     register(
       context,
       SKILLED,
       Rank.builder()
-        .setLevel(2)
-        .setColor("#FFFF00")
+        .setLevel(MinMaxBounds.Ints.between(2, 3))
     );
     register(
       context,
       ELITE,
       Rank.builder()
-        .setLevel(3)
-        .setColor("#FF9900")
+        .setLevel(MinMaxBounds.Ints.between(3, 4))
     );
     register(
       context,
       LEGENDARY,
       Rank.builder()
-        .setLevel(4)
-        .setColor("#66FFFF")
+        .setLevel(MinMaxBounds.Ints.exactly(4))
+        .setWeight(3)
     );
     register(
       context,
       ULTIMATE,
       Rank.builder()
-        .setLevel(5)
-        .setColor("#CC33FF")
+        .setLevel(MinMaxBounds.Ints.exactly(5))
+        .setWeight(2)
     );
   }
 

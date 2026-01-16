@@ -9,6 +9,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 专用于实体的冠军处理程序
@@ -89,11 +91,12 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 
   @Override
   default Optional<Integer> getLevel() {
-    if (this.entity().hasData(Attachments.LEVEL)) {
-      return Optional.of(this.entity().getData(Attachments.LEVEL));
-    } else {
-      return this.getRank().map(rank -> rank.value().level());
-    }
+    return this.entity().getExistingData(Attachments.LEVEL);
+//    if (this.entity().hasData(Attachments.LEVEL)) {
+//      return Optional.of(this.entity().getData(Attachments.LEVEL));
+//    } else {
+//      return this.getRank().map(rank -> rank.value().level());
+//    }
   }
 
   @Override
@@ -107,11 +110,12 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 
   @Override
   default Optional<Integer> getColor() {
-    if (this.entity().hasData(Attachments.COLOR)) {
-      return Optional.of(this.entity().getData(Attachments.COLOR));
-    }
-
-    return this.getRank().map(rank -> rank.value().color());
+    return this.entity().getExistingData(Attachments.COLOR);
+//    if (this.entity().hasData(Attachments.COLOR)) {
+//      return Optional.of(this.entity().getData(Attachments.COLOR));
+//    }
+//
+//    return this.getRank().map(rank -> rank.value().color());
   }
 
   @Override
@@ -177,29 +181,74 @@ public interface ChampionHandlerEntity extends ChampionHandler {
   }
 
   default void doFinalizeSpawn(ServerLevel level, double x, double y, double z, DifficultyInstance difficultyInstance, EntitySpawnReason reason) {
-    if (reason == EntitySpawnReason.SPAWN_ITEM_USE) {
-      return;
-    }
-
     if (!this.isValid()) {
+      /*
+        思路：区域难度 -> 等级 -> Rank（提供前缀名，每等级颜色，等级区间（根据前一步计算出的等级判断是否可用），词缀，战利品表等）
+        简述：生物（Mob）在生成初始化阶段时（FinalizeSpawn，处理生物装备盔甲，僵尸鸡骑士，灾厄队长等的阶段）
+              获取所在位置的区域难度，从区域难度计算该生物的冠军等级，从等级寻找可用的Rank，并从所有可用的Rank中随机抽取并应用于生物。
+
+        例：猎杀者
+            等级：[1, 3]
+            颜色：[color_1, color_2, color_3] , default_color
+            词缀：[]
+            战利品表：LootTableId 用于额外的掉落
+
+        难度映射等级计算方式：
+          Minecraft区域难度，简单：[0.75-1.5]，普通：[1.5-4.0]，困难：[2.25-6.75]
+          将区域难度进行四舍五入，并将值钳制在最小最大等级之间，目前为[1, 5]
+          而后根据计算得出的等级，匹配可用的Rank，并为实体应用。
+
+        等级映射词缀数量计算方式：
+          总词缀数量 = 等级依赖函数：
+                          最小值：基础词缀数量（默认为1） + 除去第一级外的每级数量（默认为1）
+                          最大值：5
+       */
+
       // 等级
-      int championLevel = (int) Math.clamp(difficultyInstance.getEffectiveDifficulty(), 1, 5);
-      this.setLevel(championLevel);
-      //  词缀
-      Registry<Affix> affixes = level.registryAccess().lookupOrThrow(Registries.AFFIX);
-      List<Holder<Affix>> list = new ArrayList<>();
-      affixes.asHolderIdMap().forEach(list::add);
-      Collections.shuffle(list);
-      this.updateAffixes(mutable -> {
-        int i = 0;
-        for (Holder<Affix> affix : list) {
-          i++;
-          mutable.add(affix);
-          if (i >= championLevel){
+      RandomSource random = level.getRandom();
+      int championLevel = random.nextInt((int) Math.clamp(difficultyInstance.getEffectiveDifficulty(), 1, 5), 6);
+      Registry<Rank> ranks = level.registryAccess().lookupOrThrow(Registries.RANK);
+      List<Holder<Rank>> filteredRanks = ranks.stream().filter(rank -> rank.level().matches(championLevel)).map(ranks::wrapAsHolder).toList();
+
+      if (!filteredRanks.isEmpty()) {
+        int totalWeight = filteredRanks.stream().mapToInt(rank -> rank.value().weight()).sum();
+        int targetWeight = random.nextInt(1, totalWeight);
+        int currentWeight = 0;
+        Holder<Rank> rank = null;
+        for (Holder<Rank> rank1 : filteredRanks) {
+          currentWeight += rank1.value().weight();
+          if (currentWeight >= targetWeight) {
+            rank = rank1;
             break;
           }
         }
-      });
+
+        if (rank != null) {
+          int minAffix = (int) rank.value().minAffix().calculate(championLevel);
+          int maxAffix = (int) rank.value().maxAffix().calculate(championLevel);
+          int affixCount =  minAffix < maxAffix ? random.nextInt(minAffix, maxAffix) : minAffix == maxAffix ? minAffix : 0;
+
+          this.setRank(rank);
+          this.setColor(rank.value().getColor(championLevel).getValue());
+          this.setLevel(championLevel);
+          //  词缀
+          Registry<Affix> affixes = level.registryAccess().lookupOrThrow(Registries.AFFIX);
+          List<Holder<Affix>> list =  affixes.stream().map(affixes::wrapAsHolder).collect(Collectors.toList());
+          Collections.shuffle(list);
+          this.updateAffixes(mutable -> {
+            int i = 0;
+            for (Holder<Affix> affix : list) {
+              i++;
+              mutable.add(affix);
+              if (i >= affixCount) {
+                break;
+              }
+            }
+          });
+        }
+
+
+      }
 
 
     }
@@ -334,7 +383,7 @@ public interface ChampionHandlerEntity extends ChampionHandler {
     if (item != null && item != Items.AIR) {
       ItemStack itemStack = new ItemStack(item);
 
-      ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handlerItem.applyConfig(this.deriveConfig()));
+      ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handlerItem.applyData(this.deriveData()));
 
       return itemStack;
     }

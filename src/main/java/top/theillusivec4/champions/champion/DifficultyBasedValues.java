@@ -94,7 +94,7 @@ public final class DifficultyBasedValues {
 
     @Override
     public float calculate(DifficultyInstance instance) {
-      return Mth.sqrt(instance.getDifficulty().getId()) + this.added;
+      return Mth.sqrt(instance.getEffectiveDifficulty()) + this.added;
     }
 
     @Override
@@ -111,7 +111,7 @@ public final class DifficultyBasedValues {
 
     @Override
     public float calculate(DifficultyInstance instance) {
-      return this.base + this.perEffectiveDifficultyAboveEasy * Math.max(instance.getEffectiveDifficulty() - 1.5f, 0.0f);
+      return this.base + this.perEffectiveDifficultyAboveEasy * instance.getEffectiveDifficulty();
     }
 
     @Override

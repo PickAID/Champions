@@ -26,7 +26,6 @@ public final class LootContextParamSets {
     builder()
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.ENTITY_SPAWN_REASON)
   );
   public static final ContextKeySet LOCATION = register(
     "location",
@@ -214,7 +213,6 @@ public final class LootContextParamSets {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.ENTITY_SPAWN_REASON, spawnReason)
       .create(SPAWN);
     return new LootContext.Builder(params).create(randomSequenceKey);
   }

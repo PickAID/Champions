@@ -1,7 +1,6 @@
 package top.theillusivec4.champions.world.entity;
 
 import net.minecraft.core.Holder;
-import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -23,12 +22,10 @@ import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.apache.commons.lang3.mutable.MutableFloat;
-import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.entity.ChampionHandlerEntity;
 import top.theillusivec4.champions.particle.ParticleTypes;
-import top.theillusivec4.champions.server.champion.config.EntitySettingHolder;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 import top.theillusivec4.champions.stats.Stats;
 import top.theillusivec4.champions.world.effect.MobEffects;
@@ -117,7 +114,7 @@ public final class EntityEventListener {
       if (victim instanceof LivingEntity livingEntity) {
         MobEffectInstance mobEffectInstance = livingEntity.getEffect(MobEffects.WOUND);
         if (mobEffectInstance != null) {
-          damage.setValue(damage.floatValue() * 0.1f * mobEffectInstance.getAmplifier());
+          damage.setValue(damage.floatValue() + damage.floatValue() * 0.1f * mobEffectInstance.getAmplifier());
         }
       }
 
@@ -243,7 +240,7 @@ public final class EntityEventListener {
   public void onLivingConversionPost(LivingConversionEvent.Post event) {
     Entity entity = event.getEntity();
     Entity newEntity = event.getOutcome();
-    ChampionUtil.getHandler(newEntity).ifPresent(handler -> ChampionUtil.getHandler(entity).ifPresent(handler1 -> handler.applyConfig(handler1.deriveConfig())));
+    ChampionUtil.getHandler(newEntity).ifPresent(handler -> ChampionUtil.getHandler(entity).ifPresent(handler1 -> handler.applyData(handler1.deriveData())));
   }
 
   /**
@@ -256,7 +253,7 @@ public final class EntityEventListener {
     Entity parent = event.getParent();
     ChampionUtil.getHandler(parent).ifPresent(handler -> {
       for (Mob child : event.getChildren()) {
-        ChampionUtil.getHandler(child).ifPresent(handler1 -> handler1.applyConfig(handler.deriveConfig()));
+        ChampionUtil.getHandler(child).ifPresent(handler1 -> handler1.applyData(handler.deriveData()));
       }
     });
   }

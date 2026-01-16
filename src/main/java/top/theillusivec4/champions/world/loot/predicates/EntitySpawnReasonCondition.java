@@ -3,10 +3,12 @@ package top.theillusivec4.champions.world.loot.predicates;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import top.theillusivec4.champions.world.loot.parameters.LootContextParams;
 
 import java.util.List;
 import java.util.Locale;
@@ -37,7 +39,7 @@ public record EntitySpawnReasonCondition(List<EntitySpawnReason> reasons) implem
 
   @Override
   public boolean test(LootContext lootContext) {
-    EntitySpawnReason reason = lootContext.getOptionalParameter(LootContextParams.ENTITY_SPAWN_REASON);
-    return reason != null && this.reasons.contains(reason);
+    Entity entity = lootContext.getOptionalParameter(LootContextParams.THIS_ENTITY);
+    return entity instanceof Mob mob && mob.getSpawnType() != null && this.reasons.contains(mob.getSpawnType());
   }
 }

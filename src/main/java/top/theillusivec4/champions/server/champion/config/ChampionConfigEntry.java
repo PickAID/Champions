@@ -5,15 +5,15 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.Validatable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import top.theillusivec4.champions.champion.ChampionConfig;
+import top.theillusivec4.champions.champion.ChampionData;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.Optional;
 
-public record ChampionConfigEntry(Optional<LootItemCondition> requirements, ChampionConfig config, int weight) {
+public record ChampionConfigEntry(Optional<LootItemCondition> requirements, ChampionData config, int weight) {
   public static final Codec<ChampionConfigEntry> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     LootItemCondition.DIRECT_CODEC.validate(Validatable.validatorForContext(LootContextParamSets.SPAWN)).optionalFieldOf("requirements").forGetter(ChampionConfigEntry::requirements),
-    ChampionConfig.CODEC.fieldOf("config").forGetter(ChampionConfigEntry::config),
+    ChampionData.CODEC.fieldOf("config").forGetter(ChampionConfigEntry::config),
     Codec.intRange(1, Integer.MAX_VALUE).fieldOf("weight").forGetter(ChampionConfigEntry::weight)
   ).apply(instance, ChampionConfigEntry::new));
 
