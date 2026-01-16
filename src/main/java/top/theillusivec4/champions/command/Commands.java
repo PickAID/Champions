@@ -15,7 +15,6 @@ public final class Commands {
       CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
       LiteralArgumentBuilder<CommandSourceStack> builder = net.minecraft.commands.Commands.literal(Champions.MODID).requires(net.minecraft.commands.Commands.hasPermission(net.minecraft.commands.Commands.LEVEL_ADMINS));
       SpawnEggCommand.register(builder, buildContext);
-      ConfigSelectorCommand.register(builder, buildContext);
 
       dispatcher.register(builder);
 //      SpawnEggCommand.register(dispatcher, buildContext);

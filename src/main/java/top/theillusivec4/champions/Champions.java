@@ -36,7 +36,6 @@ import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
 import top.theillusivec4.champions.champion.affix.effect.AffixEntityEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixValueEffects;
-import top.theillusivec4.champions.world.entity.EntityEventListener;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValues;
 import top.theillusivec4.champions.command.Commands;
 import top.theillusivec4.champions.component.DataComponents;
@@ -47,11 +46,13 @@ import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.network.protocol.ClientGamePacketListener;
 import top.theillusivec4.champions.particle.ParticleTypes;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
-import top.theillusivec4.champions.server.champion.config.EntitySettingManager;
+import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.server.champion.ChampionConfigManager;
 import top.theillusivec4.champions.server.config.ServerConfig;
 import top.theillusivec4.champions.stats.Stats;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.world.effect.MobEffects;
+import top.theillusivec4.champions.world.entity.EntityEventListener;
 import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
 import top.theillusivec4.champions.world.item.ItemEventListener;
@@ -72,7 +73,8 @@ public class Champions {
   private static Champions instance;
   private final CommonConfig commonConfig;
   private final ServerConfig serverConfig;
-  private EntitySettingManager entitySettingManager;
+  private ChampionConfigManager entityConfigManager;
+  private ChampionConfigManager levelConfigManager;
 
   public static Champions getInstance() {
     return instance;
@@ -142,12 +144,17 @@ public class Champions {
     return serverConfig;
   }
 
-  public EntitySettingManager getChampionConfigSelectorManager() {
-    return Objects.requireNonNull(entitySettingManager, "过早的访问配置选择管理器，至少应该在世界加载后");
+  public ChampionConfigManager getLevelConfigManager() {
+    return Objects.requireNonNull(levelConfigManager, "过早的访问实体配置管理器");
+  }
+
+  public ChampionConfigManager getEntityConfigManager() {
+    return Objects.requireNonNull(entityConfigManager, "过早的访问实体配置管理器");
   }
 
   public static final class ReloadEventListener {
-    public static final Identifier CHAMPION_CONFIG_MANAGER = Utils.id("champion_config_manager");
+    public static final Identifier ENTITY_CONFIG_MANAGER = Util.id("entity_config_manager");
+    public static final Identifier LEVEL_CONFIG_MANAGER = Util.id("level_config_manager");
 
     private static void register() {
       NeoForge.EVENT_BUS.register(new ReloadEventListener());
@@ -158,9 +165,12 @@ public class Champions {
 
     @SubscribeEvent
     public void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
-      EntitySettingManager manager = new EntitySettingManager(event.getRegistryAccess());
-      event.addListener(CHAMPION_CONFIG_MANAGER, manager);
-      Champions.instance.entitySettingManager = manager;
+      ChampionConfigManager entityConfigManager = new ChampionConfigManager(event.getRegistryAccess(), Registries.ENTITY_CONFIG);
+      ChampionConfigManager levelConfigManager = new ChampionConfigManager(event.getRegistryAccess(), Registries.LEVEL_CONFIG);
+      event.addListener(ENTITY_CONFIG_MANAGER, entityConfigManager);
+      event.addListener(LEVEL_CONFIG_MANAGER, levelConfigManager);
+      Champions.instance.entityConfigManager = entityConfigManager;
+      Champions.instance.levelConfigManager = levelConfigManager;
     }
 
   }

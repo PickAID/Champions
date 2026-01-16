@@ -6,7 +6,7 @@ import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ARGB;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -59,11 +59,6 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
 
   @Override
   default Optional<Integer> getLevel() {
-//    if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.LEVEL)) {
-//      return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.LEVEL));
-//    }
-//
-//    return this.getRank().map(rank -> rank.value().level());
     return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.LEVEL));
   }
 
@@ -77,18 +72,13 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
   }
 
   @Override
-  default Optional<Integer> getColor() {
-//    if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.COLOR)) {
-//      return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.COLOR));
-//    }
-//
-//    return this.getRank().map(rank -> rank.value().color());
+  default Optional<TextColor> getColor() {
     return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.COLOR));
   }
 
   @Override
-  public default void setColor(int color) {
-    this.itemStack().set(top.theillusivec4.champions.component.DataComponents.COLOR, ARGB.opaque(color));
+  default void setColor(TextColor color) {
+    this.itemStack().set(top.theillusivec4.champions.component.DataComponents.COLOR, color);
   }
 
   @Override
@@ -130,19 +120,19 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
     Optional<Integer> optional = this.getLevel();
     optional.ifPresent(level -> consumer.accept(
       Component.translatable(LanguageKeys.TOOLTIP_LEVEL_KEY).withStyle(ChatFormatting.GRAY)
-        .append(LanguageUtil.getLevelComponent(level).withColor(this.getColorOrDefault()))
+        .append(LanguageUtil.getLevelComponent(level).withColor(this.getColorOrDefault().getValue()))
     ));
     // 颜色
-    Optional<Integer> optional1 = this.getColor();
+    Optional<TextColor> optional1 = this.getColor();
     optional1.ifPresent(color -> consumer.accept(
       Component.translatable(LanguageKeys.TOOLTIP_COLOR_KEY).withStyle(ChatFormatting.GRAY)
-        .append(LanguageUtil.getColorComponent(color))
+        .append(LanguageUtil.getColorComponent(color.getValue()))
     ));
     // 前缀
     Optional<Component> optional2 = this.getPrefixName();
     optional2.ifPresent(component -> consumer.accept(
       Component.translatable(LanguageKeys.TOOLTIP_PREFIX_NAME_KEY).withStyle(ChatFormatting.GRAY)
-        .append(component.copy().withColor(this.getColorOrDefault()))
+        .append(component.copy().withColor(this.getColorOrDefault().getValue()))
     ));
     // 首领
     Optional<Boolean> optional3 = this.isBoss();

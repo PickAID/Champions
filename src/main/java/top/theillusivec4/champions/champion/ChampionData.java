@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.TextColor;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
@@ -27,7 +28,7 @@ public record ChampionData(
   Optional<Component> prefixName,
   Optional<Affixes> affixes,
   Optional<Integer> level,
-  Optional<Integer> color,
+  Optional<TextColor> color,
   Optional<Boolean> boss
 ) {
   public static final Codec<ChampionData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -35,7 +36,8 @@ public record ChampionData(
     ComponentSerialization.CODEC.optionalFieldOf("prefix_name").forGetter(ChampionData::prefixName),
     Affixes.CODEC.optionalFieldOf("affixes").forGetter(ChampionData::affixes),
     Codec.INT.optionalFieldOf("level").forGetter(ChampionData::level),
-    Codec.INT.optionalFieldOf("color").forGetter(ChampionData::color), Codec.BOOL.optionalFieldOf("boss").forGetter(ChampionData::boss)
+    TextColor.CODEC.optionalFieldOf("color").forGetter(ChampionData::color),
+    Codec.BOOL.optionalFieldOf("boss").forGetter(ChampionData::boss)
   ).apply(instance, ChampionData::new));
 
   public static Builder builder() {
@@ -47,7 +49,7 @@ public record ChampionData(
     private @Nullable Component prefixName;
     private @Nullable Affixes.Mutable affixes;
     private @Nullable Integer level;
-    private @Nullable Integer color;
+    private @Nullable TextColor color;
     private @Nullable Boolean boss;
 
     public Builder addAffix(Holder<Affix> affix) {
@@ -69,27 +71,27 @@ public record ChampionData(
       );
     }
 
-    public Builder setRank(@Nullable Holder<Rank> rank) {
+    public Builder setRank(Holder<Rank> rank) {
       this.rank = rank;
       return this;
     }
 
-    public Builder setPrefixName(@Nullable Component prefixName) {
+    public Builder setPrefixName(Component prefixName) {
       this.prefixName = prefixName;
       return this;
     }
 
-    public Builder setLevel(@Nullable Integer level) {
+    public Builder setLevel(Integer level) {
       this.level = level;
       return this;
     }
 
-    public Builder setColor(@Nullable Integer color) {
+    public Builder setColor(TextColor color) {
       this.color = color;
       return this;
     }
 
-    public Builder setBoss(@Nullable Boolean boss) {
+    public Builder setBoss(Boolean boss) {
       this.boss = boss;
       return this;
     }

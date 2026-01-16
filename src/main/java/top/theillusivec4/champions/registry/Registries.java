@@ -10,10 +10,10 @@ import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffec
 import top.theillusivec4.champions.champion.affix.effect.AffixEntityEffect;
 import top.theillusivec4.champions.champion.affix.effect.AffixValueEffect;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
-import top.theillusivec4.champions.server.champion.config.EntitySetting;
+import top.theillusivec4.champions.server.champion.ChampionConfig;
 import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 public final class Registries {
   public static final ResourceKey<Registry<Affix>> AFFIX = create("affix");
@@ -26,11 +26,12 @@ public final class Registries {
   public static final ResourceKey<Registry<MapCodec<? extends AffixValueEffect>>> AFFIX_VALUE_EFFECT_TYPE = create("affix_value_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixEntityEffect>>> AFFIX_ENTITY_EFFECT_TYPE = create("affix_entity_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixLocationBasedEffect>>> AFFIX_LOCATION_BASED_EFFECT_TYPE = create("affix_location_based_effect_type");
-  // 非Registry 它使用ReloadListener 如果有必要也可以设计一个可重载注册表，只是依然不能持有外部引用。
-  public static final ResourceKey<Registry<EntitySetting>> ENTITY_SETTING = create("entity_setting");
+  // 非Registry 使用ReloadListener 如果有必要也可以设计一个可重载注册表，只是依然不能持有外部引用。
+  public static final ResourceKey<Registry<ChampionConfig>> ENTITY_CONFIG = create("entity_config");
+  public static final ResourceKey<Registry<ChampionConfig>> LEVEL_CONFIG = create("level_config");
 
   private static <T> ResourceKey<Registry<T>> create(String name) {
-    return ResourceKey.createRegistryKey(Utils.id(name));
+    return ResourceKey.createRegistryKey(Util.id(name));
   }
 
   private Registries() {

@@ -3,6 +3,7 @@ package top.theillusivec4.champions.champion;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import net.minecraft.world.Difficulty;
 import net.minecraft.world.DifficultyInstance;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
 
@@ -35,7 +36,7 @@ public interface DifficultyBasedValue {
     return new DifficultyBasedValues.DifficultySquared(added);
   }
 
-  static DifficultyBasedValue linear(float base, float perDifficultAbovePeaceful) {
+  static DifficultyBasedValue linear(DifficultyBasedValue base, DifficultyBasedValue perDifficultAbovePeaceful) {
     return new DifficultyBasedValues.Linear(base, perDifficultAbovePeaceful);
   }
 
@@ -47,7 +48,7 @@ public interface DifficultyBasedValue {
     return new DifficultyBasedValues.Lookup(values, fallback);
   }
 
-  float calculate(DifficultyInstance instance);
+  float calculate(Difficulty difficulty);
 
   MapCodec<? extends DifficultyBasedValue> codec();
 }

@@ -16,11 +16,11 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import top.theillusivec4.champions.world.entity.BaseBulletEntity;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 public class ColorizedBulletRenderer<T extends BaseBulletEntity, S extends BulletRenderState> extends EntityRenderer<T, S> {
 
-  private static final Identifier GENERIC_SPARK_TEXTURE = Utils.id("textures/entity/generic_spark.png");
+  private static final Identifier GENERIC_SPARK_TEXTURE = Util.id("textures/entity/generic_spark.png");
   private static final RenderType RENDER_TYPE = RenderTypes.entityTranslucent(GENERIC_SPARK_TEXTURE);
   private final ShulkerBulletModel model;
 

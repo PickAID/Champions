@@ -4,7 +4,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.storage.loot.LootTable;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,7 +17,7 @@ public class ModLootTables {
   private static final Set<ResourceKey<LootTable>> IMMUTABLE_LOCATIONS = Collections.unmodifiableSet(LOCATIONS);
 
   private static ResourceKey<LootTable> create(String name) {
-    return create(ResourceKey.create(Registries.LOOT_TABLE, Utils.id(name)));
+    return create(ResourceKey.create(Registries.LOOT_TABLE, Util.id(name)));
   }
 
   private static ResourceKey<LootTable> create(ResourceKey<LootTable> name) {

@@ -76,12 +76,12 @@ public final class EntityEventListener {
   @SubscribeEvent
   public void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
     Entity victim = event.getEntity();
-    DamageSource damageSource = event.getSource();
+    DamageSource source = event.getSource();
 
     if (victim instanceof LivingEntity livingEntity) {
       MobEffectInstance mobEffectInstance = livingEntity.getEffect(MobEffects.SHIELD);
-      if (mobEffectInstance != null) {
-        livingEntity.level().playSound(null, livingEntity.blockPosition(), SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.AMBIENT, 1.0f, 1.0f);
+      if (mobEffectInstance != null ) {
+        livingEntity.level().playSound(null, livingEntity.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 1.0f, 1.0f);
         livingEntity.removeEffect(MobEffects.SHIELD);
         event.setCanceled(true);
         return;
@@ -89,7 +89,7 @@ public final class EntityEventListener {
     }
 
     ChampionUtil.getHandler(victim).ifPresent(handler -> {
-      boolean invulnerable = handler.isImmuneToDamage((ServerLevel) victim.level(), victim, damageSource);
+      boolean invulnerable = handler.isImmuneToDamage((ServerLevel) victim.level(), victim, source);
       if (invulnerable) {
         event.setCanceled(true);
       }
@@ -203,7 +203,7 @@ public final class EntityEventListener {
           double x = position.x() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
           double y = position.y() + randomSource.nextDouble() * entity.getBbHeight();
           double z = position.z() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
-          int color = handler.getColorOrDefault();
+          int color = handler.getColorOrDefault().getValue();
           entity.level().addParticle(ParticleTypes.rank(color), x, y, z, 1.0f, 1.0f, 1.0f);
         }
       });

@@ -14,15 +14,15 @@ import top.theillusivec4.champions.deprecated.client.config.ClientChampionsConfi
 import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.deprecated.common.rank.Rank;
 import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class HUDHelper {
 
-  private static final Identifier GUI_BAR_TEXTURES = Utils.id("textures/gui/bars.png");
-  private static final Identifier GUI_STAR = Utils.id("textures/gui/staricon.png");
+  private static final Identifier GUI_BAR_TEXTURES = Util.id("textures/gui/bars.png");
+  private static final Identifier GUI_STAR = Util.id("textures/gui/staricon.png");
 
   public static boolean renderHealthBar(GuiGraphics guiGraphics, final LivingEntity livingEntity) {
     return ChampionAttachment.getAttachment(livingEntity).map(champion -> {

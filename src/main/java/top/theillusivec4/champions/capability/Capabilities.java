@@ -17,7 +17,7 @@ import top.theillusivec4.champions.champion.entity.ChampionHandlerEntity;
 import top.theillusivec4.champions.champion.entity.CommonChampionEntity;
 import top.theillusivec4.champions.champion.item.ChampionHandlerItem;
 import top.theillusivec4.champions.champion.item.CommonChampionItem;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -49,8 +49,8 @@ public final class Capabilities {
   }
 
   public static final class ChampionHandlers {
-    public static final EntityCapability<ChampionHandlerEntity, @Nullable Void> ENTITY = EntityCapability.createVoid(Utils.id("champion_handler"), ChampionHandlerEntity.class);
-    public static final ItemCapability<ChampionHandlerItem, @Nullable Void> ITEM = ItemCapability.createVoid(Utils.id("champion_handler"), ChampionHandlerItem.class);
+    public static final EntityCapability<ChampionHandlerEntity, @Nullable Void> ENTITY = EntityCapability.createVoid(Util.id("champion_handler"), ChampionHandlerEntity.class);
+    public static final ItemCapability<ChampionHandlerItem, @Nullable Void> ITEM = ItemCapability.createVoid(Util.id("champion_handler"), ChampionHandlerItem.class);
 
     private static final Set<EntityType<?>> IMPLEMENTED_ENTITY_TYPES = new HashSet<>();
     private static final Set<Item> IMPLEMENTED_ITEMS = new HashSet<>();

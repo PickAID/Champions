@@ -1,7 +1,9 @@
 package top.theillusivec4.champions.champion;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +20,7 @@ import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -261,18 +264,18 @@ public interface ChampionHandler {
   /**
    * 获取颜色值
    */
-  Optional<Integer> getColor();
+  Optional<TextColor> getColor();
 
   /**
-   * 设置颜色值，内部自动调用ARGB.opaque(color)
+   * 设置颜色值
    */
-  void setColor(int color);
+  void setColor(TextColor color);
 
   /**
    * 获取可能为默认值的颜色
    */
-  default int getColorOrDefault() {
-    return getColor().orElse(-1);
+  default TextColor getColorOrDefault() {
+    return Objects.requireNonNull(getColor().orElse(TextColor.fromLegacyFormat(ChatFormatting.WHITE)));
   }
 
   /**

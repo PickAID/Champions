@@ -22,7 +22,7 @@ import top.theillusivec4.champions.deprecated.common.network.SPacketSyncChampion
 import top.theillusivec4.champions.deprecated.common.rank.Rank;
 import top.theillusivec4.champions.deprecated.common.rank.RankManager;
 import top.theillusivec4.champions.deprecated.common.util.EntityManager.EntitySettings;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.*;
 
@@ -50,7 +50,7 @@ public class ChampionBuilder {
       ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
       List<IAffix> newAffixes = ChampionBuilder.createAffixes(newRank, champion);
       champion.getServer().setAffixes(newAffixes);
-      Utils.consumeIfLifeCycle(newAffixes, lifecycle -> lifecycle.onInitialSpawn(champion));
+      Util.consumeIfLifeCycle(newAffixes, lifecycle -> lifecycle.onInitialSpawn(champion));
       // only post when champion spawned
       ChampionsEventHooks.onPostChampionSpawn(champion);
     }
@@ -62,7 +62,7 @@ public class ChampionBuilder {
     ChampionBuilder.applyGrowth(champion, newRank.getGrowthFactor());
     affixes = affixes.isEmpty() ? ChampionBuilder.createAffixes(newRank, champion) : affixes;
     champion.getServer().setAffixes(affixes);
-    Utils.consumeIfLifeCycle(affixes, lifecycle -> lifecycle.onInitialSpawn(champion));
+    Util.consumeIfLifeCycle(affixes, lifecycle -> lifecycle.onInitialSpawn(champion));
   }
 
   public static List<IAffix> createAffixes(final Rank rank, final IChampion champion) {
@@ -297,7 +297,7 @@ public class ChampionBuilder {
   }
 
   private static void applyAttributeModifier(LivingEntity livingEntity, Holder.Reference<Attribute> attributeValue, Identifier modifierId, Pair<Double, AttributeModifier.Operation> setting, float growthFactor) {
-    applyAttributeModifier(livingEntity, attributeValue, Utils.id(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
+    applyAttributeModifier(livingEntity, attributeValue, Util.id(modifierId.getNamespace() + "_" + modifierId.getPath().split("\\.json")[0] + "_modifier"), setting.getFirst() * growthFactor, setting.getSecond());
   }
 
   public static void applyAttributeModifier(LivingEntity livingEntity, Holder<Attribute> attribute, Identifier modifierId, double amount, AttributeModifier.Operation operation) {
@@ -318,7 +318,7 @@ public class ChampionBuilder {
     ChampionBuilder.applyGrowth(newChampion, rank.getGrowthFactor());
     List<IAffix> oldAffixes = oldChampion.getServer().getAffixes();
     newServer.setAffixes(oldAffixes);
-    Utils.consumeIfLifeCycle(newServer.getAffixes(), lifecycle -> {
+    Util.consumeIfLifeCycle(newServer.getAffixes(), lifecycle -> {
       lifecycle.onInitialSpawn(newChampion);
       lifecycle.onSpawn(newChampion);
     });

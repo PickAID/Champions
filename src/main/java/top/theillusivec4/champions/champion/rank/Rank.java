@@ -6,6 +6,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.RegistryCodecs;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
@@ -14,103 +16,123 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
-import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
+import net.minecraft.world.level.storage.loot.LootTable;
+import org.jetbrains.annotations.Nullable;
+import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.registry.Registries;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 /**
- * 冠军生物的等级或“稀有度”
  *
  * @param description
- * @param level
- * @param color
  */
-public record Rank(Component description, MinMaxBounds.Ints level, Rank.Color color, LevelBasedValue minAffix, LevelBasedValue maxAffix, int weight) {
-  public static final MapCodec<Rank> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-    ComponentSerialization.CODEC.fieldOf("description").forGetter(Rank::description),
-    MinMaxBounds.Ints.CODEC.optionalFieldOf("level", MinMaxBounds.Ints.between(1, 5)).forGetter(Rank::level),
-    Color.CODEC.optionalFieldOf("color", Color.INSTANCE).forGetter(Rank::color),
-    LevelBasedValue.CODEC.optionalFieldOf("min_affix", LevelBasedValue.linear(LevelBasedValue.constant(1), LevelBasedValue.constant(1))).forGetter(Rank::minAffix),
-    LevelBasedValue.CODEC.optionalFieldOf("min_affix", LevelBasedValue.constant(5)).forGetter(Rank::maxAffix),
-    Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(Rank::weight)
-  ).apply(instance, Rank::new));
+public record Rank(
+  Component description,
+  MinMaxBounds.Ints level,
+  int weight,
+  List<TextColor> colors,
+  TextColor defaultColor,
+  HolderSet<Affix> affixes,
+  boolean boss,
+  Optional<ResourceKey<LootTable>> lootTable
+) {
   public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Rank>> STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.RANK);
-  private static final MinMaxBounds.Ints LEVEL = MinMaxBounds.Ints.between(1, 5);
-  private static final LevelBasedValue MIN_AFFIX = LevelBasedValue.linear(LevelBasedValue.constant(1), LevelBasedValue.constant(1));
-  private static final LevelBasedValue MAX_AFFIX = LevelBasedValue.constant(5);
+  private static final List<TextColor> COLORS = List.of(
+    Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.WHITE)),
+    Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.YELLOW)),
+    Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.AQUA)),
+    Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)),
+    Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.GOLD))
+  );
   public static final Codec<Rank> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Rank::description),
-    MinMaxBounds.Ints.CODEC.optionalFieldOf("level", LEVEL).forGetter(Rank::level),
-    Color.CODEC.optionalFieldOf("color", Color.INSTANCE).forGetter(Rank::color),
-    LevelBasedValue.CODEC.optionalFieldOf("min_affix", MIN_AFFIX).forGetter(Rank::minAffix),
-    LevelBasedValue.CODEC.optionalFieldOf("min_affix", MAX_AFFIX).forGetter(Rank::maxAffix),
-    Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(Rank::weight)
+    MinMaxBounds.Ints.CODEC.fieldOf("level").forGetter(Rank::level),
+    Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(Rank::weight),
+    TextColor.CODEC.listOf().optionalFieldOf("colors", COLORS).forGetter(Rank::colors),
+    TextColor.CODEC.optionalFieldOf("default_color", Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.WHITE))).forGetter(Rank::defaultColor),
+    RegistryCodecs.homogeneousList(Registries.AFFIX).optionalFieldOf("affixes", HolderSet.empty()).forGetter(Rank::affixes),
+    Codec.BOOL.optionalFieldOf("boss", false).forGetter(Rank::boss),
+    ResourceKey.codec(net.minecraft.core.registries.Registries.LOOT_TABLE).optionalFieldOf("loot_table").forGetter(Rank::lootTable)
   ).apply(instance, Rank::new));
   public static final Codec<Holder<Rank>> REFERENCE_CODEC = RegistryFileCodec.create(Registries.RANK, DIRECT_CODEC);
+  public static final MapCodec<Rank> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    ComponentSerialization.CODEC.fieldOf("description").forGetter(Rank::description),
+    MinMaxBounds.Ints.CODEC.fieldOf("level").forGetter(Rank::level),
+    Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(Rank::weight),
+    TextColor.CODEC.listOf().optionalFieldOf("colors", COLORS).forGetter(Rank::colors),
+    TextColor.CODEC.optionalFieldOf("default_color", Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.WHITE))).forGetter(Rank::defaultColor),
+    RegistryCodecs.homogeneousList(Registries.AFFIX).optionalFieldOf("affixes", HolderSet.empty()).forGetter(Rank::affixes),
+    Codec.BOOL.optionalFieldOf("boss", false).forGetter(Rank::boss),
+    ResourceKey.codec(net.minecraft.core.registries.Registries.LOOT_TABLE).optionalFieldOf("loot_table").forGetter(Rank::lootTable)
+  ).apply(instance, Rank::new));
 
   public static Rank.Builder builder() {
     return new Builder();
   }
 
   public TextColor getColor(int level) {
-    return level <= this.color.colors.size() ? this.color.colors.get(level - 1) : this.color.fallback;
+    return level <= this.colors.size() ? this.colors.get(level - 1) : this.defaultColor;
   }
 
-  public record Color(List<TextColor> colors, TextColor fallback) {
-    @SuppressWarnings("DataFlowIssue")
-    public static final Color INSTANCE = new Color(
-      List.of(
-        TextColor.fromLegacyFormat(ChatFormatting.WHITE),
-        TextColor.fromLegacyFormat(ChatFormatting.YELLOW),
-        TextColor.fromLegacyFormat(ChatFormatting.AQUA),
-        TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE)
-      ),
-      TextColor.fromLegacyFormat(ChatFormatting.WHITE)
-    );
-    public static final Codec<Color> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-      TextColor.CODEC.listOf().fieldOf("colors").forGetter(Color::colors),
-      TextColor.CODEC.fieldOf("fallback").forGetter(Color::fallback)
-    ).apply(instance, Color::new));
+  public boolean matches(int championLevel) {
+    return this.level.matches(championLevel);
   }
 
+  @SuppressWarnings("unused")
   public static class Builder {
-    private MinMaxBounds.Ints level = LEVEL;
-    private Rank.Color color = Color.INSTANCE;
-    private LevelBasedValue minAffix = MIN_AFFIX;
-    private LevelBasedValue maxAffix = MAX_AFFIX;
+    private MinMaxBounds.Ints level = MinMaxBounds.Ints.ANY;
     private int weight = 5;
-
+    private List<TextColor> colors = COLORS;
+    private TextColor defaultColor = Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
+    private HolderSet<Affix> affixes = HolderSet.empty();
+    private boolean boss;
+    private @Nullable ResourceKey<LootTable> lootTable;
 
     public Rank build(Identifier id) {
       return new Rank(
         Component.translatable(Util.makeDescriptionId("rank", id)),
         this.level,
-        this.color,
-        this.minAffix,
-        this.maxAffix,
-        this.weight
+        this.weight,
+        this.colors,
+        this.defaultColor,
+        this.affixes,
+        this.boss,
+        Optional.ofNullable(this.lootTable)
       );
     }
 
-    public Builder setMinAffix(LevelBasedValue minAffix) {
-      this.minAffix = minAffix;
+    public Builder setColors(List<TextColor> colors) {
+      this.colors = colors;
       return this;
     }
 
-    public Builder setMaxAffix(LevelBasedValue maxAffix) {
-      this.maxAffix = maxAffix;
+    public Builder setDefaultColor(TextColor defaultColor) {
+      this.defaultColor = defaultColor;
+      return this;
+    }
+
+    public Builder setLootTable(@Nullable ResourceKey<LootTable> lootTable) {
+      this.lootTable = lootTable;
+      return this;
+    }
+
+    public Builder setBoss(boolean boss) {
+      this.boss = boss;
+      return this;
+    }
+
+    public Builder setAffixes(HolderSet<Affix> affixes) {
+      this.affixes = affixes;
       return this;
     }
 
     public Builder setLevel(MinMaxBounds.Ints level) {
       this.level = level;
-      return this;
-    }
-
-    public Builder setColor(Rank.Color color) {
-      this.color = color;
       return this;
     }
 

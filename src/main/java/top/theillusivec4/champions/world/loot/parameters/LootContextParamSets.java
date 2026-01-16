@@ -13,7 +13,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.Damage;
 import top.theillusivec4.champions.mixin.LootContextParamSetsAccessor;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.Optional;
 
@@ -219,7 +219,7 @@ public final class LootContextParamSets {
 
   private static ContextKeySet register(String name, ContextKeySet.Builder builder) {
     ContextKeySet contextKeySet = builder.build();
-    LootContextParamSetsAccessor.getRegistry().put(Utils.id(name), contextKeySet);
+    LootContextParamSetsAccessor.getRegistry().put(Util.id(name), contextKeySet);
     return contextKeySet;
   }
 

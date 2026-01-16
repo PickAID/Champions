@@ -38,7 +38,7 @@ import top.theillusivec4.champions.deprecated.common.stats.Stats;
 import top.theillusivec4.champions.deprecated.common.util.ChampionBuilder;
 import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
 import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -52,8 +52,8 @@ public class ChampionEventsHandler {
    */
   @SubscribeEvent
   private void onAddReloadListener(AddServerReloadListenersEvent event) {
-    event.addListener(Utils.id("affix_data"), Champions.API.getAffixDataLoader());
-    event.addListener(Utils.id("attributes_modifier_data"), Champions.API.getAttributesModifierDataLoader());
+    event.addListener(Util.id("affix_data"), Champions.API.getAffixDataLoader());
+    event.addListener(Util.id("attributes_modifier_data"), Champions.API.getAttributesModifierDataLoader());
   }
 
   /**
@@ -143,7 +143,7 @@ public class ChampionEventsHandler {
             }
             ChampionBuilder.spawn(champion);
           }
-          Utils.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onSpawn(champion));
+          Util.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onSpawn(champion));
           serverChampion.getRank().ifPresent(rank -> {
             var effects = rank.getEffects();
             effects.forEach(effectPair -> champion.getLivingEntity()
@@ -161,7 +161,7 @@ public class ChampionEventsHandler {
         ChampionAttachment.getAttachment(livingEntity).ifPresent(champion -> {
           IChampion.Client clientChampion = champion.getClient();
           if (ChampionHelper.isValidChampion(clientChampion)) {
-            Utils.consumeIfLifeCycle(clientChampion.getAffixes(), lifecycle -> lifecycle.onClientUpdate(champion));
+            Util.consumeIfLifeCycle(clientChampion.getAffixes(), lifecycle -> lifecycle.onClientUpdate(champion));
             clientChampion.getRank().ifPresent(rank -> {
               if (ChampionsConfig.showParticles && rank.getA() >= 1) {
                 String colorCode = rank.getB();
@@ -187,7 +187,7 @@ public class ChampionEventsHandler {
         ChampionAttachment.getAttachment(livingEntity).ifPresent(champion -> {
           IChampion.Server serverChampion = champion.getServer();
           if (ChampionHelper.isValidChampion(serverChampion)) {
-            Utils.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onServerUpdate(champion));
+            Util.consumeIfLifeCycle(serverChampion.getAffixes(), lifecycle -> lifecycle.onServerUpdate(champion));
             serverChampion.getRank().ifPresent(rank -> {
               if (livingEntity.tickCount % 4 == 0) {
                 var effects = rank.getEffects();
@@ -222,7 +222,7 @@ public class ChampionEventsHandler {
         IChampion.Server serverChampion = champion.getServer();
         if (ChampionHelper.isValidChampion(serverChampion)) {
 
-          Utils.consumeIfCombat(serverChampion.getAffixes(), combatAffix -> {
+          Util.consumeIfCombat(serverChampion.getAffixes(), combatAffix -> {
             if (!combatAffix.onAttacked(champion, evt.getSource(), evt.getAmount())) {
               evt.setCanceled(true);
             }
@@ -237,7 +237,7 @@ public class ChampionEventsHandler {
       ChampionAttachment.getAttachment(source).ifPresent(champion -> {
         IChampion.Server serverChampion = champion.getServer();
         if (ChampionHelper.isValidChampion(serverChampion)) {
-          Utils.consumeIfCombat(serverChampion.getAffixes(), combatAffix -> {
+          Util.consumeIfCombat(serverChampion.getAffixes(), combatAffix -> {
             if (!combatAffix.onAttack(champion, evt.getEntity(), evt.getSource(), evt.getAmount())) {
               evt.setCanceled(true);
             }
@@ -256,9 +256,9 @@ public class ChampionEventsHandler {
       ChampionAttachment.getAttachment(livingEntity).ifPresent(champion -> {
         IChampion.Server serverChampion = champion.getServer();
         if (ChampionHelper.isValidChampion(serverChampion)) {
-          Utils.consumeIfCombat(serverChampion.getAffixes(), combatAffix ->
+          Util.consumeIfCombat(serverChampion.getAffixes(), combatAffix ->
             amounts[1] = combatAffix.onDamage(champion, evt.getSource(), amounts[0], amounts[1]));
-          Utils.consumeIfCombat(serverChampion.getAffixes(), combatAffix ->
+          Util.consumeIfCombat(serverChampion.getAffixes(), combatAffix ->
             amounts[1] = combatAffix.onHurt(champion, evt.getSource(), amounts[0], amounts[1]));
           evt.setNewDamage(amounts[1]);
         }
@@ -276,7 +276,7 @@ public class ChampionEventsHandler {
     ChampionAttachment.getAttachment(livingEntity).ifPresent(champion -> {
       IChampion.Server serverChampion = champion.getServer();
       if (ChampionHelper.isValidChampion(serverChampion)) {
-        Utils.consumeIfCombat(serverChampion.getAffixes(), combatAffix -> {
+        Util.consumeIfCombat(serverChampion.getAffixes(), combatAffix -> {
           if (!combatAffix.onDeath(champion, evt.getSource())) {
             evt.setCanceled(true);
           }
@@ -327,7 +327,7 @@ public class ChampionEventsHandler {
       ChampionAttachment.getAttachment(livingEntity).ifPresent(champion -> {
         IChampion.Server serverChampion = champion.getServer();
         if (ChampionHelper.isValidChampion(serverChampion)) {
-          Utils.consumeIfCombat(serverChampion.getAffixes(),
+          Util.consumeIfCombat(serverChampion.getAffixes(),
             combatAffix -> amounts[1] = combatAffix.onHeal(champion, amounts[0], amounts[1]));
         }
       });

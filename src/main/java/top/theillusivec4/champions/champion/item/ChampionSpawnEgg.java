@@ -1,47 +1,41 @@
 package top.theillusivec4.champions.champion.item;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.util.ARGB;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
-import top.theillusivec4.champions.capability.Capabilities;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.registry.Registries;
 
 import java.util.Optional;
-import java.util.function.Function;
 
-public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, Optional<Component> prefix, Optional<Integer> level, Optional<Integer> color, HolderSet<Affix> affixes) {
-  private static final Codec<Integer> STRING_COLOR_CODEC = Codec.STRING.comapFlatMap(string -> TextColor.parseColor(string).map(TextColor::getValue), integer -> TextColor.fromRgb(integer).serialize());
-  private static final Codec<Integer> INT_COLOR_CODEC = Codec.INT.xmap(ARGB::opaque, Function.identity());
-  private static final Codec<Integer> COLOR_CODEC = Codec.withAlternative(STRING_COLOR_CODEC, INT_COLOR_CODEC);
-  private static final Codec<Holder<Item>> SPAWN_EGG_CODEC = Item.CODEC.validate(item -> Capabilities.ChampionHandlers.isImplemented(item.value()) ? DataResult.success(item) : DataResult.error(() -> "This item %s cannot be used as a Champion Spawn Egg".formatted(item.getRegisteredName())));
+@SuppressWarnings("unused")
+public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, Optional<Component> prefix, Optional<Integer> level, Optional<TextColor> color, HolderSet<Affix> affixes) {
 
   public static final Codec<ChampionSpawnEgg> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     Item.CODEC.fieldOf("item").forGetter(ChampionSpawnEgg::item),
     Rank.REFERENCE_CODEC.optionalFieldOf("rank").forGetter(ChampionSpawnEgg::rank),
     ComponentSerialization.CODEC.optionalFieldOf("prefix").forGetter(ChampionSpawnEgg::prefix),
     Codec.intRange(1, 5).optionalFieldOf("level").forGetter(ChampionSpawnEgg::level),
-    COLOR_CODEC.optionalFieldOf("color").forGetter(ChampionSpawnEgg::color),
+    TextColor.CODEC.optionalFieldOf("color").forGetter(ChampionSpawnEgg::color),
     Affix.LIST_CODEC.fieldOf("affixes").forGetter(ChampionSpawnEgg::affixes)
   ).apply(instance, ChampionSpawnEgg::new));
 
   public static Builder builder(Item item) {
-    return new Builder(item.builtInRegistryHolder());
+    return new Builder(BuiltInRegistries.ITEM.wrapAsHolder(item));
   }
 
   public ItemStack getSpawnEgg(Level level) {
@@ -50,7 +44,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
       this.rank.ifPresent(handler::setRank);
       this.prefix.ifPresent(handler::setPrefixName);
       this.level.ifPresent(handler::setLevel);
-      this.level.ifPresent(handler::setColor);
+      this.color.ifPresent(handler::setColor);
       handler.updateAffixes(mutable -> {
         for (Holder<Affix> affix : this.affixes) {
           mutable.add(affix);
@@ -67,7 +61,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
     private @Nullable ResourceKey<Rank> rankKey;
     private @Nullable Component prefix;
     private @Nullable Integer level;
-    private @Nullable Integer color;
+    private @Nullable TextColor color;
     private @Nullable HolderSet<Affix> affixes;
 
     public Builder(Holder<Item> item) {
@@ -106,7 +100,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
       return this;
     }
 
-    public Builder setColor(int color) {
+    public Builder setColor(TextColor color) {
       this.color = color;
       return this;
     }
