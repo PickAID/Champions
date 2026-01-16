@@ -12,12 +12,12 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttachment;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 @Deprecated
 public record SPacketSyncAffixData(int entityId, String affixId, CompoundTag data) implements CustomPacketPayload {
 
-  public static final Type<SPacketSyncAffixData> TYPE = new Type<>(Utils.id("main"));
+  public static final Type<SPacketSyncAffixData> TYPE = new Type<>(Util.id("main"));
 
   public static final StreamCodec<FriendlyByteBuf, SPacketSyncAffixData> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.VAR_INT,

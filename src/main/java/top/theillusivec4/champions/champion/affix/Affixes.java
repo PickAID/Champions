@@ -1,9 +1,6 @@
 package top.theillusivec4.champions.champion.affix;
 
-import net.minecraft.advancements.criterion.DamageSourcePredicate;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.MobEffectsPredicate;
-import net.minecraft.advancements.criterion.TagPredicate;
+import net.minecraft.advancements.criterion.*;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ColorParticleOption;
@@ -27,9 +24,11 @@ import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
 import top.theillusivec4.champions.champion.affix.effect.*;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.tag.AffixTags;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.world.loot.predicates.LatestDamageCondition;
 
+@SuppressWarnings("SpellCheckingInspection")
 public interface Affixes {
   ResourceKey<Affix> ADAPTABLE = register("adaptable");
   ResourceKey<Affix> ARCTIC = register("arctic");
@@ -49,6 +48,7 @@ public interface Affixes {
   ResourceKey<Affix> WOUNDING = register("wounding");
 
   static void bootstrap(BootstrapContext<Affix> context) {
+    HolderGetter<Affix> affixes = context.lookup(Registries.AFFIX);
     HolderGetter<DamageType> damageTypes = context.lookup(net.minecraft.core.registries.Registries.DAMAGE_TYPE);
     /*
       适应
@@ -59,7 +59,14 @@ public interface Affixes {
     register(
       context,
       ADAPTABLE,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withConditionalEffects(
           AffixEffectComponents.DAMAGE_PROTECTION,
           AffixValueEffect.add(
@@ -69,7 +76,9 @@ public interface Affixes {
             )
           ),
           LatestDamageCondition.builder()
-        ));
+        )
+        .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE))
+    );
     /*
       抑制
         旧：对直接伤害具有0.8伤害减免
@@ -79,7 +88,14 @@ public interface Affixes {
     register(
       context,
       DAMPENING,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withConditionalEffects(
           AffixEffectComponents.DAMAGE_PROTECTION,
           AffixValueEffect.add(
@@ -93,6 +109,7 @@ public interface Affixes {
               .isDirect(true)
           )
         )
+        .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE))
     );
     /*
       仓促
@@ -103,7 +120,14 @@ public interface Affixes {
     register(
       context,
       HASTY,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withEffects(
           AffixEffectComponents.ATTRIBUTES,
           new AffixAttributeEffect(
@@ -134,7 +158,14 @@ public interface Affixes {
     register(
       context,
       KNOCKING,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withTargetedConditionalEffects(
           AffixEffectComponents.POST_ATTACK,
           AffixTarget.ATTACKER,
@@ -168,6 +199,7 @@ public interface Affixes {
             )
           )
         )
+        .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_EXCLUSIVE))
     );
     /*
       活力
@@ -178,7 +210,14 @@ public interface Affixes {
     register(
       context,
       LIVELY,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withConditionalEffects(
           AffixEffectComponents.TICK,
           AffixEntityEffect.applyMobEffect(
@@ -212,7 +251,14 @@ public interface Affixes {
     register(
       context,
       MOLTEN,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withConditionalEffects(
           AffixEffectComponents.DAMAGE_IMMUNITY,
           DamageImmunity.INSTANCE,
@@ -250,6 +296,7 @@ public interface Affixes {
             )
           )
         )
+        .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_IMMUNITY_EXCLUSIVE))
     );
     /*
       瘫痪
@@ -260,7 +307,14 @@ public interface Affixes {
     register(
       context,
       PARALYZING,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withTargetedConditionalEffects(
           AffixEffectComponents.POST_ATTACK,
           AffixTarget.ATTACKER,
@@ -287,6 +341,7 @@ public interface Affixes {
               )
           ).invert()
         )
+        .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_EXCLUSIVE))
     );
     /*
       瘟疫
@@ -301,7 +356,14 @@ public interface Affixes {
     register(
       context,
       PLAGUED,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withTargetedConditionalEffects(
           AffixEffectComponents.POST_ATTACK,
           AffixTarget.VICTIM,
@@ -372,7 +434,14 @@ public interface Affixes {
     register(
       context,
       SHIELDING,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
         .withConditionalEffects(
           AffixEffectComponents.TICK,
           AffixEntityEffect.applyMobEffect(
@@ -396,6 +465,7 @@ public interface Affixes {
 //          ),
           new TimeCheck.Builder(IntRange.exact(0)).setPeriod(40)
         )
+        .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE))
 //        .withTargetedConditionalEffects(
 //          AffixEffectComponents.POST_ATTACK,
 //          AffixTarget.VICTIM,
@@ -425,7 +495,14 @@ public interface Affixes {
     register(
       context,
       WOUNDING,
-      Affix.builder()
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
 //        .withConditionalEffects(
 //          AffixEffectComponents.HEAL,
 //          AffixValueEffect.multiply(LevelBasedValue.constant(0.5f)),
@@ -483,6 +560,6 @@ public interface Affixes {
   }
 
   private static ResourceKey<Affix> register(String name) {
-    return ResourceKey.create(Registries.AFFIX, Utils.id(name));
+    return ResourceKey.create(Registries.AFFIX, Util.id(name));
   }
 }

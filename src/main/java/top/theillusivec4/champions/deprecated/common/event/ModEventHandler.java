@@ -10,8 +10,6 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -29,7 +27,7 @@ import top.theillusivec4.champions.deprecated.common.rank.RankManager;
 import top.theillusivec4.champions.world.item.Items;
 import top.theillusivec4.champions.deprecated.common.stats.Stats;
 import top.theillusivec4.champions.deprecated.common.util.EntityManager;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.deprecated.server.command.ChampionSelectorOptions;
 
 import java.util.List;
@@ -53,8 +51,8 @@ public class ModEventHandler {
   @SubscribeEvent
   private void onCommonSetup(final FMLCommonSetupEvent event) {
     event.enqueueWork(() -> {
-      Utils.createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
-      Utils.createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
+      Util.createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
+      Util.createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
 
       ChampionAttachment.register();
       // 统计数据 @todo
@@ -130,7 +128,7 @@ public class ModEventHandler {
           } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
             ChampionsConfig.transformEntities(commentedConfig);
             EntityManager.buildEntitySettings();
-          } else if (spec == ChampionsConfig.STAGE_SPEC && Utils.isGameStagesLoaded()) {
+          } else if (spec == ChampionsConfig.STAGE_SPEC && Util.isGameStagesLoaded()) {
             ChampionsConfig.entityStages = ChampionsConfig.STAGE.entityStages.get();
             ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
           }

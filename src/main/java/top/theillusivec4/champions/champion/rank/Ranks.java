@@ -4,7 +4,7 @@ import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 public interface Ranks {
   ResourceKey<Rank> COMMON = register("common");
@@ -14,7 +14,7 @@ public interface Ranks {
   ResourceKey<Rank> ULTIMATE = register("ultimate");
 
   static ResourceKey<Rank> register(String name) {
-    return ResourceKey.create(Registries.RANK, Utils.id(name));
+    return ResourceKey.create(Registries.RANK, Util.id(name));
   }
 
   static void bootstrap(BootstrapContext<Rank> context) {
@@ -22,19 +22,19 @@ public interface Ranks {
       context,
       COMMON,
       Rank.builder()
-        .setLevel(MinMaxBounds.Ints.between(1, 2))
+        .setLevel(MinMaxBounds.Ints.exactly(1))
     );
     register(
       context,
       SKILLED,
       Rank.builder()
-        .setLevel(MinMaxBounds.Ints.between(2, 3))
+        .setLevel(MinMaxBounds.Ints.exactly(2))
     );
     register(
       context,
       ELITE,
       Rank.builder()
-        .setLevel(MinMaxBounds.Ints.between(3, 4))
+        .setLevel(MinMaxBounds.Ints.exactly(3))
     );
     register(
       context,
@@ -49,6 +49,7 @@ public interface Ranks {
       Rank.builder()
         .setLevel(MinMaxBounds.Ints.exactly(5))
         .setWeight(2)
+        .setBoss(true)
     );
   }
 

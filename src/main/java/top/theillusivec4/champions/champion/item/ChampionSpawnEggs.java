@@ -8,7 +8,7 @@ import net.minecraft.world.item.Items;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 public interface ChampionSpawnEggs {
   ResourceKey<ChampionSpawnEgg> ZOMBIE = register("zombie");
@@ -25,7 +25,7 @@ public interface ChampionSpawnEggs {
   }
 
   private static ResourceKey<ChampionSpawnEgg> register(String name) {
-    return ResourceKey.create(Registries.SPAWN_EGG, Utils.id(name));
+    return ResourceKey.create(Registries.SPAWN_EGG, Util.id(name));
   }
 
   private static void register(BootstrapContext<ChampionSpawnEgg> context, ResourceKey<ChampionSpawnEgg> key, ChampionSpawnEgg.Builder builder) {

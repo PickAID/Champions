@@ -9,7 +9,7 @@ import top.theillusivec4.champions.deprecated.client.renderer.ColorizedBulletRen
 import top.theillusivec4.champions.client.particle.RankParticle;
 import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.particle.ParticleTypes;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 @Deprecated
 //@EventBusSubscriber(value = Dist.CLIENT, modid = Champions.MODID)
@@ -17,7 +17,7 @@ public class ClientModEventHandler {
 
   @SubscribeEvent
   public static void registerGuiOverlayEvent(final RegisterGuiLayersEvent evt) {
-    evt.registerBelow(VanillaGuiLayers.BOSS_OVERLAY, Utils.id("health_overlay"), new ChampionsOverlay());
+    evt.registerBelow(VanillaGuiLayers.BOSS_OVERLAY, Util.id("health_overlay"), new ChampionsOverlay());
   }
 
   @SubscribeEvent

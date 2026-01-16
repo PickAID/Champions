@@ -7,7 +7,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.StringRepresentable;
 import top.theillusivec4.champions.deprecated.api.AffixSettingBuilder;
 import top.theillusivec4.champions.deprecated.common.config.ConfigEnums;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +30,7 @@ public record AffixSetting(Identifier type, boolean enabled, Optional<MinMaxBoun
   ).apply(instance, AffixSetting::new));
 
   public static AffixSetting empty() {
-    return new AffixSetting(Utils.id("empty"), false, Optional.empty(), Optional.empty(), Optional.empty(), AffixCategory.CC, Optional.empty(), Optional.empty());
+    return new AffixSetting(Util.id("empty"), false, Optional.empty(), Optional.empty(), Optional.empty(), AffixCategory.CC, Optional.empty(), Optional.empty());
   }
 
   public static AffixSettingBuilder builder() {

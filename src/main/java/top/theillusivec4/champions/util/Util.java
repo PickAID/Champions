@@ -2,25 +2,22 @@ package top.theillusivec4.champions.util;
 
 import net.minecraft.resources.Identifier;
 import net.neoforged.fml.ModList;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import org.apache.commons.io.FileUtils;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.affix.IAffix;
 import top.theillusivec4.champions.deprecated.api.affix.IAffixLifecycle;
 import top.theillusivec4.champions.deprecated.common.affix.core.CombatAffix;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class Utils {
+public class Util {
   private static Boolean scalingHealthLoaded = null;
   private static Boolean gameStagesLoaded = null;
   private static Boolean gateways = null;
   private static Boolean kubejs = null;
+
+
 
   public static boolean isGameStagesLoaded() {
     if (gameStagesLoaded == null) {

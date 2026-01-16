@@ -8,7 +8,7 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.data.AffixSetting;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ public record SyncAffixSettingPacket(
     SyncAffixSettingPacket::affixSettingMap,    // getter function
     SyncAffixSettingPacket::new    // factory function
   );
-  public static final Type<SyncAffixSettingPacket> TYPE = new Type<>(Utils.id("sync_affix_setting"));
+  public static final Type<SyncAffixSettingPacket> TYPE = new Type<>(Util.id("sync_affix_setting"));
 
   public static void handle(final SyncAffixSettingPacket data, final IPayloadContext cxt) {
     cxt.enqueueWork(() -> {

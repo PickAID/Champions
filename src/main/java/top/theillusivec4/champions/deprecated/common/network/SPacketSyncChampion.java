@@ -16,7 +16,7 @@ import top.theillusivec4.champions.deprecated.api.affix.IAffix;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.deprecated.common.rank.Rank;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public record SPacketSyncChampion(int entityId, int tier, String defaultColor,
                                   Set<Identifier> affixes) implements CustomPacketPayload {
 
-  public static final Type<SPacketSyncChampion> TYPE = new Type<>(Utils.id("sync_champion"));
+  public static final Type<SPacketSyncChampion> TYPE = new Type<>(Util.id("sync_champion"));
 
   public static final StreamCodec<FriendlyByteBuf, SPacketSyncChampion> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.INT,

@@ -1,9 +1,8 @@
 package top.theillusivec4.champions.data.lang;
 
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.Util;
 import top.theillusivec4.champions.stats.Stats;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 /**
  * 翻译键
@@ -39,19 +38,19 @@ public final class LanguageKeys {
   public static final String STAT_CHAMPION_MOBS_KILLED_KEY = statKey(Stats.CHAMPION_MOBS_KILLED.getId());
 
   static String itemGroup(String name) {
-    return Util.makeDescriptionId("itemGroup", Utils.id(name));
+    return net.minecraft.util.Util.makeDescriptionId("itemGroup", Util.id(name));
   }
 
   static String tooltipKey(String name) {
-    return Util.makeDescriptionId("tooltip", Utils.id(name));
+    return net.minecraft.util.Util.makeDescriptionId("tooltip", Util.id(name));
   }
 
   static String commandsErrorKey(String name) {
-    return Util.makeDescriptionId("error", Utils.id(name));
+    return net.minecraft.util.Util.makeDescriptionId("error", Util.id(name));
   }
 
   static String commandsKey(String name, CommandsKeyType type) {
-    return Util.makeDescriptionId("commands", Utils.id(name)) + "." + type.getName();
+    return net.minecraft.util.Util.makeDescriptionId("commands", Util.id(name)) + "." + type.getName();
   }
 
   static String commandsKey(String name, CommandsKeyType type, String message) {
@@ -59,11 +58,11 @@ public final class LanguageKeys {
   }
 
   static String configKey(String name) {
-    return Util.makeDescriptionId("configuration", Utils.id(name));
+    return net.minecraft.util.Util.makeDescriptionId("configuration", Util.id(name));
   }
 
   static String statKey(Identifier id) {
-    return Util.makeDescriptionId("stat", id);
+    return net.minecraft.util.Util.makeDescriptionId("stat", id);
   }
 
   private LanguageKeys() {

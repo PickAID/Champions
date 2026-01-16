@@ -9,7 +9,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 @Deprecated
 public class DamageTypes {
@@ -37,6 +37,6 @@ public class DamageTypes {
   }
 
   private static ResourceKey<DamageType> create(String name) {
-    return ResourceKey.create(Registries.DAMAGE_TYPE, Utils.id(name));
+    return ResourceKey.create(Registries.DAMAGE_TYPE, Util.id(name));
   }
 }

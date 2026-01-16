@@ -9,7 +9,7 @@ import top.theillusivec4.champions.deprecated.api.affix.IAffix;
 import top.theillusivec4.champions.deprecated.api.data.AffixSetting;
 import top.theillusivec4.champions.deprecated.common.affix.core.BasicAffix;
 import top.theillusivec4.champions.deprecated.common.registries.AffixTypes;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 @Deprecated
 public class AffixRegistry {
@@ -34,11 +34,11 @@ public class AffixRegistry {
     .create();
 
   public static ResourceKey<IAffix> create(String path) {
-    return ResourceKey.create(Keys.AFFIX_TYPE, Utils.id(path));
+    return ResourceKey.create(Keys.AFFIX_TYPE, Util.id(path));
   }
 
   private static ResourceKey<Registry<IAffix>> createKey(String path) {
-    return ResourceKey.createRegistryKey(Utils.id(path));
+    return ResourceKey.createRegistryKey(Util.id(path));
   }
 
   public static class Keys {

@@ -12,7 +12,7 @@ import top.theillusivec4.champions.deprecated.api.affix.IAffix;
 import top.theillusivec4.champions.deprecated.api.data.AffixCategory;
 import top.theillusivec4.champions.deprecated.common.rank.Rank;
 import top.theillusivec4.champions.deprecated.common.rank.RankManager;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.*;
 
@@ -91,7 +91,7 @@ public class ChampionData {
         }
         ChampionBuilder.applyGrowth(champion, rank.getGrowthFactor());
         champion.getServer().setAffixes(affixes);
-        Utils.consumeIfLifeCycle(affixes,
+        Util.consumeIfLifeCycle(affixes,
           lifecycle -> lifecycle.onInitialSpawn(champion));
         return true;
       }

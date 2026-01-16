@@ -11,7 +11,7 @@ import net.minecraft.data.advancements.AdvancementSubProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -51,7 +51,7 @@ public class ModAdvancementProvider extends AdvancementProvider {
 //            Optional.of(MinMaxBounds.Ints.ANY),
 //            Optional.of(new AffixesPredicate(Utils.getLocationSet("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
 //          )))
-        .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion"))).save(saver, Utils.id("kill_a_champion"))
+        .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion"))).save(saver, Util.id("kill_a_champion"))
         .value();
     }
   }

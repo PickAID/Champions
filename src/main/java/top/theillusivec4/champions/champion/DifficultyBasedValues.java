@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Mth;
-import net.minecraft.world.DifficultyInstance;
+import net.minecraft.world.Difficulty;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
@@ -13,6 +13,7 @@ import top.theillusivec4.champions.registry.Registries;
 import java.util.List;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public final class DifficultyBasedValues {
   private static final DeferredRegister<MapCodec<? extends DifficultyBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(Registries.DIFFICULTY_BASED_VALUE, Champions.MODID);
   public static final Supplier<MapCodec<Constant>> CONSTANT = register("constant", Constant.MAP_CODEC);
@@ -41,7 +42,7 @@ public final class DifficultyBasedValues {
     ).apply(instance, Constant::new));
 
     @Override
-    public float calculate(DifficultyInstance instance) {
+    public float calculate(Difficulty difficulty) {
       return this.value;
     }
 
@@ -59,8 +60,8 @@ public final class DifficultyBasedValues {
     ).apply(instance, Clamped::new));
 
     @Override
-    public float calculate(DifficultyInstance instance) {
-      return Mth.clamp(this.value.calculate(instance), this.min, this.max);
+    public float calculate(Difficulty difficulty) {
+      return Mth.clamp(this.value.calculate(difficulty), this.min, this.max);
     }
 
     @Override
@@ -76,9 +77,9 @@ public final class DifficultyBasedValues {
     ).apply(instance, Fraction::new));
 
     @Override
-    public float calculate(DifficultyInstance instance) {
-      float denominator = this.denominator.calculate(instance);
-      return denominator == 0.0F ? 0.0F : this.numerator.calculate(instance) / denominator;
+    public float calculate(Difficulty difficulty) {
+      float denominator = this.denominator.calculate(difficulty);
+      return denominator == 0.0F ? 0.0F : this.numerator.calculate(difficulty) / denominator;
     }
 
     @Override
@@ -93,8 +94,8 @@ public final class DifficultyBasedValues {
     ).apply(instance, DifficultySquared::new));
 
     @Override
-    public float calculate(DifficultyInstance instance) {
-      return Mth.sqrt(instance.getEffectiveDifficulty()) + this.added;
+    public float calculate(Difficulty difficulty) {
+      return Mth.sqrt(difficulty.getId()) + this.added;
     }
 
     @Override
@@ -103,15 +104,15 @@ public final class DifficultyBasedValues {
     }
   }
 
-  public record Linear(float base, float perEffectiveDifficultyAboveEasy) implements DifficultyBasedValue {
+  public record Linear(DifficultyBasedValue base, DifficultyBasedValue perDifficultyAbovePeaceful) implements DifficultyBasedValue {
     public static final MapCodec<Linear> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-      Codec.FLOAT.fieldOf("base").forGetter(Linear::base),
-      Codec.FLOAT.fieldOf("per_effective_difficulty_above_easy").forGetter(Linear::perEffectiveDifficultyAboveEasy)
+      DifficultyBasedValue.CODEC.fieldOf("base").forGetter(Linear::base),
+      DifficultyBasedValue.CODEC.fieldOf("per_difficulty_above_peaceful").forGetter(Linear::perDifficultyAbovePeaceful)
     ).apply(instance, Linear::new));
 
     @Override
-    public float calculate(DifficultyInstance instance) {
-      return this.base + this.perEffectiveDifficultyAboveEasy * instance.getEffectiveDifficulty();
+    public float calculate(Difficulty difficulty) {
+      return this.base.calculate(difficulty) + this.perDifficultyAbovePeaceful.calculate(difficulty) * difficulty.getId();
     }
 
     @Override
@@ -127,8 +128,8 @@ public final class DifficultyBasedValues {
     ).apply(instance, Exponent::new));
 
     @Override
-    public float calculate(DifficultyInstance instance) {
-      return (float) Math.pow(this.base.calculate(instance), this.power.calculate(instance));
+    public float calculate(Difficulty difficulty) {
+      return (float) Math.pow(this.base.calculate(difficulty), this.power.calculate(difficulty));
     }
 
     @Override
@@ -144,9 +145,9 @@ public final class DifficultyBasedValues {
     ).apply(instance, Lookup::new));
 
     @Override
-    public float calculate(DifficultyInstance instance) {
-      int id = instance.getDifficulty().getId();
-      return id <= this.values.size() ? this.values.get(id - 1) : this.fallback.calculate(instance);
+    public float calculate(Difficulty difficulty) {
+      int id = difficulty.getId();
+      return id <= this.values.size() ? this.values.get(id - 1) : this.fallback.calculate(difficulty);
     }
 
     @Override

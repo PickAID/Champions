@@ -10,7 +10,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 public class EntityTypes {
   private static final DeferredRegister<EntityType<?>> ENTITY_TYPE = DeferredRegister.create(BuiltInRegistries.ENTITY_TYPE, Champions.MODID);
@@ -23,8 +23,8 @@ public class EntityTypes {
   }
 
   static class Keys {
-    static ResourceKey<EntityType<?>> ARCTIC_BULLET = ResourceKey.create(ENTITY_TYPE.getRegistryKey(), Utils.id("arctic_bullet"));
-    static ResourceKey<EntityType<?>> ENKINDLING_BULLET = ResourceKey.create(ENTITY_TYPE.getRegistryKey(), Utils.id("enkindling_bullet"));
+    static ResourceKey<EntityType<?>> ARCTIC_BULLET = ResourceKey.create(ENTITY_TYPE.getRegistryKey(), Util.id("arctic_bullet"));
+    static ResourceKey<EntityType<?>> ENKINDLING_BULLET = ResourceKey.create(ENTITY_TYPE.getRegistryKey(), Util.id("enkindling_bullet"));
   }
 
   public static class Tags {
@@ -32,7 +32,7 @@ public class EntityTypes {
     public static final TagKey<EntityType<?>> ALLOW_CHAMPIONS = create("allow_champions");
 
     private static TagKey<EntityType<?>> create(String name) {
-      return TagKey.create(Registries.ENTITY_TYPE, Utils.id(name));
+      return TagKey.create(Registries.ENTITY_TYPE, Util.id(name));
     }
   }
 }

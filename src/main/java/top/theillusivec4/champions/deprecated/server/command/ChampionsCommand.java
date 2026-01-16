@@ -7,7 +7,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import net.minecraft.util.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -38,7 +37,7 @@ import top.theillusivec4.champions.deprecated.common.item.ChampionEggItem;
 import top.theillusivec4.champions.world.item.Items;
 import top.theillusivec4.champions.deprecated.common.util.ChampionBuilder;
 import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.deprecated.server.command.argument.AffixArgumentType;
 
 import javax.annotation.Nullable;
@@ -50,11 +49,11 @@ import java.util.Objects;
 public class ChampionsCommand {
 
   public static final SuggestionProvider<CommandSourceStack> AFFIXES = SuggestionProviders
-    .register(Utils.id("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
+    .register(Util.id("affixes"), (context, builder) -> SharedSuggestionProvider.suggestResource(
       AffixRegistry.AFFIX_REGISTRY.stream().filter(IAffix::isEnabled), builder, IAffix::getIdentifier, affix -> Component.translatable(affix.toLanguageKey())));
 
   public static final SuggestionProvider<CommandSourceStack> MONSTER_ENTITIES = SuggestionProviders
-    .register(Utils.id("monster_entities"),
+    .register(Util.id("monster_entities"),
       (context, builder) -> SharedSuggestionProvider.suggestResource(
         BuiltInRegistries.ENTITY_TYPE.stream()
           .filter(type -> {
@@ -65,7 +64,7 @@ public class ChampionsCommand {
           }),
         builder, EntityType::getKey,
         (type) -> Component.translatable(
-          Util.makeDescriptionId("entity", EntityType.getKey(type)))));
+          net.minecraft.util.Util.makeDescriptionId("entity", EntityType.getKey(type)))));
 
 
   private static final DynamicCommandExceptionType UNKNOWN_ENTITY = new DynamicCommandExceptionType(

@@ -15,7 +15,7 @@ import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.client.util.ClientUtil;
 import top.theillusivec4.champions.network.protocol.game.ClientboundChampionBossEventPacket;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public final class ChampionHealthOverlay {
-  private static final Identifier BAR = Utils.id("textures/gui/bars.png");
-  private static final Identifier STAR = Utils.id("textures/gui/staricon.png");
+  private static final Identifier BAR = Util.id("textures/gui/bars.png");
+  private static final Identifier STAR = Util.id("textures/gui/staricon.png");
   private final Map<UUID, ClientChampionBossEvent> events = new HashMap<>();
   private final ChampionHealthOverlay.Handler handler = new Handler();
   private int x;
@@ -55,7 +55,7 @@ public final class ChampionHealthOverlay {
             ).orElse(entity.getDisplayName());
             ClientChampionBossEvent event = new ClientChampionBossEvent(entity.getUUID(), name);
             event.setLevel(handler.getLevelOrDefault());
-            event.setColor(handler.getColorOrDefault());
+            event.setColor(handler.getColorOrDefault().getValue());
             event.setProgress(Math.clamp(handler.getHealth() / handler.getMaxHealth(), 0.0f, 1.0f));
             event.setAffixes(handler.getAffixesOrDefault().getAffixes());
             this.render(guiGraphics, event);
@@ -126,7 +126,7 @@ public final class ChampionHealthOverlay {
     startY += 6; // BossBar的
     // 显示词缀
     this.drawAffixes(guiGraphics, startX, startY, event);
-    this.y = startY += 9 + 3; // 词缀的 基础的
+    this.y = startY + 9 + 3; // 词缀的 基础的
   }
 
   private void drawAffixes(GuiGraphics guiGraphics, int x, int y, ClientChampionBossEvent event) {

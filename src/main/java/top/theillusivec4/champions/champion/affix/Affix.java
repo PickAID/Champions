@@ -1,12 +1,15 @@
 package top.theillusivec4.champions.champion.affix;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
@@ -20,12 +23,14 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.Util;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
+import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.effect.*;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
@@ -36,9 +41,11 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
-public record Affix(Component description, HolderSet<Affix> exclusiveSet, DataComponentMap effects) {
+@SuppressWarnings("unused")
+public record Affix(Component description, Affix.AffixDefinition definition, HolderSet<Affix> exclusiveSet, DataComponentMap effects) {
   public static final Codec<Affix> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Affix::description),
+    AffixDefinition.MAP_CODEC.forGetter(Affix::definition),
     RegistryCodecs.homogeneousList(Registries.AFFIX).optionalFieldOf("exclusive_set", HolderSet.empty()).forGetter(Affix::exclusiveSet),
     AffixEffectComponents.CODEC.fieldOf("effects").forGetter(Affix::effects)
   ).apply(instance, Affix::new));
@@ -52,8 +59,21 @@ public record Affix(Component description, HolderSet<Affix> exclusiveSet, DataCo
     }
   }
 
-  public static Affix.Builder builder() {
-    return new Builder();
+  public static AffixDefinition definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, MinMaxBounds.Ints cost, int maxLevel, int weight) {
+    return new AffixDefinition(
+      Optional.ofNullable(supportedEntityTypes),
+      cost,
+      maxLevel,
+      weight
+    );
+  }
+
+  public boolean isSupportedEntityType(EntityType<?> entityType){
+    return this.definition.supportedEntityTypes.isEmpty() || this.definition.supportedEntityTypes.get().contains(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entityType));
+  }
+
+  public static Affix.Builder affix(AffixDefinition definition) {
+    return new Builder(definition);
   }
 
   public void modifyKnockback(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat knockback) {
@@ -125,29 +145,46 @@ public record Affix(Component description, HolderSet<Affix> exclusiveSet, DataCo
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE_PROTECTION), context, effect -> protection.setValue(effect.process(affixLevel, random, protection.floatValue())));
   }
 
-  public <T> Optional<T> getSpecialEffect(Supplier<DataComponentType<T>> componentTypeSupplier) {
-    return getSpecialEffect(componentTypeSupplier.get());
+  public <T> Optional<T> getSpecialEffect(Supplier<DataComponentType<T>> effectComponent) {
+    return getSpecialEffect(effectComponent.get());
   }
 
-  public <T> Optional<T> getSpecialEffect(DataComponentType<T> dataComponentType) {
-    return Optional.ofNullable(effects.get(dataComponentType));
+  public <T> Optional<T> getSpecialEffect(DataComponentType<T> effectComponent) {
+    return Optional.ofNullable(effects.get(effectComponent));
   }
 
-  public <T> List<T> getEffects(Supplier<DataComponentType<List<T>>> dataComponentTypeSupplier) {
-    return getEffects(dataComponentTypeSupplier.get());
+  public <T> List<T> getEffects(Supplier<DataComponentType<List<T>>> effectComponent) {
+    return getEffects(effectComponent.get());
   }
 
-  public <T> List<T> getEffects(DataComponentType<List<T>> dataComponentType) {
-    return effects.getOrDefault(dataComponentType, List.of());
+  public <T> List<T> getEffects(DataComponentType<List<T>> effectComponent) {
+    return effects.getOrDefault(effectComponent, List.of());
   }
 
+  public record AffixDefinition(
+    Optional<HolderSet<EntityType<?>>> supportedEntityTypes,
+    MinMaxBounds.Ints cost,
+    int maxLevel,
+    int weight
+  ) {
+    public static final MapCodec<AffixDefinition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+      RegistryCodecs.homogeneousList(net.minecraft.core.registries.Registries.ENTITY_TYPE).optionalFieldOf("supported_entity_types").forGetter(AffixDefinition::supportedEntityTypes),
+      MinMaxBounds.Ints.CODEC.optionalFieldOf("cost", MinMaxBounds.Ints.ANY).forGetter(AffixDefinition::cost),
+      Codec.intRange(1, 5).optionalFieldOf("max_level", 5).forGetter(AffixDefinition::maxLevel),
+      Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(AffixDefinition::weight)
+    ).apply(instance, AffixDefinition::new));
+  }
+
+  @SuppressWarnings("unused")
   public static class Builder {
+    private final AffixDefinition definition;
     private final DataComponentMap.Builder builder = DataComponentMap.builder();
     private final Map<DataComponentType<?>, List<?>> effects = new HashMap<>();
     private HolderSet<Affix> exclusiveSet = HolderSet.empty();
     private UnaryOperator<MutableComponent> nameFactory = UnaryOperator.identity();
 
-    private Builder() {
+    private Builder(AffixDefinition definition) {
+      this.definition = definition;
     }
 
     public Builder exclusiveWith(HolderSet<Affix> set) {
@@ -213,6 +250,7 @@ public record Affix(Component description, HolderSet<Affix> exclusiveSet, DataCo
     public Affix build(Identifier identifier) {
       return new Affix(
         this.nameFactory.apply(Component.translatable(Util.makeDescriptionId("affix", identifier))),
+        this.definition,
         this.exclusiveSet,
         this.builder.build()
       );

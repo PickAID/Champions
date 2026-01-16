@@ -40,7 +40,7 @@ import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.api.affix.IAffix;
 import top.theillusivec4.champions.deprecated.common.capabilities.ChampionAttachment;
 import top.theillusivec4.champions.deprecated.common.util.ChampionBuilder;
-import top.theillusivec4.champions.util.Utils;
+import top.theillusivec4.champions.util.Util;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -56,7 +56,7 @@ public class ChampionEggItem extends EggItem {
   private static final String CHAMPION_TAG = "Champion";
 
   public ChampionEggItem() {
-    super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Utils.id("champion_egg"))));
+    super(new Item.Properties().useItemDescriptionPrefix().setId(ResourceKey.create(Registries.ITEM, Util.id("champion_egg"))));
   }
 
   public static Optional<EntityType<?>> getType(ItemStack stack) {
