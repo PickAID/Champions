@@ -154,28 +154,25 @@ public interface ChampionHandlerEntity extends ChampionHandler {
   }
 
   default void doFinalizeSpawn(ServerLevel level, double x, double y, double z, DifficultyInstance difficultyInstance, EntitySpawnReason reason) {
-    int championLevel = ChampionHelper.calculateChampionLevel(difficultyInstance);
+    int championLevel = ChampionHelper.calculateChampionLevel(level.getRandom(), difficultyInstance);
     if (championLevel > 0) {
-      this.setLevel(championLevel);
-
-      List<Holder<Affix>> list = ChampionHelper.selectAffixes(entity(), championLevel, level.registryAccess().lookupOrThrow(Registries.AFFIX).listElements().map(affix -> (Holder<Affix>) affix));
-      Affixes.Mutable mutable = this.getAffixes().map(Affixes::toMutable).orElse(new Affixes.Mutable());
-      list.forEach(mutable::add);
-      this.setAffixes(mutable.toImmutable());
-
-      this.setColor(ChampionHelper.selectColor(championLevel));
-
       ChampionHelper.selectRank(this.entity(), championLevel, level.registryAccess().lookupOrThrow(Registries.RANK).listElements().map(rankReference -> (Holder<Rank>) rankReference)).ifPresent(rank -> {
+
+        List<Holder<Affix>> list = ChampionHelper.selectAffixes(entity(), championLevel, level.registryAccess().lookupOrThrow(Registries.AFFIX).listElements().map(affix -> (Holder<Affix>) affix));
+
+        this.setLevel(championLevel);
+
+        Affixes.Mutable mutable = this.getAffixes().map(Affixes::toMutable).orElse(new Affixes.Mutable());
+        list.forEach(mutable::add);
+        this.setAffixes(mutable.toImmutable());
+
+        this.setColor(ChampionHelper.selectColor(championLevel));
+
         this.setPrefixName(rank.value().description());
         if (rank.value().boss()) {
           this.setBoss(true);
         }
       });
-
-      if (championLevel > 6) {
-        this.setBoss(true);
-      }
-
     }
   }
 

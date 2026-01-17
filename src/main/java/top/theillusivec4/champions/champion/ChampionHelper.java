@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.Entity;
@@ -24,8 +25,14 @@ public final class ChampionHelper {
     return results;
   }
 
-  public static int calculateChampionLevel(DifficultyInstance difficultyInstance) {
-    return Math.clamp(Math.round(difficultyInstance.getEffectiveDifficulty()), 0, 8);
+  public static int calculateChampionLevel(RandomSource random, DifficultyInstance difficultyInstance) {
+    if (random.nextFloat() <= difficultyInstance.getSpecialMultiplier()) {
+      int originLevel = Math.round(difficultyInstance.getEffectiveDifficulty());
+      random.nextInt(Math.max(originLevel / 2, 1), 8);
+      return Math.min(random.nextInt(Math.max(originLevel / 2, 1), 8), 8);
+    }
+
+    return 0;
   }
 
   public static List<Holder<Affix>> selectAffixes(Entity entity, int championLevel, Stream<Holder<Affix>> source) {
