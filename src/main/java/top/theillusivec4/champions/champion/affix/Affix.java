@@ -59,6 +59,10 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
     }
   }
 
+  public static boolean areCompatible(Holder<Affix> affix, Holder<Affix> other) {
+    return !affix.value().equals(other.value()) && !affix.value().exclusiveSet.contains(other) && !other.value().exclusiveSet.contains(affix);
+  }
+
   public static AffixDefinition definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, MinMaxBounds.Ints cost, int maxLevel, int weight) {
     return new AffixDefinition(
       Optional.ofNullable(supportedEntityTypes),
@@ -68,12 +72,12 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
     );
   }
 
-  public boolean isSupportedEntityType(EntityType<?> entityType){
-    return this.definition.supportedEntityTypes.isEmpty() || this.definition.supportedEntityTypes.get().contains(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entityType));
-  }
-
   public static Affix.Builder affix(AffixDefinition definition) {
     return new Builder(definition);
+  }
+
+  public boolean isSupportedEntityType(EntityType<?> entityType) {
+    return this.definition.supportedEntityTypes.isEmpty() || this.definition.supportedEntityTypes.get().contains(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entityType));
   }
 
   public void modifyKnockback(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat knockback) {

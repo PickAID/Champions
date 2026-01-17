@@ -41,7 +41,6 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
   public ItemStack getSpawnEgg(Level level) {
     ItemStack itemStack = new ItemStack(this.item);
     ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
-      this.rank.ifPresent(handler::setRank);
       this.prefix.ifPresent(handler::setPrefixName);
       this.level.ifPresent(handler::setLevel);
       this.color.ifPresent(handler::setColor);

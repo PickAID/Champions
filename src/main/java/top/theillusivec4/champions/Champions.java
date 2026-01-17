@@ -71,8 +71,8 @@ public class Champions {
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
   // champion instance
   private static Champions instance;
-  private final CommonConfig commonConfig;
-  private final ServerConfig serverConfig;
+  private final CommonConfig commonConfig = new CommonConfig();
+  private final ServerConfig serverConfig = new ServerConfig();
   private ChampionConfigManager entityConfigManager;
   private ChampionConfigManager levelConfigManager;
 
@@ -80,12 +80,10 @@ public class Champions {
     return instance;
   }
 
-  public Champions(IEventBus modEventBus, ModContainer modContainer) {
+  public Champions(IEventBus modEventBus, ModContainer container) {
     instance = this;
-    this.commonConfig = new CommonConfig();
-    this.serverConfig = new ServerConfig();
-    modContainer.registerConfig(ModConfig.Type.COMMON, this.commonConfig.getConfigSpec());
-    modContainer.registerConfig(ModConfig.Type.SERVER, this.serverConfig.getConfigSpec());
+    container.registerConfig(ModConfig.Type.COMMON, this.commonConfig.getConfigSpec());
+    container.registerConfig(ModConfig.Type.SERVER, this.serverConfig.getConfigSpec());
     Items.register(modEventBus);
     ParticleTypes.register(modEventBus);
     MobEffects.register(modEventBus);
@@ -117,14 +115,14 @@ public class Champions {
 //    Stats.register(modEventBus);
 //    ChampionsRegistry.register(modEventBus);
     // register champions config
-//  modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
-//  modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
-//  modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
+//  container.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
+//  container.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
+//  container.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
 
     // register GameStages compat config, if gameStages loaded
 
 //    if (Utils.isGameStagesLoaded()) {
-//      modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
+//      container.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
 //    }
 //
 //    if (Utils.isGatewaysLoaded()) {
