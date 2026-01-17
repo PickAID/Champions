@@ -1,22 +1,24 @@
 package top.theillusivec4.champions.config;
 
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.neoforged.neoforge.common.ModConfigSpec;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class CommonConfig {
   private final ModConfigSpec configSpec;
-  private final ModConfigSpec.ConfigValue<List<? extends String>> skipFinalizeSpawnReasons;
+  private final ModConfigSpec.ConfigValue<Double> maxDamageProtection;
+
+  private static boolean validDamageProtection(Object damageProtection) {
+    return damageProtection instanceof Double d && d >= 0.0;
+  }
 
   public CommonConfig() {
     ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
-    this.skipFinalizeSpawnReasons = builder
-      .defineListAllowEmpty("skip_finalize_spawn_reasons", new ArrayList<>(), () -> "NATURAL", object -> Arrays.stream(EntitySpawnReason.values()).anyMatch(entitySpawnReason -> object == entitySpawnReason));
+    this.maxDamageProtection = builder.define("max_damage_protection", 0.8, CommonConfig::validDamageProtection);
 
     this.configSpec = builder.build();
+  }
+
+  public float getMaxDamageProtection() {
+    return maxDamageProtection.get().floatValue();
   }
 
   public ModConfigSpec getConfigSpec() {

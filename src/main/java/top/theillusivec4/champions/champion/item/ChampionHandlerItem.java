@@ -17,7 +17,6 @@ import top.theillusivec4.champions.champion.Affixes;
 import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.data.lang.LanguageUtil;
 
@@ -35,11 +34,6 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
   @Override
   default Optional<Boolean> isBoss() {
     return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.BOSS));
-  }
-
-  @Override
-  default void removeRank() {
-    this.itemStack().remove(top.theillusivec4.champions.component.DataComponents.RANK);
   }
 
   @Override
@@ -82,22 +76,8 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
   }
 
   @Override
-  default Optional<Holder<Rank>> getRank() {
-    return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.RANK));
-  }
-
-  @Override
-  default void setRank(Holder<Rank> rank) {
-    this.itemStack().set(top.theillusivec4.champions.component.DataComponents.RANK, rank);
-  }
-
-  @Override
   default Optional<Component> getPrefixName() {
-    if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.PREFIX_NAME)) {
-      return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.PREFIX_NAME));
-    }
-
-    return this.getRank().map(rank -> rank.value().description());
+    return Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.PREFIX_NAME));
   }
 
   @Override

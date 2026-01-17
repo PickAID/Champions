@@ -23,17 +23,17 @@ public class AffixTagsProvider extends KeyTagProvider<Affix> {
   @Override
   protected void addTags(HolderLookup.Provider registries) {
     tag(AffixTags.DAMAGE_IMMUNITY_EXCLUSIVE)
-      .add(Affixes.SHIELDING);
+      .add(Affixes.SHIELDING) // 保护
+      .add(Affixes.MOLTEN); // 熔融
     tag(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE)
-      .add(Affixes.ADAPTABLE)
-      .add(Affixes.DAMPENING)
-      .add(Affixes.MOLTEN);
+      .add(Affixes.ADAPTABLE) // 适应
+      .add(Affixes.DAMPENING); // 抑制
     tag(AffixTags.DAMAGE_EXCLUSIVE)
-      .add(Affixes.KNOCKING)
-      .add(Affixes.MOLTEN)
-      .add(Affixes.PARALYZING);
+      .add(Affixes.KNOCKING) // 爆震
+      .add(Affixes.MOLTEN) // 熔融
+      .add(Affixes.PARALYZING); // 瘟疫
     tag(AffixTags.RANGE_EXCLUSIVE)
-      .add(Affixes.PLAGUED);
+      .add(Affixes.PLAGUED); // 瘟疫
     tag(AffixTags.CURSE)
       .add(Affixes.WOUNDING);
 

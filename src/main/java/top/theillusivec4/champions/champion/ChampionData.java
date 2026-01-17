@@ -16,7 +16,6 @@ import java.util.Optional;
  * 一个冠军数据快照对象。
  * 将冠军数据组织进一个配置对象应该对数据转移有所帮助，事实上也确实如此。
  *
- * @param rank
  * @param prefixName
  * @param affixes
  * @param level
@@ -24,7 +23,6 @@ import java.util.Optional;
  * @param boss
  */
 public record ChampionData(
-  Optional<Holder<Rank>> rank,
   Optional<Component> prefixName,
   Optional<Affixes> affixes,
   Optional<Integer> level,
@@ -32,7 +30,6 @@ public record ChampionData(
   Optional<Boolean> boss
 ) {
   public static final Codec<ChampionData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-    Rank.REFERENCE_CODEC.optionalFieldOf("rank").forGetter(ChampionData::rank),
     ComponentSerialization.CODEC.optionalFieldOf("prefix_name").forGetter(ChampionData::prefixName),
     Affixes.CODEC.optionalFieldOf("affixes").forGetter(ChampionData::affixes),
     Codec.INT.optionalFieldOf("level").forGetter(ChampionData::level),
@@ -45,7 +42,6 @@ public record ChampionData(
   }
 
   public static class Builder {
-    private @Nullable Holder<Rank> rank;
     private @Nullable Component prefixName;
     private @Nullable Affixes.Mutable affixes;
     private @Nullable Integer level;
@@ -62,18 +58,12 @@ public record ChampionData(
 
     public ChampionData build() {
       return new ChampionData(
-        Optional.ofNullable(this.rank),
         Optional.ofNullable(this.prefixName),
         this.affixes != null ? Optional.of(this.affixes.toImmutable()) : Optional.empty(),
         Optional.ofNullable(this.level),
         Optional.ofNullable(this.color),
         Optional.ofNullable(this.boss)
       );
-    }
-
-    public Builder setRank(Holder<Rank> rank) {
-      this.rank = rank;
-      return this;
     }
 
     public Builder setPrefixName(Component prefixName) {

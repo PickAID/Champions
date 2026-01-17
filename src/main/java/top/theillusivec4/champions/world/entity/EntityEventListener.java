@@ -18,10 +18,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.apache.commons.lang3.mutable.MutableFloat;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.ChampionHandler;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.entity.ChampionHandlerEntity;
@@ -137,7 +139,7 @@ public final class EntityEventListener {
       if (damage.floatValue() > 0.0f) {
         float protection = ChampionUtil.getHandler(victim).map(handler -> {
           float originProtection = handler.getDamageProtection(level, victim, event.getSource());
-          return Math.clamp(originProtection, -1024.0f, 1.0f);
+          return Math.clamp(originProtection, -1024.0f, Champions.getInstance().getCommonConfig().getMaxDamageProtection());
         }).orElse(0.0f);
 
         damage.setValue(damage.floatValue() * (1.0f - protection));
@@ -269,6 +271,5 @@ public final class EntityEventListener {
       ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doFinalizeSpawn(level, event.getX(), event.getY(), event.getZ(), level.getCurrentDifficultyAt(entity.blockPosition()), event.getSpawnType()));
     }
   }
-
 
 }

@@ -17,7 +17,6 @@ import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.affix.effect.ConditionalEffect;
 import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
-import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
 
 import java.util.Objects;
@@ -33,12 +32,6 @@ public interface ChampionHandler {
    * 是否为首领怪物
    */
   Optional<Boolean> isBoss();
-
-  /**
-   * 删除头衔
-   *
-   */
-  void removeRank();
 
   /**
    * 删除前缀名
@@ -74,13 +67,13 @@ public interface ChampionHandler {
    * @param level        服务端维度
    * @param entity       实体
    * @param origin       位置
-   * @param becameActive
+   * @param becameActive 是否首次激活
    */
   default void runLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin, boolean becameActive) {
     this.runIteration(affix -> affix.value().runLocationChangedEffects(level, this.getLevelOrDefault(), entity, origin, becameActive));
   }
 
-  default void forEachModifier(ServerLevel level, BiConsumer<Holder<Attribute>, AttributeModifier> action) {
+  default void forEachModifier(BiConsumer<Holder<Attribute>, AttributeModifier> action) {
     this.runIteration(affix -> affix.value().forEachModifier(this.getLevelOrDefault(), action));
   }
 
@@ -178,7 +171,7 @@ public interface ChampionHandler {
    * 执行每个刻度的效果
    *
    * @param level  服务端维度
-   * @param entity
+   * @param entity 实体自身
    */
   default void tickEffects(ServerLevel level, Entity entity) {
     this.runIteration(affix -> affix.value().tick(level, this.getLevelOrDefault(), entity));
@@ -197,7 +190,6 @@ public interface ChampionHandler {
    * 对当前处理程序应用冠军配置数据。
    */
   default void applyData(ChampionData data) {
-    data.rank().ifPresent(this::setRank);
     data.prefixName().ifPresent(this::setPrefixName);
     data.level().ifPresent(this::setLevel);
     data.color().ifPresent(this::setColor);
@@ -210,7 +202,6 @@ public interface ChampionHandler {
    */
   default ChampionData deriveData() {
     return new ChampionData(
-      this.getRank(),
       this.getPrefixName(),
       this.getAffixes(),
       this.getLevel(),
@@ -277,16 +268,6 @@ public interface ChampionHandler {
   default TextColor getColorOrDefault() {
     return Objects.requireNonNull(getColor().orElse(TextColor.fromLegacyFormat(ChatFormatting.WHITE)));
   }
-
-  /**
-   * 获取头衔
-   */
-  Optional<Holder<Rank>> getRank();
-
-  /**
-   * 设置头衔
-   */
-  void setRank(Holder<Rank> rank);
 
   /**
    * 获取前缀名

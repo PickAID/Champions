@@ -102,7 +102,7 @@ public final class ChampionHealthOverlay {
     int startX;
     int startY = y;
     // 显示等级
-    if (event.getLevel() <= 5) {
+    if (event.getLevel() <= 9) {
       // 小于5的等级⭐⭐⭐⭐⭐
       startX = guiGraphics.guiWidth() / 2 - 5 - 5 * (event.getLevel() - 1);
       this.drawStar(guiGraphics, startX, startY, event);
@@ -112,7 +112,7 @@ public final class ChampionHealthOverlay {
       String msg = "x" + event.getLevel();
       guiGraphics.blit(RenderPipelines.GUI_TEXTURED, STAR, startX - this.getClient().font.width(msg) / 2, startY, 0, 0, 9, 9, 9, 9, event.getColor());
       startX = startX + 10 - this.getClient().font.width(msg) / 2;
-      guiGraphics.drawString(this.getClient().font, msg, startX, startY, 16777215, true);
+      guiGraphics.drawString(this.getClient().font, msg, startX, startY, -1, true);
     }
     startX = guiGraphics.guiWidth() / 2 - this.getClient().font.width(name) / 2;
     startY += 12; // 星星的
