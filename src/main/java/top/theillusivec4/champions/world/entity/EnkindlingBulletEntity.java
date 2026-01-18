@@ -12,6 +12,7 @@ import top.theillusivec4.champions.deprecated.common.damagesource.DamageTypes;
 
 import javax.annotation.Nonnull;
 
+@Deprecated
 public class EnkindlingBulletEntity extends BaseBulletEntity {
 
   public EnkindlingBulletEntity(Level level, LivingEntity livingEntity, @Nonnull Entity entity,

@@ -153,7 +153,9 @@ public interface ChampionHandlerEntity extends ChampionHandler {
     return this.isValid();
   }
 
-  default void doFinalizeSpawn(ServerLevel level, double x, double y, double z, DifficultyInstance difficultyInstance, EntitySpawnReason reason) {
+  default void onFinalizeSpawn(ServerLevel level, double x, double y, double z, DifficultyInstance difficultyInstance, EntitySpawnReason reason) {
+    if (this.isValid()) return;
+
     int championLevel = ChampionHelper.calculateChampionLevel(level.getRandom(), difficultyInstance);
     if (championLevel > 0) {
       ChampionHelper.selectRank(this.entity(), championLevel, level.registryAccess().lookupOrThrow(Registries.RANK).listElements().map(rankReference -> (Holder<Rank>) rankReference)).ifPresent(rank -> {

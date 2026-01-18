@@ -6,13 +6,14 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceKey;
 import top.theillusivec4.champions.champion.DifficultyBasedValue;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.champion.affix.effect.AffixEntityEffect;
+import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.champion.affix.effect.AffixValueEffect;
-import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
-import top.theillusivec4.champions.server.champion.ChampionConfig;
+import top.theillusivec4.champions.champion.affix.effect.ProjectileProvider;
 import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
 import top.theillusivec4.champions.champion.rank.Rank;
+import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
+import top.theillusivec4.champions.server.champion.ChampionConfig;
 import top.theillusivec4.champions.util.Util;
 
 public final class Registries {
@@ -22,10 +23,10 @@ public final class Registries {
   public static final ResourceKey<Registry<DataComponentType<?>>> AFFIX_EFFECT_COMPONENT_TYPE = create("affix_effect_component_type");
   public static final ResourceKey<Registry<MapCodec<? extends LevelBasedValue>>> LOOT_CONTEXT_BASED_VALUE_TYPE = create("loot_context_based_value_type");
   public static final ResourceKey<Registry<MapCodec<? extends DifficultyBasedValue>>> DIFFICULTY_BASED_VALUE = create("difficulty_based_value");
-
   public static final ResourceKey<Registry<MapCodec<? extends AffixValueEffect>>> AFFIX_VALUE_EFFECT_TYPE = create("affix_value_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixEntityEffect>>> AFFIX_ENTITY_EFFECT_TYPE = create("affix_entity_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixLocationBasedEffect>>> AFFIX_LOCATION_BASED_EFFECT_TYPE = create("affix_location_based_effect_type");
+  public static final ResourceKey<Registry<MapCodec<? extends ProjectileProvider>>> PROJECTILE_PROVIDER_TYPE = create("projectile_provider_type");
   // 非Registry 使用ReloadListener 如果有必要也可以设计一个可重载注册表，只是依然不能持有外部引用。
   public static final ResourceKey<Registry<ChampionConfig>> ENTITY_CONFIG = create("entity_config");
   public static final ResourceKey<Registry<ChampionConfig>> LEVEL_CONFIG = create("level_config");

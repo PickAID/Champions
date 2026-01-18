@@ -32,10 +32,10 @@ public class AffixTypes {
 
   static {
     ADAPTABLE = register("adaptable", AdaptableAffix::new); // 适应 √
-    ARCTIC = register("arctic", ArcticAffix::new); // 北极 Goal Affix ×
+    ARCTIC = register("arctic", ArcticAffix::new); // 极寒 √
     DAMPENING = register("dampening", DampeningAffix::new); // 抑制 √
-    DESECRATING = register("desecrating", DesecratingAffix::new); // 亵渎 Goal Affix ×
-    ENKINDLING = register("enkindling", EnkindlingAffix::new); // 点燃 Goal Affi ×
+    DESECRATING = register("desecrating", DesecratingAffix::new); // 亵渎 Goal Affix ·
+    ENKINDLING = register("enkindling", EnkindlingAffix::new); // 点燃 Goal Affi ·
     HASTY = register("hasty", HastyAffix::new); // 急速 √
     INFESTED = register("infested", InfestedAffix::new); // 寄生 Goal Affix ×
     KNOCKING = register("knocking", KnockingAffix::new); // 击退 √
@@ -43,10 +43,10 @@ public class AffixTypes {
     MAGNETIC = register("magnetic", MagneticAffix::new); // 磁性 Goal Affix ×
     MOLTEN = register("molten", MoltenAffix::new); // 熔融 √
     PARALYZING = register("paralyzing", ParalyzingAffix::new); // 瘫痪 √
-    PLAGUED = register("plagued", PlaguedAffix::new); // 瘟疫 √ 差一个范围实体效果组件
+    PLAGUED = register("plagued", PlaguedAffix::new); // 瘟疫 √
     REFLECTIVE = register("reflective", ReflectiveAffix::new); // 反射 √
     SHIELDING = register("shielding", ShieldingAffix::new); // 保护 √
-    WOUNDING = register("wounding", WoundingAffix::new); // 创伤 ·
+    WOUNDING = register("wounding", WoundingAffix::new); // 创伤 √
   }
 
   private static <I extends IAffix> DeferredHolder<IAffix, I> register(String name, Supplier<I> supplier) {

@@ -15,6 +15,8 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import top.theillusivec4.champions.particle.ParticleTypes;
 
 import java.util.Random;

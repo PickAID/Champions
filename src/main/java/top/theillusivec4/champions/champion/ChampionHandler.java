@@ -174,7 +174,17 @@ public interface ChampionHandler {
    * @param entity 实体自身
    */
   default void tickEffects(ServerLevel level, Entity entity) {
-    this.runIteration(affix -> affix.value().tick(level, this.getLevelOrDefault(), entity));
+    this.runIteration(affix -> affix.value().tickEffects(level, this.getLevelOrDefault(), entity));
+  }
+
+  /**
+   * 执行目标效果
+   * @param level 服务端维度
+   * @param entity 实体自身
+   * @param target 目标实体
+   */
+  default void targetEffects(ServerLevel level, Entity entity, Entity target) {
+    this.runIteration(affix -> affix.value().targetEffects(level, this.getLevelOrDefault(), entity, target));
   }
 
   /**

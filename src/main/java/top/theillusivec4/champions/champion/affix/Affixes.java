@@ -1,12 +1,15 @@
 package top.theillusivec4.champions.champion.affix;
 
 import net.minecraft.advancements.criterion.*;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.valueproviders.ConstantFloat;
@@ -15,6 +18,8 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
@@ -46,10 +51,157 @@ public interface Affixes {
   ResourceKey<Affix> REFLECTIVE = register("reflective");
   ResourceKey<Affix> SHIELDING = register("shielding");
   ResourceKey<Affix> WOUNDING = register("wounding");
+  ResourceKey<Affix> TEST = register("test");
+  ResourceKey<Affix> TEST_1 = register("test_1");
+  ResourceKey<Affix> TEST_2 = register("test_2");
+  ResourceKey<Affix> TEST_3 = register("test_3");
+  ResourceKey<Affix> TEST_4 = register("test_4");
+  ResourceKey<Affix> TEST_5 = register("test_5");
 
   static void bootstrap(BootstrapContext<Affix> context) {
     HolderGetter<Affix> affixes = context.lookup(Registries.AFFIX);
     HolderGetter<DamageType> damageTypes = context.lookup(net.minecraft.core.registries.Registries.DAMAGE_TYPE);
+    /*
+      测试新功能用例。
+     */
+    register(
+      context,
+      TEST,
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.arcticBullet(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(0),
+            LevelBasedValue.constant(2),
+            Holder.direct(SoundEvents.SHULKER_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
+        )
+    );
+    register(
+      context,
+      TEST_1,
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.arrow(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(1.2f),
+            LevelBasedValue.constant(2),
+            Holder.direct(SoundEvents.ARROW_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
+        )
+    );
+    register(
+      context,
+      TEST_2,
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.smallFireball(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(1.2f),
+            LevelBasedValue.constant(2),
+            Holder.direct(SoundEvents.ARROW_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
+        )
+    );
+    register(
+      context,
+      TEST_3,
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.fireworkRocket(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(1.2f),
+            LevelBasedValue.constant(2),
+            Holder.direct(SoundEvents.ARROW_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
+        )
+    );
+    register(
+      context,
+      TEST_4,
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.shulkerBullet(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(0),
+            LevelBasedValue.constant(2),
+            Holder.direct(SoundEvents.ARROW_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
+        )
+    );
+    register(
+      context,
+      TEST_5,
+      Affix.affix(
+          Affix.definition(
+            null,
+            MinMaxBounds.Ints.ANY,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.largeFireball(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(1.2f),
+            LevelBasedValue.constant(2),
+            Holder.direct(SoundEvents.ARROW_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
+        )
+    );
     /*
       适应
       旧：当伤害类型与上一次所受伤害类型相同时，伤害减免 = 0.15*所受同一伤害类型的伤害次数
