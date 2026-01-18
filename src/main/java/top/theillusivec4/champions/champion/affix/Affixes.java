@@ -1,6 +1,9 @@
 package top.theillusivec4.champions.champion.affix;
 
-import net.minecraft.advancements.criterion.*;
+import net.minecraft.advancements.criterion.DamageSourcePredicate;
+import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.advancements.criterion.MobEffectsPredicate;
+import net.minecraft.advancements.criterion.TagPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
@@ -8,7 +11,6 @@ import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.ARGB;
@@ -51,12 +53,13 @@ public interface Affixes {
   ResourceKey<Affix> REFLECTIVE = register("reflective");
   ResourceKey<Affix> SHIELDING = register("shielding");
   ResourceKey<Affix> WOUNDING = register("wounding");
-  ResourceKey<Affix> TEST = register("test");
   ResourceKey<Affix> TEST_1 = register("test_1");
   ResourceKey<Affix> TEST_2 = register("test_2");
   ResourceKey<Affix> TEST_3 = register("test_3");
   ResourceKey<Affix> TEST_4 = register("test_4");
   ResourceKey<Affix> TEST_5 = register("test_5");
+  ResourceKey<Affix> TEST_6 = register("test_6");
+  ResourceKey<Affix> TEST_7 = register("test_7");
 
   static void bootstrap(BootstrapContext<Affix> context) {
     HolderGetter<Affix> affixes = context.lookup(Registries.AFFIX);
@@ -66,34 +69,10 @@ public interface Affixes {
      */
     register(
       context,
-      TEST,
-      Affix.affix(
-          Affix.definition(
-            null,
-            MinMaxBounds.Ints.ANY,
-            5,
-            5
-          )
-        )
-        .withConditionalEffects(
-          AffixEffectComponents.TARGET,
-          AffixEntityEffect.projection(
-            ProjectileProvider.arcticBullet(),
-            new ItemStack(Items.ARROW),
-            LevelBasedValue.constant(0),
-            LevelBasedValue.constant(2),
-            Holder.direct(SoundEvents.SHULKER_SHOOT)
-          ),
-          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
-        )
-    );
-    register(
-      context,
       TEST_1,
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -116,7 +95,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -139,7 +117,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -162,7 +139,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -185,7 +161,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -214,7 +189,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -243,7 +217,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -275,7 +248,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -313,7 +285,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -365,7 +336,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -394,6 +364,43 @@ public interface Affixes {
           new TimeCheck.Builder(IntRange.exact(0)).setPeriod(60)
         )
     );
+    register(
+      context,
+      TEST_6,
+      Affix.affix(
+          Affix.definition(
+            null,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.arcticBullet(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(0),
+            LevelBasedValue.constant(2),
+            Holder.direct(SoundEvents.SHULKER_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
+        )
+    );
+    register(
+      context,
+      TEST_7,
+      Affix.affix(
+          Affix.definition(
+            null,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.movement(0.05)
+        )
+    );
     /*
       熔融
         旧：获得永久0级火焰抗性状态效果，攻击后点燃目标实体20秒，造成上一次所受伤害值(未计算伤害减免的原伤害值)的伤害
@@ -406,7 +413,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -462,7 +468,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -511,7 +516,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -589,7 +593,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -650,7 +653,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )

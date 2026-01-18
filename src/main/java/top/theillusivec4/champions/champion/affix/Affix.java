@@ -3,7 +3,6 @@ package top.theillusivec4.champions.champion.affix;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -65,10 +64,9 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
     return !affix.value().equals(other.value()) && !affix.value().exclusiveSet.contains(other) && !other.value().exclusiveSet.contains(affix);
   }
 
-  public static AffixDefinition definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, MinMaxBounds.Ints cost, int maxLevel, int weight) {
+  public static AffixDefinition definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, int maxLevel, int weight) {
     return new AffixDefinition(
       Optional.ofNullable(supportedEntityTypes),
-      cost,
       maxLevel,
       weight
     );
@@ -119,20 +117,20 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
 
   }
 
-  public void doPostAttack(ServerLevel level, int affixLevel, AffixTarget target, Entity victim, DamageSource source) {
+  public void doPostAttack(ServerLevel level, int affixLevel, AffixTarget targetType, Entity victim, DamageSource source) {
     for (TargetedConditionalEffect<AffixEntityEffect> effect : this.getEffects(AffixEffectComponents.POST_ATTACK)) {
-      if (target == effect.enchanted()) {
-        Entity targetEntity = switch (effect.affected()) {
+      if (targetType == effect.enchanted()) {
+        Entity target = switch (effect.affected()) {
           case ATTACKER -> source.getEntity();
           case DAMAGING_ENTITY -> source.getDirectEntity();
           case VICTIM -> victim;
         };
 
-        if (targetEntity != null) {
-          LootContext lootContext = LootContextParamSets.postAttack(level, targetEntity, affixLevel, source, null, source.getEntity(), source.getDirectEntity());
+        if (target != null) {
+          LootContext lootContext = LootContextParamSets.postAttack(level, target, affixLevel, source, null, source.getEntity(), source.getDirectEntity());
 
           if (effect.match(lootContext)) {
-            effect.effect().apply(level, affixLevel, targetEntity, victim, targetEntity.position());
+            effect.effect().apply(level, affixLevel, victim, target, target.position());
           }
         }
       }
@@ -179,13 +177,11 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
 
   public record AffixDefinition(
     Optional<HolderSet<EntityType<?>>> supportedEntityTypes,
-    MinMaxBounds.Ints cost,
     int maxLevel,
     int weight
   ) {
     public static final MapCodec<AffixDefinition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
       RegistryCodecs.homogeneousList(net.minecraft.core.registries.Registries.ENTITY_TYPE).optionalFieldOf("supported_entity_types").forGetter(AffixDefinition::supportedEntityTypes),
-      MinMaxBounds.Ints.CODEC.optionalFieldOf("cost", MinMaxBounds.Ints.ANY).forGetter(AffixDefinition::cost),
       Codec.intRange(1, 5).optionalFieldOf("max_level", 5).forGetter(AffixDefinition::maxLevel),
       Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(AffixDefinition::weight)
     ).apply(instance, AffixDefinition::new));

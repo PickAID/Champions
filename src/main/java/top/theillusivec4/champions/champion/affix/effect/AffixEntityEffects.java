@@ -53,8 +53,9 @@ public final class AffixEntityEffects {
   public static final Supplier<MapCodec<SpawnParticlesEffect>> SPAWN_PARTICLES = register("spawn_particles", SpawnParticlesEffect.MAP_CODEC);
   public static final Supplier<MapCodec<IterationEntity>> ITERATION_ENTITY = register("iteration_entity", IterationEntity.MAP_CODEC);
   public static final Supplier<MapCodec<ExplodeEffect>> EXPLODE = register("explode", ExplodeEffect.MAP_CODEC);
-  public static final Supplier<MapCodec<PlaySound>> PLAY_SOUND = register("play_sound", PlaySound.MAP_CODEC);
-  public static final Supplier<MapCodec<Projection>> PROJECTION = register("projection", Projection.MAP_CODEC);
+  public static final Supplier<MapCodec<PlaySoundEffect>> PLAY_SOUND = register("play_sound", PlaySoundEffect.MAP_CODEC);
+  public static final Supplier<MapCodec<ProjectionEffect>> PROJECTION = register("projection", ProjectionEffect.MAP_CODEC);
+  public static final Supplier<MapCodec<MovementEffect>> MOVEMENT = register("movement", MovementEffect.MAP_CODEC);
 
   private AffixEntityEffects() {
   }
@@ -299,11 +300,11 @@ public final class AffixEntityEffects {
     ).apply(instance, IterationEntity::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity entity, Vec3 origin) {
-      AABB aabb = entity.getBoundingBox().inflate(this.horizontalScale, this.verticalScale, this.horizontalScale);
-      for (Entity target : level.getEntities(entity, aabb)) {
-        if (this.predicate.map(entityPredicate -> entityPredicate.matches(level, origin, target)).orElse(true)) {
-          this.effect.apply(level, affixLevel, source, target, target.position());
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+      AABB aabb = target.getBoundingBox().inflate(this.horizontalScale, this.verticalScale, this.horizontalScale);
+      for (Entity target1 : level.getEntities(target, aabb)) {
+        if (this.predicate.isEmpty() || this.predicate.get().matches(level, origin, target1)) {
+          this.effect.apply(level, affixLevel, source, target1, source.position());
         }
       }
     }
@@ -379,16 +380,16 @@ public final class AffixEntityEffects {
     }
   }
 
-  public record PlaySound(List<Holder<SoundEvent>> soundEvents, FloatProvider volume, FloatProvider pitch) implements AffixEntityEffect {
-    public static final MapCodec<PlaySound> MAP_CODEC = RecordCodecBuilder.mapCodec(
+  public record PlaySoundEffect(List<Holder<SoundEvent>> soundEvents, FloatProvider volume, FloatProvider pitch) implements AffixEntityEffect {
+    public static final MapCodec<PlaySoundEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(
       i -> i.group(
           ExtraCodecs.compactListCodec(SoundEvent.CODEC, SoundEvent.CODEC.sizeLimitedListOf(255))
             .fieldOf("sound")
-            .forGetter(PlaySound::soundEvents),
-          FloatProvider.codec(1.0E-5F, 10.0F).fieldOf("volume").forGetter(PlaySound::volume),
-          FloatProvider.codec(1.0E-5F, 2.0F).fieldOf("pitch").forGetter(PlaySound::pitch)
+            .forGetter(PlaySoundEffect::soundEvents),
+          FloatProvider.codec(1.0E-5F, 10.0F).fieldOf("volume").forGetter(PlaySoundEffect::volume),
+          FloatProvider.codec(1.0E-5F, 2.0F).fieldOf("pitch").forGetter(PlaySoundEffect::pitch)
         )
-        .apply(i, PlaySound::new)
+        .apply(i, PlaySoundEffect::new)
     );
 
     @Override
@@ -415,20 +416,20 @@ public final class AffixEntityEffects {
     }
   }
 
-  public record Projection(
+  public record ProjectionEffect(
     ProjectileProvider projectile,
     ItemStack projectileItem,
     LevelBasedValue power,
     LevelBasedValue uncertainty,
     Holder<SoundEvent> sound
   ) implements AffixEntityEffect {
-    public static final MapCodec<Projection> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-      ProjectileProvider.CODEC.fieldOf("projectile").forGetter(Projection::projectile),
-      ItemStack.CODEC.fieldOf("projectile_item").forGetter(Projection::projectileItem),
-      LevelBasedValue.CODEC.fieldOf("power").forGetter(Projection::power),
-      LevelBasedValue.CODEC.fieldOf("uncertainty").forGetter(Projection::uncertainty),
-      SoundEvent.CODEC.fieldOf("sound").forGetter(Projection::sound)
-    ).apply(instance, Projection::new));
+    public static final MapCodec<ProjectionEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+      ProjectileProvider.CODEC.fieldOf("projectile").forGetter(ProjectionEffect::projectile),
+      ItemStack.CODEC.fieldOf("projectile_item").forGetter(ProjectionEffect::projectileItem),
+      LevelBasedValue.CODEC.fieldOf("power").forGetter(ProjectionEffect::power),
+      LevelBasedValue.CODEC.fieldOf("uncertainty").forGetter(ProjectionEffect::uncertainty),
+      SoundEvent.CODEC.fieldOf("sound").forGetter(ProjectionEffect::sound)
+    ).apply(instance, ProjectionEffect::new));
 
     @Override
     public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
@@ -463,6 +464,22 @@ public final class AffixEntityEffects {
       return MAP_CODEC;
     }
 
+  }
 
+  public record MovementEffect(double speed) implements AffixEntityEffect {
+    public static final MapCodec<MovementEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+      Codec.DOUBLE.fieldOf("speed").forGetter(MovementEffect::speed)
+    ).apply(instance, MovementEffect::new));
+
+    @Override
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+      Vec3 vec3 = new Vec3(source.getX(), source.getY(), source.getZ()).subtract(target.position()).normalize().scale(this.speed);
+      target.setDeltaMovement(vec3);
+    }
+
+    @Override
+    public MapCodec<? extends AffixEntityEffect> codec() {
+      return MAP_CODEC;
+    }
   }
 }

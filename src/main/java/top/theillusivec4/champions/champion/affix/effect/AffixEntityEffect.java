@@ -79,13 +79,26 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
   }
 
   static AffixEntityEffect playSound(List<Holder<SoundEvent>> soundEvents, FloatProvider volume, FloatProvider pitch) {
-    return new AffixEntityEffects.PlaySound(soundEvents, volume, pitch);
+    return new AffixEntityEffects.PlaySoundEffect(soundEvents, volume, pitch);
   }
 
   static AffixEntityEffect projection(ProjectileProvider projectile, ItemStack projectileItem, LevelBasedValue power, LevelBasedValue uncertainty, Holder<SoundEvent> sound) {
-    return new AffixEntityEffects.Projection(projectile, projectileItem, power, uncertainty, sound);
+    return new AffixEntityEffects.ProjectionEffect(projectile, projectileItem, power, uncertainty, sound);
   }
 
+  static AffixEntityEffect movement(double speed) {
+    return new AffixEntityEffects.MovementEffect(speed);
+  }
+
+  /**
+   * 对目标实体执行操作
+   *
+   * @param level      服务端维度
+   * @param affixLevel 词条等级
+   * @param source     词条源实体
+   * @param target     执行目标实体
+   * @param origin     执行目标位置
+   */
   void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin);
 
   @Override
