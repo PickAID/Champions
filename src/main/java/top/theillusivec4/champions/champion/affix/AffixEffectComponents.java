@@ -30,6 +30,7 @@ public final class AffixEffectComponents {
   public static final Supplier<DataComponentType<List<ConditionalEffect<AffixValueEffect>>>> HEAL = register("heal", builder -> builder.persistent(ConditionalEffect.validatedListCodec(AffixValueEffect.CODEC, LootContextParamSets.HEAL)));
   public static final Supplier<DataComponentType<List<TargetedConditionalEffect<AffixEntityEffect>>>> POST_ATTACK = register("post_attack", builder -> builder.persistent(TargetedConditionalEffect.validatedListCodec(AffixEntityEffect.CODEC, LootContextParamSets.POST_ATTACK)));
   public static final Supplier<DataComponentType<List<ConditionalEffect<AffixEntityEffect>>>> TICK = register("tick", builder -> builder.persistent(ConditionalEffect.validatedListCodec(AffixEntityEffect.CODEC, LootContextParamSets.TICK)));
+  public static final Supplier<DataComponentType<List<ConditionalEffect<AffixEntityEffect>>>> TARGET = register("target", builder -> builder.persistent(ConditionalEffect.validatedListCodec(AffixEntityEffect.CODEC, LootContextParamSets.TICK)));
 
   public static void register(IEventBus modEventBus) {
     DEFERRED_REGISTER.register(modEventBus);

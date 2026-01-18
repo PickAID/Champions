@@ -14,13 +14,19 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 
+@Deprecated
 public class ArcticBulletEntity extends BaseBulletEntity {
 
-  public ArcticBulletEntity(Level level, LivingEntity livingEntity, @Nonnull Entity entity, Direction.Axis axis) {
-    super(EntityTypes.ARCTIC_BULLET.get(), level, livingEntity, entity, axis);
+  public ArcticBulletEntity(Level level, LivingEntity owner, Entity target, Direction.Axis axis) {
+    super(EntityTypes.ARCTIC_BULLET.get(), level, owner, target, axis);
   }
 
-  public ArcticBulletEntity(EntityType<? extends ArcticBulletEntity> entityEntityType, Level level) {
+  public ArcticBulletEntity(Level level, double x, double y, double z, Entity target, Direction.Axis axis) {
+    super(EntityTypes.ARCTIC_BULLET.get(), level);
+    this.setPos(x, y, z);
+  }
+
+  protected ArcticBulletEntity(EntityType<? extends ArcticBulletEntity> entityEntityType, Level level) {
     super(entityEntityType, level);
   }
 

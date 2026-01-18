@@ -27,6 +27,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
@@ -138,7 +140,17 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
     }
   }
 
-  public void tick(ServerLevel level, int affixLevel, Entity entity) {
+  public void targetEffects(ServerLevel level, int affixLevel, Entity entity, Entity target) {
+    LootParams params = new LootParams.Builder(level)
+      .withParameter(LootContextParams.THIS_ENTITY, entity)
+      .withParameter(LootContextParams.ORIGIN, entity.position())
+      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, affixLevel)
+      .create(LootContextParamSets.LOCATION);
+    LootContext context = new LootContext.Builder(params).create(Optional.empty());
+    applyConditionalEffects(this.getEffects(AffixEffectComponents.TARGET), context, effect -> effect.apply(level, affixLevel, entity, target, entity.position()));
+  }
+
+  public void tickEffects(ServerLevel level, int affixLevel, Entity entity) {
     LootContext context = LootContextParamSets.tick(level, entity, affixLevel, null);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TICK), context, effect -> effect.apply(level, affixLevel, entity, entity, entity.position()));
   }

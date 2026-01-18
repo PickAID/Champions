@@ -17,6 +17,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
@@ -79,6 +80,10 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
 
   static AffixEntityEffect playSound(List<Holder<SoundEvent>> soundEvents, FloatProvider volume, FloatProvider pitch) {
     return new AffixEntityEffects.PlaySound(soundEvents, volume, pitch);
+  }
+
+  static AffixEntityEffect projection(ProjectileProvider projectile, ItemStack projectileItem, LevelBasedValue power, LevelBasedValue uncertainty, Holder<SoundEvent> sound) {
+    return new AffixEntityEffects.Projection(projectile, projectileItem, power, uncertainty, sound);
   }
 
   void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin);

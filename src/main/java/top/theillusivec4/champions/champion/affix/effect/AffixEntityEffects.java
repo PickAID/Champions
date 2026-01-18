@@ -26,6 +26,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.SimpleExplosionDamageCalculator;
 import net.minecraft.world.level.block.Block;
@@ -52,17 +54,17 @@ public final class AffixEntityEffects {
   public static final Supplier<MapCodec<IterationEntity>> ITERATION_ENTITY = register("iteration_entity", IterationEntity.MAP_CODEC);
   public static final Supplier<MapCodec<ExplodeEffect>> EXPLODE = register("explode", ExplodeEffect.MAP_CODEC);
   public static final Supplier<MapCodec<PlaySound>> PLAY_SOUND = register("play_sound", PlaySound.MAP_CODEC);
+  public static final Supplier<MapCodec<Projection>> PROJECTION = register("projection", Projection.MAP_CODEC);
+
+  private AffixEntityEffects() {
+  }
 
   public static void register(IEventBus modEventBus) {
     DEFERRED_REGISTER.register(modEventBus);
   }
 
-
   private static <T extends AffixEntityEffect> Supplier<MapCodec<T>> register(String name, MapCodec<T> mapCodec) {
     return DEFERRED_REGISTER.register(name, () -> mapCodec);
-  }
-
-  private AffixEntityEffects() {
   }
 
   public record DamageEntity(LevelBasedValue minDamage, LevelBasedValue maxDamage, Holder<DamageType> damageType) implements AffixEntityEffect {
@@ -411,5 +413,56 @@ public final class AffixEntityEffects {
     public MapCodec<? extends AffixEntityEffect> codec() {
       return MAP_CODEC;
     }
+  }
+
+  public record Projection(
+    ProjectileProvider projectile,
+    ItemStack projectileItem,
+    LevelBasedValue power,
+    LevelBasedValue uncertainty,
+    Holder<SoundEvent> sound
+  ) implements AffixEntityEffect {
+    public static final MapCodec<Projection> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+      ProjectileProvider.CODEC.fieldOf("projectile").forGetter(Projection::projectile),
+      ItemStack.CODEC.fieldOf("projectile_item").forGetter(Projection::projectileItem),
+      LevelBasedValue.CODEC.fieldOf("power").forGetter(Projection::power),
+      LevelBasedValue.CODEC.fieldOf("uncertainty").forGetter(Projection::uncertainty),
+      SoundEvent.CODEC.fieldOf("sound").forGetter(Projection::sound)
+    ).apply(instance, Projection::new));
+
+    @Override
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+      Projectile projectile = this.projectile.provide(level, source, this.projectileItem);
+      double x = source.getX();
+      double y = source.getEyeY() - 0.1f;
+      double z = source.getZ();
+      projectile.setOwner(source);
+      projectile.setPos(x, y, z);
+
+      double xd = target.getX() - source.getX();
+      double yd = target.getY(0.3333333333333333) - projectile.getY();
+      double zd = target.getZ() - source.getZ();
+      double distanceToTarget = Math.sqrt(xd * xd + zd * zd);
+
+      Projectile.spawnProjectileUsingShoot(
+        projectile,
+        level,
+        this.projectileItem,
+        xd,
+        yd + distanceToTarget * 0.2f,
+        zd,
+        this.power.calculate(affixLevel),
+        this.uncertainty.calculate(affixLevel)
+      );
+
+      source.playSound(this.sound.value(), 1.0F, 1.0F / (source.getRandom().nextFloat() * 0.4F + 0.8F));
+    }
+
+    @Override
+    public MapCodec<? extends AffixEntityEffect> codec() {
+      return MAP_CODEC;
+    }
+
+
   }
 }

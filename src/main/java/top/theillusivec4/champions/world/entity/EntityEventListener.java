@@ -18,7 +18,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
@@ -35,11 +34,11 @@ import top.theillusivec4.champions.world.effect.MobEffects;
 public final class EntityEventListener {
   private static final double BOSS_EVENT_DISTANCE_SQR = 3025.0;
 
-  public static void register() {
-    NeoForge.EVENT_BUS.register(new EntityEventListener());
+  private EntityEventListener() {
   }
 
-  private EntityEventListener() {
+  public static void register() {
+    NeoForge.EVENT_BUS.register(new EntityEventListener());
   }
 
   /**
@@ -82,7 +81,7 @@ public final class EntityEventListener {
 
     if (victim instanceof LivingEntity livingEntity) {
       MobEffectInstance mobEffectInstance = livingEntity.getEffect(MobEffects.SHIELD);
-      if (mobEffectInstance != null ) {
+      if (mobEffectInstance != null) {
         livingEntity.level().playSound(null, livingEntity.blockPosition(), SoundEvents.SHIELD_BLOCK.value(), SoundSource.HOSTILE, 1.0f, 1.0f);
         livingEntity.removeEffect(MobEffects.SHIELD);
         event.setCanceled(true);
@@ -184,6 +183,11 @@ public final class EntityEventListener {
     if (entity.level() instanceof ServerLevel level) {
       ChampionUtil.getHandler(entity).ifPresent(handler -> {
         handler.tickEffects(level, entity);
+        if (entity instanceof Mob mob && mob.getTarget() != null) {
+          LivingEntity target = mob.getTarget();
+          handler.targetEffects(level, entity, target);
+        }
+
         // BossBar
         handler.getBossEvent().ifPresent(bossEvent -> {
           for (ServerPlayer player : level.players()) {
@@ -268,7 +272,7 @@ public final class EntityEventListener {
   public void onFinalizeSpawn(FinalizeSpawnEvent event) {
     if (event.getLevel() instanceof ServerLevel level) {
       Entity entity = event.getEntity();
-      ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doFinalizeSpawn(level, event.getX(), event.getY(), event.getZ(), level.getCurrentDifficultyAt(entity.blockPosition()), event.getSpawnType()));
+      ChampionUtil.getHandler(entity).ifPresent(handler -> handler.onFinalizeSpawn(level, event.getX(), event.getY(), event.getZ(), level.getCurrentDifficultyAt(entity.blockPosition()), event.getSpawnType()));
     }
   }
 

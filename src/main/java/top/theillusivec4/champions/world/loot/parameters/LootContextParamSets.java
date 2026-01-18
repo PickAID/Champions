@@ -105,6 +105,9 @@ public final class LootContextParamSets {
       .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
   );
 
+  private LootContextParamSets() {
+  }
+
   public static LootContext attributes(ServerLevel serverLevel, Entity entity, int level) {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
@@ -140,7 +143,7 @@ public final class LootContextParamSets {
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext heal(ServerLevel serverLevel, Entity entity, int level,@Nullable Damage damage) {
+  public static LootContext heal(ServerLevel serverLevel, Entity entity, int level, @Nullable Damage damage) {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
@@ -189,7 +192,7 @@ public final class LootContextParamSets {
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext tick(ServerLevel serverLevel, Entity entity, int level,@Nullable Damage damage) {
+  public static LootContext tick(ServerLevel serverLevel, Entity entity, int level, @Nullable Damage damage) {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
@@ -225,9 +228,6 @@ public final class LootContextParamSets {
 
   private static ContextKeySet.Builder builder() {
     return new ContextKeySet.Builder();
-  }
-
-  private LootContextParamSets() {
   }
 
 }
