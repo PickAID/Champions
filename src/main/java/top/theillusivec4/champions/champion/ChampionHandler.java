@@ -276,7 +276,7 @@ public interface ChampionHandler {
    * 获取可能为默认值的颜色
    */
   default TextColor getColorOrDefault() {
-    return Objects.requireNonNull(getColor().orElse(TextColor.fromLegacyFormat(ChatFormatting.WHITE)));
+    return Objects.requireNonNull(getColor().orElse(ChampionHelper.selectColor(this.getLevelOrDefault())));
   }
 
   /**
