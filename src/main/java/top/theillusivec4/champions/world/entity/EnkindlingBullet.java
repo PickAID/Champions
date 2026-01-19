@@ -13,18 +13,19 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
+import top.theillusivec4.champions.world.damagesource.DamageTypes;
 
-public class ArcticBullet extends ShulkerBullet {
-  public ArcticBullet(Level level, LivingEntity owner, Entity target, Direction.Axis invalidStartAxis) {
+public class EnkindlingBullet extends ShulkerBullet {
+  public EnkindlingBullet(Level level, LivingEntity owner, Entity target, Direction.Axis invalidStartAxis) {
     super(level, owner, target, invalidStartAxis);
   }
 
-  public ArcticBullet(EntityType<? extends ArcticBullet> type, Level level) {
+  public EnkindlingBullet(EntityType<? extends EnkindlingBullet> type, Level level) {
     super(type, level);
   }
 
-  public ArcticBullet(Level level, Entity owner) {
-    this(EntityTypes.ARCTIC_BULLET.get(), level);
+  public EnkindlingBullet(Level level, Entity owner) {
+    super(EntityTypes.ENKINDLING_BULLET.get(), level);
     this.setOwner(owner);
     Vec3 position = owner.getBoundingBox().getCenter();
     this.snapTo(position.x, position.y, position.z, this.getYRot(), this.getXRot());
@@ -39,25 +40,22 @@ public class ArcticBullet extends ShulkerBullet {
     Entity target = hitResult.getEntity();
     Entity owner = this.getOwner();
     LivingEntity livingOwner = owner instanceof LivingEntity ? (LivingEntity) owner : null;
-    DamageSource damageSource = this.damageSources().mobProjectile(this, livingOwner);
+    DamageSource damageSource = new DamageSource(this.level().registryAccess().getOrThrow(DamageTypes.ENKINDLING_BULLET), this.getOwner(), this);
     @SuppressWarnings("deprecation")
-    boolean wasHurt = target.hurtOrSimulate(damageSource, 0.0F);
+    boolean wasHurt = target.hurtOrSimulate(damageSource, 1.0F);
     if (wasHurt) {
-      if (this.level() instanceof ServerLevel serverLevel) {
-        EnchantmentHelper.doPostAttackEffects(serverLevel, target, damageSource);
+      if (this.level() instanceof ServerLevel level) {
+        EnchantmentHelper.doPostAttackEffects(level, target, damageSource);
         // Affix
         Entity victim = hitResult.getEntity();
-        ChampionUtil.getHandler(victim).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, victim, damageSource));
+        ChampionUtil.getHandler(victim).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, victim, damageSource));
         Entity attacker = this.getOwner();
         if (attacker != null) {
-          ChampionUtil.getHandler(attacker).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, victim, damageSource));
+          ChampionUtil.getHandler(attacker).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, victim, damageSource));
         }
-        ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.DAMAGING_ENTITY, victim, damageSource));
-      }
+        ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.DAMAGING_ENTITY, victim, damageSource));
 
-      if (target instanceof LivingEntity livingTarget) {
-        livingTarget.addEffect(new MobEffectInstance(MobEffects.SLOWNESS, 100, 2));
-        livingTarget.addEffect(new MobEffectInstance(MobEffects.MINING_FATIGUE, 100, 2));
+        target.setRemainingFireTicks(8 * 20);
       }
     }
   }

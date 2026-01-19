@@ -14,7 +14,7 @@ import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.effect.AffixEntityEffect;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.champion.affix.effect.AffixValueEffect;
-import top.theillusivec4.champions.champion.affix.effect.ProjectileProvider;
+import top.theillusivec4.champions.champion.affix.ProjectileProvider;
 import top.theillusivec4.champions.champion.item.ChampionSpawnEgg;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;

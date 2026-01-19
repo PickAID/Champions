@@ -34,10 +34,10 @@ public class AffixTypes {
     ADAPTABLE = register("adaptable", AdaptableAffix::new); // 适应 √
     ARCTIC = register("arctic", ArcticAffix::new); // 极寒 √
     DAMPENING = register("dampening", DampeningAffix::new); // 抑制 √
-    DESECRATING = register("desecrating", DesecratingAffix::new); // 亵渎 Goal Affix ·
-    ENKINDLING = register("enkindling", EnkindlingAffix::new); // 点燃 Goal Affi ·
+    DESECRATING = register("desecrating", DesecratingAffix::new); // 亵渎 √
+    ENKINDLING = register("enkindling", EnkindlingAffix::new); // 点燃 √
     HASTY = register("hasty", HastyAffix::new); // 急速 √
-    INFESTED = register("infested", InfestedAffix::new); // 寄生 Goal Affix ×
+    INFESTED = register("infested", InfestedAffix::new); // 感染 √
     KNOCKING = register("knocking", KnockingAffix::new); // 击退 √
     LIVELY = register("lively", LivelyAffix::new); // 活性 √
     MAGNETIC = register("magnetic", MagneticAffix::new); // 磁性 Goal Affix ×

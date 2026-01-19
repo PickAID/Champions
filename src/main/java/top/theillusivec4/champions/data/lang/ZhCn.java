@@ -3,6 +3,7 @@ package top.theillusivec4.champions.data.lang;
 import net.minecraft.data.PackOutput;
 import top.theillusivec4.champions.champion.affix.Affixes;
 import top.theillusivec4.champions.champion.rank.Ranks;
+import top.theillusivec4.champions.world.damagesource.DamageTypes;
 
 public class ZhCn extends ChampionsLanguageProvider {
   public ZhCn(PackOutput output) {
@@ -11,6 +12,9 @@ public class ZhCn extends ChampionsLanguageProvider {
 
   @Override
   protected void addTranslations() {
+    addDamageType(DamageTypes.REFLECTION_DAMAGE, "%1$s遭报应了!", "%1$s在与%2$s的战斗中遭到了报应!");
+    addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s被火焰击中", "%1$s在与%2$s的战斗中被火焰击中");
+
     add(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, "%s强敌蛋");
     add(LanguageKeys.TOOLTIP_RANK_KEY, "头衔：");
     add(LanguageKeys.TOOLTIP_LEVEL_KEY, "等级：");
@@ -50,7 +54,7 @@ public class ZhCn extends ChampionsLanguageProvider {
     addRank(Ranks.LEGENDARY, "传奇");
     addRank(Ranks.ULTIMATE, "终极");
     addAffix(Affixes.ADAPTABLE, "适应");
-    addAffix(Affixes.ARCTIC, "严寒");
+    addAffix(Affixes.ARCTIC, "极寒");
     addAffix(Affixes.DAMPENING, "抑制");
     addAffix(Affixes.DESECRATING, "亵渎");
     addAffix(Affixes.ENKINDLING, "点燃");

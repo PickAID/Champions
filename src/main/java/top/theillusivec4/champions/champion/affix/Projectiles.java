@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion.affix.effect;
+package top.theillusivec4.champions.champion.affix;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Direction;
@@ -13,12 +13,15 @@ import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.world.entity.projectile.arrow.Arrow;
 import net.minecraft.world.entity.projectile.hurtingprojectile.LargeFireball;
 import net.minecraft.world.entity.projectile.hurtingprojectile.SmallFireball;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownLingeringPotion;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.ThrownSplashPotion;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.world.entity.ArcticBullet;
+import top.theillusivec4.champions.world.entity.EnkindlingBullet;
 
 import java.util.function.Supplier;
 
@@ -26,10 +29,13 @@ public final class Projectiles {
   private static final DeferredRegister<MapCodec<? extends ProjectileProvider>> DEFERRED_REGISTER = DeferredRegister.create(Registries.PROJECTILE_PROVIDER_TYPE, Champions.MODID);
   public static final Supplier<MapCodec<ArrowProvider>> ARROW = register("arrow", ArrowProvider.MAP_CODEC);
   public static final Supplier<MapCodec<ArcticBulletProvider>> ARCTIC_BULLET = register("arctic_bullet", ArcticBulletProvider.MAP_CODEC);
+  public static final Supplier<MapCodec<EnkindlingBulletProvider>> ENKINDLING_BULLET = register("enkindling_bullet", EnkindlingBulletProvider.MAP_CODEC);
   public static final Supplier<MapCodec<ShulkerBulletProvider>> SHULKER_BULLET = register("shulker_bullet", ShulkerBulletProvider.MAP_CODEC);
   public static final Supplier<MapCodec<FireworkRocketProvider>> FIREWORK_ROCKET = register("firework_rocket", FireworkRocketProvider.MAP_CODEC);
   public static final Supplier<MapCodec<SmallFireballProvider>> SMALL_FIREBALL = register("small_fireball", SmallFireballProvider.MAP_CODEC);
   public static final Supplier<MapCodec<LargeFireballProvider>> LARGE_FIREBALL = register("large_fireball", LargeFireballProvider.MAP_CODEC);
+  public static final Supplier<MapCodec<ThrownSplashPotionProvider>> THROWN_SPLASH_POTION = register("thrown_splash_potion", ThrownSplashPotionProvider.MAP_CODEC);
+  public static final Supplier<MapCodec<ThrownLingeringPotionProvider>> THROWN_LINGERING_POTION = register("thrown_lingering_potion", ThrownLingeringPotionProvider.MAP_CODEC);
 
   private Projectiles() {
   }
@@ -78,6 +84,24 @@ public final class Projectiles {
     @Override
     public Projectile provide(ServerLevel level, Entity source, ItemStack projectileItem) {
       return new ArcticBullet(
+        level,
+        source
+      );
+    }
+
+    @Override
+    public MapCodec<? extends ProjectileProvider> codec() {
+      return MAP_CODEC;
+    }
+  }
+
+  public record EnkindlingBulletProvider() implements ProjectileProvider {
+    public static final EnkindlingBulletProvider INSTANCE = new EnkindlingBulletProvider();
+    public static final MapCodec<EnkindlingBulletProvider> MAP_CODEC = MapCodec.unit(EnkindlingBulletProvider.INSTANCE);
+
+    @Override
+    public Projectile provide(ServerLevel level, Entity source, ItemStack projectileItem) {
+      return new EnkindlingBullet(
         level,
         source
       );
@@ -204,4 +228,51 @@ public final class Projectiles {
     }
   }
 
+  public record ThrownSplashPotionProvider() implements ProjectileProvider {
+    public static final ThrownSplashPotionProvider INSTANCE = new ThrownSplashPotionProvider();
+    public static final MapCodec<ThrownSplashPotionProvider> MAP_CODEC = MapCodec.unit(INSTANCE);
+
+    @Override
+    public Projectile provide(ServerLevel level, Entity source, ItemStack projectileItem) {
+      ThrownSplashPotion thrownSplashPotion = new ThrownSplashPotion(
+        level,
+        source.getX(),
+        source.getEyeY() - 0.1f,
+        source.getZ(),
+        projectileItem
+      );
+      thrownSplashPotion.setOwner(source);
+
+      return thrownSplashPotion;
+    }
+
+    @Override
+    public MapCodec<? extends ProjectileProvider> codec() {
+      return MAP_CODEC;
+    }
+  }
+
+  public record ThrownLingeringPotionProvider() implements ProjectileProvider {
+    public static final ThrownLingeringPotionProvider INSTANCE = new ThrownLingeringPotionProvider();
+    public static final MapCodec<ThrownLingeringPotionProvider> MAP_CODEC = MapCodec.unit(INSTANCE);
+
+    @Override
+    public Projectile provide(ServerLevel level, Entity source, ItemStack projectileItem) {
+      ThrownLingeringPotion thrownLingeringPotion = new ThrownLingeringPotion(
+        level,
+        source.getX(),
+        source.getEyeY() - 0.1f,
+        source.getZ(),
+        projectileItem
+      );
+      thrownLingeringPotion.setOwner(source);
+
+      return thrownLingeringPotion;
+    }
+
+    @Override
+    public MapCodec<? extends ProjectileProvider> codec() {
+      return MAP_CODEC;
+    }
+  }
 }

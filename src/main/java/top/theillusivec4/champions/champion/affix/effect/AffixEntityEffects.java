@@ -5,6 +5,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.advancements.criterion.EntityPredicate;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -12,6 +13,7 @@ import net.minecraft.core.particles.ExplosionParticleInfo;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
@@ -24,8 +26,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -37,6 +38,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.champion.affix.ProjectileProvider;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
 import top.theillusivec4.champions.registry.Registries;
 
@@ -46,7 +48,7 @@ import java.util.function.Supplier;
 
 public final class AffixEntityEffects {
   private static final DeferredRegister<MapCodec<? extends AffixEntityEffect>> DEFERRED_REGISTER = DeferredRegister.create(Registries.AFFIX_ENTITY_EFFECT_TYPE, Champions.MODID);
-  public static final Supplier<MapCodec<DamageEntity>> DAMAGE_ENTITY = register("damage_entity", DamageEntity.MAP_CODEC);
+  public static final Supplier<MapCodec<DamageEntityEffect>> DAMAGE_ENTITY = register("damage_entity", DamageEntityEffect.MAP_CODEC);
   public static final Supplier<MapCodec<AllOf.EntityEffects>> ALL_OF = register("all_of", AllOf.EntityEffects.MAP_CODEC);
   public static final Supplier<MapCodec<ApplyMobEffect>> APPLY_MOB_EFFECT = register("apply_mob_effect", ApplyMobEffect.MAP_CODEC);
   public static final Supplier<MapCodec<Ignite>> IGNITE = register("ignite", Ignite.MAP_CODEC);
@@ -55,6 +57,7 @@ public final class AffixEntityEffects {
   public static final Supplier<MapCodec<ExplodeEffect>> EXPLODE = register("explode", ExplodeEffect.MAP_CODEC);
   public static final Supplier<MapCodec<PlaySoundEffect>> PLAY_SOUND = register("play_sound", PlaySoundEffect.MAP_CODEC);
   public static final Supplier<MapCodec<ProjectionEffect>> PROJECTION = register("projection", ProjectionEffect.MAP_CODEC);
+  public static final Supplier<MapCodec<SummonEntityEffect>> SUMMON_ENTITY = register("summon_entity", SummonEntityEffect.MAP_CODEC);
   public static final Supplier<MapCodec<MovementEffect>> MOVEMENT = register("movement", MovementEffect.MAP_CODEC);
 
   private AffixEntityEffects() {
@@ -68,15 +71,15 @@ public final class AffixEntityEffects {
     return DEFERRED_REGISTER.register(name, () -> mapCodec);
   }
 
-  public record DamageEntity(LevelBasedValue minDamage, LevelBasedValue maxDamage, Holder<DamageType> damageType) implements AffixEntityEffect {
-    public static final MapCodec<DamageEntity> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-      LevelBasedValue.CODEC.fieldOf("min_damage").forGetter(DamageEntity::minDamage),
-      LevelBasedValue.CODEC.fieldOf("max_damage").forGetter(DamageEntity::maxDamage),
-      DamageType.CODEC.fieldOf("damage_type").forGetter(DamageEntity::damageType)
-    ).apply(instance, DamageEntity::new));
+  public record DamageEntityEffect(LevelBasedValue minDamage, LevelBasedValue maxDamage, Holder<DamageType> damageType) implements AffixEntityEffect {
+    public static final MapCodec<DamageEntityEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+      LevelBasedValue.CODEC.fieldOf("min_damage").forGetter(DamageEntityEffect::minDamage),
+      LevelBasedValue.CODEC.fieldOf("max_damage").forGetter(DamageEntityEffect::maxDamage),
+      DamageType.CODEC.fieldOf("damage_type").forGetter(DamageEntityEffect::damageType)
+    ).apply(instance, DamageEntityEffect::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       float damage = Mth.randomBetween(level.getRandom(), this.minDamage.calculate(affixLevel), this.maxDamage.calculate(affixLevel));
       target.hurtServer(level, new DamageSource(damageType, source), damage);
     }
@@ -112,7 +115,7 @@ public final class AffixEntityEffects {
     ).apply(instance, ApplyMobEffect::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       if (target instanceof LivingEntity living) {
         RandomSource random = living.getRandom();
         Optional<Holder<MobEffect>> selected = this.toApply.getRandomElement(random);
@@ -141,7 +144,7 @@ public final class AffixEntityEffects {
     ).apply(instance, Ignite::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       target.igniteForSeconds(this.duration.calculate(affixLevel));
     }
 
@@ -172,16 +175,16 @@ public final class AffixEntityEffects {
     ).apply(instance, SpawnParticlesEffect::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       RandomSource random = target.getRandom();
       Vec3 movement = target.getKnownMovement();
       float bbWidth = target.getBbWidth();
       float bbHeight = target.getBbHeight();
       level.sendParticles(
         this.particle,
-        this.horizontalPosition.getCoordinate(origin.x(), origin.x(), bbWidth, random),
-        this.verticalPosition.getCoordinate(origin.y(), origin.y() + bbHeight / 2.0F, bbHeight, random),
-        this.horizontalPosition.getCoordinate(origin.z(), origin.z(), bbWidth, random),
+        this.horizontalPosition.getCoordinate(position.x(), position.x(), bbWidth, random),
+        this.verticalPosition.getCoordinate(position.y(), position.y() + bbHeight / 2.0F, bbHeight, random),
+        this.horizontalPosition.getCoordinate(position.z(), position.z(), bbWidth, random),
         this.count,
         this.horizontalVelocity.getVelocity(movement.x(), random),
         this.verticalVelocity.getVelocity(movement.y(), random),
@@ -300,10 +303,10 @@ public final class AffixEntityEffects {
     ).apply(instance, IterationEntity::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       AABB aabb = target.getBoundingBox().inflate(this.horizontalScale, this.verticalScale, this.horizontalScale);
       for (Entity target1 : level.getEntities(target, aabb)) {
-        if (this.predicate.isEmpty() || this.predicate.get().matches(level, origin, target1)) {
+        if (this.predicate.isEmpty() || this.predicate.get().matches(level, position, target1)) {
           this.effect.apply(level, affixLevel, source, target1, source.position());
         }
       }
@@ -346,8 +349,8 @@ public final class AffixEntityEffects {
     ).apply(instance, ExplodeEffect::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
-      Vec3 pos = origin.add(this.offset);
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
+      Vec3 pos = position.add(this.offset);
       level.explode(
         this.attributeToUser ? target : null,
         this.getDamageSource(target, pos),
@@ -393,15 +396,15 @@ public final class AffixEntityEffects {
     );
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       if (!target.isSilent()) {
         RandomSource random = target.getRandom();
         int index = Mth.clamp(affixLevel - 1, 0, this.soundEvents.size() - 1);
         level.playSound(
           null,
-          origin.x(),
-          origin.y(),
-          origin.z(),
+          position.x(),
+          position.y(),
+          position.z(),
           this.soundEvents.get(index),
           target.getSoundSource(),
           this.volume.sample(random),
@@ -432,8 +435,8 @@ public final class AffixEntityEffects {
     ).apply(instance, ProjectionEffect::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
-      Projectile projectile = this.projectile.provide(level, source, this.projectileItem);
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
+      Projectile projectile = this.projectile.provide(level, source, this.projectileItem.copyWithCount(1));
       double x = source.getX();
       double y = source.getEyeY() - 0.1f;
       double z = source.getZ();
@@ -448,7 +451,7 @@ public final class AffixEntityEffects {
       Projectile.spawnProjectileUsingShoot(
         projectile,
         level,
-        this.projectileItem,
+        this.projectileItem.copyWithCount(1),
         xd,
         yd + distanceToTarget * 0.2f,
         zd,
@@ -466,13 +469,42 @@ public final class AffixEntityEffects {
 
   }
 
+  public record SummonEntityEffect(HolderSet<EntityType<?>> entityTypes) implements AffixEntityEffect {
+    public static final MapCodec<SummonEntityEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+      RegistryCodecs.homogeneousList(net.minecraft.core.registries.Registries.ENTITY_TYPE).fieldOf("entity").forGetter(SummonEntityEffect::entityTypes)
+    ).apply(instance, SummonEntityEffect::new));
+
+    @Override
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
+      BlockPos blockPos = BlockPos.containing(position);
+      if (Level.isInSpawnableBounds(blockPos)) {
+        Optional<Holder<EntityType<?>>> entityType = this.entityTypes().getRandomElement(level.getRandom());
+        if (entityType.isPresent()) {
+          Entity spawned = entityType.get().value().spawn(level, blockPos, EntitySpawnReason.TRIGGERED);
+          if (spawned != null) {
+            if (spawned instanceof LightningBolt lightningBolt && source instanceof ServerPlayer player) {
+              lightningBolt.setCause(player);
+            }
+
+            spawned.snapTo(position.x, position.y, position.z, spawned.getYRot(), spawned.getXRot());
+          }
+        }
+      }
+    }
+
+    @Override
+    public MapCodec<? extends AffixEntityEffect> codec() {
+      return MAP_CODEC;
+    }
+  }
+
   public record MovementEffect(double speed) implements AffixEntityEffect {
     public static final MapCodec<MovementEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
       Codec.DOUBLE.fieldOf("speed").forGetter(MovementEffect::speed)
     ).apply(instance, MovementEffect::new));
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       Vec3 vec3 = new Vec3(source.getX(), source.getY(), source.getZ()).subtract(target.position()).normalize().scale(this.speed);
       target.setDeltaMovement(vec3);
     }

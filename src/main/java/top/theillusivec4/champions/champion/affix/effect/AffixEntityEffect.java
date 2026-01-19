@@ -15,6 +15,7 @@ import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import top.theillusivec4.champions.champion.affix.ProjectileProvider;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
 
@@ -50,7 +52,7 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
   }
 
   static AffixEntityEffect damageEntity(LevelBasedValue minDamage, LevelBasedValue maxDamage, Holder<DamageType> damageType) {
-    return new AffixEntityEffects.DamageEntity(minDamage, maxDamage, damageType);
+    return new AffixEntityEffects.DamageEntityEffect(minDamage, maxDamage, damageType);
   }
 
   static AffixEntityEffect spawnParticles(ParticleOptions particle, int count, AffixEntityEffects.SpawnParticlesEffect.PositionSource horizontalPosition, AffixEntityEffects.SpawnParticlesEffect.PositionSource verticalPosition, AffixEntityEffects.SpawnParticlesEffect.VelocitySource horizontalVelocity, AffixEntityEffects.SpawnParticlesEffect.VelocitySource verticalVelocity, FloatProvider speed) {
@@ -86,6 +88,10 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
     return new AffixEntityEffects.ProjectionEffect(projectile, projectileItem, power, uncertainty, sound);
   }
 
+  static AffixEntityEffect summonEntity(HolderSet<EntityType<?>> entityTypes) {
+    return new AffixEntityEffects.SummonEntityEffect(entityTypes);
+  }
+
   static AffixEntityEffect movement(double speed) {
     return new AffixEntityEffects.MovementEffect(speed);
   }
@@ -97,9 +103,9 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
    * @param affixLevel 词条等级
    * @param source     词条源实体
    * @param target     执行目标实体
-   * @param origin     执行目标位置
+   * @param position   执行目标位置
    */
-  void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin);
+  void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position);
 
   @Override
   default void onChangedBlock(ServerLevel level, int affixLevel, Entity source, Vec3 origin, boolean becameActive) {

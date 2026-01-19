@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion.affix.effect;
+package top.theillusivec4.champions.champion.affix;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -21,6 +21,10 @@ public interface ProjectileProvider {
     return Projectiles.ArcticBulletProvider.INSTANCE;
   }
 
+  static ProjectileProvider enkindlingBullet(){
+    return Projectiles.EnkindlingBulletProvider.INSTANCE;
+  }
+
   static ProjectileProvider shulkerBullet() {
     return Projectiles.ShulkerBulletProvider.INSTANCE;
   }
@@ -35,6 +39,14 @@ public interface ProjectileProvider {
 
   static ProjectileProvider largeFireball() {
     return Projectiles.LargeFireballProvider.INSTANCE;
+  }
+
+  static ProjectileProvider thrownSplashPotion() {
+    return Projectiles.ThrownSplashPotionProvider.INSTANCE;
+  }
+
+  static ProjectileProvider thrownLingeringPotion() {
+    return Projectiles.ThrownLingeringPotionProvider.INSTANCE;
   }
 
   Projectile provide(ServerLevel level, Entity source, ItemStack projectileItem);

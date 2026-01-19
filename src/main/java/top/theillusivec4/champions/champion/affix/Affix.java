@@ -141,7 +141,7 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
   public void targetEffects(ServerLevel level, int affixLevel, Entity entity, Entity target) {
     LootParams params = new LootParams.Builder(level)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
+      .withParameter(LootContextParams.ORIGIN, target.position())
       .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, affixLevel)
       .create(LootContextParamSets.LOCATION);
     LootContext context = new LootContext.Builder(params).create(Optional.empty());
