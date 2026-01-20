@@ -154,6 +154,8 @@ public interface ChampionHandlerEntity extends ChampionHandler {
   }
 
   default void onFinalizeSpawn(ServerLevel level, double x, double y, double z, DifficultyInstance difficultyInstance, EntitySpawnReason reason) {
+    // 召唤
+    if (reason == EntitySpawnReason.TRIGGERED) return;
     if (this.isValid()) return;
 
     int championLevel = ChampionHelper.calculateChampionLevel(level.getRandom(), difficultyInstance);

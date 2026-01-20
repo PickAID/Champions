@@ -50,9 +50,9 @@ public interface AllOf {
     public static final MapCodec<EntityEffects> MAP_CODEC = AllOf.codec(AffixEntityEffect.CODEC, EntityEffects::new, EntityEffects::effects);
 
     @Override
-    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin) {
+    public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       for (AffixEntityEffect effect : this.effects) {
-        effect.apply(level, affixLevel, source, target, origin);
+        effect.apply(level, affixLevel, source, target, position);
       }
     }
 

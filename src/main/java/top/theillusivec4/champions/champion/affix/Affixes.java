@@ -4,11 +4,12 @@ import net.minecraft.advancements.criterion.*;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ColorParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.util.ARGB;
@@ -16,16 +17,17 @@ import net.minecraft.util.valueproviders.ConstantFloat;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.predicates.DamageSourceCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemRandomChanceCondition;
-import net.minecraft.world.level.storage.loot.predicates.TimeCheck;
+import net.minecraft.world.level.storage.loot.predicates.*;
+import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import top.theillusivec4.champions.champion.affix.effect.*;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
 import top.theillusivec4.champions.registry.Registries;
@@ -33,7 +35,6 @@ import top.theillusivec4.champions.tag.AffixTags;
 import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.world.loot.predicates.LatestDamageCondition;
 
-@SuppressWarnings("SpellCheckingInspection")
 public interface Affixes {
   ResourceKey<Affix> ADAPTABLE = register("adaptable");
   ResourceKey<Affix> ARCTIC = register("arctic");
@@ -51,157 +52,10 @@ public interface Affixes {
   ResourceKey<Affix> REFLECTIVE = register("reflective");
   ResourceKey<Affix> SHIELDING = register("shielding");
   ResourceKey<Affix> WOUNDING = register("wounding");
-  ResourceKey<Affix> TEST = register("test");
-  ResourceKey<Affix> TEST_1 = register("test_1");
-  ResourceKey<Affix> TEST_2 = register("test_2");
-  ResourceKey<Affix> TEST_3 = register("test_3");
-  ResourceKey<Affix> TEST_4 = register("test_4");
-  ResourceKey<Affix> TEST_5 = register("test_5");
 
   static void bootstrap(BootstrapContext<Affix> context) {
     HolderGetter<Affix> affixes = context.lookup(Registries.AFFIX);
     HolderGetter<DamageType> damageTypes = context.lookup(net.minecraft.core.registries.Registries.DAMAGE_TYPE);
-    /*
-      测试新功能用例。
-     */
-    register(
-      context,
-      TEST,
-      Affix.affix(
-          Affix.definition(
-            null,
-            MinMaxBounds.Ints.ANY,
-            5,
-            5
-          )
-        )
-        .withConditionalEffects(
-          AffixEffectComponents.TARGET,
-          AffixEntityEffect.projection(
-            ProjectileProvider.arcticBullet(),
-            new ItemStack(Items.ARROW),
-            LevelBasedValue.constant(0),
-            LevelBasedValue.constant(2),
-            Holder.direct(SoundEvents.SHULKER_SHOOT)
-          ),
-          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
-        )
-    );
-    register(
-      context,
-      TEST_1,
-      Affix.affix(
-          Affix.definition(
-            null,
-            MinMaxBounds.Ints.ANY,
-            5,
-            5
-          )
-        )
-        .withConditionalEffects(
-          AffixEffectComponents.TARGET,
-          AffixEntityEffect.projection(
-            ProjectileProvider.arrow(),
-            new ItemStack(Items.ARROW),
-            LevelBasedValue.constant(1.2f),
-            LevelBasedValue.constant(2),
-            Holder.direct(SoundEvents.ARROW_SHOOT)
-          ),
-          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
-        )
-    );
-    register(
-      context,
-      TEST_2,
-      Affix.affix(
-          Affix.definition(
-            null,
-            MinMaxBounds.Ints.ANY,
-            5,
-            5
-          )
-        )
-        .withConditionalEffects(
-          AffixEffectComponents.TARGET,
-          AffixEntityEffect.projection(
-            ProjectileProvider.smallFireball(),
-            new ItemStack(Items.ARROW),
-            LevelBasedValue.constant(1.2f),
-            LevelBasedValue.constant(2),
-            Holder.direct(SoundEvents.ARROW_SHOOT)
-          ),
-          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
-        )
-    );
-    register(
-      context,
-      TEST_3,
-      Affix.affix(
-          Affix.definition(
-            null,
-            MinMaxBounds.Ints.ANY,
-            5,
-            5
-          )
-        )
-        .withConditionalEffects(
-          AffixEffectComponents.TARGET,
-          AffixEntityEffect.projection(
-            ProjectileProvider.fireworkRocket(),
-            new ItemStack(Items.ARROW),
-            LevelBasedValue.constant(1.2f),
-            LevelBasedValue.constant(2),
-            Holder.direct(SoundEvents.ARROW_SHOOT)
-          ),
-          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
-        )
-    );
-    register(
-      context,
-      TEST_4,
-      Affix.affix(
-          Affix.definition(
-            null,
-            MinMaxBounds.Ints.ANY,
-            5,
-            5
-          )
-        )
-        .withConditionalEffects(
-          AffixEffectComponents.TARGET,
-          AffixEntityEffect.projection(
-            ProjectileProvider.shulkerBullet(),
-            new ItemStack(Items.ARROW),
-            LevelBasedValue.constant(0),
-            LevelBasedValue.constant(2),
-            Holder.direct(SoundEvents.ARROW_SHOOT)
-          ),
-          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
-        )
-    );
-    register(
-      context,
-      TEST_5,
-      Affix.affix(
-          Affix.definition(
-            null,
-            MinMaxBounds.Ints.ANY,
-            5,
-            5
-          )
-        )
-        .withConditionalEffects(
-          AffixEffectComponents.TARGET,
-          AffixEntityEffect.projection(
-            ProjectileProvider.largeFireball(),
-            new ItemStack(Items.ARROW),
-            LevelBasedValue.constant(1.2f),
-            LevelBasedValue.constant(2),
-            Holder.direct(SoundEvents.ARROW_SHOOT)
-          ),
-          TimeCheck.time(IntRange.exact(0)).setPeriod(40)
-        )
-    );
     /*
       适应
       旧：当伤害类型与上一次所受伤害类型相同时，伤害减免 = 0.15*所受同一伤害类型的伤害次数
@@ -214,7 +68,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -232,6 +85,32 @@ public interface Affixes {
         .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE))
     );
     /*
+      严寒
+        旧：每60刻发射一个会追踪目标的寒冰子弹
+     */
+    register(
+      context,
+      ARCTIC,
+      Affix.affix(
+          Affix.definition(
+            null,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.arcticBullet(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(0.0f),
+            LevelBasedValue.constant(0.0f),
+            Holder.direct(SoundEvents.SHULKER_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(60)
+        )
+    );
+    /*
       抑制
         旧：对直接伤害具有0.8伤害减免
 
@@ -243,7 +122,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -264,6 +142,62 @@ public interface Affixes {
         .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE))
     );
     /*
+      亵渎
+      旧：约60tick在目标实体处生成一次持续10秒，半径4，起效时刻1秒，瞬间伤害区域效果云
+
+      新：60tick向目标实体投掷具有上述效果的滞留型药水瓶
+     */
+    ItemStack lingeringPotion = Items.LINGERING_POTION.getDefaultInstance().copy();
+    lingeringPotion.set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.HARMING));
+    register(
+      context,
+      DESECRATING,
+      Affix.affix(
+          Affix.definition(
+            null,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.thrownLingeringPotion(),
+            lingeringPotion,
+            LevelBasedValue.constant(1.2f),
+            LevelBasedValue.constant(0.0f),
+            Holder.direct(SoundEvents.LINGERING_POTION_THROW)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(60)
+        )
+    );
+    /*
+      点燃
+        旧：每60刻发射一个会追踪的会点燃实体的子弹攻击目标
+     */
+    register(
+      context,
+      ENKINDLING,
+      Affix.affix(
+          Affix.definition(
+            null,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.projection(
+            ProjectileProvider.enkindlingBullet(),
+            new ItemStack(Items.ARROW),
+            LevelBasedValue.constant(0.0f),
+            LevelBasedValue.constant(0.0f),
+            Holder.direct(SoundEvents.SHULKER_SHOOT)
+          ),
+          TimeCheck.time(IntRange.exact(0)).setPeriod(60)
+        )
+    );
+    /*
       仓促
         旧：0.25移动速度属性 0.5击退属性
 
@@ -275,7 +209,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -302,6 +235,28 @@ public interface Affixes {
         )
     );
     /*
+      感染：
+        旧：被攻击、治疗、杀死都有概率生成蠹虫
+     */
+    register(
+      context,
+      INFESTED,
+      Affix.affix(
+        Affix.definition(
+          null,
+          5,
+          5
+        )
+      ).withTargetedConditionalEffects(
+        AffixEffectComponents.POST_ATTACK,
+        AffixTarget.VICTIM,
+        AffixTarget.VICTIM,
+        AffixEntityEffect.summonEntity(HolderSet.direct(BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(EntityType.SILVERFISH))),
+        ValueCheckCondition.hasValue(UniformGenerator.between(0.0f, 10.0f), IntRange.range(5, 10))
+      )
+    );
+
+    /*
       爆震
         旧：带有该词缀的实体攻击后，对被攻击实体造成缓慢效果100刻的缓慢III效果，造成5.0强度的击退
 
@@ -313,7 +268,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -365,7 +319,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -395,6 +348,30 @@ public interface Affixes {
         )
     );
     /*
+      磁性：
+        旧：每40刻对目标实体产生吸引力
+     */
+    register(
+      context,
+      MAGNETIC,
+      Affix.affix(
+          Affix.definition(
+            null,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.TARGET,
+          AffixEntityEffect.movement(0.05),
+          LootItemEntityPropertyCondition.hasProperties(
+            LootContext.EntityTarget.THIS,
+            new EntityPredicate.Builder()
+              .distance(DistancePredicate.absolute(MinMaxBounds.Doubles.atMost(5.0)))
+          )
+        )
+    );
+    /*
       熔融
         旧：获得永久0级火焰抗性状态效果，攻击后点燃目标实体20秒，造成上一次所受伤害值(未计算伤害减免的原伤害值)的伤害
 
@@ -406,7 +383,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -462,7 +438,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -511,7 +486,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -575,6 +549,38 @@ public interface Affixes {
         )
     );
     /*
+      反射
+        旧：遭遇近战攻击时将攻击反弹回攻击者
+        新：反弹伤害值改为等级相关的线性递增函数
+     */
+    register(
+      context,
+      REFLECTIVE,
+      Affix.affix(
+        Affix.definition(
+          null,
+          5,
+          5
+        )
+      ).withTargetedConditionalEffects(
+        AffixEffectComponents.POST_ATTACK,
+        AffixTarget.VICTIM,
+        AffixTarget.ATTACKER,
+        AffixEntityEffect.damageEntity(
+          LevelBasedValue.linear(
+            LevelBasedValue.constant(1.0f),
+            LevelBasedValue.constant(0.5f)
+          ),
+          LevelBasedValue.linear(
+            LevelBasedValue.constant(2.0f),
+            LevelBasedValue.constant(1.0f)
+          ),
+          damageTypes.getOrThrow(top.theillusivec4.champions.world.damagesource.DamageTypes.REFLECTION_DAMAGE)
+        ),
+        DamageSourceCondition.hasDamageSource(new DamageSourcePredicate.Builder().isDirect(true))
+      )
+    );
+    /*
       保护
         旧：每40刻生成一次ParticleTypes.ENTITY_EFFECT粒子
           每40刻具有一次伤害免疫
@@ -589,7 +595,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )
@@ -650,7 +655,6 @@ public interface Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            MinMaxBounds.Ints.ANY,
             5,
             5
           )

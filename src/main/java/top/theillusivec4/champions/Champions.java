@@ -36,7 +36,7 @@ import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
 import top.theillusivec4.champions.champion.affix.effect.AffixEntityEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixValueEffects;
-import top.theillusivec4.champions.champion.affix.effect.Projectiles;
+import top.theillusivec4.champions.champion.affix.Projectiles;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValues;
 import top.theillusivec4.champions.command.Commands;
 import top.theillusivec4.champions.component.DataComponents;

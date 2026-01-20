@@ -55,12 +55,12 @@ public final class ChampionHelper {
 
   public static TextColor selectColor(int championLevel) {
     return switch (championLevel) {
-      case 1 -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
-      case 2 -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.YELLOW));
-      case 3 -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.AQUA));
-      case 4 -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.LIGHT_PURPLE));
-      case 5 -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.GOLD));
-      default -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.RED));
+      case 1 -> TextColor.parseColor("#FFC0CB").getOrThrow();
+      case 2 -> TextColor.parseColor("#FFFF00").getOrThrow();
+      case 3 -> TextColor.parseColor("#FF9900").getOrThrow();
+      case 4 -> TextColor.parseColor("#66FFFF").getOrThrow();
+      case 5 -> TextColor.parseColor("#CC33FF").getOrThrow();
+      default -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
     };
   }
 

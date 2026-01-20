@@ -15,6 +15,7 @@ import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
@@ -22,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
+import top.theillusivec4.champions.champion.affix.ProjectileProvider;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
 
@@ -50,7 +52,7 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
   }
 
   static AffixEntityEffect damageEntity(LevelBasedValue minDamage, LevelBasedValue maxDamage, Holder<DamageType> damageType) {
-    return new AffixEntityEffects.DamageEntity(minDamage, maxDamage, damageType);
+    return new AffixEntityEffects.DamageEntityEffect(minDamage, maxDamage, damageType);
   }
 
   static AffixEntityEffect spawnParticles(ParticleOptions particle, int count, AffixEntityEffects.SpawnParticlesEffect.PositionSource horizontalPosition, AffixEntityEffects.SpawnParticlesEffect.PositionSource verticalPosition, AffixEntityEffects.SpawnParticlesEffect.VelocitySource horizontalVelocity, AffixEntityEffects.SpawnParticlesEffect.VelocitySource verticalVelocity, FloatProvider speed) {
@@ -79,14 +81,31 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
   }
 
   static AffixEntityEffect playSound(List<Holder<SoundEvent>> soundEvents, FloatProvider volume, FloatProvider pitch) {
-    return new AffixEntityEffects.PlaySound(soundEvents, volume, pitch);
+    return new AffixEntityEffects.PlaySoundEffect(soundEvents, volume, pitch);
   }
 
   static AffixEntityEffect projection(ProjectileProvider projectile, ItemStack projectileItem, LevelBasedValue power, LevelBasedValue uncertainty, Holder<SoundEvent> sound) {
-    return new AffixEntityEffects.Projection(projectile, projectileItem, power, uncertainty, sound);
+    return new AffixEntityEffects.ProjectionEffect(projectile, projectileItem, power, uncertainty, sound);
   }
 
-  void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 origin);
+  static AffixEntityEffect summonEntity(HolderSet<EntityType<?>> entityTypes) {
+    return new AffixEntityEffects.SummonEntityEffect(entityTypes);
+  }
+
+  static AffixEntityEffect movement(double speed) {
+    return new AffixEntityEffects.MovementEffect(speed);
+  }
+
+  /**
+   * 对目标实体执行操作
+   *
+   * @param level      服务端维度
+   * @param affixLevel 词条等级
+   * @param source     词条源实体
+   * @param target     执行目标实体
+   * @param position   执行目标位置
+   */
+  void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position);
 
   @Override
   default void onChangedBlock(ServerLevel level, int affixLevel, Entity source, Vec3 origin, boolean becameActive) {
