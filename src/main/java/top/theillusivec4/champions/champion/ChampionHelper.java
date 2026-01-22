@@ -19,25 +19,27 @@ public final class ChampionHelper {
     affixes.removeIf(e -> !Affix.areCompatible(e, target));
   }
 
-  public static List<Holder<Affix>> getAvailableEnchantmentResults(int championLevel, Entity entity, Stream<Holder<Affix>> source) {
+  public static List<Holder<Affix>> getAvailableEnchantmentResults(Entity entity, Stream<Holder<Affix>> source) {
     List<Holder<Affix>> results = Lists.newArrayList();
     source.filter(affix -> affix.value().isSupportedEntityType(entity.getType())).forEach(results::add);
     return results;
   }
 
+  /**
+   * 计算等级, 区域难度四舍五入：[1, 7], 减半得到基值：[1, 3], 生成不小于该值不超过8的随机数
+   * 最小返回1，最大返回5
+   * @param random 随机
+   * @param difficultyInstance 难度
+   * @return 等级
+   */
   public static int calculateChampionLevel(RandomSource random, DifficultyInstance difficultyInstance) {
-    if (random.nextFloat() <= difficultyInstance.getSpecialMultiplier()) {
-      int originLevel = Math.round(difficultyInstance.getEffectiveDifficulty());
-      random.nextInt(Math.max(originLevel / 2, 1), 8);
-      return Math.min(random.nextInt(Math.max(originLevel / 2, 1), 8), 8);
-    }
-
-    return 0;
+    int originLevel = Math.round(difficultyInstance.getEffectiveDifficulty());
+    return Math.min(random.nextInt(Math.max(originLevel / 2, 1), 8), 8);
   }
 
   public static List<Holder<Affix>> selectAffixes(Entity entity, int championLevel, Stream<Holder<Affix>> source) {
     List<Holder<Affix>> results = Lists.newArrayList();
-    List<Holder<Affix>> list = getAvailableEnchantmentResults(championLevel, entity, source);
+    List<Holder<Affix>> list = getAvailableEnchantmentResults(entity, source);
     Collections.shuffle(list);
 
     int i = 0;
@@ -53,14 +55,14 @@ public final class ChampionHelper {
     return results;
   }
 
-  public static TextColor selectColor(int championLevel) {
+  public static int selectColor(int championLevel) {
     return switch (championLevel) {
-      case 1 -> TextColor.parseColor("#FFC0CB").getOrThrow();
-      case 2 -> TextColor.parseColor("#FFFF00").getOrThrow();
-      case 3 -> TextColor.parseColor("#FF9900").getOrThrow();
-      case 4 -> TextColor.parseColor("#66FFFF").getOrThrow();
-      case 5 -> TextColor.parseColor("#CC33FF").getOrThrow();
-      default -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.WHITE));
+      case 1 -> TextColor.parseColor("#FFC0CB").getOrThrow().getValue();
+      case 2 -> TextColor.parseColor("#FFFF00").getOrThrow().getValue();
+      case 3 -> TextColor.parseColor("#FF9900").getOrThrow().getValue();
+      case 4 -> TextColor.parseColor("#66FFFF").getOrThrow().getValue();
+      case 5 -> TextColor.parseColor("#CC33FF").getOrThrow().getValue();
+      default -> Objects.requireNonNull(TextColor.fromLegacyFormat(ChatFormatting.WHITE)).getValue();
     };
   }
 

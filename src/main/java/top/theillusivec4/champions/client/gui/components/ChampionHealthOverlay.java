@@ -48,16 +48,11 @@ public final class ChampionHealthOverlay {
       if (entity != null) {
         ChampionUtil.getHandler(entity).ifPresent(handler -> {
           if (handler.displayHealthOverlay()) {
-            Component name = handler.getPrefixName().map(component ->
-              (Component) component.copy()
-                .append(CommonComponents.space())
-                .append(entity.getDisplayName())
-            ).orElse(entity.getDisplayName());
-            ClientChampionBossEvent event = new ClientChampionBossEvent(entity.getUUID(), name);
-            event.setLevel(handler.getLevelOrDefault());
-            event.setColor(handler.getColorOrDefault().getValue());
+	          ClientChampionBossEvent event = new ClientChampionBossEvent(entity.getUUID(), handler.getDisplayName());
+            event.setLevel(handler.getLevel());
+            event.setColor(handler.getColor());
             event.setProgress(Math.clamp(handler.getHealth() / handler.getMaxHealth(), 0.0f, 1.0f));
-            event.setAffixes(handler.getAffixesOrDefault().getAffixes());
+            event.setAffixes(handler.getAffixes().getAffixes());
             this.render(guiGraphics, event);
           }
         });
