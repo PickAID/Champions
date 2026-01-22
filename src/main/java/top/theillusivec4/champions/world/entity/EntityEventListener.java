@@ -209,7 +209,7 @@ public final class EntityEventListener {
           double x = position.x() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
           double y = position.y() + randomSource.nextDouble() * entity.getBbHeight();
           double z = position.z() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();
-          int color = handler.getColorOrDefault().getValue();
+          int color = handler.getColor();
           entity.level().addParticle(ParticleTypes.rank(color), x, y, z, 1.0f, 1.0f, 1.0f);
         }
       });
@@ -246,7 +246,7 @@ public final class EntityEventListener {
   public void onLivingConversionPost(LivingConversionEvent.Post event) {
     Entity entity = event.getEntity();
     Entity newEntity = event.getOutcome();
-    ChampionUtil.getHandler(newEntity).ifPresent(handler -> ChampionUtil.getHandler(entity).ifPresent(handler1 -> handler.applyData(handler1.deriveData())));
+    ChampionUtil.getHandler(newEntity).ifPresent(handler -> ChampionUtil.getHandler(entity).ifPresent(handler1 -> handler.load(handler1.save())));
   }
 
   /**
@@ -259,7 +259,7 @@ public final class EntityEventListener {
     Entity parent = event.getParent();
     ChampionUtil.getHandler(parent).ifPresent(handler -> {
       for (Mob child : event.getChildren()) {
-        ChampionUtil.getHandler(child).ifPresent(handler1 -> handler1.applyData(handler.deriveData()));
+        ChampionUtil.getHandler(child).ifPresent(handler1 -> handler1.load(handler.save()));
       }
     });
   }
@@ -272,7 +272,7 @@ public final class EntityEventListener {
   public void onFinalizeSpawn(FinalizeSpawnEvent event) {
     if (event.getLevel() instanceof ServerLevel level) {
       Entity entity = event.getEntity();
-      ChampionUtil.getHandler(entity).ifPresent(handler -> handler.onFinalizeSpawn(level, event.getX(), event.getY(), event.getZ(), level.getCurrentDifficultyAt(entity.blockPosition()), event.getSpawnType()));
+      ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doFinalizeSpawn(level, event.getX(), event.getY(), event.getZ(), level.getCurrentDifficultyAt(entity.blockPosition()), event.getSpawnType()));
     }
   }
 

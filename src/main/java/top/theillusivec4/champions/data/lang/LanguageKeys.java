@@ -25,10 +25,6 @@ public final class LanguageKeys {
   public static final String COMMANDS_LEVEL_SUCCESS_KEY = commandsKey("level", CommandsKeyType.SUCCESS);
   public static final String COMMANDS_BOSS_SUCCESS_KEY = commandsKey("boss", CommandsKeyType.SUCCESS);
   public static final String COMMANDS_COLOR_SUCCESS_KEY = commandsKey("color", CommandsKeyType.SUCCESS);
-  public static final String COMMANDS_CONFIG_SELECTOR_SUCCESS_KEY = commandsKey("config_selector", CommandsKeyType.SUCCESS);
-  public static final String COMMANDS_ERROR_NO_CONFIG_SELECTOR_ON_CLIENT_KEY = commandsErrorKey("no_config_selector_on_client");
-  public static final String COMMANDS_ERROR_INVALID_CONFIG_SELECTOR_KEY = commandsErrorKey("invalid_config_selector");
-  public static final String COMMANDS_ERROR_INVALID_CHAMPION_ENTITY_KEY = commandsErrorKey("invalid_champion_entity");
   // 创造模式物品栏
   public static final String ITEM_GROUP_CHAMPION_SPAWN_EGGS = itemGroup("champion_spawn_eggs");
   public static final String ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS = itemGroup("custom_champion_spawn_eggs");

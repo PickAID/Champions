@@ -7,7 +7,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -24,7 +23,7 @@ public class DataComponents {
   public static final Supplier<DataComponentType<Affixes>> AFFIXES = register("affixes", DataComponentType.<Affixes>builder().persistent(Affixes.CODEC).networkSynchronized(Affixes.STREAM_CODEC));
   public static final Supplier<DataComponentType<Holder<Rank>>> RANK = register("rank", DataComponentType.<Holder<Rank>>builder().persistent(Rank.REFERENCE_CODEC).networkSynchronized(Rank.STREAM_CODEC));
   public static final Supplier<DataComponentType<Integer>> LEVEL = register("level", DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
-  public static final Supplier<DataComponentType<TextColor>> COLOR = register("color", DataComponentType.<TextColor>builder().persistent(TextColor.CODEC).networkSynchronized(ByteBufCodecs.fromCodec(TextColor.CODEC)));
+  public static final Supplier<DataComponentType<Integer>> COLOR = register("color", DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
   public static final Supplier<DataComponentType<Component>> PREFIX_NAME = register("prefix_name", DataComponentType.<Component>builder().persistent(ComponentSerialization.CODEC).networkSynchronized(ComponentSerialization.STREAM_CODEC));
   public static final Supplier<DataComponentType<Boolean>> BOSS = register("boss", DataComponentType.<Boolean>builder().persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
 

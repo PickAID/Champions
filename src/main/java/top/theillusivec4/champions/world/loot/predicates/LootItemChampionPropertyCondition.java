@@ -34,13 +34,11 @@ public record LootItemChampionPropertyCondition(LootContext.EntityTarget entityT
     public boolean matches(Entity entity) {
       return ChampionUtil.getHandler(entity)
         .map(handler -> {
-          if (this.level.isPresent() && !this.level.get().matches(handler.getLevelOrDefault())) {
+          if (this.level.isPresent() && !this.level.get().matches(handler.getLevel())) {
             return false;
           }
 
-          if (this.prefixName.isPresent() && handler.getPrefixName().isEmpty() || this.prefixName.isPresent() && handler.getPrefixName().isPresent() && !this.prefixName.get().equals(handler.getPrefixName().get())) {
-            return false;
-          }
+
 
 
 

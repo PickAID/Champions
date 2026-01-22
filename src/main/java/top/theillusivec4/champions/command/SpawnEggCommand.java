@@ -10,21 +10,23 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.ARGB;
 import net.minecraft.world.item.ItemStack;
+import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.data.lang.LanguageUtil;
 import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 
 import java.util.Collection;
 
 public final class SpawnEggCommand {
+
+  private SpawnEggCommand() {
+  }
 
   public static void register(LiteralArgumentBuilder<CommandSourceStack> builder, CommandBuildContext buildContext) {
     builder
@@ -117,14 +119,11 @@ public final class SpawnEggCommand {
     for (ServerPlayer player : players) {
       ItemStack itemStack = player.getMainHandItem();
       ChampionUtil.getHandler(itemStack)
-        .ifPresent(handler -> handler.setColor(TextColor.fromRgb(ARGB.opaque(color))));
+        .ifPresent(handler -> handler.setColor(ARGB.opaque(color)));
       i++;
     }
 
     source.sendSuccess(() -> Component.translatable(LanguageKeys.COMMANDS_COLOR_SUCCESS_KEY, LanguageUtil.getColorComponent(color)), true);
     return i;
-  }
-
-  private SpawnEggCommand() {
   }
 }

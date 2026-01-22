@@ -23,14 +23,14 @@ import top.theillusivec4.champions.registry.Registries;
 import java.util.Optional;
 
 @SuppressWarnings("unused")
-public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, Optional<Component> prefix, Optional<Integer> level, Optional<TextColor> color, HolderSet<Affix> affixes) {
+public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, Optional<Component> prefix, Optional<Integer> level, int color, HolderSet<Affix> affixes) {
 
   public static final Codec<ChampionSpawnEgg> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     Item.CODEC.fieldOf("item").forGetter(ChampionSpawnEgg::item),
     Rank.REFERENCE_CODEC.optionalFieldOf("rank").forGetter(ChampionSpawnEgg::rank),
     ComponentSerialization.CODEC.optionalFieldOf("prefix").forGetter(ChampionSpawnEgg::prefix),
     Codec.intRange(1, 5).optionalFieldOf("level").forGetter(ChampionSpawnEgg::level),
-    TextColor.CODEC.optionalFieldOf("color").forGetter(ChampionSpawnEgg::color),
+    Codec.INT.optionalFieldOf("color", -1).forGetter(ChampionSpawnEgg::color),
     Affix.LIST_CODEC.fieldOf("affixes").forGetter(ChampionSpawnEgg::affixes)
   ).apply(instance, ChampionSpawnEgg::new));
 
@@ -43,7 +43,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
     ChampionUtil.getHandler(itemStack).ifPresent(handler -> {
       this.prefix.ifPresent(handler::setPrefixName);
       this.level.ifPresent(handler::setLevel);
-      this.color.ifPresent(handler::setColor);
+      handler.setColor(this.color);
       handler.updateAffixes(mutable -> {
         for (Holder<Affix> affix : this.affixes) {
           mutable.add(affix);
@@ -60,7 +60,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
     private @Nullable ResourceKey<Rank> rankKey;
     private @Nullable Component prefix;
     private @Nullable Integer level;
-    private @Nullable TextColor color;
+    private int color = -1;
     private @Nullable HolderSet<Affix> affixes;
 
     public Builder(Holder<Item> item) {
@@ -74,7 +74,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
         Optional.ofNullable(this.rank),
         Optional.ofNullable(this.prefix),
         Optional.ofNullable(this.level),
-        Optional.ofNullable(this.color),
+        this.color,
         this.affixes != null ? this.affixes : HolderSet.empty()
       );
     }
@@ -99,7 +99,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
       return this;
     }
 
-    public Builder setColor(TextColor color) {
+    public Builder setColor(int color) {
       this.color = color;
       return this;
     }
