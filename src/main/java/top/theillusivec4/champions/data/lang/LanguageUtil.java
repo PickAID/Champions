@@ -4,22 +4,22 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
 public final class LanguageUtil {
-  public static MutableComponent getLevelComponent(int level) {
-    if (level <= 5) {
-      return Component.translatable(getLevelKey(level));
-    } else {
-      return Component.literal("⭐x" + level);
-    }
-  }
+	private LanguageUtil() {
+	}
 
-  public static MutableComponent getColorComponent(int color) {
-    return Component.literal("■").withColor(color);
-  }
+	public static MutableComponent getPrefixComponent(int level) {
+		return Component.translatable(LanguageKeys.getPrefixKey(level));
+	}
 
-  public static String getLevelKey(int level) {
-    return LanguageKeys.tooltipKey("champions.level." + level);
-  }
+	public static MutableComponent getLevelComponent(int level) {
+		return Component.translatable(LanguageKeys.getLevelKey(level));
+	}
 
-  private LanguageUtil() {
-  }
+	public static MutableComponent getColorComponent(int color) {
+		return Component.literal("■").withColor(color);
+	}
+
+	public static MutableComponent getBossStatusComponent(boolean boss) {
+		return boss ? Component.translatable(LanguageKeys.TOOLTIP_IS_BOSS_KEY) : Component.translatable(LanguageKeys.TOOLTIP_NOT_BOSS_KEY);
+	}
 }

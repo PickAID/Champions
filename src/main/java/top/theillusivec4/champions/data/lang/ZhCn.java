@@ -16,7 +16,6 @@ public class ZhCn extends ChampionsLanguageProvider {
     addDamageType(DamageTypes.ENKINDLING_BULLET, "%1$s被火焰击中", "%1$s在与%2$s的战斗中被火焰击中");
 
     add(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, "%s强敌蛋");
-    add(LanguageKeys.TOOLTIP_RANK_KEY, "头衔：");
     add(LanguageKeys.TOOLTIP_LEVEL_KEY, "等级：");
     add(LanguageKeys.TOOLTIP_COLOR_KEY, "颜色：");
     add(LanguageKeys.TOOLTIP_PREFIX_NAME_KEY, "前缀：");
@@ -36,12 +35,17 @@ public class ZhCn extends ChampionsLanguageProvider {
 
     add(LanguageKeys.CONFIG_DISPLAY_CHAMPION_OVERLAY_KEY, "显示生命值覆盖层");
 
-    add(LanguageUtil.getLevelKey(0), "无");
-    add(LanguageUtil.getLevelKey(1), "⭐");
-    add(LanguageUtil.getLevelKey(2), "⭐⭐");
-    add(LanguageUtil.getLevelKey(3), "⭐⭐⭐");
-    add(LanguageUtil.getLevelKey(4), "⭐⭐⭐⭐");
-    add(LanguageUtil.getLevelKey(5), "⭐⭐⭐⭐⭐");
+    add(LanguageKeys.getLevelKey(1), "I");
+    add(LanguageKeys.getLevelKey(2), "II");
+    add(LanguageKeys.getLevelKey(3), "III");
+    add(LanguageKeys.getLevelKey(4), "IV");
+    add(LanguageKeys.getLevelKey(5), "V");
+
+	  add(LanguageKeys.getPrefixKey(1), "普通");
+	  add(LanguageKeys.getPrefixKey(2), "稀有");
+	  add(LanguageKeys.getPrefixKey(3), "精英");
+	  add(LanguageKeys.getPrefixKey(4), "传奇");
+	  add(LanguageKeys.getPrefixKey(5), "终极");
 
     add(LanguageKeys.STAT_CHAMPION_MOBS_KILLED_KEY, "冠军生物击杀数");
 

@@ -51,7 +51,6 @@ public interface ChampionHandler {
 
 	/**
 	 * 设置当前等级
-	 * 等级会钳制在默认最小最大值之间
 	 */
 	void setLevel(int level);
 
@@ -68,7 +67,7 @@ public interface ChampionHandler {
 	/**
 	 * 获取前缀名
 	 */
-	Component getPrefixName();
+	Component getPrefix();
 
 	/**
 	 * 设置前缀名
