@@ -24,6 +24,7 @@ public record ChampionData(
 		Optional<Integer> color,
 		Optional<Boolean> boss
 ) {
+	public static final ChampionData EMPTY = new ChampionData(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 	public static final Codec<ChampionData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			ComponentSerialization.CODEC.optionalFieldOf("prefix_name").forGetter(ChampionData::prefixName),
 			Affixes.CODEC.optionalFieldOf("affixes").forGetter(ChampionData::affixes),

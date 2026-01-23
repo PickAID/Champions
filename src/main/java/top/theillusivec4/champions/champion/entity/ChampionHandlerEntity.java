@@ -102,16 +102,14 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 
 	@Override
 	default void setLevel(int level) {
-		if (level > 1) {
+		if (level >= 1) {
 			this.entity().setData(Attachments.LEVEL, Optional.of(level));
-		} else {
-			this.entity().removeData(Attachments.LEVEL);
 		}
 	}
 
 	@Override
 	default int getColor() {
-		return this.entity().getData(Attachments.COLOR).orElse(-1);
+		return this.entity().getData(Attachments.COLOR).orElse(ChampionHelper.getColor(this.getLevel()));
 	}
 
 	@Override
@@ -120,19 +118,19 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 	}
 
 	@Override
-	default Component getPrefixName() {
-		return this.entity().getData(Attachments.PREFIX_NAME).orElse(Component.empty());
+	default Component getPrefix() {
+		return this.entity().getData(Attachments.PREFIX).orElse(ChampionHelper.getPrefixComponent(this.getLevel()));
 	}
 
 	@Override
 	default void setPrefixName(Component name) {
-		this.entity().setData(Attachments.PREFIX_NAME, Optional.of(name));
+		this.entity().setData(Attachments.PREFIX, Optional.of(name));
 	}
 
 	@Override
 	default ChampionData save() {
 		return new ChampionData(
-				this.entity().getData(Attachments.PREFIX_NAME),
+				this.entity().getData(Attachments.PREFIX),
 				this.entity().getData(Attachments.AFFIXES),
 				this.entity().getData(Attachments.LEVEL),
 				this.entity().getData(Attachments.COLOR),
@@ -141,8 +139,8 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 	}
 
 	default Component getDisplayName() {
-		if (this.entity().hasData(Attachments.PREFIX_NAME)) {
-			return this.getPrefixName().copy().append(CommonComponents.space()).append(this.entity().getDisplayName()).withColor(this.getColor());
+		if (this.entity().hasData(Attachments.PREFIX)) {
+			return this.getPrefix().copy().append(CommonComponents.space()).append(this.entity().getDisplayName()).withColor(this.getColor());
 		} else {
 			return this.entity().getDisplayName();
 		}
@@ -176,23 +174,11 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 		RandomSource random = level.getRandom();
 		if (random.nextFloat() < difficultyInstance.getSpecialMultiplier()) {
 			int championLevel = ChampionHelper.calculateChampionLevel(level.getRandom(), difficultyInstance);
-			ChampionHelper.selectRank(this.entity(), championLevel, level.registryAccess().lookupOrThrow(Registries.RANK).listElements().map(rankReference -> (Holder<Rank>) rankReference)).ifPresent(rank -> {
-
-				List<Holder<Affix>> list = ChampionHelper.selectAffixes(entity(), championLevel, level.registryAccess().lookupOrThrow(Registries.AFFIX).listElements().map(affix -> (Holder<Affix>) affix));
-
-				this.setLevel(championLevel);
-
-				Affixes.Mutable mutable = this.getAffixes().toMutable();
-				list.forEach(mutable::add);
-				this.setAffixes(mutable.toImmutable());
-
-				this.setColor(ChampionHelper.selectColor(championLevel));
-
-				this.setPrefixName(rank.value().description());
-				if (rank.value().boss()) {
-					this.setBoss(true);
-				}
-			});
+			this.setLevel(championLevel);
+			List<Holder<Affix>> list = ChampionHelper.selectAffixes(entity(), championLevel, level.registryAccess().lookupOrThrow(Registries.AFFIX).listElements());
+			Affixes.Mutable mutable = this.getAffixes().toMutable();
+			list.forEach(mutable::add);
+			this.setAffixes(mutable.toImmutable());
 		}
 
 	}

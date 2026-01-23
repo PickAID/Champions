@@ -24,7 +24,7 @@ public class DataComponents {
   public static final Supplier<DataComponentType<Holder<Rank>>> RANK = register("rank", DataComponentType.<Holder<Rank>>builder().persistent(Rank.REFERENCE_CODEC).networkSynchronized(Rank.STREAM_CODEC));
   public static final Supplier<DataComponentType<Integer>> LEVEL = register("level", DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
   public static final Supplier<DataComponentType<Integer>> COLOR = register("color", DataComponentType.<Integer>builder().persistent(Codec.INT).networkSynchronized(ByteBufCodecs.INT));
-  public static final Supplier<DataComponentType<Component>> PREFIX_NAME = register("prefix_name", DataComponentType.<Component>builder().persistent(ComponentSerialization.CODEC).networkSynchronized(ComponentSerialization.STREAM_CODEC));
+  public static final Supplier<DataComponentType<Component>> PREFIX = register("prefix_name", DataComponentType.<Component>builder().persistent(ComponentSerialization.CODEC).networkSynchronized(ComponentSerialization.STREAM_CODEC));
   public static final Supplier<DataComponentType<Boolean>> BOSS = register("boss", DataComponentType.<Boolean>builder().persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL));
 
   public static <T> Supplier<DataComponentType<T>> register(String name, DataComponentType.Builder<T> builder) {
