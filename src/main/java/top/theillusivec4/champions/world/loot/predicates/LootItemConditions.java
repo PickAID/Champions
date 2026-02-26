@@ -12,9 +12,8 @@ import java.util.function.Supplier;
 public final class LootItemConditions {
   private static final DeferredRegister<MapCodec<? extends LootItemCondition>> DEFERRED_REGISTER = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, Champions.MODID);
   public static final Supplier<MapCodec<LatestDamageCondition>> LATEST_DAMAGE = register("latest_damage", LatestDamageCondition.MAP_CODEC);
-  public static final Supplier<MapCodec<EntitySpawnReasonCondition>> ENTITY_SPAWN_REASON = register("entity_spawn_reason", EntitySpawnReasonCondition.MAP_CODEC);
 
-  public static void register(IEventBus modEventBus) {
+	public static void register(IEventBus modEventBus) {
     DEFERRED_REGISTER.register(modEventBus);
   }
 

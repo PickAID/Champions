@@ -60,6 +60,7 @@ import top.theillusivec4.champions.world.item.ItemEventListener;
 import top.theillusivec4.champions.world.item.Items;
 import top.theillusivec4.champions.world.loot.modifier.LootModifiers;
 import top.theillusivec4.champions.world.loot.predicates.LootItemConditions;
+import top.theillusivec4.champions.world.loot.providers.number.NumberProviders;
 
 import java.util.Objects;
 
@@ -104,6 +105,7 @@ public class Champions {
     Attachments.register(modEventBus);
     LootItemConditions.register(modEventBus);
     LootModifiers.register(modEventBus);
+	  NumberProviders.register(modEventBus);
     DataEventListener.register(modEventBus);
     ClientGamePacketListener.register(modEventBus);
     EntityEventListener.register();

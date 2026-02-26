@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.core.HolderSet;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -13,7 +12,7 @@ import top.theillusivec4.champions.champion.affix.Affix;
 
 import java.util.Optional;
 
-public record LootItemChampionPropertyCondition(LootContext.EntityTarget entityTarget) implements LootItemCondition {
+public record LootItemChampionEntityPropertyCondition(LootContext.EntityTarget entityTarget) implements LootItemCondition {
 
   @Override
   public MapCodec<? extends LootItemCondition> codec() {
@@ -28,7 +27,7 @@ public record LootItemChampionPropertyCondition(LootContext.EntityTarget entityT
   public record ChampionPredicate(
     Optional<MinMaxBounds.Ints> level,
     Optional<Component> prefixName,
-    Optional<TextColor> color,
+    Optional<Integer> color,
     Optional<HolderSet<Affix>> affixes
   ) {
     public boolean matches(Entity entity) {
