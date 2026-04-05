@@ -10,7 +10,7 @@ public class ClientConfig {
   public ClientConfig() {
     ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
     this.displayOverlay = builder
-      .translation(LanguageKeys.CONFIG_DISPLAY_CHAMPION_OVERLAY_KEY)
+      .translation(LanguageKeys.CONFIG_DISPLAY_CHAMPION_OVERLAY)
       .define("display_champion_overlay", true);
     this.configSpec = builder.build();
   }

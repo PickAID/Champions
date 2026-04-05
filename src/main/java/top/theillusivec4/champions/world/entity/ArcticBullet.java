@@ -11,6 +11,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 
@@ -43,16 +44,17 @@ public class ArcticBullet extends ShulkerBullet {
     @SuppressWarnings("deprecation")
     boolean wasHurt = target.hurtOrSimulate(damageSource, 0.0F);
     if (wasHurt) {
-      if (this.level() instanceof ServerLevel serverLevel) {
-        EnchantmentHelper.doPostAttackEffects(serverLevel, target, damageSource);
+      if (this.level() instanceof ServerLevel level) {
+        EnchantmentHelper.doPostAttackEffects(level, target, damageSource);
         // Affix
         Entity victim = hitResult.getEntity();
-        ChampionUtil.getHandler(victim).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, victim, damageSource));
-        Entity attacker = this.getOwner();
-        if (attacker != null) {
-          ChampionUtil.getHandler(attacker).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, victim, damageSource));
-        }
-        ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.DAMAGING_ENTITY, victim, damageSource));
+	      ChampionHelper.doPostAttackEffects(level, victim, damageSource);
+//        ChampionUtil.getHandler(victim).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, victim, damageSource));
+//        Entity attacker = this.getOwner();
+//        if (attacker != null) {
+//          ChampionUtil.getHandler(attacker).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, victim, damageSource));
+//        }
+//        ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.DAMAGING_ENTITY, victim, damageSource));
       }
 
       if (target instanceof LivingEntity livingTarget) {

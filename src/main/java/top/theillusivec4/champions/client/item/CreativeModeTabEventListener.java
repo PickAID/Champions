@@ -12,6 +12,7 @@ import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
 
+@Deprecated
 public final class CreativeModeTabEventListener {
   public static void register(IEventBus modEventBus) {
     modEventBus.register(new CreativeModeTabEventListener());
@@ -29,13 +30,13 @@ public final class CreativeModeTabEventListener {
       Level level = Minecraft.getInstance().level;
       if (level != null) {
 
-        for (Item item : Capabilities.ChampionHandlers.getImplementedItems()) {
-          ItemStack itemStack = new ItemStack(item);
-          ChampionUtil.getHandler(itemStack)
-            .ifPresent(handler -> handler.setLevel(ChampionDefaultConfigs.MIN_LEVEL));
-
-          event.accept(itemStack);
-        }
+//        for (Item item : Capabilities.ChampionHandlers.getImplementedItems()) {
+//          ItemStack itemStack = new ItemStack(item);
+//          ChampionUtil.getHandler(itemStack)
+//            .ifPresent(handler -> handler.setLevel(ChampionDefaultConfigs.MIN_LEVEL));
+//
+//          event.accept(itemStack);
+//        }
 
       }
     }

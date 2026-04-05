@@ -30,20 +30,17 @@ import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.attachment.Attachments;
-import top.theillusivec4.champions.capability.Capabilities;
 import top.theillusivec4.champions.champion.DifficultyBasedValues;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
+import top.theillusivec4.champions.champion.affix.Projectiles;
 import top.theillusivec4.champions.champion.affix.effect.AffixEntityEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixValueEffects;
-import top.theillusivec4.champions.champion.affix.Projectiles;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValues;
 import top.theillusivec4.champions.command.Commands;
 import top.theillusivec4.champions.component.DataComponents;
 import top.theillusivec4.champions.config.CommonConfig;
 import top.theillusivec4.champions.data.DataEventListener;
-import top.theillusivec4.champions.deprecated.api.ChampionsApiImpl;
-import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.network.protocol.ClientGamePacketListener;
 import top.theillusivec4.champions.particle.ParticleTypes;
 import top.theillusivec4.champions.registry.BuiltInRegistries;
@@ -66,114 +63,88 @@ import java.util.Objects;
 
 @Mod(Champions.MODID)
 public class Champions {
-  public static final String MODID = "champions";
-  public static final Logger LOGGER = LogManager.getLogger();
-  public static final String VERSION = "2.1.12.3";
-  @Deprecated
-  public static final IChampionsApi API = ChampionsApiImpl.getInstance();
-  // champion instance
-  private static Champions instance;
-  private final CommonConfig commonConfig = new CommonConfig();
-  private final ServerConfig serverConfig = new ServerConfig();
-  private ChampionConfigManager entityConfigManager;
-  private ChampionConfigManager levelConfigManager;
+	public static final String MODID = "champions";
+	public static final Logger LOGGER = LogManager.getLogger();
+	public static final String VERSION = "2.1.12.3";
+	// champion instance
+	private static Champions instance;
+	private final CommonConfig commonConfig = new CommonConfig();
+	private final ServerConfig serverConfig = new ServerConfig();
+	private ChampionConfigManager entityConfigManager;
+	private ChampionConfigManager levelConfigManager;
 
-  public static Champions getInstance() {
-    return instance;
-  }
+	public Champions(IEventBus modEventBus, ModContainer container) {
+		instance = this;
+		container.registerConfig(ModConfig.Type.COMMON, this.commonConfig.getConfigSpec());
+		container.registerConfig(ModConfig.Type.SERVER, this.serverConfig.getConfigSpec());
+		Items.register(modEventBus);
+		ParticleTypes.register(modEventBus);
+		MobEffects.register(modEventBus);
+		EntityTypes.register(modEventBus);
+		Stats.register(modEventBus);
+		DataComponents.register(modEventBus);
+		CreativeModeTabs.register(modEventBus);
+//    Capabilities.register(modEventBus);
+		BuiltInRegistries.register(modEventBus);
+		AffixEffectComponents.register(modEventBus);
+		LevelBasedValues.register(modEventBus);
+		DifficultyBasedValues.register(modEventBus);
+		AffixValueEffects.register(modEventBus);
+		AffixEntityEffects.register(modEventBus);
+		AffixLocationBasedEffects.register(modEventBus);
+		Projectiles.register(modEventBus);
+		Attachments.register(modEventBus);
+		LootItemConditions.register(modEventBus);
+		LootModifiers.register(modEventBus);
+		NumberProviders.register(modEventBus);
+		DataEventListener.register(modEventBus);
+		ClientGamePacketListener.register(modEventBus);
+		EntityEventListener.register();
+		ItemEventListener.register();
+		ReloadEventListener.register();
+		Commands.register();
+	}
 
-  public Champions(IEventBus modEventBus, ModContainer container) {
-    instance = this;
-    container.registerConfig(ModConfig.Type.COMMON, this.commonConfig.getConfigSpec());
-    container.registerConfig(ModConfig.Type.SERVER, this.serverConfig.getConfigSpec());
-    Items.register(modEventBus);
-    ParticleTypes.register(modEventBus);
-    MobEffects.register(modEventBus);
-    EntityTypes.register(modEventBus);
-    Stats.register(modEventBus);
-    DataComponents.register(modEventBus);
-    CreativeModeTabs.register(modEventBus);
-    Capabilities.register(modEventBus);
-    BuiltInRegistries.register(modEventBus);
-    AffixEffectComponents.register(modEventBus);
-    LevelBasedValues.register(modEventBus);
-    DifficultyBasedValues.register(modEventBus);
-    AffixValueEffects.register(modEventBus);
-    AffixEntityEffects.register(modEventBus);
-    AffixLocationBasedEffects.register(modEventBus);
-    Projectiles.register(modEventBus);
-    Attachments.register(modEventBus);
-    LootItemConditions.register(modEventBus);
-    LootModifiers.register(modEventBus);
-	  NumberProviders.register(modEventBus);
-    DataEventListener.register(modEventBus);
-    ClientGamePacketListener.register(modEventBus);
-    EntityEventListener.register();
-    ItemEventListener.register();
-    ReloadEventListener.register();
-    Commands.register();
+	public static Champions getInstance() {
+		return instance;
+	}
 
-//    modEventBus.register(this);
-//    modEventBus.register(new ModEventHandler());
-//    LootModifiers.register(modEventBus);
-//    Stats.register(modEventBus);
-//    ChampionsRegistry.register(modEventBus);
-    // register champions config
-//  container.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
-//  container.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
-//  container.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
+	public CommonConfig getCommonConfig() {
+		return commonConfig;
+	}
 
-    // register GameStages compat config, if gameStages loaded
+	public ServerConfig getServerConfig() {
+		return serverConfig;
+	}
 
-//    if (Utils.isGameStagesLoaded()) {
-//      container.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
-//    }
-//
-//    if (Utils.isGatewaysLoaded()) {
-//      NeoForge.EVENT_BUS.register(new GatewaysToEternityCompat());
-//    }
-//    if (Utils.isKubejsLoaded()){
-//      NeoForge.EVENT_BUS.register(new NeoForgeJsEventHandler());
-//    }
+	public ChampionConfigManager getLevelConfigManager() {
+		return Objects.requireNonNull(levelConfigManager, "过早的访问实体配置管理器");
+	}
 
-  }
+	public ChampionConfigManager getEntityConfigManager() {
+		return Objects.requireNonNull(entityConfigManager, "过早的访问实体配置管理器");
+	}
 
-  public CommonConfig getCommonConfig() {
-    return commonConfig;
-  }
+	public static final class ReloadEventListener {
+		public static final Identifier ENTITY_CONFIG_MANAGER = Util.id("entity_config_manager");
+		public static final Identifier LEVEL_CONFIG_MANAGER = Util.id("level_config_manager");
 
-  public ServerConfig getServerConfig() {
-    return serverConfig;
-  }
+		private ReloadEventListener() {
+		}
 
-  public ChampionConfigManager getLevelConfigManager() {
-    return Objects.requireNonNull(levelConfigManager, "过早的访问实体配置管理器");
-  }
+		private static void register() {
+			NeoForge.EVENT_BUS.register(new ReloadEventListener());
+		}
 
-  public ChampionConfigManager getEntityConfigManager() {
-    return Objects.requireNonNull(entityConfigManager, "过早的访问实体配置管理器");
-  }
+		@SubscribeEvent
+		public void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
+			ChampionConfigManager entityConfigManager = new ChampionConfigManager(event.getRegistryAccess(), Registries.ENTITY_CONFIG);
+			ChampionConfigManager levelConfigManager = new ChampionConfigManager(event.getRegistryAccess(), Registries.LEVEL_CONFIG);
+			event.addListener(ENTITY_CONFIG_MANAGER, entityConfigManager);
+			event.addListener(LEVEL_CONFIG_MANAGER, levelConfigManager);
+			Champions.instance.entityConfigManager = entityConfigManager;
+			Champions.instance.levelConfigManager = levelConfigManager;
+		}
 
-  public static final class ReloadEventListener {
-    public static final Identifier ENTITY_CONFIG_MANAGER = Util.id("entity_config_manager");
-    public static final Identifier LEVEL_CONFIG_MANAGER = Util.id("level_config_manager");
-
-    private static void register() {
-      NeoForge.EVENT_BUS.register(new ReloadEventListener());
-    }
-
-    private ReloadEventListener() {
-    }
-
-    @SubscribeEvent
-    public void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
-      ChampionConfigManager entityConfigManager = new ChampionConfigManager(event.getRegistryAccess(), Registries.ENTITY_CONFIG);
-      ChampionConfigManager levelConfigManager = new ChampionConfigManager(event.getRegistryAccess(), Registries.LEVEL_CONFIG);
-      event.addListener(ENTITY_CONFIG_MANAGER, entityConfigManager);
-      event.addListener(LEVEL_CONFIG_MANAGER, levelConfigManager);
-      Champions.instance.entityConfigManager = entityConfigManager;
-      Champions.instance.levelConfigManager = levelConfigManager;
-    }
-
-  }
+	}
 }

@@ -9,10 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipProvider;
-import top.theillusivec4.champions.champion.Affixes;
-import top.theillusivec4.champions.champion.ChampionData;
-import top.theillusivec4.champions.champion.ChampionHandler;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.champion.*;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.data.lang.LanguageUtil;
@@ -23,6 +20,7 @@ import java.util.function.Consumer;
 /**
  * 专用于物品的冠军处理程序
  */
+@Deprecated
 public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
 	ItemStack itemStack();
 
@@ -41,13 +39,13 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
 	}
 
 	@Override
-	default Affixes getAffixes() {
-		return this.itemStack().getOrDefault(top.theillusivec4.champions.component.DataComponents.AFFIXES, Affixes.EMPTY);
+	default AffixContainer getAffixes() {
+		return this.itemStack().getOrDefault(top.theillusivec4.champions.component.DataComponents.AFFIX_CONTAINER_STORED, AffixContainer.EMPTY);
 	}
 
 	@Override
-	default void setAffixes(Affixes affixes) {
-		this.itemStack().set(top.theillusivec4.champions.component.DataComponents.AFFIXES, affixes);
+	default void setAffixes(AffixContainer affixContainer) {
+		this.itemStack().set(top.theillusivec4.champions.component.DataComponents.AFFIX_CONTAINER_STORED, affixContainer);
 	}
 
 	@Override
@@ -64,7 +62,7 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
 
 	@Override
 	default int getColor() {
-		return this.itemStack().getOrDefault(top.theillusivec4.champions.component.DataComponents.COLOR, ChampionHelper.getColor(this.getLevel()));
+		return this.itemStack().getOrDefault(top.theillusivec4.champions.component.DataComponents.COLOR, ChampionHelper.byLevelColor(this.getLevel()));
 	}
 
 	@Override
@@ -86,8 +84,8 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
 	default ChampionData save() {
 		return new ChampionData(
 				Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.PREFIX)),
-				Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.AFFIXES)),
-				this.itemStack().has(top.theillusivec4.champions.component.DataComponents.AFFIXES) ? Optional.of(this.getLevel()) : Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.LEVEL)),
+				Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.AFFIX_CONTAINER_STORED)),
+				this.itemStack().has(top.theillusivec4.champions.component.DataComponents.AFFIX_CONTAINER_STORED) ? Optional.of(this.getLevel()) : Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.LEVEL)),
 				Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.COLOR)),
 				Optional.ofNullable(this.itemStack().get(top.theillusivec4.champions.component.DataComponents.BOSS))
 		);
@@ -95,27 +93,27 @@ public interface ChampionHandlerItem extends ChampionHandler, TooltipProvider {
 
 	@Override
 	default void addToTooltip(Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
-		if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.AFFIXES)) {
-			Affixes affixes = this.getAffixes();
+		if (this.itemStack().has(top.theillusivec4.champions.component.DataComponents.AFFIX_CONTAINER_STORED)) {
+			AffixContainer affixContainer = this.getAffixes();
 			int level = this.getLevel();
 			int color = this.getColor();
 			Component prefixName = this.getPrefix();
 			boolean boss = this.isBoss();
 
-			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_LEVEL_KEY).withStyle(ChatFormatting.GRAY)
+			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_LEVEL).withStyle(ChatFormatting.GRAY)
 					.append(ChampionHelper.getLevelComponent(level)));
 
-			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_COLOR_KEY).withStyle(ChatFormatting.GRAY)
+			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_COLOR).withStyle(ChatFormatting.GRAY)
 					.append(ChampionHelper.getColorComponent(color)));
 
-			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_PREFIX_NAME_KEY).withStyle(ChatFormatting.GRAY)
+			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_PREFIX_NAME).withStyle(ChatFormatting.GRAY)
 					.append(prefixName));
 
-			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_BOSS_KEY).withStyle(ChatFormatting.GRAY)
+			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_BOSS).withStyle(ChatFormatting.GRAY)
 					.append(LanguageUtil.getBossStatusComponent(boss)));
 
-			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_AFFIXES_KEY).withStyle(ChatFormatting.GRAY));
-			for (Holder<Affix> affix : affixes.getAffixes()) {
+			consumer.accept(Component.translatable(LanguageKeys.TOOLTIP_AFFIXES).withStyle(ChatFormatting.GRAY));
+			for (Holder<Affix> affix : affixContainer.getAffixList()) {
 				consumer.accept(CommonComponents.space().append(affix.value().description()));
 			}
 		}

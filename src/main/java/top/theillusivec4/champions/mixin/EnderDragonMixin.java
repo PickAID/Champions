@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.ChampionUtil;
 
@@ -26,13 +27,15 @@ public class EnderDragonMixin extends Mob {
 
   @Inject(method = "knockBack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
   private void champion$knockBack(ServerLevel level, List<Entity> entities, CallbackInfo ci, @Local LivingEntity livingTarget, @Local DamageSource damageSource) {
-    ChampionUtil.getHandler(livingTarget).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, livingTarget, damageSource));
-    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, livingTarget, damageSource));
+//    ChampionUtil.getHandler(livingTarget).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, livingTarget, damageSource));
+//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, livingTarget, damageSource));
+	  ChampionHelper.doPostAttackEffects(level, livingTarget, damageSource);
   }
 
   @Inject(method = "hurt(Lnet/minecraft/server/level/ServerLevel;Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
   private void champion$hurt(ServerLevel level, List<Entity> entities, CallbackInfo ci, @Local Entity entity, @Local DamageSource damageSource) {
-    ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, entity, damageSource));
-    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, entity, damageSource));
+//    ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, entity, damageSource));
+//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, entity, damageSource));
+	  ChampionHelper.doPostAttackEffects(level, entity, damageSource);
   }
 }

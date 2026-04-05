@@ -9,28 +9,28 @@ import top.theillusivec4.champions.util.Util;
  */
 public final class LanguageKeys {
 	// 物品
-	public static final String ITEM_CHAMPION_SPAWN_EGG_KEY = "suffix.item.champion_spawn_egg";
+	public static final String ITEM_CHAMPION_SPAWN_EGG = "champion.spawn_egg";
 	// Tooltip
-	public static final String TOOLTIP_LEVEL_KEY = tooltipKey("champion.level");
-	public static final String TOOLTIP_COLOR_KEY = tooltipKey("champion.color");
-	public static final String TOOLTIP_PREFIX_NAME_KEY = tooltipKey("champion.prefix_name");
-	public static final String TOOLTIP_AFFIXES_KEY = tooltipKey("champion.affixes");
-	public static final String TOOLTIP_BOSS_KEY = tooltipKey("champion.boss");
-	public static final String TOOLTIP_IS_BOSS_KEY = tooltipKey("boss.is");
-	public static final String TOOLTIP_NOT_BOSS_KEY = tooltipKey("boss.not");
+	public static final String TOOLTIP_LEVEL = tooltipKey("champion.level");
+	public static final String TOOLTIP_COLOR = tooltipKey("champion.color");
+	public static final String TOOLTIP_PREFIX_NAME = tooltipKey("champion.prefix_name");
+	public static final String TOOLTIP_AFFIXES = tooltipKey("champion.affixes");
+	public static final String TOOLTIP_BOSS = tooltipKey("champion.boss");
+	public static final String TOOLTIP_IS_BOSS = tooltipKey("boss.is");
+	public static final String TOOLTIP_NOT_BOSS = tooltipKey("boss.not");
 	// 命令
-	public static final String COMMANDS_AFFIX_SUCCESS_KEY = commandsKey("affix", CommandsKeyType.SUCCESS);
-	public static final String COMMANDS_RANK_SUCCESS_KEY = commandsKey("rank", CommandsKeyType.SUCCESS);
-	public static final String COMMANDS_LEVEL_SUCCESS_KEY = commandsKey("level", CommandsKeyType.SUCCESS);
-	public static final String COMMANDS_BOSS_SUCCESS_KEY = commandsKey("boss", CommandsKeyType.SUCCESS);
-	public static final String COMMANDS_COLOR_SUCCESS_KEY = commandsKey("color", CommandsKeyType.SUCCESS);
+	public static final String COMMANDS_AFFIX_SUCCESS = commandsKey("affix", CommandsKeyType.SUCCESS);
+	public static final String COMMANDS_RANK_SUCCESS = commandsKey("rank", CommandsKeyType.SUCCESS);
+	public static final String COMMANDS_LEVEL_SUCCESS = commandsKey("level", CommandsKeyType.SUCCESS);
+	public static final String COMMANDS_BOSS_SUCCESS = commandsKey("boss", CommandsKeyType.SUCCESS);
+	public static final String COMMANDS_COLOR_SUCCESS = commandsKey("color", CommandsKeyType.SUCCESS);
 	// 创造模式物品栏
 	public static final String ITEM_GROUP_CHAMPION_SPAWN_EGGS = itemGroup("champion_spawn_eggs");
 	public static final String ITEM_GROUP_CUSTOM_CHAMPION_SPAWN_EGGS = itemGroup("custom_champion_spawn_eggs");
 	// 配置
-	public static final String CONFIG_DISPLAY_CHAMPION_OVERLAY_KEY = configKey("display_champion_overlay");
+	public static final String CONFIG_DISPLAY_CHAMPION_OVERLAY = configKey("display_champion_overlay");
 	// 统计信息
-	public static final String STAT_CHAMPION_MOBS_KILLED_KEY = statKey(Stats.CHAMPION_MOBS_KILLED.getId());
+	public static final String STAT_CHAMPION_MOBS_KILLED = statKey(Stats.CHAMPION_MOBS_KILLED.getId());
 
 	private LanguageKeys() {
 	}
@@ -48,7 +48,7 @@ public final class LanguageKeys {
 	}
 
 	public static String getPrefixKey(int level) {
-		return "prefix." + getLevelKey(level);
+		return "champion.prefix." + level;
 	}
 
 	private static String commandsErrorKey(String name) {

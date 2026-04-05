@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.ChampionUtil;
 
@@ -23,7 +24,8 @@ public abstract class SlimeMixin extends Mob {
 
   @Inject(method = "dealDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
   private void champion$dealDamage(LivingEntity target, CallbackInfo ci, @Local ServerLevel level, @Local DamageSource damageSource) {
-    ChampionUtil.getHandler(target).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, target, damageSource));
-    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, target, damageSource));
+//    ChampionUtil.getHandler(target).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, target, damageSource));
+//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, target, damageSource));
+	  ChampionHelper.doPostAttackEffects(level, target, damageSource);
   }
 }

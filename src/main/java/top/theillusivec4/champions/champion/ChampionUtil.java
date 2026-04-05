@@ -11,6 +11,7 @@ import java.util.Optional;
 /**
  * 提供Capability对象获取方法，一些工具方法
  */
+@Deprecated
 public final class ChampionUtil {
   public static Optional<ChampionHandlerEntity> getHandler(Entity entity) {
     return Optional.ofNullable(entity.getCapability(Capabilities.ChampionHandlers.ENTITY));

@@ -20,6 +20,6 @@ public final class LanguageUtil {
 	}
 
 	public static MutableComponent getBossStatusComponent(boolean boss) {
-		return boss ? Component.translatable(LanguageKeys.TOOLTIP_IS_BOSS_KEY) : Component.translatable(LanguageKeys.TOOLTIP_NOT_BOSS_KEY);
+		return boss ? Component.translatable(LanguageKeys.TOOLTIP_IS_BOSS) : Component.translatable(LanguageKeys.TOOLTIP_NOT_BOSS);
 	}
 }

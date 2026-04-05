@@ -15,9 +15,9 @@ import top.theillusivec4.champions.client.particle.RankParticle;
 
 public class ParticleTypes {
   private static final DeferredRegister<ParticleType<?>> DEFERRED_REGISTER = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, Champions.MODID);
-  public static final DeferredHolder<ParticleType<?>, ParticleType<RankParticle.Options>> RANK_PARTICLE_TYPE = register("rank", false, RankParticle.Options.MAP_CODEC, RankParticle.Options.STREAM_CODEC);
+  public static final DeferredHolder<ParticleType<?>, ParticleType<RankParticle.Options>> CHAMPION = register("champion", false, RankParticle.Options.MAP_CODEC, RankParticle.Options.STREAM_CODEC);
 
-  public static ParticleOptions rank(int color) {
+  public static ParticleOptions champion(int color) {
     return new RankParticle.Options(color);
   }
 
