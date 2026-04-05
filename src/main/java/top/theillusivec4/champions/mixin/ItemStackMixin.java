@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 
 /**
@@ -31,14 +31,27 @@ public abstract class ItemStackMixin implements DataComponentHolder, TypedInstan
 
 	@Inject(method = "getItemName", at = @At(value = "HEAD"), cancellable = true)
 	private void champions$getHoverName(CallbackInfoReturnable<Component> cir) {
-		ChampionUtil.getHandler((ItemStack) (Object) this).ifPresent(handler -> {
-			if (handler.isValid()){
-				TypedEntityData<EntityType<?>> data = this.components.get(DataComponents.ENTITY_DATA);
-				if (data != null) {
-					Component name = handler.getPrefix().copy().append(CommonComponents.space()).append(Component.translatable(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, data.type().getDescription())).withColor(handler.getColor());
-					cir.setReturnValue(name);
-				}
+		ItemStack itemStack = (ItemStack) (Object) this;
+		if (!ChampionHelper.getAffixContainerStored(itemStack).isEmpty()) {
+			TypedEntityData<EntityType<?>> data = this.components.get(DataComponents.ENTITY_DATA);
+			if (data != null) {
+				Component name = ChampionHelper.getPrefix(itemStack).copy()
+						.append(CommonComponents.space())
+						.append(data.type().getDescription())
+						.append(CommonComponents.space())
+						.append(Component.translatable(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG))
+						.withColor(ChampionHelper.getColor(itemStack));
+				cir.setReturnValue(name);
 			}
-		});
+		}
+//		ChampionUtil.getHandler((ItemStack) (Object) this).ifPresent(handler -> {
+//			if (handler.isValid()) {
+//				TypedEntityData<EntityType<?>> data = this.components.get(DataComponents.ENTITY_DATA);
+//				if (data != null) {
+//					Component name = handler.getPrefix().copy().append(CommonComponents.space()).append(Component.translatable(LanguageKeys.ITEM_CHAMPION_SPAWN_EGG_KEY, data.type().getDescription())).withColor(handler.getColor());
+//					cir.setReturnValue(name);
+//				}
+//			}
+//		});
 	}
 }

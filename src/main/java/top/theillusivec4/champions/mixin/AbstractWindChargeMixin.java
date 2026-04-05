@@ -13,23 +13,23 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
-import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.ChampionHelper;
 
 @Mixin(value = AbstractWindCharge.class)
 public abstract class AbstractWindChargeMixin extends AbstractHurtingProjectile {
-  protected AbstractWindChargeMixin(EntityType<? extends AbstractHurtingProjectile> type, Level level) {
-    super(type, level);
-  }
+	protected AbstractWindChargeMixin(EntityType<? extends AbstractHurtingProjectile> type, Level level) {
+		super(type, level);
+	}
 
-  @Inject(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-  private void champion$onHitEntity(EntityHitResult hitResult, CallbackInfo ci, @Local ServerLevel serverLevel, @Local DamageSource source) {
-    Entity victim = hitResult.getEntity();
-    ChampionUtil.getHandler(victim).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, victim, source));
-    Entity attacker = this.getOwner();
-    if (attacker != null) {
-      ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, victim, source));
-    }
-    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.DAMAGING_ENTITY, victim, source));
-  }
+	@Inject(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
+	private void champion$onHitEntity(EntityHitResult hitResult, CallbackInfo ci, @Local ServerLevel serverLevel, @Local DamageSource source) {
+		Entity victim = hitResult.getEntity();
+//    ChampionUtil.getHandler(victim).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, victim, source));
+//    Entity attacker = this.getOwner();
+//    if (attacker != null) {
+//      ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, victim, source));
+//    }
+//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.DAMAGING_ENTITY, victim, source));
+		ChampionHelper.doPostAttackEffects(serverLevel, victim, source);
+	}
 }

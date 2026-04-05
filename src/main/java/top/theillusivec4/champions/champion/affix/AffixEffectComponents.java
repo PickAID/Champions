@@ -20,7 +20,6 @@ import java.util.function.UnaryOperator;
 public final class AffixEffectComponents {
   public static final Codec<DataComponentMap> CODEC = DataComponentMap.makeCodec(Codec.lazyInitialized(BuiltInRegistries.AFFIX_EFFECT_COMPONENT_TYPE::byNameCodec));
   private static final DeferredRegister<DataComponentType<?>> DEFERRED_REGISTER = DeferredRegister.create(Registries.AFFIX_EFFECT_COMPONENT_TYPE, Champions.MODID);
-
   public static final Supplier<DataComponentType<List<AffixLocationBasedEffect>>> INITIALIZE = register("initialize", builder -> builder.persistent(AffixLocationBasedEffect.CODEC.listOf()));
   public static final Supplier<DataComponentType<List<AffixAttributeEffect>>> ATTRIBUTES = register("attributes", builder -> builder.persistent(AffixAttributeEffect.CODEC.listOf()));
   public static final Supplier<DataComponentType<List<ConditionalEffect<AffixValueEffect>>>> DAMAGE_PROTECTION = register("damage_protection", builder -> builder.persistent(ConditionalEffect.validatedListCodec(AffixValueEffect.CODEC, LootContextParamSets.DAMAGE_PROTECTION)));

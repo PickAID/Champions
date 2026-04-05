@@ -1,5 +1,6 @@
 package top.theillusivec4.champions.mixin;
 
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.champion.ChampionUtil;
 
 import java.util.function.Consumer;
@@ -30,6 +32,7 @@ public abstract class EntityTypeMixin<T extends Entity> implements EntityTypeTes
 
   @Unique
   private static <T extends Entity> Consumer<T> champion$appendChampionConfig(ItemStack itemStack, Consumer<T> consumer) {
-    return consumer.andThen(entity -> ChampionUtil.getHandler(entity).ifPresent(handler -> ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handler.load(handlerItem.save()))));
+//    return consumer.andThen(entity -> ChampionUtil.getHandler(entity).ifPresent(handler -> ChampionUtil.getHandler(itemStack).ifPresent(handlerItem -> handler.load(handlerItem.save()))));
+	  return consumer.andThen(entity -> ChampionHelper.updateFromItemStack((ServerLevel) entity.level(), entity, itemStack));
   }
 }

@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 /**
  * 冠军处理程序
  */
+@Deprecated
 public interface ChampionHandler {
 	/**
 	 * 是否为首领怪物
@@ -37,12 +38,12 @@ public interface ChampionHandler {
 	/**
 	 * 获取全部词缀数据
 	 */
-	Affixes getAffixes();
+	AffixContainer getAffixes();
 
 	/**
 	 * 设置词缀对象
 	 */
-	void setAffixes(Affixes affixes);
+	void setAffixes(AffixContainer affixContainer);
 
 	/**
 	 * 获取等级
@@ -84,8 +85,8 @@ public interface ChampionHandler {
 	 *
 	 * @param updater 更新
 	 */
-	default void updateAffixes(Consumer<Affixes.Mutable> updater) {
-		Affixes.Mutable mutable = this.getAffixes().toMutable();
+	default void updateAffixes(Consumer<AffixContainer.Mutable> updater) {
+		AffixContainer.Mutable mutable = this.getAffixes().toMutable();
 		updater.accept(mutable);
 		this.setAffixes(mutable.toImmutable());
 	}
@@ -126,7 +127,7 @@ public interface ChampionHandler {
 	 * @return 是 | 否
 	 */
 	default boolean isImmuneToDamage(ServerLevel serverLevel, Entity victim, DamageSource source) {
-		for (Holder<Affix> affix : this.getAffixes().getAffixes()) {
+		for (Holder<Affix> affix : this.getAffixes().getAffixList()) {
 			LootContext context = LootContextParamSets.damageImmunity(serverLevel, victim, this.getLevel(), source, null, null, null);
 			for (ConditionalEffect<DamageImmunity> effect : affix.value().getEffects(AffixEffectComponents.DAMAGE_IMMUNITY)) {
 				if (effect.matches(context)) {
@@ -234,7 +235,7 @@ public interface ChampionHandler {
 	 * @param consumer 执行的方法
 	 */
 	default void runIteration(Consumer<Holder<Affix>> consumer) {
-		this.getAffixes().getAffixes().forEach(consumer);
+		this.getAffixes().getAffixList().forEach(consumer);
 	}
 
 	/**

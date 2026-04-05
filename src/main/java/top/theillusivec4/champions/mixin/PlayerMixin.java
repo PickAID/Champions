@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.ChampionUtil;
 
@@ -26,13 +27,15 @@ public abstract class PlayerMixin extends Avatar {
 
   @Inject(method = "itemAttackInteraction", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffectsWithItemSource(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/item/ItemStack;)V", shift = At.Shift.AFTER))
   private void champion$itemAttackInteraction(Entity entity, ItemStack attackingItemStack, DamageSource damageSource, boolean applyToTarget, CallbackInfo ci, @Local ServerLevel serverLevel) {
-    ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, entity, damageSource));
-    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, entity, damageSource));
+//    ChampionUtil.getHandler(entity).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, entity, damageSource));
+//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, entity, damageSource));
+	  ChampionHelper.doPostAttackEffects(serverLevel, entity, damageSource);
   }
 
   @Inject(method = "doSweepAttack(Lnet/minecraft/world/entity/Entity;FLnet/minecraft/world/damagesource/DamageSource;FLnet/minecraft/world/phys/AABB;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
   private void champion$doSweepAttack(Entity entity, float baseDamage, DamageSource damageSource, float attackStrengthScale, AABB sweepHitBox, CallbackInfo ci, @Local ServerLevel serverLevel, @Local LivingEntity nearby) {
-    ChampionUtil.getHandler(nearby).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, nearby, damageSource));
-    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, entity, damageSource));
+//    ChampionUtil.getHandler(nearby).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, nearby, damageSource));
+//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, entity, damageSource));
+	  ChampionHelper.doPostAttackEffects(serverLevel, entity, damageSource);
   }
 }

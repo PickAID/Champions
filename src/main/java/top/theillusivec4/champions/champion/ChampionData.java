@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 public record ChampionData(
 		Optional<Component> prefixName,
-		Optional<Affixes> affixes,
+		Optional<AffixContainer> affixes,
 		Optional<Integer> level,
 		Optional<Integer> color,
 		Optional<Boolean> boss
@@ -27,7 +27,7 @@ public record ChampionData(
 	public static final ChampionData EMPTY = new ChampionData(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 	public static final Codec<ChampionData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			ComponentSerialization.CODEC.optionalFieldOf("prefix_name").forGetter(ChampionData::prefixName),
-			Affixes.CODEC.optionalFieldOf("affixes").forGetter(ChampionData::affixes),
+			AffixContainer.CODEC.optionalFieldOf("affixes").forGetter(ChampionData::affixes),
 			Codec.INT.optionalFieldOf("level").forGetter(ChampionData::level),
 			Codec.INT.optionalFieldOf("color").forGetter(ChampionData::color),
 			Codec.BOOL.optionalFieldOf("boss").forGetter(ChampionData::boss)

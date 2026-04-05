@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.ChampionUtil;
 
@@ -17,7 +18,8 @@ import top.theillusivec4.champions.champion.ChampionUtil;
 public abstract class ChargeAttackMixin {
   @Inject(method = "dealDamageToTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
   private void champion$dealDamageToTarget(ServerLevel level, Animal body, LivingEntity target, CallbackInfo ci, @Local DamageSource damageSource) {
-    ChampionUtil.getHandler(target).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, target, damageSource));
-    ChampionUtil.getHandler(body).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, target, damageSource));
+//    ChampionUtil.getHandler(target).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, target, damageSource));
+//    ChampionUtil.getHandler(body).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, target, damageSource));
+	  ChampionHelper.doPostAttackEffects(level, target, damageSource);
   }
 }

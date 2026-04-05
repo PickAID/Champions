@@ -10,29 +10,32 @@ import top.theillusivec4.champions.champion.rank.Ranks;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.util.Util;
 
-public interface ChampionSpawnEggs {
-  ResourceKey<ChampionSpawnEgg> ZOMBIE = register("zombie");
+public final class ChampionSpawnEggs {
+	public static final ResourceKey<ChampionSpawnEgg> ZOMBIE = register("zombie");
 
-  static void bootstrap(BootstrapContext<ChampionSpawnEgg> context) {
-    HolderGetter<Rank> ranks = context.lookup(Registries.RANK);
-    register(
-      context,
-      ZOMBIE,
-      ChampionSpawnEgg.builder(Items.ZOMBIE_SPAWN_EGG)
-        .setRank(ranks.getOrThrow(Ranks.SKILLED))
-        .setPrefix(Component.literal("做完的做你的，做完你的做你的，别急别急，我心里有数"))
-    );
-  }
+	private ChampionSpawnEggs() {
+	}
 
-  private static ResourceKey<ChampionSpawnEgg> register(String name) {
-    return ResourceKey.create(Registries.SPAWN_EGG, Util.id(name));
-  }
+	public static void bootstrap(BootstrapContext<ChampionSpawnEgg> context) {
+		HolderGetter<Rank> ranks = context.lookup(Registries.RANK);
+		register(
+				context,
+				ZOMBIE,
+				ChampionSpawnEgg.builder(Items.ZOMBIE_SPAWN_EGG)
+						.setRank(ranks.getOrThrow(Ranks.SKILLED))
+						.setPrefix(Component.literal("做完的做你的，做完你的做你的，别急别急，我心里有数"))
+		);
+	}
 
-  private static void register(BootstrapContext<ChampionSpawnEgg> context, ResourceKey<ChampionSpawnEgg> key, ChampionSpawnEgg.Builder builder) {
+	private static ResourceKey<ChampionSpawnEgg> register(String name) {
+		return ResourceKey.create(Registries.SPAWN_EGG, Util.id(name));
+	}
 
-    context.register(
-      key,
-      builder.build(context)
-    );
-  }
+	private static void register(BootstrapContext<ChampionSpawnEgg> context, ResourceKey<ChampionSpawnEgg> key, ChampionSpawnEgg.Builder builder) {
+
+		context.register(
+				key,
+				builder.build(context)
+		);
+	}
 }

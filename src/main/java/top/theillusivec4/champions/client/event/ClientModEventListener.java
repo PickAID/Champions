@@ -33,7 +33,7 @@ public final class ClientModEventListener {
 
   @SubscribeEvent
   private void onRegisterParticleProviders(RegisterParticleProvidersEvent event) {
-    event.registerSpriteSet(ParticleTypes.RANK_PARTICLE_TYPE.get(), RankParticle.Provider::new);
+    event.registerSpriteSet(ParticleTypes.CHAMPION.get(), RankParticle.Provider::new);
   }
 
   @SubscribeEvent

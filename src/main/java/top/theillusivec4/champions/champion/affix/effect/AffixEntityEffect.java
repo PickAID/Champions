@@ -19,6 +19,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.Vec3;
@@ -84,7 +85,7 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
     return new AffixEntityEffects.PlaySoundEffect(soundEvents, volume, pitch);
   }
 
-  static AffixEntityEffect projection(ProjectileProvider projectile, ItemStack projectileItem, LevelBasedValue power, LevelBasedValue uncertainty, Holder<SoundEvent> sound) {
+  static AffixEntityEffect projection(ProjectileProvider projectile, ItemStackTemplate projectileItem, LevelBasedValue power, LevelBasedValue uncertainty, Holder<SoundEvent> sound) {
     return new AffixEntityEffects.ProjectionEffect(projectile, projectileItem, power, uncertainty, sound);
   }
 

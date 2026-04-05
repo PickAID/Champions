@@ -30,11 +30,11 @@ public final class LanguageHelper {
   }
 
   public static void addLevelTooltip(LanguageProvider provider, String name) {
-    provider.add(LanguageKeys.TOOLTIP_LEVEL_KEY, name);
+    provider.add(LanguageKeys.TOOLTIP_LEVEL, name);
   }
 
   public static void addAffixesToolTip(LanguageProvider provider, String name) {
-    provider.add(LanguageKeys.TOOLTIP_AFFIXES_KEY, name);
+    provider.add(LanguageKeys.TOOLTIP_AFFIXES, name);
   }
 
 

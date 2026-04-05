@@ -27,7 +27,7 @@ public final class Registries {
   public static final ResourceKey<Registry<MapCodec<? extends AffixEntityEffect>>> AFFIX_ENTITY_EFFECT_TYPE = create("affix_entity_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixLocationBasedEffect>>> AFFIX_LOCATION_BASED_EFFECT_TYPE = create("affix_location_based_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends ProjectileProvider>>> PROJECTILE_PROVIDER_TYPE = create("projectile_provider_type");
-  // 非Registry 使用ReloadListener 如果有必要也可以设计一个可重载注册表，只是依然不能持有外部引用。
+  // 非Registry 使用ReloadListener
   public static final ResourceKey<Registry<ChampionConfig>> ENTITY_CONFIG = create("entity_config");
   public static final ResourceKey<Registry<ChampionConfig>> LEVEL_CONFIG = create("level_config");
 

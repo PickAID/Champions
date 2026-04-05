@@ -19,36 +19,42 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.ChampionHelper;
 
 /**
  * 实现使用鼠标中键点击实体时获取实体刷怪蛋的功能
+ * TODO
  */
 @Mixin(ServerGamePacketListenerImpl.class)
 public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPacketListenerImpl implements ServerGamePacketListener, ServerPlayerConnection, TickablePacketListener, GameProtocols.Context {
-  @Shadow
-  public ServerPlayer player;
+	@Shadow
+	public ServerPlayer player;
 
-  private ServerGamePacketListenerImplMixin(MinecraftServer server, Connection connection, CommonListenerCookie cookie) {
-    super(server, connection, cookie);
-  }
+	private ServerGamePacketListenerImplMixin(MinecraftServer server, Connection connection, CommonListenerCookie cookie) {
+		super(server, connection, cookie);
+	}
 
-  @Shadow
-  protected abstract void tryPickItem(ItemStack stack);
+	@Shadow
+	protected abstract void tryPickItem(ItemStack stack);
 
-  @Inject(method = "handlePickItemFromEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;tryPickItem(Lnet/minecraft/world/item/ItemStack;)V"), cancellable = true)
-  private void modifyItemStack(ServerboundPickItemFromEntityPacket packet, CallbackInfo ci) {
-    ServerLevel serverLevel = this.player.level();
-    Entity entity = serverLevel.getEntity(packet.id());
-    if (entity != null) {
-      ChampionUtil.getHandler(entity).ifPresent(handler -> {
-        ItemStack itemStack = handler.getSpawnEgg();
-        if (!itemStack.isEmpty()) {
-          this.tryPickItem(itemStack);
-          ci.cancel();
-        }
-      });
-    }
+	@Inject(method = "handlePickItemFromEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;tryPickItem(Lnet/minecraft/world/item/ItemStack;)V"), cancellable = true)
+	private void modifyItemStack(ServerboundPickItemFromEntityPacket packet, CallbackInfo ci) {
+		ServerLevel serverLevel = this.player.level();
+		Entity entity = serverLevel.getEntity(packet.id());
+		if (entity != null) {
+			ItemStack itemStack = ChampionHelper.getSpawnEgg(entity);
+			if (!itemStack.isEmpty()) {
+				this.tryPickItem(itemStack);
+				ci.cancel();
+			}
+//      ChampionUtil.getHandler(entity).ifPresent(handler -> {
+//        ItemStack itemStack = handler.getSpawnEgg();
+//        if (!itemStack.isEmpty()) {
+//          this.tryPickItem(itemStack);
+//          ci.cancel();
+//        }
+//      });
+		}
 //    var serverLevel = this.player.level();
 //    var pickedEntity = serverLevel.getEntity(packet.id());
 //    if (pickedEntity != null && this.player != null) {
@@ -68,5 +74,5 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
 //        }
 //      }
 //    }
-  }
+	}
 }

@@ -7,27 +7,30 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import top.theillusivec4.champions.champion.ChampionUtil;
+import top.theillusivec4.champions.champion.ChampionHelper;
 
 import java.util.function.Consumer;
 
 public final class ItemEventListener {
-  public static void register() {
-    NeoForge.EVENT_BUS.register(new ItemEventListener());
-  }
+	private ItemEventListener() {
+	}
 
-  private ItemEventListener() {
-  }
+	public static void register() {
+		NeoForge.EVENT_BUS.register(new ItemEventListener());
+	}
 
-  @SubscribeEvent
-  public void onItemTooltip(ItemTooltipEvent event) {
-    ItemStack itemStack = event.getItemStack();
-    Item.TooltipContext tooltipContext = event.getContext();
-    TooltipFlag tooltipFlag = event.getFlags();
+	@SubscribeEvent
+	public void onItemTooltip(ItemTooltipEvent event) {
+		ItemStack itemStack = event.getItemStack();
+		Item.TooltipContext tooltipContext = event.getContext();
+		TooltipFlag tooltipFlag = event.getFlags();
 
-    Consumer<Component> consumer = component -> event.getToolTip().add(component);
-    ChampionUtil.getHandler(itemStack)
-      .ifPresent(handlerItem -> handlerItem.addToTooltip(tooltipContext, consumer, tooltipFlag, itemStack.getComponents()));
+		Consumer<Component> adder = component -> event.getToolTip().add(component);
+		ChampionHelper.addToTooltip(itemStack, tooltipContext, adder, tooltipFlag, itemStack);
+
+//    ChampionUtil.getHandler(itemStack)
+//      .ifPresent(handlerItem -> handlerItem.addToTooltip(tooltipContext, adder, tooltipFlag, itemStack.getComponents()));
+
 //    List<Component> list = event.getToolTip();
 //    ItemStack itemStack = event.getItemStack();
 //    Level level = event.getContext().level();
@@ -114,6 +117,6 @@ public final class ItemEventListener {
 //      }
 //    }
 
-  }
+	}
 
 }

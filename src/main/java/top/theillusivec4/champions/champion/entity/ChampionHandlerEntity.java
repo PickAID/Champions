@@ -23,7 +23,6 @@ import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.attachment.Attachments;
 import top.theillusivec4.champions.champion.*;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.registry.Registries;
 import top.theillusivec4.champions.server.champion.ChampionConfig;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
@@ -35,6 +34,7 @@ import java.util.Optional;
  * 专用于实体的冠军处理程序
  */
 @SuppressWarnings("unused")
+@Deprecated
 public interface ChampionHandlerEntity extends ChampionHandler {
 	Entity entity();
 
@@ -56,7 +56,7 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 								this.getHealth() / this.getMaxHealth(),
 								this.getLevel(),
 								this.getColor(),
-								this.getAffixes().getAffixes()
+								this.getAffixes().getAffixList()
 						)
 				);
 			} else if (!boss && this.getBossEvent().isPresent()) {
@@ -66,12 +66,12 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 	}
 
 	@Override
-	default Affixes getAffixes() {
-		return this.entity().getData(Attachments.AFFIXES).orElse(Affixes.EMPTY);
+	default AffixContainer getAffixes() {
+		return this.entity().getData(Attachments.AFFIX_CONTAINER).orElse(AffixContainer.EMPTY);
 	}
 
 	@Override
-	default void setAffixes(Affixes affixes) {
+	default void setAffixes(AffixContainer affixContainer) {
 		if (this.entity().level() instanceof ServerLevel level) {
 			if (this.entity() instanceof LivingEntity livingEntity) {
 				this.forEachModifier((attribute, modifier) -> {
@@ -82,7 +82,7 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 				});
 			}
 			this.stopLocationChangedEffects(level, this.entity(), this.entity().position());
-			this.entity().setData(Attachments.AFFIXES, Optional.of(affixes));
+			this.entity().setData(Attachments.AFFIX_CONTAINER, Optional.of(affixContainer));
 			if (this.entity() instanceof LivingEntity livingEntity) {
 				this.forEachModifier((attribute, modifier) -> {
 					AttributeInstance attributeModifier = livingEntity.getAttribute(attribute);
@@ -109,7 +109,7 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 
 	@Override
 	default int getColor() {
-		return this.entity().getData(Attachments.COLOR).orElse(ChampionHelper.getColor(this.getLevel()));
+		return this.entity().getData(Attachments.COLOR).orElse(ChampionHelper.byLevelColor(this.getLevel()));
 	}
 
 	@Override
@@ -131,7 +131,7 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 	default ChampionData save() {
 		return new ChampionData(
 				this.entity().getData(Attachments.PREFIX),
-				this.entity().getData(Attachments.AFFIXES),
+				this.entity().getData(Attachments.AFFIX_CONTAINER),
 				this.entity().getData(Attachments.LEVEL),
 				this.entity().getData(Attachments.COLOR),
 				this.entity().getData(Attachments.BOSS)
@@ -176,7 +176,7 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 			int championLevel = ChampionHelper.calculateChampionLevel(level.getRandom(), difficultyInstance);
 			this.setLevel(championLevel);
 			List<Holder<Affix>> list = ChampionHelper.selectAffixes(entity(), championLevel, level.registryAccess().lookupOrThrow(Registries.AFFIX).listElements());
-			Affixes.Mutable mutable = this.getAffixes().toMutable();
+			AffixContainer.Mutable mutable = this.getAffixes().toMutable();
 			list.forEach(mutable::add);
 			this.setAffixes(mutable.toImmutable());
 		}
@@ -205,7 +205,7 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 	}
 
 	default void removeBossEvent() {
-		Optional<ServerChampionBossEvent> optional = this.entity().removeData(Attachments.SERVER_CHAMPION_BOSS_EVENT);
+		Optional<ServerChampionBossEvent> optional = this.entity().removeData(Attachments.CHAMPION_EVENT);
 		if (optional != null) {
 			optional.ifPresent(ServerChampionBossEvent::removeAllPlayers);
 		}
@@ -268,13 +268,13 @@ public interface ChampionHandlerEntity extends ChampionHandler {
 	 */
 	default Optional<ServerChampionBossEvent> getBossEvent() {
 		if (!this.entity().level().isClientSide()) {
-			return this.entity().getData(Attachments.SERVER_CHAMPION_BOSS_EVENT);
+			return this.entity().getData(Attachments.CHAMPION_EVENT);
 		}
 		return Optional.empty();
 	}
 
 	default void setBossEvent(ServerChampionBossEvent event) {
-		Optional<ServerChampionBossEvent> optional = this.entity().setData(Attachments.SERVER_CHAMPION_BOSS_EVENT, Optional.of(event));
+		Optional<ServerChampionBossEvent> optional = this.entity().setData(Attachments.CHAMPION_EVENT, Optional.of(event));
 		if (optional != null) {
 			optional.ifPresent(ServerChampionBossEvent::removeAllPlayers);
 		}
