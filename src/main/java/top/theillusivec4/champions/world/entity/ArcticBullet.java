@@ -12,8 +12,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.champion.ChampionHelper;
-import top.theillusivec4.champions.champion.ChampionUtil;
-import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 
 public class ArcticBullet extends ShulkerBullet {
   public ArcticBullet(Level level, LivingEntity owner, Entity target, Direction.Axis invalidStartAxis) {

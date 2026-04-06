@@ -12,7 +12,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.Collection;
 import java.util.Map;
@@ -39,14 +39,14 @@ public class ChampionConfigManager extends SimpleJsonResourceReloadListener<Cham
   }
 
   public @Nullable ChampionConfig byEntity(Entity entity) {
-    if (this.key.equals(Registries.ENTITY_CONFIG)) {
+    if (this.key.equals(ChampionsRegistries.ENTITY_CONFIG)) {
       return this.byId(BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType()));
     }
     return null;
   }
 
   public @Nullable ChampionConfig byLevel(Level level) {
-    if (this.key.equals(Registries.LEVEL_CONFIG)) {
+    if (this.key.equals(ChampionsRegistries.LEVEL_CONFIG)) {
       return this.byId(level.dimension().identifier());
     }
     return null;

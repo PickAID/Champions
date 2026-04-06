@@ -8,7 +8,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import top.theillusivec4.champions.Champions;
 
-public final class Commands {
+public final class ChampionsCommands {
   public static void register() {
     NeoForge.EVENT_BUS.addListener(RegisterCommandsEvent.class, event -> {
       CommandBuildContext buildContext = event.getBuildContext();
@@ -21,6 +21,6 @@ public final class Commands {
     });
   }
 
-  private Commands() {
+  private ChampionsCommands() {
   }
 }

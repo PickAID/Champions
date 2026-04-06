@@ -30,7 +30,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.attachment.Attachments;
+import top.theillusivec4.champions.attachment.ChampionsAttachments;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
 import top.theillusivec4.champions.champion.affix.Damage;
@@ -38,12 +38,14 @@ import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.champion.affix.effect.ConditionalEffect;
 import top.theillusivec4.champions.champion.affix.effect.DamageImmunity;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.component.DataComponents;
+import top.theillusivec4.champions.component.ChampionsDataComponents;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.data.lang.LanguageUtil;
 import top.theillusivec4.champions.particle.ParticleTypes;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
+import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParamSets;
+import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParams;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -56,7 +58,7 @@ public final class ChampionHelper {
 	}
 
 	public static void addToTooltip(ItemStack itemStack, Item.TooltipContext context, Consumer<Component> consumer, TooltipFlag flag, DataComponentGetter components) {
-		if (itemStack.has(top.theillusivec4.champions.component.DataComponents.AFFIX_CONTAINER_STORED)) {
+		if (itemStack.has(ChampionsDataComponents.AFFIX_CONTAINER_STORED)) {
 			AffixContainer affixContainer = getAffixContainerStored(itemStack);
 			int level = getLevel(itemStack);
 			int color = getColor(itemStack);
@@ -86,25 +88,15 @@ public final class ChampionHelper {
 		EntityType<?> entityType = entity.getType();
 		Identifier id = EntityType.getKey(entityType).withSuffix("_spawn_egg");
 		Item item = BuiltInRegistries.ITEM.getValue(id);
-		// 具有默认值的注册表
+		// Item 具有默认值(Air)的注册表
 		//noinspection ConstantValue
 		if (item != null && item != Items.AIR) {
 			ItemStack itemStack = new ItemStack(item);
-			if (entity.hasData(Attachments.PREFIX)) {
-				itemStack.set(DataComponents.PREFIX, entity.getData(Attachments.PREFIX).orElseThrow());
-			}
-			if (entity.hasData(Attachments.LEVEL)) {
-				itemStack.set(DataComponents.LEVEL, entity.getData(Attachments.LEVEL).orElseThrow());
-			}
-			if (entity.hasData(Attachments.COLOR)) {
-				itemStack.set(DataComponents.COLOR, entity.getData(Attachments.COLOR).orElseThrow());
-			}
-			if (entity.hasData(Attachments.AFFIX_CONTAINER)) {
-				itemStack.set(DataComponents.AFFIX_CONTAINER_STORED, entity.getData(Attachments.AFFIX_CONTAINER).orElseThrow());
-			}
-			if (entity.hasData(Attachments.BOSS)) {
-				itemStack.set(DataComponents.BOSS, entity.getData(Attachments.BOSS).orElseThrow());
-			}
+			itemStack.set(ChampionsDataComponents.PREFIX, getPrefix(entity));
+			itemStack.set(ChampionsDataComponents.LEVEL, getLevel(entity));
+			itemStack.set(ChampionsDataComponents.COLOR, getColor(entity));
+			itemStack.set(ChampionsDataComponents.AFFIX_CONTAINER_STORED, getAffixContainer(entity));
+			itemStack.set(ChampionsDataComponents.BOSS, isBoss(entity));
 
 			return itemStack;
 		}
@@ -113,31 +105,31 @@ public final class ChampionHelper {
 	}
 
 	public static AffixContainer getAffixContainerStored(ItemStack itemStack) {
-		return itemStack.getOrDefault(DataComponents.AFFIX_CONTAINER_STORED, AffixContainer.EMPTY);
+		return itemStack.getOrDefault(ChampionsDataComponents.AFFIX_CONTAINER_STORED, AffixContainer.EMPTY);
 	}
 
 	public static int getColor(ItemStack itemStack) {
-		return itemStack.getOrDefault(DataComponents.COLOR, byLevelColor(getLevel(itemStack)));
+		return itemStack.getOrDefault(ChampionsDataComponents.COLOR, byLevelColor(getLevel(itemStack)));
 	}
 
 	public static Component getPrefix(ItemStack itemStack) {
-		return itemStack.getOrDefault(DataComponents.PREFIX, byLevelPrefix(getLevel(itemStack)));
+		return itemStack.getOrDefault(ChampionsDataComponents.PREFIX, byLevelPrefix(getLevel(itemStack)));
 	}
 
 	public static int getLevel(ItemStack itemStack) {
-		return itemStack.getOrDefault(DataComponents.LEVEL, 1);
+		return itemStack.getOrDefault(ChampionsDataComponents.LEVEL, 1);
 	}
 
 	public static void setColor(ItemStack itemStack, int color) {
-		itemStack.set(DataComponents.COLOR, color);
+		itemStack.set(ChampionsDataComponents.COLOR, color);
 	}
 
 	public static void setColor(Entity entity, int color) {
-		entity.setData(Attachments.COLOR, Optional.of(color));
+		entity.setData(ChampionsAttachments.COLOR, Optional.of(color));
 	}
 
 	public static Component getPrefix(Entity entity) {
-		return entity.getExistingData(Attachments.PREFIX).flatMap(Function.identity()).orElse(byLevelPrefix(getLevel(entity)));
+		return entity.getExistingData(ChampionsAttachments.PREFIX).flatMap(Function.identity()).orElse(byLevelPrefix(getLevel(entity)));
 	}
 
 	public static Component byLevelPrefix(int level) {
@@ -153,47 +145,47 @@ public final class ChampionHelper {
 	}
 
 	public static boolean isBoss(ItemStack itemStack) {
-		return itemStack.getOrDefault(DataComponents.BOSS, false);
+		return itemStack.getOrDefault(ChampionsDataComponents.BOSS, false);
 	}
 
 	public static boolean isBoss(Entity entity) {
-		return entity.getExistingData(Attachments.BOSS).flatMap(Function.identity()).orElse(false);
+		return entity.getExistingData(ChampionsAttachments.BOSS).flatMap(Function.identity()).orElse(false);
 	}
 
 	public static void setBoss(ItemStack itemStack, boolean boss) {
-		itemStack.set(DataComponents.BOSS, boss);
+		itemStack.set(ChampionsDataComponents.BOSS, boss);
 	}
 
 	public static void setBoss(LivingEntity entity, boolean boss) {
-		entity.setData(Attachments.BOSS, Optional.of(boss));
-		if (boss && !entity.hasData(Attachments.CHAMPION_EVENT)) {
+		entity.setData(ChampionsAttachments.BOSS, Optional.of(boss));
+		if (boss && !entity.hasData(ChampionsAttachments.CHAMPION_EVENT)) {
 			getOrCreateChampionEvent(entity);
-		} else if (!boss && entity.hasData(Attachments.CHAMPION_EVENT)) {
-			entity.removeData(Attachments.CHAMPION_EVENT);
+		} else if (!boss && entity.hasData(ChampionsAttachments.CHAMPION_EVENT)) {
+			entity.removeData(ChampionsAttachments.CHAMPION_EVENT);
 		}
 	}
 
 	public static void setPrefix(Entity entity, Component prefix) {
-		entity.setData(Attachments.PREFIX, Optional.of(prefix));
+		entity.setData(ChampionsAttachments.PREFIX, Optional.of(prefix));
 	}
 
 	public static void updateFromItemStack(ServerLevel level, Entity entity, ItemStack from) {
-		Component prefix = from.get(DataComponents.PREFIX);
+		Component prefix = from.get(ChampionsDataComponents.PREFIX);
 		if (prefix != null) {
 			setPrefix(entity, prefix);
 		}
 		int lvl = getLevel(entity);
-		int lvl1 = from.getOrDefault(DataComponents.LEVEL, lvl);
+		int lvl1 = from.getOrDefault(ChampionsDataComponents.LEVEL, lvl);
 		if (lvl1 != lvl) {
-			setLevel(entity, lvl);
+			setLevel(level, entity, lvl);
 		}
 		int color = getColor(entity);
-		int color1 = from.getOrDefault(DataComponents.COLOR, color);
+		int color1 = from.getOrDefault(ChampionsDataComponents.COLOR, color);
 		if (color1 != color) {
 			setColor(entity, color);
 		}
 		AffixContainer container = getAffixContainer(entity);
-		AffixContainer container1 = from.getOrDefault(DataComponents.AFFIX_CONTAINER_STORED, AffixContainer.EMPTY);
+		AffixContainer container1 = from.getOrDefault(ChampionsDataComponents.AFFIX_CONTAINER_STORED, AffixContainer.EMPTY);
 		if (!Objects.equals(container1, container)) {
 			updateAffixContainer(level, entity, mutable -> {
 				mutable.clear();
@@ -202,7 +194,7 @@ public final class ChampionHelper {
 		}
 		if (entity instanceof LivingEntity livingEntity) {
 			boolean boss = isBoss(entity);
-			boolean boss1 = from.getOrDefault(DataComponents.BOSS, false);
+			boolean boss1 = from.getOrDefault(ChampionsDataComponents.BOSS, false);
 			if (boss1 != boss) {
 				setBoss(livingEntity, boss1);
 			}
@@ -212,18 +204,18 @@ public final class ChampionHelper {
 
 	public static void doFinalizeSpawn(ServerLevel level, Mob mob, double x, double y, double z, DifficultyInstance difficultyInstance, EntitySpawnReason reason) {
 		RandomSource random = level.getRandom();
-		if (reason != EntitySpawnReason.SPAWN_ITEM_USE && random.nextFloat() < difficultyInstance.getSpecialMultiplier()) {
+		if (random.nextFloat() < difficultyInstance.getSpecialMultiplier()) {
 			int championLevel = ChampionHelper.calculateChampionLevel(level.getRandom(), difficultyInstance);
-			setLevel(mob, championLevel);
-			List<Holder<Affix>> list = ChampionHelper.selectAffixes(mob, championLevel, level.registryAccess().lookupOrThrow(Registries.AFFIX).listElements());
-			AffixContainer.Mutable mutable = getAffixContainer(mob).toMutable();
+			setLevel(level, mob, championLevel);
+			List<Holder<Affix>> list = ChampionHelper.selectAffixes(mob, championLevel, level.registryAccess().lookupOrThrow(ChampionsRegistries.AFFIX).listElements());
+			AffixContainer.Mutable mutable = getAffixContainer(mob).mutable();
 			list.forEach(mutable::add);
 			setAffixContainer(mob, mutable.toImmutable());
 		}
 	}
 
 	public static void setAffixContainer(Entity entity, AffixContainer container) {
-		entity.setData(Attachments.AFFIX_CONTAINER, Optional.of(container));
+		entity.setData(ChampionsAttachments.AFFIX_CONTAINER, Optional.of(container));
 	}
 
 	public static void updateFromEntity(ServerLevel level, Entity entity, Entity from) {
@@ -235,7 +227,7 @@ public final class ChampionHelper {
 		int lvl = getLevel(entity);
 		int lvl1 = getLevel(from);
 		if (lvl1 != lvl) {
-			setLevel(entity, lvl);
+			setLevel(level, entity, lvl);
 		}
 		int color = getColor(entity);
 		int color1 = getColor(from);
@@ -260,8 +252,8 @@ public final class ChampionHelper {
 	}
 
 	public static @Nullable ServerChampionBossEvent getChampionEvent(LivingEntity entity) {
-		if (entity.hasData(Attachments.CHAMPION_EVENT) && entity.getData(Attachments.CHAMPION_EVENT).isPresent()) {
-			return entity.getData(Attachments.CHAMPION_EVENT).orElseThrow();
+		if (entity.hasData(ChampionsAttachments.CHAMPION_EVENT) && entity.getData(ChampionsAttachments.CHAMPION_EVENT).isPresent()) {
+			return entity.getData(ChampionsAttachments.CHAMPION_EVENT).orElseThrow();
 		}
 		return null;
 	}
@@ -270,17 +262,17 @@ public final class ChampionHelper {
 		var event = getChampionEvent(entity);
 		if (event == null) {
 			event = new ServerChampionBossEvent(Mth.createInsecureUUID(entity.getRandom()), getName(entity), entity.getHealth() / entity.getMaxHealth(), getLevel(entity), getColor(entity), getAffixList(entity));
-			entity.setData(Attachments.CHAMPION_EVENT, Optional.of(event));
+			entity.setData(ChampionsAttachments.CHAMPION_EVENT, Optional.of(event));
 		}
 		return event;
 	}
 
 	public static int getColor(Entity entity) {
-		return entity.getExistingData(Attachments.COLOR).flatMap(Function.identity()).orElse(byLevelColor(getLevel(entity)));
+		return entity.getExistingData(ChampionsAttachments.COLOR).flatMap(Function.identity()).orElse(byLevelColor(getLevel(entity)));
 	}
 
 	public static AffixContainer getAffixContainer(Entity entity) {
-		return entity.getExistingData(Attachments.AFFIX_CONTAINER).flatMap(Function.identity()).orElse(AffixContainer.EMPTY);
+		return entity.getExistingData(ChampionsAttachments.AFFIX_CONTAINER).flatMap(Function.identity()).orElse(AffixContainer.EMPTY);
 	}
 
 	public static void runIteration(Entity entity, Consumer<Holder<Affix>> consumer) {
@@ -288,7 +280,7 @@ public final class ChampionHelper {
 	}
 
 	public static int getLevel(Entity entity) {
-		return entity.getExistingData(Attachments.LEVEL).flatMap(Function.identity()).orElse(1);
+		return entity.getExistingData(ChampionsAttachments.LEVEL).flatMap(Function.identity()).orElse(1);
 	}
 
 	public static void runLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin, boolean becameActive) {
@@ -343,8 +335,8 @@ public final class ChampionHelper {
 	}
 
 	public static void updateLatestDamage(Entity entity, DamageSource source, float amount) {
-		entity.setData(Attachments.DAMAGE_TYPE, Optional.of(source.typeHolder()));
-		entity.setData(Attachments.DAMAGE_AMOUNT, Optional.of(amount));
+		entity.setData(ChampionsAttachments.DAMAGE_TYPE, Optional.of(source.typeHolder()));
+		entity.setData(ChampionsAttachments.DAMAGE_AMOUNT, Optional.of(amount));
 	}
 
 	public static void doParticlesEffects(Entity entity) {
@@ -409,7 +401,15 @@ public final class ChampionHelper {
 	}
 
 	private static LootContext createDamageImmunityContext(ServerLevel serverLevel, Entity entity, int level, DamageSource damageSource, @Nullable Damage damage, @Nullable Entity directAttackingEntity, @Nullable Entity attackingEntity) {
-		LootParams params = new LootParams.Builder(serverLevel).withParameter(LootContextParams.THIS_ENTITY, entity).withParameter(LootContextParams.ORIGIN, entity.position()).withParameter(LootContextParams.DAMAGE_SOURCE, damageSource).withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level).withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage).withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity).withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity).create(top.theillusivec4.champions.world.loot.parameters.LootContextParamSets.DAMAGE_IMMUNITY);
+		LootParams params = new LootParams.Builder(serverLevel)
+				.withParameter(LootContextParams.THIS_ENTITY, entity)
+				.withParameter(LootContextParams.ORIGIN, entity.position())
+				.withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
+				.withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
+				.withOptionalParameter(ChampionsLootContextParams.LATEST_DAMAGE, damage)
+				.withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
+				.withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity)
+				.create(ChampionsLootContextParamSets.DAMAGE_IMMUNITY);
 		return new LootContext.Builder(params).create(Optional.empty());
 	}
 
@@ -490,23 +490,18 @@ public final class ChampionHelper {
 
 	public static void setLevel(ItemStack itemStack, int lvl) {
 		if (lvl > 1) {
-			itemStack.set(DataComponents.LEVEL, lvl);
+			itemStack.set(ChampionsDataComponents.LEVEL, lvl);
 		}
 	}
 
-	public static void setLevel(Entity entity, int lvl) {
-		entity.setData(Attachments.LEVEL, Optional.of(lvl));
+	public static void setLevel(ServerLevel level, Entity entity, int lvl) {
+		updateAffixContainer(level, entity, mutable -> entity.setData(ChampionsAttachments.LEVEL, Optional.of(lvl)));
 	}
 
 	public static void updateAffixContainerStored(ItemStack itemStack, Consumer<AffixContainer.Mutable> updater) {
-		AffixContainer.Mutable mutable = itemStack.getOrDefault(DataComponents.AFFIX_CONTAINER_STORED, AffixContainer.EMPTY).toMutable();
+		AffixContainer.Mutable mutable = itemStack.getOrDefault(ChampionsDataComponents.AFFIX_CONTAINER_STORED, AffixContainer.EMPTY).mutable();
 		updater.accept(mutable);
-		itemStack.set(DataComponents.AFFIX_CONTAINER_STORED, mutable.toImmutable());
-	}
-
-	public static void updateAffixContainer(ServerLevel level, Entity entity) {
-		updateAffixContainer(level, entity, mutable -> {
-		});
+		itemStack.set(ChampionsDataComponents.AFFIX_CONTAINER_STORED, mutable.toImmutable());
 	}
 
 	public static void updateAffixContainer(ServerLevel level, Entity entity, Consumer<AffixContainer.Mutable> updater) {
@@ -519,10 +514,10 @@ public final class ChampionHelper {
 			});
 		}
 		stopLocationChangedEffects(level, entity, entity.position());
-		AffixContainer.Mutable mutable = getAffixContainer(entity).toMutable();
+		AffixContainer.Mutable mutable = getAffixContainer(entity).mutable();
 		updater.accept(mutable);
 		AffixContainer affixContainer = mutable.toImmutable();
-		entity.setData(Attachments.AFFIX_CONTAINER, Optional.of(affixContainer));
+		entity.setData(ChampionsAttachments.AFFIX_CONTAINER, Optional.of(affixContainer));
 		if (entity instanceof LivingEntity livingEntity) {
 			forEachModifier(entity, (attribute, modifier) -> {
 				AttributeInstance attributeModifier = livingEntity.getAttribute(attribute);
@@ -537,6 +532,6 @@ public final class ChampionHelper {
 	public enum ChampionEventOperation {
 		PROGRESS,
 		PLAYERS,
-		REMOVE_ALL_PLAYERS;
+		REMOVE_ALL_PLAYERS
 	}
 }

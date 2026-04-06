@@ -6,18 +6,18 @@ import net.minecraft.data.tags.KeyTagProvider;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.affix.Affixes;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tag.AffixTags;
 
 import java.util.concurrent.CompletableFuture;
 
 public class AffixTagsProvider extends KeyTagProvider<Affix> {
   public AffixTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries, String modId) {
-    super(output, Registries.AFFIX, registries, modId);
+    super(output, ChampionsRegistries.AFFIX, registries, modId);
   }
 
   public AffixTagsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-    super(output, Registries.AFFIX, registries, Champions.MODID);
+    super(output, ChampionsRegistries.AFFIX, registries, Champions.MODID);
   }
 
   @Override

@@ -33,8 +33,9 @@ import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.effect.*;
-import top.theillusivec4.champions.registry.Registries;
-import top.theillusivec4.champions.world.loot.parameters.LootContextParamSets;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParamSets;
+import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParams;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -47,12 +48,12 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
   public static final Codec<Affix> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Affix::description),
     AffixDefinition.MAP_CODEC.forGetter(Affix::definition),
-    RegistryCodecs.homogeneousList(Registries.AFFIX).optionalFieldOf("exclusive_set", HolderSet.empty()).forGetter(Affix::exclusiveSet),
+    RegistryCodecs.homogeneousList(ChampionsRegistries.AFFIX).optionalFieldOf("exclusive_set", HolderSet.empty()).forGetter(Affix::exclusiveSet),
     AffixEffectComponents.CODEC.fieldOf("effects").forGetter(Affix::effects)
   ).apply(instance, Affix::new));
-  public static final Codec<Holder<Affix>> REFERENCE_CODEC = RegistryFileCodec.create(Registries.AFFIX, DIRECT_CODEC);
-  public static final Codec<HolderSet<Affix>> LIST_CODEC = RegistryCodecs.homogeneousList(Registries.AFFIX, DIRECT_CODEC);
-  public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Affix>> STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.AFFIX);
+  public static final Codec<Holder<Affix>> REFERENCE_CODEC = RegistryFileCodec.create(ChampionsRegistries.AFFIX, DIRECT_CODEC);
+  public static final Codec<HolderSet<Affix>> LIST_CODEC = RegistryCodecs.homogeneousList(ChampionsRegistries.AFFIX, DIRECT_CODEC);
+  public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Affix>> STREAM_CODEC = ByteBufCodecs.holderRegistry(ChampionsRegistries.AFFIX);
 
   public static <T> void applyConditionalEffects(List<ConditionalEffect<T>> effects, LootContext context, Consumer<T> consumer) {
     for (ConditionalEffect<T> effect : effects) {
@@ -81,13 +82,13 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
   }
 
   public void modifyKnockback(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat knockback) {
-    LootContext context = LootContextParamSets.knockback(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    LootContext context = ChampionsLootContextParamSets.knockback(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.KNOCKBACK), context, effect -> knockback.setValue(effect.process(affixLevel, random, knockback.floatValue())));
   }
 
   public void modifyDamage(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat damage) {
-    LootContext context = LootContextParamSets.damage(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    LootContext context = ChampionsLootContextParamSets.damage(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE), context, effect -> damage.setValue(effect.process(affixLevel, random, damage.floatValue())));
   }
@@ -111,7 +112,7 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
   }
 
   public void modifyHeal(ServerLevel level, int affixLevel, Entity victim, MutableFloat heal) {
-    LootContext lootContext = LootContextParamSets.heal(level, victim, affixLevel, null);
+    LootContext lootContext = ChampionsLootContextParamSets.heal(level, victim, affixLevel, null);
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.HEAL), lootContext, effect -> heal.setValue(effect.process(affixLevel, random, heal.floatValue())));
 
@@ -127,7 +128,7 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
         };
 
         if (target != null) {
-          LootContext lootContext = LootContextParamSets.postAttack(level, target, affixLevel, source, null, source.getEntity(), source.getDirectEntity());
+          LootContext lootContext = ChampionsLootContextParamSets.postAttack(level, target, affixLevel, source, null, source.getEntity(), source.getDirectEntity());
 
           if (effect.match(lootContext)) {
             effect.effect().apply(level, affixLevel, victim, target, target.position());
@@ -142,19 +143,19 @@ public record Affix(Component description, Affix.AffixDefinition definition, Hol
     LootParams params = new LootParams.Builder(level)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, target.position())
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, affixLevel)
-      .create(LootContextParamSets.LOCATION);
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, affixLevel)
+      .create(ChampionsLootContextParamSets.LOCATION);
     LootContext context = new LootContext.Builder(params).create(Optional.empty());
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TARGET), context, effect -> effect.apply(level, affixLevel, entity, target, entity.position()));
   }
 
   public void tickEffects(ServerLevel level, int affixLevel, Entity entity) {
-    LootContext context = LootContextParamSets.tick(level, entity, affixLevel, null);
+    LootContext context = ChampionsLootContextParamSets.tick(level, entity, affixLevel, null);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TICK), context, effect -> effect.apply(level, affixLevel, entity, entity, entity.position()));
   }
 
   public void modifyDamageProtection(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat protection) {
-    LootContext context = LootContextParamSets.damageProtection(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    LootContext context = ChampionsLootContextParamSets.damageProtection(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE_PROTECTION), context, effect -> protection.setValue(effect.process(affixLevel, random, protection.floatValue())));
   }

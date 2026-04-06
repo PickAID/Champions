@@ -7,7 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.champion.rank.Ranks;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.Util;
 
 public final class ChampionSpawnEggs {
@@ -17,7 +17,7 @@ public final class ChampionSpawnEggs {
 	}
 
 	public static void bootstrap(BootstrapContext<ChampionSpawnEgg> context) {
-		HolderGetter<Rank> ranks = context.lookup(Registries.RANK);
+		HolderGetter<Rank> ranks = context.lookup(ChampionsRegistries.RANK);
 		register(
 				context,
 				ZOMBIE,
@@ -28,7 +28,7 @@ public final class ChampionSpawnEggs {
 	}
 
 	private static ResourceKey<ChampionSpawnEgg> register(String name) {
-		return ResourceKey.create(Registries.SPAWN_EGG, Util.id(name));
+		return ResourceKey.create(ChampionsRegistries.SPAWN_EGG, Util.id(name));
 	}
 
 	private static void register(BootstrapContext<ChampionSpawnEgg> context, ResourceKey<ChampionSpawnEgg> key, ChampionSpawnEgg.Builder builder) {

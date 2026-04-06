@@ -1,15 +1,10 @@
 package top.theillusivec4.champions.client.item;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import top.theillusivec4.champions.capability.Capabilities;
-import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
-import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
 
 @Deprecated

@@ -3,7 +3,7 @@ package top.theillusivec4.champions.champion.rank;
 import net.minecraft.advancements.criterion.MinMaxBounds;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.Util;
 
 public final class Ranks {
@@ -17,7 +17,7 @@ public final class Ranks {
 	}
 
 	public static ResourceKey<Rank> register(String name) {
-    return ResourceKey.create(Registries.RANK, Util.id(name));
+    return ResourceKey.create(ChampionsRegistries.RANK, Util.id(name));
   }
 
 	public static void bootstrap(BootstrapContext<Rank> context) {

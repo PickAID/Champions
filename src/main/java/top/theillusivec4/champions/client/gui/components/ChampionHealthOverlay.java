@@ -12,7 +12,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.ChampionsClient;
 import top.theillusivec4.champions.champion.ChampionHelper;
-import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.client.util.ClientUtil;
 import top.theillusivec4.champions.network.protocol.game.ClientboundChampionBossEventPacket;

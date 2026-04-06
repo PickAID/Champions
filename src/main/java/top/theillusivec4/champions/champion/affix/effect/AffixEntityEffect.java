@@ -18,7 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -26,7 +25,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.champion.affix.ProjectileProvider;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
-import top.theillusivec4.champions.registry.BuiltInRegistries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +33,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public interface AffixEntityEffect extends AffixLocationBasedEffect {
-  Codec<AffixEntityEffect> CODEC = BuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE.byNameCodec().dispatch(AffixEntityEffect::codec, Function.identity());
+  Codec<AffixEntityEffect> CODEC = ChampionsBuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE.byNameCodec().dispatch(AffixEntityEffect::codec, Function.identity());
 
   static AffixLocationBasedEffect attribute(Identifier id, Holder<Attribute> attribute, LevelBasedValue amount, AttributeModifier.Operation operation) {
     return new AffixAttributeEffect(id, attribute, amount, operation);

@@ -33,7 +33,7 @@ import net.minecraft.world.level.storage.loot.predicates.*;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import top.theillusivec4.champions.champion.affix.effect.*;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tag.AffixTags;
 import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.world.loot.predicates.LatestDamageCondition;
@@ -60,7 +60,7 @@ public final class Affixes {
 	}
 
 	public static void bootstrap(BootstrapContext<Affix> context) {
-		HolderGetter<Affix> affixes = context.lookup(Registries.AFFIX);
+		HolderGetter<Affix> affixes = context.lookup(ChampionsRegistries.AFFIX);
 		HolderGetter<DamageType> damages = context.lookup(net.minecraft.core.registries.Registries.DAMAGE_TYPE);
 		HolderGetter<WorldClock> clocks = context.lookup(net.minecraft.core.registries.Registries.WORLD_CLOCK);
     /*
@@ -721,6 +721,6 @@ public final class Affixes {
 	}
 
 	private static ResourceKey<Affix> register(String name) {
-		return ResourceKey.create(Registries.AFFIX, Util.id(name));
+		return ResourceKey.create(ChampionsRegistries.AFFIX, Util.id(name));
 	}
 }

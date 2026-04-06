@@ -6,7 +6,7 @@ import net.minecraft.util.context.ContextKey;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
-import top.theillusivec4.champions.world.loot.parameters.LootContextParams;
+import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParams;
 
 import java.util.Set;
 
@@ -17,7 +17,7 @@ public record ChampionLevelProvider(LevelBasedValue amount) implements NumberPro
 
 	@Override
 	public float getFloat(LootContext context) {
-		int level = context.getParameter(LootContextParams.CHAMPION_LEVEL);
+		int level = context.getParameter(ChampionsLootContextParams.CHAMPION_LEVEL);
 		return this.amount.calculate(level);
 	}
 
@@ -28,6 +28,6 @@ public record ChampionLevelProvider(LevelBasedValue amount) implements NumberPro
 
 	@Override
 	public Set<ContextKey<?>> getReferencedContextParams() {
-		return Set.of(LootContextParams.CHAMPION_LEVEL);
+		return Set.of(ChampionsLootContextParams.CHAMPION_LEVEL);
 	}
 }

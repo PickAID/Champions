@@ -17,7 +17,7 @@ import top.theillusivec4.champions.util.Util;
 
 import java.util.Optional;
 
-public final class LootContextParamSets {
+public final class ChampionsLootContextParamSets {
   /**
    * 用于实体生成选择配置
    */
@@ -32,20 +32,20 @@ public final class LootContextParamSets {
     builder()
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
   );
   public static final ContextKeySet ATTRIBUTES = register("attribute",
     builder()
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
   );
   public static final ContextKeySet KNOCKBACK = register("knockback",
     builder().required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
-      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -54,8 +54,8 @@ public final class LootContextParamSets {
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
-      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -63,16 +63,16 @@ public final class LootContextParamSets {
     builder()
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
-      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
   );
   public static final ContextKeySet POST_ATTACK = register("post_attack",
     builder()
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
-      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -82,8 +82,8 @@ public final class LootContextParamSets {
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
-      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -92,8 +92,8 @@ public final class LootContextParamSets {
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
-      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -101,18 +101,18 @@ public final class LootContextParamSets {
     builder()
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .required(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL)
-      .optional(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
   );
 
-  private LootContextParamSets() {
+  private ChampionsLootContextParamSets() {
   }
 
   public static LootContext attributes(ServerLevel serverLevel, Entity entity, int level) {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
       .create(ATTRIBUTES);
     return new LootContext.Builder(params).create(Optional.empty());
   }
@@ -122,8 +122,8 @@ public final class LootContextParamSets {
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
+      .withOptionalParameter(ChampionsLootContextParams.LATEST_DAMAGE, damage)
       .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
       .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity)
       .create(KNOCKBACK);
@@ -135,8 +135,8 @@ public final class LootContextParamSets {
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
+      .withOptionalParameter(ChampionsLootContextParams.LATEST_DAMAGE, damage)
       .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
       .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity)
       .create(DAMAGE);
@@ -147,8 +147,8 @@ public final class LootContextParamSets {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
+      .withOptionalParameter(ChampionsLootContextParams.LATEST_DAMAGE, damage)
       .create(HEAL);
     return new LootContext.Builder(params).create(Optional.empty());
   }
@@ -158,8 +158,8 @@ public final class LootContextParamSets {
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
+      .withOptionalParameter(ChampionsLootContextParams.LATEST_DAMAGE, damage)
       .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
       .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity)
       .create(POST_ATTACK);
@@ -171,8 +171,8 @@ public final class LootContextParamSets {
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
+      .withOptionalParameter(ChampionsLootContextParams.LATEST_DAMAGE, damage)
       .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
       .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity)
       .create(DAMAGE_IMMUNITY);
@@ -184,8 +184,8 @@ public final class LootContextParamSets {
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
+      .withOptionalParameter(ChampionsLootContextParams.LATEST_DAMAGE, damage)
       .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
       .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity)
       .create(DAMAGE_PROTECTION);
@@ -196,8 +196,8 @@ public final class LootContextParamSets {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
-      .withOptionalParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.LATEST_DAMAGE, damage)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
+      .withOptionalParameter(ChampionsLootContextParams.LATEST_DAMAGE, damage)
       .create(TICK);
     return new LootContext.Builder(params).create(Optional.empty());
   }
@@ -206,7 +206,7 @@ public final class LootContextParamSets {
     LootParams params = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, origin)
-      .withParameter(top.theillusivec4.champions.world.loot.parameters.LootContextParams.CHAMPION_LEVEL, level)
+      .withParameter(ChampionsLootContextParams.CHAMPION_LEVEL, level)
       .create(LOCATION);
     return new LootContext.Builder(params).create(Optional.empty());
   }
