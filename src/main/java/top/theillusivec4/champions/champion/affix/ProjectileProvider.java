@@ -6,47 +6,47 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
-import top.theillusivec4.champions.registry.BuiltInRegistries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 
 import java.util.function.Function;
 
 public interface ProjectileProvider {
-  Codec<ProjectileProvider> CODEC = BuiltInRegistries.PROJECTILE_PROVIDER_TYPE.byNameCodec().dispatch(ProjectileProvider::codec, Function.identity());
+  Codec<ProjectileProvider> CODEC = ChampionsBuiltInRegistries.PROJECTILE_PROVIDER_TYPE.byNameCodec().dispatch(ProjectileProvider::codec, Function.identity());
 
   static ProjectileProvider arrow() {
-    return Projectiles.ArrowProvider.INSTANCE;
+    return ProjectileProviders.ArrowProvider.INSTANCE;
   }
 
   static ProjectileProvider arcticBullet() {
-    return Projectiles.ArcticBulletProvider.INSTANCE;
+    return ProjectileProviders.ArcticBulletProvider.INSTANCE;
   }
 
   static ProjectileProvider enkindlingBullet(){
-    return Projectiles.EnkindlingBulletProvider.INSTANCE;
+    return ProjectileProviders.EnkindlingBulletProvider.INSTANCE;
   }
 
   static ProjectileProvider shulkerBullet() {
-    return Projectiles.ShulkerBulletProvider.INSTANCE;
+    return ProjectileProviders.ShulkerBulletProvider.INSTANCE;
   }
 
   static ProjectileProvider fireworkRocket() {
-    return Projectiles.FireworkRocketProvider.INSTANCE;
+    return ProjectileProviders.FireworkRocketProvider.INSTANCE;
   }
 
   static ProjectileProvider smallFireball() {
-    return Projectiles.SmallFireballProvider.INSTANCE;
+    return ProjectileProviders.SmallFireballProvider.INSTANCE;
   }
 
   static ProjectileProvider largeFireball() {
-    return Projectiles.LargeFireballProvider.INSTANCE;
+    return ProjectileProviders.LargeFireballProvider.INSTANCE;
   }
 
   static ProjectileProvider thrownSplashPotion() {
-    return Projectiles.ThrownSplashPotionProvider.INSTANCE;
+    return ProjectileProviders.ThrownSplashPotionProvider.INSTANCE;
   }
 
   static ProjectileProvider thrownLingeringPotion() {
-    return Projectiles.ThrownLingeringPotionProvider.INSTANCE;
+    return ProjectileProviders.ThrownLingeringPotionProvider.INSTANCE;
   }
 
   Projectile provide(ServerLevel level, Entity source, ItemStack projectileItem);

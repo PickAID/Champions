@@ -8,14 +8,14 @@ import net.minecraft.world.Difficulty;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.List;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
 public final class DifficultyBasedValues {
-  private static final DeferredRegister<MapCodec<? extends DifficultyBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(Registries.DIFFICULTY_BASED_VALUE, Champions.MODID);
+  private static final DeferredRegister<MapCodec<? extends DifficultyBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.DIFFICULTY_BASED_VALUE, Champions.MODID);
   public static final Supplier<MapCodec<Constant>> CONSTANT = register("constant", Constant.MAP_CODEC);
   public static final Supplier<MapCodec<Clamped>> CLAMPED = register("clamped", Clamped.MAP_CODEC);
   public static final Supplier<MapCodec<Fraction>> FRACTION = register("fraction", Fraction.MAP_CODEC);

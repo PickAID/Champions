@@ -29,22 +29,22 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.attachment.Attachments;
+import top.theillusivec4.champions.attachment.ChampionsAttachments;
 import top.theillusivec4.champions.champion.DifficultyBasedValues;
 import top.theillusivec4.champions.champion.affix.AffixEffectComponents;
-import top.theillusivec4.champions.champion.affix.Projectiles;
+import top.theillusivec4.champions.champion.affix.ProjectileProviders;
 import top.theillusivec4.champions.champion.affix.effect.AffixEntityEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixLocationBasedEffects;
 import top.theillusivec4.champions.champion.affix.effect.AffixValueEffects;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValues;
-import top.theillusivec4.champions.command.Commands;
-import top.theillusivec4.champions.component.DataComponents;
+import top.theillusivec4.champions.command.ChampionsCommands;
+import top.theillusivec4.champions.component.ChampionsDataComponents;
 import top.theillusivec4.champions.config.CommonConfig;
 import top.theillusivec4.champions.data.DataEventListener;
 import top.theillusivec4.champions.network.protocol.ClientGamePacketListener;
 import top.theillusivec4.champions.particle.ParticleTypes;
-import top.theillusivec4.champions.registry.BuiltInRegistries;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.server.champion.ChampionConfigManager;
 import top.theillusivec4.champions.server.config.ServerConfig;
 import top.theillusivec4.champions.stats.Stats;
@@ -54,7 +54,6 @@ import top.theillusivec4.champions.world.entity.EntityEventListener;
 import top.theillusivec4.champions.world.entity.EntityTypes;
 import top.theillusivec4.champions.world.item.CreativeModeTabs;
 import top.theillusivec4.champions.world.item.ItemEventListener;
-import top.theillusivec4.champions.world.item.Items;
 import top.theillusivec4.champions.world.loot.modifier.LootModifiers;
 import top.theillusivec4.champions.world.loot.predicates.LootItemConditions;
 import top.theillusivec4.champions.world.loot.providers.number.NumberProviders;
@@ -77,23 +76,23 @@ public class Champions {
 		instance = this;
 		container.registerConfig(ModConfig.Type.COMMON, this.commonConfig.getConfigSpec());
 		container.registerConfig(ModConfig.Type.SERVER, this.serverConfig.getConfigSpec());
-		Items.register(modEventBus);
+//		Items.register(modEventBus);
 		ParticleTypes.register(modEventBus);
 		MobEffects.register(modEventBus);
 		EntityTypes.register(modEventBus);
 		Stats.register(modEventBus);
-		DataComponents.register(modEventBus);
+		ChampionsDataComponents.register(modEventBus);
 		CreativeModeTabs.register(modEventBus);
 //    Capabilities.register(modEventBus);
-		BuiltInRegistries.register(modEventBus);
+		ChampionsBuiltInRegistries.register(modEventBus);
 		AffixEffectComponents.register(modEventBus);
 		LevelBasedValues.register(modEventBus);
 		DifficultyBasedValues.register(modEventBus);
 		AffixValueEffects.register(modEventBus);
 		AffixEntityEffects.register(modEventBus);
 		AffixLocationBasedEffects.register(modEventBus);
-		Projectiles.register(modEventBus);
-		Attachments.register(modEventBus);
+		ProjectileProviders.register(modEventBus);
+		ChampionsAttachments.register(modEventBus);
 		LootItemConditions.register(modEventBus);
 		LootModifiers.register(modEventBus);
 		NumberProviders.register(modEventBus);
@@ -102,7 +101,7 @@ public class Champions {
 		EntityEventListener.register();
 		ItemEventListener.register();
 		ReloadEventListener.register();
-		Commands.register();
+		ChampionsCommands.register();
 	}
 
 	public static Champions getInstance() {
@@ -138,8 +137,8 @@ public class Champions {
 
 		@SubscribeEvent
 		public void onAddServerReloadListeners(AddServerReloadListenersEvent event) {
-			ChampionConfigManager entityConfigManager = new ChampionConfigManager(event.getRegistryAccess(), Registries.ENTITY_CONFIG);
-			ChampionConfigManager levelConfigManager = new ChampionConfigManager(event.getRegistryAccess(), Registries.LEVEL_CONFIG);
+			ChampionConfigManager entityConfigManager = new ChampionConfigManager(event.getRegistryAccess(), ChampionsRegistries.ENTITY_CONFIG);
+			ChampionConfigManager levelConfigManager = new ChampionConfigManager(event.getRegistryAccess(), ChampionsRegistries.LEVEL_CONFIG);
 			event.addListener(ENTITY_CONFIG_MANAGER, entityConfigManager);
 			event.addListener(LEVEL_CONFIG_MANAGER, levelConfigManager);
 			Champions.instance.entityConfigManager = entityConfigManager;

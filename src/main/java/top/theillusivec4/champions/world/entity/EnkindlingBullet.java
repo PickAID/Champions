@@ -3,8 +3,6 @@ package top.theillusivec4.champions.world.entity;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -12,8 +10,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.champion.ChampionHelper;
-import top.theillusivec4.champions.champion.ChampionUtil;
-import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
 import top.theillusivec4.champions.world.damagesource.DamageTypes;
 
 public class EnkindlingBullet extends ShulkerBullet {

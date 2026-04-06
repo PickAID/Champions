@@ -12,13 +12,12 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import top.theillusivec4.champions.champion.ChampionDefaultConfigs;
 import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
 import top.theillusivec4.champions.data.lang.LanguageKeys;
 import top.theillusivec4.champions.data.lang.LanguageUtil;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.Collection;
 
@@ -31,22 +30,22 @@ public final class SpawnEggCommand {
 		builder
 				.then(Commands.literal("affix")
 						.then(Commands.argument("players", EntityArgument.players())
-								.then(Commands.argument("affix", ResourceArgument.resource(buildContext, Registries.AFFIX))
-										.executes(context -> affix(context.getSource(), EntityArgument.getPlayers(context, "players"), ResourceArgument.getResource(context, "affix", Registries.AFFIX)))
+								.then(Commands.argument("affix", ResourceArgument.resource(buildContext, ChampionsRegistries.AFFIX))
+										.executes(context -> affix(context.getSource(), EntityArgument.getPlayers(context, "players"), ResourceArgument.getResource(context, "affix", ChampionsRegistries.AFFIX)))
 								)
 						)
 				)
 				.then(Commands.literal("level")
 						.then(Commands.argument("players", EntityArgument.players())
-								.then(Commands.argument("level", IntegerArgumentType.integer(ChampionDefaultConfigs.MIN_LEVEL, ChampionDefaultConfigs.MAX_LEVEL))
+								.then(Commands.argument("level", IntegerArgumentType.integer(1, 255))
 										.executes(context -> level(context.getSource(), EntityArgument.getPlayers(context, "players"), IntegerArgumentType.getInteger(context, "level")))
 								)
 						)
 				)
 				.then(Commands.literal("rank")
 						.then(Commands.argument("players", EntityArgument.players())
-								.then(Commands.argument("rank", ResourceArgument.resource(buildContext, Registries.RANK))
-										.executes(context -> rank(context.getSource(), EntityArgument.getPlayers(context, "players"), ResourceArgument.getResource(context, "rank", Registries.RANK)))
+								.then(Commands.argument("rank", ResourceArgument.resource(buildContext, ChampionsRegistries.RANK))
+										.executes(context -> rank(context.getSource(), EntityArgument.getPlayers(context, "players"), ResourceArgument.getResource(context, "rank", ChampionsRegistries.RANK)))
 								)
 						)
 				)

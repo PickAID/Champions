@@ -4,7 +4,7 @@ import net.minecraft.util.context.ContextKey;
 import top.theillusivec4.champions.champion.affix.Damage;
 import top.theillusivec4.champions.util.Util;
 
-public final class LootContextParams {
+public final class ChampionsLootContextParams {
   public static final ContextKey<Integer> CHAMPION_LEVEL = create("champion_level");
   public static final ContextKey<Damage> LATEST_DAMAGE = create("latest_damage");
 
@@ -12,6 +12,6 @@ public final class LootContextParams {
     return new ContextKey<>(Util.id(name));
   }
 
-  private LootContextParams() {
+  private ChampionsLootContextParams() {
   }
 }

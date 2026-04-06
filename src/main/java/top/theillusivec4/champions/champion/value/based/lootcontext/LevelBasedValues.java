@@ -7,12 +7,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.function.Supplier;
 
 public final class LevelBasedValues {
-  private static final DeferredRegister<MapCodec<? extends LevelBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(Registries.LOOT_CONTEXT_BASED_VALUE_TYPE, Champions.MODID);
+  private static final DeferredRegister<MapCodec<? extends LevelBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.LOOT_CONTEXT_BASED_VALUE_TYPE, Champions.MODID);
   public static final Supplier<MapCodec<Constant>> CONSTANT = register("constant", Constant.MAP_CODEC);
   public static final Supplier<MapCodec<Exponent>> EXPONENT = register("exponent", Exponent.MAP_CODEC);
   public static final Supplier<MapCodec<Fraction>> FRACTION = register("fraction", Fraction.MAP_CODEC);

@@ -2,7 +2,7 @@ package top.theillusivec4.champions.tag;
 
 import net.minecraft.tags.TagKey;
 import top.theillusivec4.champions.champion.affix.Affix;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.Util;
 
 public final class AffixTags {
@@ -14,6 +14,6 @@ public final class AffixTags {
 	public static final TagKey<Affix> CURSE = create("curse");
 
 	private static TagKey<Affix> create(String name) {
-		return TagKey.create(Registries.AFFIX, Util.id(name));
+		return TagKey.create(ChampionsRegistries.AFFIX, Util.id(name));
 	}
 }

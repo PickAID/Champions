@@ -14,8 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import top.theillusivec4.champions.champion.ChampionHelper;
-import top.theillusivec4.champions.champion.affix.effect.AffixTarget;
-import top.theillusivec4.champions.champion.ChampionUtil;
 
 @Mixin(value = SmallFireball.class)
 public abstract class SmallFireballMixin extends Fireball {

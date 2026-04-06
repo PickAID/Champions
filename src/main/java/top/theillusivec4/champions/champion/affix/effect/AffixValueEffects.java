@@ -7,12 +7,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.function.Supplier;
 
 public final class AffixValueEffects {
-  private static final DeferredRegister<MapCodec<? extends AffixValueEffect>> DEFERRED_REGISTER = DeferredRegister.create(Registries.AFFIX_VALUE_EFFECT_TYPE, Champions.MODID);
+  private static final DeferredRegister<MapCodec<? extends AffixValueEffect>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.AFFIX_VALUE_EFFECT_TYPE, Champions.MODID);
   public static final Supplier<MapCodec<AddValue>> ADD = register("add", AddValue.MAP_CODEC);
   public static final Supplier<MapCodec<AllOf.ValueEffects>> ALL_OF = register("all_of", AllOf.ValueEffects.MAP_CODEC);
   public static final Supplier<MapCodec<MultiplyValue>> MULTIPLY = register("multiply", MultiplyValue.MAP_CODEC);

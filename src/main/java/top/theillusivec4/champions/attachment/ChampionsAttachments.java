@@ -18,7 +18,7 @@ import top.theillusivec4.champions.server.level.ServerChampionBossEvent;
 import java.util.Optional;
 import java.util.function.Supplier;
 
-public final class Attachments {
+public final class ChampionsAttachments {
 	private static final DeferredRegister<AttachmentType<?>> DEFERRED_REGISTER = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Champions.MODID);
 	// Champion Entity
 	public static final Supplier<AttachmentType<Optional<Holder<DamageType>>>> DAMAGE_TYPE = register("damage_type", AttachmentType.<Optional<Holder<DamageType>>>builder(Optional::empty).serialize(DamageType.CODEC.optionalFieldOf("damage_type")));
@@ -34,7 +34,7 @@ public final class Attachments {
 	public static final Supplier<AttachmentType<Optional<ServerChampionBossEvent>>> CHAMPION_EVENT = register("champion_event", AttachmentType.<Optional<ServerChampionBossEvent>>builder(Optional::empty).serialize(ServerChampionBossEvent.CODEC.optionalFieldOf("champion_boss_event")));
 	public static final Supplier<AttachmentType<Optional<Boolean>>> BOSS = register("boss", AttachmentType.<Optional<Boolean>>builder(Optional::empty).serialize(Codec.BOOL.optionalFieldOf("boss")).sync(ByteBufCodecs.BOOL.apply(ByteBufCodecs::optional)));
 
-	private Attachments() {
+	private ChampionsAttachments() {
 	}
 
 	public static void register(IEventBus modEventBus) {

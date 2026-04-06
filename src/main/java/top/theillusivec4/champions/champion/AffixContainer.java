@@ -14,11 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Consumer;
 
-/**
- * 记录拥有的词缀数据
- * 内含容器对象，不宜作为记录类
- */
-@SuppressWarnings({"ClassCanBeRecord", "unused"})
 public final class AffixContainer {
 	public static final AffixContainer EMPTY = new AffixContainer(List.of());
 	public static final StreamCodec<RegistryFriendlyByteBuf, AffixContainer> STREAM_CODEC = StreamCodec.composite(
@@ -38,10 +33,6 @@ public final class AffixContainer {
 		this.affixes = List.copyOf(affixes);
 	}
 
-	public static AffixContainer.Mutable mutable() {
-		return new Mutable();
-	}
-
 	public static AffixContainer createOrEmpty(List<Holder<Affix>> affixes) {
 		if (affixes.isEmpty()) {
 			return EMPTY;
@@ -54,12 +45,8 @@ public final class AffixContainer {
 		return affixes.contains(affix);
 	}
 
-	public AffixContainer.Mutable toMutable() {
+	public AffixContainer.Mutable mutable() {
 		return new Mutable(this);
-	}
-
-	public AffixContainer copy() {
-		return new AffixContainer(this.affixes);
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import top.theillusivec4.champions.champion.rank.Rank;
 
 import java.util.function.Supplier;
 
-public class DataComponents {
+public class ChampionsDataComponents {
   private static final DeferredRegister<DataComponentType<?>> DEFERRED_REGISTER = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Champions.MODID);
 	public static final Supplier<DataComponentType<AffixContainer>> AFFIX_CONTAINER_STORED = register("affix_container_stored", DataComponentType.<AffixContainer>builder().persistent(AffixContainer.CODEC).networkSynchronized(AffixContainer.STREAM_CODEC));
   public static final Supplier<DataComponentType<Holder<Rank>>> RANK = register("rank", DataComponentType.<Holder<Rank>>builder().persistent(Rank.REFERENCE_CODEC).networkSynchronized(Rank.STREAM_CODEC));

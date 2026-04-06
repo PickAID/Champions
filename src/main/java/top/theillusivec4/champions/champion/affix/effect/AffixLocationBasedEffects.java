@@ -5,12 +5,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.function.Supplier;
 
 public final class AffixLocationBasedEffects {
-  private static final DeferredRegister<MapCodec<? extends AffixLocationBasedEffect>> DEFERRED_REGISTER = DeferredRegister.create(Registries.AFFIX_LOCATION_BASED_EFFECT_TYPE, Champions.MODID);
+  private static final DeferredRegister<MapCodec<? extends AffixLocationBasedEffect>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE, Champions.MODID);
   public static final DeferredHolder<MapCodec<? extends AffixLocationBasedEffect>, MapCodec<AffixAttributeEffect>> ATTRIBUTE = register("attribute", AffixAttributeEffect.MAP_CODEC);
   public static final DeferredHolder<MapCodec<? extends AffixLocationBasedEffect>, MapCodec<AffixEntityEffects.ApplyMobEffect>> APPLY_MOB_EFFECT = register("apply_mob_effect", AffixEntityEffects.ApplyMobEffect.MAP_CODEC);
 

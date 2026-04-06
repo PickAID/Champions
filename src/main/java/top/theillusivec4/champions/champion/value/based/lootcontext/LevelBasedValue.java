@@ -3,14 +3,13 @@ package top.theillusivec4.champions.champion.value.based.lootcontext;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import net.minecraft.world.level.storage.loot.LootContextUser;
-import top.theillusivec4.champions.registry.BuiltInRegistries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 
 import java.util.function.Function;
 
 public interface LevelBasedValue {
   Codec<LevelBasedValue> CODEC = Codec.lazyInitialized(() -> {
-    Codec<LevelBasedValue> dispatchCodec = BuiltInRegistries.LOOT_CONTEXT_BASED_VALUE_TYPE.byNameCodec().dispatch(LevelBasedValue::codec, Function.identity());
+    Codec<LevelBasedValue> dispatchCodec = ChampionsBuiltInRegistries.LOOT_CONTEXT_BASED_VALUE_TYPE.byNameCodec().dispatch(LevelBasedValue::codec, Function.identity());
     return Codec.either(LevelBasedValues.Constant.CODEC, dispatchCodec).xmap(
       either -> either.map(Function.identity(), Function.identity()),
       value -> value instanceof LevelBasedValues.Constant constant ? Either.left(constant) : Either.right(value)

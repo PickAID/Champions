@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.registry;
+package top.theillusivec4.champions.registries;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
@@ -16,7 +16,7 @@ import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedVa
 import top.theillusivec4.champions.server.champion.ChampionConfig;
 import top.theillusivec4.champions.util.Util;
 
-public final class Registries {
+public final class ChampionsRegistries {
   public static final ResourceKey<Registry<Affix>> AFFIX = create("affix");
   public static final ResourceKey<Registry<Rank>> RANK = create("rank");
   public static final ResourceKey<Registry<ChampionSpawnEgg>> SPAWN_EGG = create("spawn_egg");
@@ -35,6 +35,6 @@ public final class Registries {
     return ResourceKey.createRegistryKey(Util.id(name));
   }
 
-  private Registries() {
+  private ChampionsRegistries() {
   }
 }

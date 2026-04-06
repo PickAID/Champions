@@ -12,12 +12,12 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.champion.value.based.lootcontext.LevelBasedValue;
-import top.theillusivec4.champions.registry.BuiltInRegistries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 
 import java.util.function.Function;
 
 public interface AffixLocationBasedEffect {
-  Codec<AffixLocationBasedEffect> CODEC = BuiltInRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE.byNameCodec().dispatch(AffixLocationBasedEffect::codec, Function.identity());
+  Codec<AffixLocationBasedEffect> CODEC = ChampionsBuiltInRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE.byNameCodec().dispatch(AffixLocationBasedEffect::codec, Function.identity());
 
   static AffixLocationBasedEffect attribute(Identifier id, Holder<Attribute> attribute, LevelBasedValue amount, AttributeModifier.Operation operation) {
     return new AffixAttributeEffect(id, attribute, amount, operation);

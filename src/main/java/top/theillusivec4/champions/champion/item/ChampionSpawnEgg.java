@@ -9,16 +9,14 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jspecify.annotations.Nullable;
-import top.theillusivec4.champions.champion.ChampionUtil;
 import top.theillusivec4.champions.champion.affix.Affix;
 import top.theillusivec4.champions.champion.rank.Rank;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.Optional;
 
@@ -68,7 +66,7 @@ public record ChampionSpawnEgg(Holder<Item> item, Optional<Holder<Rank>> rank, O
     }
 
     public ChampionSpawnEgg build(BootstrapContext<ChampionSpawnEgg> context) {
-      HolderGetter<Rank> ranks = context.lookup(Registries.RANK);
+      HolderGetter<Rank> ranks = context.lookup(ChampionsRegistries.RANK);
       return new ChampionSpawnEgg(
         this.item,
         Optional.ofNullable(this.rank),

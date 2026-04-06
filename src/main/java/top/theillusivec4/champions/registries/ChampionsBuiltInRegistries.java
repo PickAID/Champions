@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.registry;
+package top.theillusivec4.champions.registries;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
@@ -24,15 +24,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public final class BuiltInRegistries {
+public final class ChampionsBuiltInRegistries {
   private static @Nullable List<Registry<?>> registries = new ArrayList<>();
-  public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = simple(Registries.AFFIX_EFFECT_COMPONENT_TYPE);
-  public static final Registry<MapCodec<? extends LevelBasedValue>> LOOT_CONTEXT_BASED_VALUE_TYPE = simple(Registries.LOOT_CONTEXT_BASED_VALUE_TYPE);
-  public static final Registry<MapCodec<? extends DifficultyBasedValue>> DIFFICULTY_BASED_VALUE = simple(Registries.DIFFICULTY_BASED_VALUE);
-  public static final Registry<MapCodec<? extends AffixValueEffect>> AFFIX_VALUE_EFFECT_TYPE = simple(Registries.AFFIX_VALUE_EFFECT_TYPE);
-  public static final Registry<MapCodec<? extends AffixEntityEffect>> AFFIX_ENTITY_EFFECT_TYPE = simple(Registries.AFFIX_ENTITY_EFFECT_TYPE);
-  public static final Registry<MapCodec<? extends AffixLocationBasedEffect>> AFFIX_LOCATION_BASED_EFFECT_TYPE = simple(Registries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
-  public static final Registry<MapCodec<? extends ProjectileProvider>> PROJECTILE_PROVIDER_TYPE = simple(Registries.PROJECTILE_PROVIDER_TYPE);
+  public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = simple(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE);
+  public static final Registry<MapCodec<? extends LevelBasedValue>> LOOT_CONTEXT_BASED_VALUE_TYPE = simple(ChampionsRegistries.LOOT_CONTEXT_BASED_VALUE_TYPE);
+  public static final Registry<MapCodec<? extends DifficultyBasedValue>> DIFFICULTY_BASED_VALUE = simple(ChampionsRegistries.DIFFICULTY_BASED_VALUE);
+  public static final Registry<MapCodec<? extends AffixValueEffect>> AFFIX_VALUE_EFFECT_TYPE = simple(ChampionsRegistries.AFFIX_VALUE_EFFECT_TYPE);
+  public static final Registry<MapCodec<? extends AffixEntityEffect>> AFFIX_ENTITY_EFFECT_TYPE = simple(ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE);
+  public static final Registry<MapCodec<? extends AffixLocationBasedEffect>> AFFIX_LOCATION_BASED_EFFECT_TYPE = simple(ChampionsRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
+  public static final Registry<MapCodec<? extends ProjectileProvider>> PROJECTILE_PROVIDER_TYPE = simple(ChampionsRegistries.PROJECTILE_PROVIDER_TYPE);
 
   public static void register(IEventBus modEventBus) {
     modEventBus.addListener(NewRegistryEvent.class, event -> {
@@ -41,9 +41,9 @@ public final class BuiltInRegistries {
     });
 
     modEventBus.addListener(DataPackRegistryEvent.NewRegistry.class, event -> {
-      event.dataPackRegistry(Registries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
-      event.dataPackRegistry(Registries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
-      event.dataPackRegistry(Registries.SPAWN_EGG, ChampionSpawnEgg.DIRECT_CODEC, ChampionSpawnEgg.DIRECT_CODEC);
+      event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
+      event.dataPackRegistry(ChampionsRegistries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
+      event.dataPackRegistry(ChampionsRegistries.SPAWN_EGG, ChampionSpawnEgg.DIRECT_CODEC, ChampionSpawnEgg.DIRECT_CODEC);
     });
   }
 
@@ -63,6 +63,6 @@ public final class BuiltInRegistries {
     return registry;
   }
 
-  private BuiltInRegistries() {
+  private ChampionsBuiltInRegistries() {
   }
 }

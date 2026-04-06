@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.Util;
 import net.minecraft.world.level.storage.loot.LootTable;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.registry.Registries;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ public record Rank(
   boolean boss,
   Optional<ResourceKey<LootTable>> lootTable
 ) {
-  public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Rank>> STREAM_CODEC = ByteBufCodecs.holderRegistry(Registries.RANK);
+  public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Rank>> STREAM_CODEC = ByteBufCodecs.holderRegistry(ChampionsRegistries.RANK);
   public static final Codec<Rank> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Rank::description),
     MinMaxBounds.Ints.CODEC.fieldOf("level").forGetter(Rank::level),
@@ -39,7 +39,7 @@ public record Rank(
     Codec.BOOL.optionalFieldOf("boss", false).forGetter(Rank::boss),
     ResourceKey.codec(net.minecraft.core.registries.Registries.LOOT_TABLE).optionalFieldOf("loot_table").forGetter(Rank::lootTable)
   ).apply(instance, Rank::new));
-  public static final Codec<Holder<Rank>> REFERENCE_CODEC = RegistryFileCodec.create(Registries.RANK, DIRECT_CODEC);
+  public static final Codec<Holder<Rank>> REFERENCE_CODEC = RegistryFileCodec.create(ChampionsRegistries.RANK, DIRECT_CODEC);
   public static final MapCodec<Rank> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Rank::description),
     MinMaxBounds.Ints.CODEC.fieldOf("level").forGetter(Rank::level),
