@@ -48,28 +48,35 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.api.IChampionsApi;
-import top.theillusivec4.champions.api.impl.ChampionsApiImpl;
-import top.theillusivec4.champions.client.config.ClientChampionsConfig;
-import top.theillusivec4.champions.common.affix.core.AffixManager;
-import top.theillusivec4.champions.common.capability.ChampionAttachment;
-import top.theillusivec4.champions.common.config.ChampionsConfig;
-import top.theillusivec4.champions.common.datagen.ModAdvancementProvider;
-import top.theillusivec4.champions.common.datagen.ModDamageTypeTagsProvider;
-import top.theillusivec4.champions.common.datagen.ModDatapackProvider;
-import top.theillusivec4.champions.common.datagen.ModGlobalLootModifierProvider;
-import top.theillusivec4.champions.common.integration.theoneprobe.TheOneProbePlugin;
-import top.theillusivec4.champions.common.item.ChampionEggItem;
-import top.theillusivec4.champions.common.network.SPacketSyncAffixData;
-import top.theillusivec4.champions.common.network.SPacketSyncChampion;
-import top.theillusivec4.champions.common.rank.RankManager;
-import top.theillusivec4.champions.common.registry.ChampionsRegistry;
-import top.theillusivec4.champions.common.registry.ModItems;
-import top.theillusivec4.champions.common.registry.ModStats;
-import top.theillusivec4.champions.common.util.ChampionHelper;
-import top.theillusivec4.champions.common.util.EntityManager;
-import top.theillusivec4.champions.server.command.ChampionSelectorOptions;
-import top.theillusivec4.champions.server.command.ChampionsCommand;
+import top.theillusivec4.champions.affix.LevelBasedValues;
+import top.theillusivec4.champions.affix.ProjectileTemplates;
+import top.theillusivec4.champions.affix.effects.AffixEntityEffects;
+import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffects;
+import top.theillusivec4.champions.affix.effects.AffixValueEffects;
+import top.theillusivec4.champions.deprecated.api.IChampionsApi;
+import top.theillusivec4.champions.deprecated.api.impl.ChampionsApiImpl;
+import top.theillusivec4.champions.deprecated.client.config.ClientChampionsConfig;
+import top.theillusivec4.champions.deprecated.common.affix.core.AffixManager;
+import top.theillusivec4.champions.deprecated.common.capability.ChampionAttachment;
+import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
+import top.theillusivec4.champions.deprecated.common.datagen.ModAdvancementProvider;
+import top.theillusivec4.champions.deprecated.common.datagen.ModDamageTypeTagsProvider;
+import top.theillusivec4.champions.deprecated.common.datagen.ModDatapackProvider;
+import top.theillusivec4.champions.deprecated.common.datagen.ModGlobalLootModifierProvider;
+import top.theillusivec4.champions.deprecated.common.integration.theoneprobe.TheOneProbePlugin;
+import top.theillusivec4.champions.deprecated.common.item.ChampionEggItem;
+import top.theillusivec4.champions.deprecated.common.network.SPacketSyncAffixData;
+import top.theillusivec4.champions.deprecated.common.network.SPacketSyncChampion;
+import top.theillusivec4.champions.deprecated.common.rank.RankManager;
+import top.theillusivec4.champions.deprecated.common.registry.ChampionsRegistry;
+import top.theillusivec4.champions.deprecated.common.registry.ModItems;
+import top.theillusivec4.champions.deprecated.common.registry.ModStats;
+import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
+import top.theillusivec4.champions.deprecated.common.util.EntityManager;
+import top.theillusivec4.champions.deprecated.server.command.ChampionSelectorOptions;
+import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.server.commands.ChampionsCommands;
 
 import java.io.File;
 import java.io.IOException;
@@ -88,7 +95,15 @@ public class Champions {
   public static boolean gameStagesLoaded = false;
 
   public Champions(IEventBus modEventBus, ModContainer modContainer) {
-
+    // New
+    ChampionsRegistries.register(modEventBus);
+    ProjectileTemplates.register(modEventBus);
+    LevelBasedValues.register(modEventBus);
+    AffixLocationBasedEffects.register(modEventBus);
+    AffixEntityEffects.register(modEventBus);
+    AffixValueEffects.register(modEventBus);
+    ChampionsCommands.register();
+    // Old
     modEventBus.addListener(this::enqueueIMC);
     modEventBus.addListener(this::registerNetwork);
     modEventBus.addListener(this::onGatherData);

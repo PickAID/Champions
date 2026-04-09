@@ -1,0 +1,89 @@
+package top.theillusivec4.champions.affix;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
+import net.minecraft.core.Holder;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.function.Predicate;
+
+public class AffixContainer {
+  public static final AffixContainer EMPTY = new AffixContainer(new Object2IntOpenHashMap<>());
+  private static final Codec<Object2IntMap<Holder<Affix>>> AFFIXES_CODEC = Codec.unboundedMap(Affix.REFERENCE_CODEC, Codec.intRange(0, 255)).xmap(Object2IntOpenHashMap::new, Function.identity());
+  public static final MapCodec<AffixContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(AFFIXES_CODEC.fieldOf("affixes").forGetter(container -> container.affixes)).apply(instance, AffixContainer::new));
+  private final Object2IntMap<Holder<Affix>> affixes;
+
+  private AffixContainer(Object2IntMap<Holder<Affix>> affixes) {
+    this.affixes = affixes;
+  }
+
+  public AffixContainer.Mutable mutable() {
+    return new Mutable(this);
+  }
+
+  public Set<Holder<Affix>> keySet() {
+    return Collections.unmodifiableSet(this.affixes.keySet());
+  }
+
+  public Set<Map.Entry<Holder<Affix>, Integer>> entrySet() {
+    return Collections.unmodifiableSet(this.affixes.object2IntEntrySet());
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    } else {
+      return obj instanceof AffixContainer that && this.affixes.equals(that.affixes);
+    }
+  }
+
+  @Override
+  public String toString() {
+    return "AffixContainer{" + this.affixes + "}";
+  }
+
+  public static class Mutable {
+    private final Object2IntMap<Holder<Affix>> affixes = new Object2IntOpenHashMap<>();
+
+    public Mutable(AffixContainer container) {
+      this.affixes.putAll(container.affixes);
+    }
+
+    public void upgrade(Holder<Affix> affix, int level) {
+      if (level > 0) {
+        this.affixes.merge(affix, Math.min(level, 255), Integer::max);
+      }
+    }
+
+    public void removeIf(Predicate<Holder<Affix>> predicate) {
+      this.affixes.keySet().removeIf(predicate);
+    }
+
+    public int getLevel(Holder<Affix> affix) {
+      return this.affixes.getOrDefault(affix, 0);
+    }
+
+    public void set(Holder<Affix> affix, int level) {
+      if (level <= 0) {
+        this.affixes.removeInt(affix);
+      } else {
+        this.affixes.put(affix, Math.min(level, 255));
+      }
+    }
+
+    public Set<Holder<Affix>> keySet() {
+      return this.affixes.keySet();
+    }
+
+    public AffixContainer toImmutable() {
+      return new AffixContainer(this.affixes);
+    }
+  }
+}
