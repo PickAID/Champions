@@ -15,6 +15,7 @@ public final class ChampionsCommands {
     var dispatcher = event.getDispatcher();
     var buildContext = event.getBuildContext();
     AffixCommands.register(dispatcher, buildContext);
+    BossCommands.register(dispatcher, buildContext);
   }
 
 }

@@ -1,5 +1,6 @@
 package top.theillusivec4.champions.util;
 
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
@@ -19,6 +20,10 @@ import java.util.Optional;
 
 public final class ChampionsUtil {
   private ChampionsUtil() {
+  }
+
+  public static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> payload(String name) {
+    return new CustomPacketPayload.Type<>(id(name));
   }
 
   public static ResourceLocation id(String name) {

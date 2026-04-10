@@ -34,7 +34,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.Nullable;
-import snownee.jade.api.ui.IElement;
 import top.theillusivec4.champions.affix.effects.*;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.ChampionsUtil;
@@ -75,21 +74,45 @@ public record Affix(
     return new Builder(definition);
   }
 
+  public static Affix.Cost constantCost(int cost) {
+    return new Affix.Cost(cost, 0);
+  }
+
+  public static Affix.Cost dynamicCost(int base, int perLevel) {
+    return new Affix.Cost(base, perLevel);
+  }
+
   public static AffixDefinition definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, int maxLevel, int weight) {
+    return definition(
+      supportedEntityTypes,
+      maxLevel,
+      weight,
+      dynamicCost(10, 20),
+      dynamicCost(60, 20)
+    );
+  }
+
+  public static AffixDefinition definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, int maxLevel, int weight, Affix.Cost minCost, Affix.Cost maxCost) {
     return new AffixDefinition(
       Optional.ofNullable(supportedEntityTypes),
       maxLevel,
-      weight
+      weight,
+      minCost,
+      maxCost
     );
   }
 
   public static MutableComponent getFullName(Holder<Affix> affix, int level) {
     MutableComponent component = affix.value().description.copy();
     if (level != 1 || affix.value().getMaxLevel() != 1) {
-      component.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + level));
+      component.append(CommonComponents.SPACE).append(Component.translatable("champions.affix.level." + level));
     }
 
     return component;
+  }
+
+  public int getMinLevel() {
+    return 1;
   }
 
   public void modifyKnockback(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat knockback) {
@@ -201,18 +224,51 @@ public record Affix(
     return this.definition.maxLevel();
   }
 
+  public boolean isSupported(Entity entity) {
+    return this.isSupported(entity.getType());
+  }
+
+  public boolean isSupported(EntityType<?> entityType) {
+    return this.definition.supportedEntityTypes.map(holders -> holders.contains(entityType.builtInRegistryHolder())).orElse(true);
+  }
+
+  public int getMinCost(int level) {
+    return this.definition.minCost.calculate(level);
+  }
+
+  public int getMaxCost(int level) {
+    return this.definition.maxCost.calculate(level);
+  }
+
   public record AffixDefinition(
     Optional<HolderSet<EntityType<?>>> supportedEntityTypes,
     int maxLevel,
-    int weight
+    int weight,
+    Cost minCost,
+    Cost maxCost
   ) {
     public static final MapCodec<AffixDefinition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
       RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE).optionalFieldOf("supported_entity_types").forGetter(AffixDefinition::supportedEntityTypes),
       Codec.intRange(1, 5).optionalFieldOf("max_level", 5).forGetter(AffixDefinition::maxLevel),
-      Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(AffixDefinition::weight)
+      Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(AffixDefinition::weight),
+      Cost.CODEC.fieldOf("min_cost").forGetter(AffixDefinition::minCost),
+      Cost.CODEC.fieldOf("min_cost").forGetter(AffixDefinition::maxCost)
     ).apply(instance, AffixDefinition::new));
   }
 
+  public record Cost(int base, int perLevelAboveFirst) {
+    public static final Codec<Cost> CODEC = RecordCodecBuilder.create(
+      p_345979_ -> p_345979_.group(
+          Codec.INT.fieldOf("base").forGetter(Cost::base),
+          Codec.INT.fieldOf("per_level_above_first").forGetter(Cost::perLevelAboveFirst)
+        )
+        .apply(p_345979_, Cost::new)
+    );
+
+    public int calculate(int level) {
+      return this.base + this.perLevelAboveFirst * (level - 1);
+    }
+  }
 
   public static class Builder {
     private final AffixDefinition definition;

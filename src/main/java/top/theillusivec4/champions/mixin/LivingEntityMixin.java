@@ -25,8 +25,8 @@ public abstract class LivingEntityMixin extends Entity {
 
   @Inject(method = "isInvulnerableTo", at = @At(value = "RETURN"), cancellable = true)
   private void champions$isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
-    if (!cir.getReturnValue()) {
-      boolean result = AffixHelper.isImmuneToDamage((ServerLevel) this.level(), this, source);
+    if (!cir.getReturnValue() && this.level() instanceof ServerLevel level) {
+      boolean result = AffixHelper.isImmuneToDamage(level, this, source);
       cir.setReturnValue(result);
     }
   }

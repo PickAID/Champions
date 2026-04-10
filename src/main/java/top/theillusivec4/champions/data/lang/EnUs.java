@@ -29,5 +29,15 @@ public class EnUs extends ChampionsLanguageProvider {
     addAffix(Affixes.REFLECTIVE, "Reflective");
     addAffix(Affixes.SHIELDING, "Shielding");
     addAffix(Affixes.WOUNDING, "Wounding");
+    addAffixLevel(1, "I");
+    addAffixLevel(2, "II");
+    addAffixLevel(3, "III");
+    addAffixLevel(4, "IV");
+    addAffixLevel(5, "V");
+    addAffixLevel(6, "VI");
+    addAffixLevel(7, "VII");
+    addAffixLevel(8, "VIII");
+    addAffixLevel(9, "IX");
+    addAffixLevel(10, "X");
   }
 }

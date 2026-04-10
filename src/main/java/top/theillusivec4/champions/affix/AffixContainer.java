@@ -24,7 +24,10 @@ public class AffixContainer {
     AffixContainer::new
   );
   private static final Codec<Object2IntMap<Holder<Affix>>> AFFIXES_CODEC = Codec.unboundedMap(Affix.REFERENCE_CODEC, Codec.intRange(0, 255)).xmap(Object2IntOpenHashMap::new, Function.identity());
-  public static final MapCodec<AffixContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(AFFIXES_CODEC.fieldOf("affixes").forGetter(container -> container.affixes)).apply(instance, AffixContainer::new));
+  public static final MapCodec<AffixContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    AFFIXES_CODEC.fieldOf("affixes").forGetter(container -> container.affixes)
+  ).apply(instance, AffixContainer::new));
+
   private final Object2IntMap<Holder<Affix>> affixes;
 
   private AffixContainer(Object2IntMap<Holder<Affix>> affixes) {
@@ -41,6 +44,10 @@ public class AffixContainer {
 
   public Set<Map.Entry<Holder<Affix>, Integer>> entrySet() {
     return Collections.unmodifiableSet(this.affixes.object2IntEntrySet());
+  }
+
+  public boolean isEmpty() {
+    return this.affixes.isEmpty();
   }
 
   @Override

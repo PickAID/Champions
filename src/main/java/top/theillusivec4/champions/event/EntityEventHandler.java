@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.world.entity;
+package top.theillusivec4.champions.event;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -10,24 +10,22 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.apache.commons.lang3.mutable.MutableFloat;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.affix.AffixHelper;
+import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 
-public final class EntityEventListener {
+@EventBusSubscriber(modid = ChampionsMod.MOD_ID)
+public final class EntityEventHandler {
 
-  private EntityEventListener() {
-  }
-
-  public static void register() {
-    NeoForge.EVENT_BUS.register(new EntityEventListener());
+  private EntityEventHandler() {
   }
 
   /**
@@ -36,7 +34,7 @@ public final class EntityEventListener {
    * @param event LivingHealEvent
    */
   @SubscribeEvent
-  public void onLivingHeal(LivingHealEvent event) {
+  private static void onLivingHeal(LivingHealEvent event) {
     Entity entity = event.getEntity();
     MutableFloat heal = new MutableFloat(event.getAmount());
     if (entity.level() instanceof ServerLevel level) {
@@ -49,7 +47,7 @@ public final class EntityEventListener {
 
       float result = AffixHelper.modifyHeal(level, entity, heal.floatValue());
       event.setAmount(Math.max(result, 0.0f));
-//      AffixHelper.updateChampionEvent(level, entity, AffixHelper.ChampionEventOperation.PROGRESS);
+      ChampionHelper.updateBossbarProgress(entity);
     }
 
   }
@@ -60,7 +58,7 @@ public final class EntityEventListener {
    * @param event LivingIncomingDamageEvent
    */
   @SubscribeEvent
-  public void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
+  private static void onLivingIncomingDamage(LivingIncomingDamageEvent event) {
     Entity victim = event.getEntity();
     DamageSource source = event.getSource();
 
@@ -86,7 +84,7 @@ public final class EntityEventListener {
    * @param event LivingDamageEvent.Pre
    */
   @SubscribeEvent
-  public void onLivingDamagePre(LivingDamageEvent.Pre event) {
+  private static void onLivingDamagePre(LivingDamageEvent.Pre event) {
     Entity victim = event.getEntity();
     MutableFloat damage = new MutableFloat(event.getOriginalDamage());
     DamageSource source = event.getSource();
@@ -143,7 +141,7 @@ public final class EntityEventListener {
    * @param event LivingDamageEvent.Post
    */
   @SubscribeEvent
-  public void onLivingDamagePost(LivingDamageEvent.Post event) {
+  private static void onLivingDamagePost(LivingDamageEvent.Post event) {
     ServerLevel level = (ServerLevel) event.getEntity().level();
     Entity entity = event.getEntity();
     DamageSource source = event.getSource();
@@ -157,7 +155,7 @@ public final class EntityEventListener {
 //			handler.getBossEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
 //		});
 //    AffixHelper.updateLatestDamage(entity, source, origin);
-//    AffixHelper.updateChampionEvent(level, entity, AffixHelper.ChampionEventOperation.PROGRESS);
+    ChampionHelper.updateBossbarProgress(entity);
 
   }
 
@@ -168,29 +166,28 @@ public final class EntityEventListener {
    * @param event EntityTickEvent.Pre
    */
   @SubscribeEvent
-  public void onEntityTickPre(EntityTickEvent.Pre event) {
+  private static void onEntityTickPre(EntityTickEvent.Pre event) {
     Entity entity = event.getEntity();
     if (entity.level() instanceof ServerLevel level) {
       AffixHelper.tickEffects(level, entity);
       AffixHelper.targetEffects(level, entity);
-//      AffixHelper.updateChampionEvent(level, entity, AffixHelper.ChampionEventOperation.PLAYERS);
-
+      ChampionHelper.updateBossbarPlayers(entity);
     } else {
-//      AffixHelper.doParticlesEffects(entity);
+      ChampionHelper.doParticlesEffects(entity);
     }
   }
 
   @SubscribeEvent
-  public void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
+  private static void onEntityLeaveLevel(EntityLeaveLevelEvent event) {
     Level level = event.getLevel();
     Entity entity = event.getEntity();
-    if (level instanceof ServerLevel serverLevel) {
-//      AffixHelper.updateChampionEvent(serverLevel, entity, AffixHelper.ChampionEventOperation.REMOVE_ALL_PLAYERS);
+    if (!level.isClientSide()) {
+      ChampionHelper.removeBoss(entity);
     }
   }
 
   @SubscribeEvent
-  public void onLivingDeath(LivingDeathEvent event) {
+  private static void onLivingDeath(LivingDeathEvent event) {
     DamageSource source = event.getSource();
     Entity attacker = source.getEntity();
     LivingEntity victim = event.getEntity();
@@ -206,7 +203,7 @@ public final class EntityEventListener {
    * @param event LivingConversionEvent
    */
   @SubscribeEvent
-  public void onLivingConversionPost(LivingConversionEvent.Post event) {
+  private static void onLivingConversionPost(LivingConversionEvent.Post event) {
     ServerLevel level = (ServerLevel) event.getEntity().level();
     Entity from = event.getEntity();
     Entity to = event.getOutcome();
@@ -219,7 +216,7 @@ public final class EntityEventListener {
    * @param event MobSplitEvent
    */
   @SubscribeEvent
-  public void onMobSplit(MobSplitEvent event) {
+  private static void onMobSplit(MobSplitEvent event) {
     ServerLevel level = (ServerLevel) event.getParent().level();
     Entity parent = event.getParent();
     for (Mob child : event.getChildren()) {
@@ -232,7 +229,7 @@ public final class EntityEventListener {
    * 对于刷怪蛋，如果刷怪蛋不附带实体数据，会触发FinalizeSpawnEvent事件，我不知道这是否合乎预期。
    */
   @SubscribeEvent
-  public void onFinalizeSpawn(FinalizeSpawnEvent event) {
+  private static void onFinalizeSpawn(FinalizeSpawnEvent event) {
     if (event.getLevel() instanceof ServerLevel level) {
       Mob mob = event.getEntity();
       double x = event.getX();

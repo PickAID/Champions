@@ -1,16 +1,16 @@
 package top.theillusivec4.champions.world.loot;
 
+import com.google.common.collect.BiMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import top.theillusivec4.champions.mixin.LootContextParamSetsAccessor;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public final class ChampionsLootContextParamSets {
-  public static final Map<ResourceLocation, LootContextParamSet> REGISTRY = new HashMap<>();
   public static final LootContextParamSet SPAWN = register(
     "spawn",
     builder -> builder
@@ -99,11 +99,12 @@ public final class ChampionsLootContextParamSets {
   }
 
   private static LootContextParamSet register(String name, Consumer<LootContextParamSet.Builder> consumer) {
+    BiMap<ResourceLocation, LootContextParamSet> registry = LootContextParamSetsAccessor.getRegistry();
     LootContextParamSet.Builder builder = new LootContextParamSet.Builder();
     consumer.accept(builder);
     ResourceLocation id = ChampionsUtil.id(name);
     LootContextParamSet set = builder.build();
-    LootContextParamSet set1 = REGISTRY.put(id, set);
+    LootContextParamSet set1 = registry.put(id, set);
     if (set1 != null) {
       throw new IllegalStateException("Loot table parameter set " + id + " is already registered");
     } else {

@@ -19,4 +19,8 @@ public abstract class ChampionsLanguageProvider extends LanguageProvider {
   protected final void addAffix(ResourceKey<Affix> key, String name) {
     this.add(ChampionsUtil.makeDescriptionId("affix", key.location()), name);
   }
+
+  protected final void addAffixLevel(int level, String name) {
+    this.add("champions.affix.level." + level, name);
+  }
 }

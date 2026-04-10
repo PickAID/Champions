@@ -20,7 +20,7 @@ public abstract class PlayerMixin extends LivingEntity {
     super(type, level);
   }
 
-  @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER, ordinal = 0))
+  @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
   private void champion$attack(Entity target, CallbackInfo ci, @Local ServerLevel serverLevel, @Local DamageSource damagesource) {
     AffixHelper.doPostAttackEffects(serverLevel, target, damagesource);
   }

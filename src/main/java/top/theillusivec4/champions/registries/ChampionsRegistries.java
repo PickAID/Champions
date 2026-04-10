@@ -11,11 +11,9 @@ import top.theillusivec4.champions.affix.ProjectileTemplate;
 import top.theillusivec4.champions.affix.effects.AffixEntityEffect;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffect;
 import top.theillusivec4.champions.affix.effects.AffixValueEffect;
-import top.theillusivec4.champions.attachments.AttachmentSyncHandler;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public final class ChampionsRegistries {
-  public static final Registry<AttachmentSyncHandler<?>> ATTACHMENT_SYNC_HANDLER = register(Keys.ATTACHMENT_SYNC_HANDLER);
   public static final Registry<MapCodec<? extends ProjectileTemplate>> PROJECTILE_TEMPLATE_TYPE = register(Keys.PROJECTILE_TEMPLATE_TYPE);
   public static final Registry<MapCodec<? extends LevelBasedValue>> LEVEL_BASED_VALUE_TYPE = register(Keys.LEVEL_BASED_VALUE_TYPE);
   public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = register(Keys.AFFIX_EFFECT_COMPONENT_TYPE);
@@ -31,7 +29,6 @@ public final class ChampionsRegistries {
   }
 
   public static final class Keys {
-    public static final ResourceKey<Registry<AttachmentSyncHandler<?>>> ATTACHMENT_SYNC_HANDLER = register("attachment_sync_handler");
     public static final ResourceKey<Registry<MapCodec<? extends ProjectileTemplate>>> PROJECTILE_TEMPLATE_TYPE = register("projectile_template_type");
     public static final ResourceKey<Registry<Affix>> AFFIX = register("affix");
     public static final ResourceKey<Registry<MapCodec<? extends LevelBasedValue>>> LEVEL_BASED_VALUE_TYPE = register("level_based_value_type");

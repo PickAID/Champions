@@ -8,12 +8,9 @@
     "AbstractWindChargeMixin",
     "AttachmentHolderMixin",
     "BeeMixin",
-    "ChunkMapAccessor",
-    "ChunkMapMixin",
     "EnderDragonMixin",
     "EvokerFangsMixin",
     "HoglinBaseMixin",
-    "IAttachmentHolderMixin",
     "IronGolemMixin",
     "LargeFireballMixin",
     "LivingEntityMixin",
@@ -25,7 +22,6 @@
     "ShulkerBulletMixin",
     "SlimeMixin",
     "SmallFireballMixin",
-    "TrackedEntityAccessor",
     "WitherSkullMixin"
   ],
   "client": [

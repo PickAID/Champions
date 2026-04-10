@@ -54,7 +54,6 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -63,8 +62,6 @@ import top.theillusivec4.champions.affix.*;
 import top.theillusivec4.champions.affix.effects.AffixEntityEffects;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffects;
 import top.theillusivec4.champions.affix.effects.AffixValueEffects;
-import top.theillusivec4.champions.attachments.AttachmentSyncHandlers;
-import top.theillusivec4.champions.attachments.ChampionsAttachmentSync;
 import top.theillusivec4.champions.attachments.ChampionsAttachments;
 import top.theillusivec4.champions.client.network.ChampionsClientPayloadHandler;
 import top.theillusivec4.champions.component.ChampionsDataComponents;
@@ -91,9 +88,9 @@ import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
 import top.theillusivec4.champions.deprecated.common.util.EntityManager;
 import top.theillusivec4.champions.deprecated.server.command.ChampionSelectorOptions;
 import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
-import top.theillusivec4.champions.network.ChampionsSyncAttachmentsPayload;
+import top.theillusivec4.champions.network.ChampionsBossEventPayload;
+import top.theillusivec4.champions.particles.ChampionsParticleTypes;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
-import top.theillusivec4.champions.registries.ChampionsRegistryCallbacks;
 import top.theillusivec4.champions.world.damage.ChampionsDamageTypes;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
@@ -123,8 +120,8 @@ public class ChampionsMod {
     ChampionsDataComponents.register(modEventBus);
     ChampionsEntityTypes.register(modEventBus);
     ChampionsMobEffects.register(modEventBus);
+    ChampionsParticleTypes.register(modEventBus);
     AffixEffectComponents.register(modEventBus);
-    AttachmentSyncHandlers.register(modEventBus);
     ProjectileTemplates.register(modEventBus);
     LevelBasedValues.register(modEventBus);
     AffixLocationBasedEffects.register(modEventBus);
@@ -171,7 +168,6 @@ public class ChampionsMod {
 
   @SubscribeEvent
   private void registerRegistries(NewRegistryEvent event) {
-    event.register(ChampionsRegistries.ATTACHMENT_SYNC_HANDLER);
     event.register(ChampionsRegistries.PROJECTILE_TEMPLATE_TYPE);
     event.register(ChampionsRegistries.LEVEL_BASED_VALUE_TYPE);
     event.register(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE);
@@ -182,7 +178,6 @@ public class ChampionsMod {
 
   @SubscribeEvent
   private void onModifyRegistries(ModifyRegistriesEvent event) {
-    NeoForgeRegistries.ATTACHMENT_TYPES.addCallback(ChampionsRegistryCallbacks.Attachments.INSTANCE);
   }
 
   @SubscribeEvent
@@ -194,9 +189,9 @@ public class ChampionsMod {
   public void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
     PayloadRegistrar registrar = event.registrar(VERSION);
     registrar.playToClient(
-      ChampionsSyncAttachmentsPayload.TYPE,
-      ChampionsSyncAttachmentsPayload.STREAM_CODEC,
-      ChampionsClientPayloadHandler::handleSyncAttachment
+      ChampionsBossEventPayload.TYPE,
+      ChampionsBossEventPayload.STREAM_CODEC,
+      ChampionsClientPayloadHandler::handleBossEvent
     );
   }
 
