@@ -1,11 +1,9 @@
 package top.theillusivec4.champions.mixin;
 
-import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.level.Level;
@@ -14,44 +12,31 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.affix.AffixHelper;
 
 @Mixin(value = LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-	@Shadow
-	public abstract void knockback(double power, double xd, double zd);
-
-	public LivingEntityMixin(EntityType<?> type, Level level) {
+  public LivingEntityMixin(EntityType<?> type, Level level) {
     super(type, level);
   }
 
+  @Shadow
+  public abstract void knockback(double power, double xd, double zd);
+
   @Inject(method = "isInvulnerableTo", at = @At(value = "RETURN"), cancellable = true)
-  private void champions$isInvulnerableTo(ServerLevel level, DamageSource source, CallbackInfoReturnable<Boolean> cir) {
+  private void champions$isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> cir) {
     if (!cir.getReturnValue()) {
-//      ChampionUtil.getHandler(this).ifPresent(handler -> cir.setReturnValue(handler.isImmuneToDamage(level, (LivingEntity) (Object) this, source)));
-	    boolean result = ChampionHelper.isImmuneToDamage(level, this, source);
-			cir.setReturnValue(result);
-		}
+      boolean result = AffixHelper.isImmuneToDamage((ServerLevel) this.level(), this, source);
+      cir.setReturnValue(result);
+    }
   }
 
   @Inject(method = "getKnockback", at = @At(value = "RETURN"), cancellable = true)
   private void champion$getKnockback(Entity target, DamageSource damageSource, CallbackInfoReturnable<Float> cir) {
     if (this.level() instanceof ServerLevel level) {
-//      ChampionUtil.getHandler(this).ifPresent(handler -> {
-//        float knockback = (float) ((LivingEntity) (Object) this).getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-//        float value = handler.modifyKnockback(level, target, damageSource, knockback) / 2.0f + cir.getReturnValue();
-//        cir.setReturnValue(value);
-//      });
-	    float knockback = (float) ((LivingEntity) (Object) this).getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-	    float value = ChampionHelper.modifyDamage(level, target, damageSource, knockback) / 2.0f + cir.getReturnValue();
-			cir.setReturnValue(value);
+      float knockback = (float) ((LivingEntity) (Object) this).getAttributeValue(Attributes.ATTACK_KNOCKBACK);
+      float value = AffixHelper.modifyDamage(level, target, damageSource, knockback) / 2.0f + cir.getReturnValue();
+      cir.setReturnValue(value);
     }
-  }
-
-  @Inject(method = "stabAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-  private void champion$stabAttack(EquipmentSlot weaponSlot, Entity target, float baseDamage, boolean dealsDamage, boolean dealsKnockback, boolean dismounts, CallbackInfoReturnable<Boolean> cir, @Local ServerLevel serverLevel, @Local DamageSource damageSource) {
-//    ChampionUtil.getHandler(target).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, target, damageSource));
-//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, target, damageSource));
-	  ChampionHelper.doPostAttackEffects(serverLevel, target, damageSource);
   }
 }

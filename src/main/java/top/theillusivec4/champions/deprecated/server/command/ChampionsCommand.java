@@ -26,7 +26,7 @@ import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.api.impl.ChampionsApiImpl;
 import top.theillusivec4.champions.deprecated.common.capability.ChampionAttachment;
@@ -42,13 +42,13 @@ import java.util.Set;
 public class ChampionsCommand {
 
   public static final SuggestionProvider<CommandSourceStack> AFFIXES = SuggestionProviders
-    .register(Champions.getLocation("affixes"),
+    .register(ChampionsMod.getLocation("affixes"),
       (context, builder) -> SharedSuggestionProvider.suggest(
         ChampionsApiImpl.getInstance().getAffixes().stream().map(IAffix::getIdentifier),
         builder));
 
   public static final SuggestionProvider<CommandSourceStack> MONSTER_ENTITIES = SuggestionProviders
-    .register(Champions.getLocation("monster_entities"),
+    .register(ChampionsMod.getLocation("monster_entities"),
       (context, builder) -> SharedSuggestionProvider.suggestResource(
         BuiltInRegistries.ENTITY_TYPE.stream()
           .filter(type -> type.getCategory() == MobCategory.MONSTER),

@@ -7,7 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.server.command.AffixArgumentType.IAffixProvider;
 
@@ -44,7 +44,7 @@ public class AffixArgumentType implements ArgumentType<IAffixProvider> {
     while (reader.canRead()) {
       reader.skipWhitespace();  // 跳过空白字符
       String id = reader.readString();  // 读取一个字符串
-      affixes.add(Champions.API.getAffix(id).orElseThrow(() -> UNKNOWN_AFFIX.create(id)));
+      affixes.add(ChampionsMod.API.getAffix(id).orElseThrow(() -> UNKNOWN_AFFIX.create(id)));
     }
     return (source) -> affixes;
   }

@@ -6,13 +6,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Animal;
-import net.minecraft.world.entity.animal.bee.Bee;
+import net.minecraft.world.entity.animal.Bee;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.affix.AffixHelper;
 
 @Mixin(value = Bee.class)
 public abstract class BeeMixin extends Animal {
@@ -21,10 +21,10 @@ public abstract class BeeMixin extends Animal {
   }
 
   @Inject(method = "doHurtTarget", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-  private void champion$doHurtTarget(ServerLevel level, Entity target, CallbackInfoReturnable<Boolean> cir, @Local DamageSource damageSource) {
-//    ChampionUtil.getHandler(target).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, target, damageSource));
-//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, target, damageSource));
-	  ChampionHelper.doPostAttackEffects(level, target, damageSource);
+  private void champions$doHurtTarget(Entity entity, CallbackInfoReturnable<Boolean> cir, @Local DamageSource damageSource) {
+    if (this.level() instanceof ServerLevel level) {
+      AffixHelper.doPostAttackEffects(level, entity, damageSource);
+    }
 
   }
 }

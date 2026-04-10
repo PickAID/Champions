@@ -6,7 +6,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.capability.ChampionAttachment;
@@ -18,7 +18,7 @@ public class TheOneProbePlugin implements IProbeInfoEntityProvider {
 
   @Override
   public String getID() {
-    return Champions.MODID + ":entity.champion";
+    return ChampionsMod.MOD_ID + ":entity.champion";
   }
 
   @Override
@@ -49,7 +49,7 @@ public class TheOneProbePlugin implements IProbeInfoEntityProvider {
           for (IAffix affix : serverChampion.getAffixes()) {
             horizontal = vertical.horizontal();
             horizontal.mcText(
-              Component.translatable("affix." + Champions.MODID + "." + affix.getIdentifier()));
+              Component.translatable("affix." + ChampionsMod.MOD_ID + "." + affix.getIdentifier()));
           }
         });
       });

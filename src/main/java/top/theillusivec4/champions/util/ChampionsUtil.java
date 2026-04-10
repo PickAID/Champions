@@ -10,10 +10,10 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.damage.Damage;
-import top.theillusivec4.champions.loot.ChampionsLootContextParamSets;
-import top.theillusivec4.champions.loot.ChampionsLootContextParams;
+import top.theillusivec4.champions.world.loot.ChampionsLootContextParamSets;
+import top.theillusivec4.champions.world.loot.ChampionsLootContextParams;
 
 import java.util.Optional;
 
@@ -22,7 +22,19 @@ public final class ChampionsUtil {
   }
 
   public static ResourceLocation id(String name) {
-    return ResourceLocation.fromNamespaceAndPath(Champions.MODID, name);
+    return ResourceLocation.fromNamespaceAndPath(ChampionsMod.MOD_ID, name);
+  }
+
+  public static String makeDescriptionId(String prefix, ResourceLocation id) {
+    return makeDescriptionId(prefix, id, null);
+  }
+
+  public static String makeDescriptionId(String prefix, ResourceLocation id, @Nullable String suffix) {
+    if (suffix != null) {
+      return id.toLanguageKey(prefix, suffix);
+    } else {
+      return id.toLanguageKey(prefix);
+    }
   }
 
   public static LootContext createAttributesContext(ServerLevel serverLevel, Entity entity, int level) {

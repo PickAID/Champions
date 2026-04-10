@@ -9,7 +9,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 
 public class ModDamageTypes {
   public static final ResourceKey<DamageType> REFLECTION_DAMAGE = create("reflection");
@@ -36,6 +36,6 @@ public class ModDamageTypes {
   }
 
   private static ResourceKey<DamageType> create(String name) {
-    return ResourceKey.create(Registries.DAMAGE_TYPE, Champions.getLocation(name));
+    return ResourceKey.create(Registries.DAMAGE_TYPE, ChampionsMod.getLocation(name));
   }
 }

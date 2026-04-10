@@ -5,9 +5,31 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractArrowMixin",
-    "AbstractWindChargeMixin"
+    "AbstractWindChargeMixin",
+    "AttachmentHolderMixin",
+    "BeeMixin",
+    "ChunkMapAccessor",
+    "ChunkMapMixin",
+    "EnderDragonMixin",
+    "EvokerFangsMixin",
+    "HoglinBaseMixin",
+    "IAttachmentHolderMixin",
+    "IronGolemMixin",
+    "LargeFireballMixin",
+    "LivingEntityMixin",
+    "LlamaSpitMixin",
+    "LootContextParamSetsAccessor",
+    "MobMixin",
+    "PlayerMixin",
+    "RamTargetMixin",
+    "ShulkerBulletMixin",
+    "SlimeMixin",
+    "SmallFireballMixin",
+    "TrackedEntityAccessor",
+    "WitherSkullMixin"
   ],
   "client": [
+    "BossHealthOverlayAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.capability.ChampionAttachment;
 
@@ -21,7 +21,7 @@ import java.util.Set;
 public record SPacketSyncChampion(int entityId, int tier, int defaultColor,
                                   Set<String> affixes) implements CustomPacketPayload {
 
-  public static final Type<SPacketSyncChampion> TYPE = new Type<>(Champions.getLocation("sync_champion"));
+  public static final Type<SPacketSyncChampion> TYPE = new Type<>(ChampionsMod.getLocation("sync_champion"));
 
   public static final StreamCodec<FriendlyByteBuf, SPacketSyncChampion> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.INT,

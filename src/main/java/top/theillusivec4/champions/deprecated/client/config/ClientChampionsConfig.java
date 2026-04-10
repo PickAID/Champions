@@ -2,11 +2,11 @@ package top.theillusivec4.champions.deprecated.client.config;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 
 public class ClientChampionsConfig {
 
-  private static final String CONFIG_PREFIX = "gui." + Champions.MODID + ".config.";
+  private static final String CONFIG_PREFIX = "gui." + ChampionsMod.MOD_ID + ".config.";
 
   public static final ModConfigSpec CLIENT_SPEC;
   public static final Client CLIENT;

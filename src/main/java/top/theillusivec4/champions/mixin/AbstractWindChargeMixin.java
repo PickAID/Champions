@@ -21,7 +21,7 @@ public abstract class AbstractWindChargeMixin extends AbstractHurtingProjectile 
   }
 
   @Inject(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-  private void champion$onHitEntity(EntityHitResult hitResult, CallbackInfo ci, @Local DamageSource source) {
+  private void champions$onHitEntity(EntityHitResult hitResult, CallbackInfo ci, @Local DamageSource source) {
     Entity victim = hitResult.getEntity();
     AffixHelper.doPostAttackEffects((ServerLevel) this.level(), victim, source);
   }

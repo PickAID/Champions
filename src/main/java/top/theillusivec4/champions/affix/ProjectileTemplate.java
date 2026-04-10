@@ -13,6 +13,42 @@ import java.util.function.Function;
 public interface ProjectileTemplate {
   Codec<ProjectileTemplate> CODEC = Codec.lazyInitialized(() -> ChampionsRegistries.PROJECTILE_TEMPLATE_TYPE.byNameCodec().dispatch(ProjectileTemplate::codec, Function.identity()));
 
+  static ProjectileTemplate arrow() {
+    return ProjectileTemplates.ArrowProvider.INSTANCE;
+  }
+
+  static ProjectileTemplate arcticBullet() {
+    return ProjectileTemplates.ArcticBulletProvider.INSTANCE;
+  }
+
+  static ProjectileTemplate enkindlingBullet() {
+    return ProjectileTemplates.EnkindlingBulletProvider.INSTANCE;
+  }
+
+  static ProjectileTemplate shulkerBullet() {
+    return ProjectileTemplates.ShulkerBulletProvider.INSTANCE;
+  }
+
+  static ProjectileTemplate fireworkRocket() {
+    return ProjectileTemplates.FireworkRocketProvider.INSTANCE;
+  }
+
+  static ProjectileTemplate smallFireball() {
+    return ProjectileTemplates.SmallFireballProvider.INSTANCE;
+  }
+
+  static ProjectileTemplate largeFireball() {
+    return ProjectileTemplates.LargeFireballProvider.INSTANCE;
+  }
+
+  static ProjectileTemplate thrownSplashPotion() {
+    return ProjectileTemplates.ThrownSplashPotionProvider.INSTANCE;
+  }
+
+  static ProjectileTemplate thrownLingeringPotion() {
+    return ProjectileTemplates.ThrownLingeringPotionProvider.INSTANCE;
+  }
+
   Projectile create(ServerLevel level, Entity source, ItemStack item);
 
   MapCodec<? extends ProjectileTemplate> codec();

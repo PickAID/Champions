@@ -3,7 +3,7 @@ package top.theillusivec4.champions.deprecated.common.affix.core;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.affix.*;
 import top.theillusivec4.champions.deprecated.common.config.AffixesConfig.AffixConfig;
@@ -18,7 +18,7 @@ public class AffixManager {
   private static final Map<String, AffixSettings> SETTINGS = new HashMap<>();
 
   public static void register() {
-    Champions.API.registerAffixes(new MoltenAffix(), new HastyAffix(), new ReflectiveAffix(),
+    ChampionsMod.API.registerAffixes(new MoltenAffix(), new HastyAffix(), new ReflectiveAffix(),
       new LivelyAffix(), new MagneticAffix(), new DampeningAffix(), new AdaptableAffix(),
       new KnockingAffix(), new DesecratingAffix(), new PlaguedAffix(), new InfestedAffix(),
       new ParalyzingAffix(), new WoundingAffix(), new ShieldingAffix(), new ArcticAffix(),
@@ -40,12 +40,12 @@ public class AffixManager {
     configs.forEach(affixConfig -> {
 
       if (affixConfig.identifier == null) {
-        Champions.LOGGER.error("Missing identifier while building affix settings, skipping...");
+        ChampionsMod.LOGGER.error("Missing identifier while building affix settings, skipping...");
         return;
       }
 
-      if (Champions.API.getAffix(affixConfig.identifier).isEmpty()) {
-        Champions.LOGGER.error("Invalid identifier while building affix settings, skipping...");
+      if (ChampionsMod.API.getAffix(affixConfig.identifier).isEmpty()) {
+        ChampionsMod.LOGGER.error("Invalid identifier while building affix settings, skipping...");
         return;
       }
       AffixSettings settings = new AffixSettings(affixConfig.identifier, affixConfig.enabled,
@@ -83,7 +83,7 @@ public class AffixManager {
       try {
         permission = Permission.valueOf(mobPermission);
       } catch (IllegalArgumentException e) {
-        Champions.LOGGER.error("Invalid permission value {}", mobPermission);
+        ChampionsMod.LOGGER.error("Invalid permission value {}", mobPermission);
       }
       this.mobPermission = permission;
     }

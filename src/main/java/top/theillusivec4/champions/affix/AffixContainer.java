@@ -6,6 +6,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.Holder;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 
 import java.util.Collections;
 import java.util.Map;
@@ -15,6 +18,11 @@ import java.util.function.Predicate;
 
 public class AffixContainer {
   public static final AffixContainer EMPTY = new AffixContainer(new Object2IntOpenHashMap<>());
+  public static final StreamCodec<RegistryFriendlyByteBuf, AffixContainer> STREAM_CODEC = StreamCodec.composite(
+    ByteBufCodecs.map(Object2IntOpenHashMap::new, Affix.STREAM_CODEC, ByteBufCodecs.VAR_INT),
+    container -> container.affixes,
+    AffixContainer::new
+  );
   private static final Codec<Object2IntMap<Holder<Affix>>> AFFIXES_CODEC = Codec.unboundedMap(Affix.REFERENCE_CODEC, Codec.intRange(0, 255)).xmap(Object2IntOpenHashMap::new, Function.identity());
   public static final MapCodec<AffixContainer> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(AFFIXES_CODEC.fieldOf("affixes").forGetter(container -> container.affixes)).apply(instance, AffixContainer::new));
   private final Object2IntMap<Holder<Affix>> affixes;
@@ -64,6 +72,10 @@ public class AffixContainer {
 
     public void removeIf(Predicate<Holder<Affix>> predicate) {
       this.affixes.keySet().removeIf(predicate);
+    }
+
+    public void remove(Holder<Affix> affix) {
+      this.affixes.removeInt(affix);
     }
 
     public int getLevel(Holder<Affix> affix) {

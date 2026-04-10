@@ -5,7 +5,7 @@ import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.common.registry.ModDamageTypes;
 
 import java.util.Set;
@@ -15,7 +15,7 @@ public class ModDatapackProvider extends DatapackBuiltinEntriesProvider {
   private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, ModDamageTypes::bootstrap);
 
   public ModDatapackProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-    super(output, registries, BUILDER, Set.of(Champions.MODID));
+    super(output, registries, BUILDER, Set.of(ChampionsMod.MOD_ID));
   }
 
 

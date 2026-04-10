@@ -21,13 +21,19 @@ package top.theillusivec4.champions;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.block.DispenserBlock;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.InterModComms;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
@@ -40,19 +46,30 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import net.neoforged.neoforge.registries.DataPackRegistryEvent;
+import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.registries.NewRegistryEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.champions.affix.LevelBasedValues;
-import top.theillusivec4.champions.affix.ProjectileTemplates;
+import top.theillusivec4.champions.affix.*;
 import top.theillusivec4.champions.affix.effects.AffixEntityEffects;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffects;
 import top.theillusivec4.champions.affix.effects.AffixValueEffects;
+import top.theillusivec4.champions.attachments.AttachmentSyncHandlers;
+import top.theillusivec4.champions.attachments.ChampionsAttachmentSync;
+import top.theillusivec4.champions.attachments.ChampionsAttachments;
+import top.theillusivec4.champions.client.network.ChampionsClientPayloadHandler;
+import top.theillusivec4.champions.component.ChampionsDataComponents;
+import top.theillusivec4.champions.data.lang.EnUs;
+import top.theillusivec4.champions.data.lang.ZhCn;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.deprecated.api.impl.ChampionsApiImpl;
 import top.theillusivec4.champions.deprecated.client.config.ClientChampionsConfig;
@@ -68,60 +85,70 @@ import top.theillusivec4.champions.deprecated.common.item.ChampionEggItem;
 import top.theillusivec4.champions.deprecated.common.network.SPacketSyncAffixData;
 import top.theillusivec4.champions.deprecated.common.network.SPacketSyncChampion;
 import top.theillusivec4.champions.deprecated.common.rank.RankManager;
-import top.theillusivec4.champions.deprecated.common.registry.ChampionsRegistry;
 import top.theillusivec4.champions.deprecated.common.registry.ModItems;
 import top.theillusivec4.champions.deprecated.common.registry.ModStats;
 import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
 import top.theillusivec4.champions.deprecated.common.util.EntityManager;
 import top.theillusivec4.champions.deprecated.server.command.ChampionSelectorOptions;
 import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
+import top.theillusivec4.champions.network.ChampionsSyncAttachmentsPayload;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
-import top.theillusivec4.champions.server.commands.ChampionsCommands;
+import top.theillusivec4.champions.registries.ChampionsRegistryCallbacks;
+import top.theillusivec4.champions.world.damage.ChampionsDamageTypes;
+import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
+import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
-@Mod(Champions.MODID)
-public class Champions {
-
-  public static final String MODID = "champions";
+@Mod(ChampionsMod.MOD_ID)
+public class ChampionsMod {
+  public static final String VERSION = "21.1.0.2.1.8.4";
+  public static final String MOD_ID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
 
   public static boolean scalingHealthLoaded = false;
   public static boolean gameStagesLoaded = false;
 
-  public Champions(IEventBus modEventBus, ModContainer modContainer) {
+  public ChampionsMod(IEventBus modEventBus, ModContainer modContainer) {
     // New
-    ChampionsRegistries.register(modEventBus);
+    modEventBus.register(this);
+    ChampionsAttachments.register(modEventBus);
+    ChampionsDataComponents.register(modEventBus);
+    ChampionsEntityTypes.register(modEventBus);
+    ChampionsMobEffects.register(modEventBus);
+    AffixEffectComponents.register(modEventBus);
+    AttachmentSyncHandlers.register(modEventBus);
     ProjectileTemplates.register(modEventBus);
     LevelBasedValues.register(modEventBus);
     AffixLocationBasedEffects.register(modEventBus);
     AffixEntityEffects.register(modEventBus);
     AffixValueEffects.register(modEventBus);
-    ChampionsCommands.register();
     // Old
-    modEventBus.addListener(this::enqueueIMC);
-    modEventBus.addListener(this::registerNetwork);
-    modEventBus.addListener(this::onGatherData);
-    modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
-    modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
-    modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
-    createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
-    createServerConfig(ChampionsConfig.AFFIXES_SPEC, "affixes");
-    createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
-
-    if (gameStagesLoaded) {
-      modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
-    }
-    modEventBus.addListener(this::config);
-    modEventBus.addListener(this::setup);
-    NeoForge.EVENT_BUS.addListener(this::registerCommands);
-    ChampionsRegistry.register(modEventBus);
-    scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
+//    modEventBus.addListener(this::enqueueIMC);
+//    modEventBus.addListener(this::registerNetwork);
+//    modEventBus.addListener(this::onGatherData);
+//    modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
+//    modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
+//    modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
+//    createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
+//    createServerConfig(ChampionsConfig.AFFIXES_SPEC, "affixes");
+//    createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
+//
+//    if (gameStagesLoaded) {
+//      modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
+//    }
+//    modEventBus.addListener(this::config);
+//    modEventBus.addListener(this::setup);
+//    NeoForge.EVENT_BUS.addListener(this::registerCommands);
+//    ChampionsRegistry.register(modEventBus);
+//    scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
   }
 
   private static void createServerConfig(ModConfigSpec spec, String suffix) {
@@ -131,7 +158,7 @@ public class Champions {
 
     if (!defaults.exists()) {
       try {
-        FileUtils.copyInputStreamToFile(Objects.requireNonNull(Champions.class.getClassLoader().getResourceAsStream(fileName)), defaults);
+        FileUtils.copyInputStreamToFile(Objects.requireNonNull(ChampionsMod.class.getClassLoader().getResourceAsStream(fileName)), defaults);
       } catch (IOException e) {
         LOGGER.error("Error creating default config for " + fileName);
       }
@@ -139,7 +166,55 @@ public class Champions {
   }
 
   public static ResourceLocation getLocation(final String path) {
-    return ResourceLocation.fromNamespaceAndPath(MODID, path);
+    return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+  }
+
+  @SubscribeEvent
+  private void registerRegistries(NewRegistryEvent event) {
+    event.register(ChampionsRegistries.ATTACHMENT_SYNC_HANDLER);
+    event.register(ChampionsRegistries.PROJECTILE_TEMPLATE_TYPE);
+    event.register(ChampionsRegistries.LEVEL_BASED_VALUE_TYPE);
+    event.register(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE);
+    event.register(ChampionsRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
+    event.register(ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE);
+    event.register(ChampionsRegistries.AFFIX_VALUE_EFFECT_TYPE);
+  }
+
+  @SubscribeEvent
+  private void onModifyRegistries(ModifyRegistriesEvent event) {
+    NeoForgeRegistries.ATTACHMENT_TYPES.addCallback(ChampionsRegistryCallbacks.Attachments.INSTANCE);
+  }
+
+  @SubscribeEvent
+  private void registerDataPackRegistries(DataPackRegistryEvent.NewRegistry event) {
+    event.dataPackRegistry(ChampionsRegistries.Keys.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
+  }
+
+  @SubscribeEvent
+  public void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
+    PayloadRegistrar registrar = event.registrar(VERSION);
+    registrar.playToClient(
+      ChampionsSyncAttachmentsPayload.TYPE,
+      ChampionsSyncAttachmentsPayload.STREAM_CODEC,
+      ChampionsClientPayloadHandler::handleSyncAttachment
+    );
+  }
+
+  @SubscribeEvent
+  public void generateData(GatherDataEvent event) {
+    DataGenerator generator = event.getGenerator();
+    ExistingFileHelper helper = event.getExistingFileHelper();
+    PackOutput output = generator.getPackOutput();
+    CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
+    RegistrySetBuilder builder = new RegistrySetBuilder()
+      .add(Registries.DAMAGE_TYPE, ChampionsDamageTypes::bootstrap)
+      .add(ChampionsRegistries.Keys.AFFIX, Affixes::bootstrap);
+    var datapackRegistries = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(ChampionsMod.MOD_ID));
+    lookup = datapackRegistries.getRegistryProvider();
+
+    generator.addProvider(event.includeServer(), datapackRegistries);
+    generator.addProvider(event.includeClient(), new ZhCn(output));
+    generator.addProvider(event.includeClient(), new EnUs(output));
   }
 
   private void setup(final FMLCommonSetupEvent evt) {
@@ -173,7 +248,7 @@ public class Champions {
 
   private void config(final ModConfigEvent.Loading evt) {
 
-    if (!evt.getConfig().getModId().equals(MODID)) {
+    if (!evt.getConfig().getModId().equals(MOD_ID)) {
       return;
     }
 
@@ -193,7 +268,7 @@ public class Champions {
         } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
           ChampionsConfig.transformEntities(commentedConfig);
           EntityManager.buildEntitySettings();
-        } else if (spec == ChampionsConfig.STAGE_SPEC && Champions.gameStagesLoaded) {
+        } else if (spec == ChampionsConfig.STAGE_SPEC && ChampionsMod.gameStagesLoaded) {
           ChampionsConfig.entityStages = ChampionsConfig.STAGE.entityStages.get();
           ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
         }
@@ -208,8 +283,8 @@ public class Champions {
   private void enqueueIMC(final InterModEnqueueEvent event) {
     // register TheOneProbe integration
     if (ModList.get().isLoaded("theoneprobe")) {
-      Champions.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
-      InterModComms.sendTo(MODID, "theoneprobe", "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
+      ChampionsMod.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
+      InterModComms.sendTo(MOD_ID, "theoneprobe", "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
     }
   }
 

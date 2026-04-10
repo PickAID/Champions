@@ -5,13 +5,13 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.function.Supplier;
 
 public final class LevelBasedValues {
-  private static final DeferredRegister<MapCodec<? extends LevelBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.Keys.LEVEL_BASED_VALUE_TYPE, Champions.MODID);
+  private static final DeferredRegister<MapCodec<? extends LevelBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.Keys.LEVEL_BASED_VALUE_TYPE, ChampionsMod.MOD_ID);
   public static final Supplier<MapCodec<Constant>> CONSTANT = register("constant", () -> Constant.MAP_CODEC);
   public static final Supplier<MapCodec<Exponent>> EXPONENT = register("exponent", () -> Exponent.MAP_CODEC);
   public static final Supplier<MapCodec<Fraction>> FRACTION = register("fraction", () -> Fraction.MAP_CODEC);

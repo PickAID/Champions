@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.UnknownNullability;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.ChampionEventsHandler;
@@ -136,7 +136,7 @@ public class ChampionAttachment {
         this.affixes.clear();
 
         for (String affix : affixes) {
-          Champions.API.getAffix(affix).ifPresent(val -> {
+          ChampionsMod.API.getAffix(affix).ifPresent(val -> {
             this.affixes.add(val);
             this.idToAffix.put(val.getIdentifier(), val);
           });
@@ -202,7 +202,7 @@ public class ChampionAttachment {
         for (int i = 0; i < list.size(); i++) {
           CompoundTag tag = list.getCompound(i);
           String id = tag.getString(ID_TAG);
-          Champions.API.getAffix(id).ifPresent(affix -> {
+          ChampionsMod.API.getAffix(id).ifPresent(affix -> {
             affixes.add(affix);
 
             if (tag.contains(DATA_TAG)) {

@@ -3,13 +3,12 @@ package top.theillusivec4.champions.affix;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
-import net.minecraft.world.item.enchantment.TargetedConditionalEffect;
 import net.minecraft.world.item.enchantment.effects.DamageImmunity;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.affix.effects.*;
-import top.theillusivec4.champions.loot.ChampionsLootContextParamSets;
+import top.theillusivec4.champions.world.loot.ChampionsLootContextParamSets;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
 
 import java.util.List;
@@ -21,7 +20,7 @@ public final class AffixEffectComponents {
     var codec = ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE.byNameCodec();
     return DataComponentMap.makeCodec(codec);
   });
-  private static final DeferredRegister<DataComponentType<?>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.Keys.AFFIX_EFFECT_COMPONENT_TYPE, Champions.MODID);
+  private static final DeferredRegister<DataComponentType<?>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.Keys.AFFIX_EFFECT_COMPONENT_TYPE, ChampionsMod.MOD_ID);
   public static final Supplier<DataComponentType<List<AffixLocationBasedEffect>>> INITIALIZE = register("initialize", builder -> builder.persistent(AffixLocationBasedEffect.CODEC.listOf()));
   public static final Supplier<DataComponentType<List<AffixAttributeEffect>>> ATTRIBUTES = register("attributes", builder -> builder.persistent(AffixAttributeEffect.CODEC.listOf()));
   public static final Supplier<DataComponentType<List<ConditionalEffect<AffixValueEffect>>>> DAMAGE_PROTECTION = register("damage_protection", builder -> builder.persistent(ConditionalEffect.codec(AffixValueEffect.CODEC, ChampionsLootContextParamSets.DAMAGE_PROTECTION).listOf()));

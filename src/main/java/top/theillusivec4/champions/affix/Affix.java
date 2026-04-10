@@ -1,63 +1,105 @@
 package top.theillusivec4.champions.affix;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
 import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.item.enchantment.TargetedConditionalEffect;
 import net.minecraft.world.item.enchantment.effects.DamageImmunity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
+import org.jetbrains.annotations.Nullable;
+import snownee.jade.api.ui.IElement;
 import top.theillusivec4.champions.affix.effects.*;
-import top.theillusivec4.champions.loot.ChampionsLootContextParamSets;
-import top.theillusivec4.champions.loot.ChampionsLootContextParams;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.world.loot.ChampionsLootContextParamSets;
+import top.theillusivec4.champions.world.loot.ChampionsLootContextParams;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 public record Affix(
   Component description,
+  AffixDefinition definition,
+  HolderSet<Affix> exclusiveSet,
   DataComponentMap effects
 ) {
   public static final Codec<Affix> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
     ComponentSerialization.CODEC.fieldOf("description").forGetter(Affix::description),
+    AffixDefinition.MAP_CODEC.forGetter(Affix::definition),
+    RegistryCodecs.homogeneousList(ChampionsRegistries.Keys.AFFIX).optionalFieldOf("exclusive_set", HolderSet.empty()).forGetter(Affix::exclusiveSet),
     AffixEffectComponents.CODEC.fieldOf("effects").forGetter(Affix::effects)
   ).apply(instance, Affix::new));
   public static final Codec<Holder<Affix>> REFERENCE_CODEC = RegistryFileCodec.create(ChampionsRegistries.Keys.AFFIX, DIRECT_CODEC, false);
   public static final Codec<HolderSet<Affix>> LIST_CODEC = RegistryCodecs.homogeneousList(ChampionsRegistries.Keys.AFFIX, DIRECT_CODEC);
+  public static final StreamCodec<RegistryFriendlyByteBuf, Holder<Affix>> STREAM_CODEC = ByteBufCodecs.holderRegistry(ChampionsRegistries.Keys.AFFIX);
 
   public static <T> void applyConditionalEffects(List<ConditionalEffect<T>> effects, LootContext context, Consumer<T> consumer) {
     effects.forEach(effect -> effect.apply(context, consumer));
   }
 
+  public static boolean areCompatible(Holder<Affix> affix, Holder<Affix> other) {
+    return !affix.value().equals(other.value()) && !affix.value().exclusiveSet.contains(other) && !other.value().exclusiveSet.contains(affix);
+  }
+
+  public static Affix.Builder affix(AffixDefinition definition) {
+    return new Builder(definition);
+  }
+
+  public static AffixDefinition definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, int maxLevel, int weight) {
+    return new AffixDefinition(
+      Optional.ofNullable(supportedEntityTypes),
+      maxLevel,
+      weight
+    );
+  }
+
+  public static MutableComponent getFullName(Holder<Affix> affix, int level) {
+    MutableComponent component = affix.value().description.copy();
+    if (level != 1 || affix.value().getMaxLevel() != 1) {
+      component.append(CommonComponents.SPACE).append(Component.translatable("enchantment.level." + level));
+    }
+
+    return component;
+  }
+
   public void modifyKnockback(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat knockback) {
-    LootContext context = ChampionsLootContextParamSets.knockback(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    LootContext context = ChampionsUtil.createKnockbackContext(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.KNOCKBACK), context, effect -> knockback.setValue(effect.process(affixLevel, random, knockback.floatValue())));
   }
 
   public void modifyDamage(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat damage) {
-    LootContext context = ChampionsLootContextParamSets.damage(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    LootContext context = ChampionsUtil.createDamageContext(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE), context, effect -> damage.setValue(effect.process(affixLevel, random, damage.floatValue())));
   }
@@ -81,7 +123,7 @@ public record Affix(
   }
 
   public void modifyHeal(ServerLevel level, int affixLevel, Entity victim, MutableFloat heal) {
-    LootContext lootContext = ChampionsLootContextParamSets.heal(level, victim, affixLevel, null);
+    LootContext lootContext = ChampionsUtil.createHealContext(level, victim, affixLevel, null);
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.HEAL), lootContext, effect -> heal.setValue(effect.process(affixLevel, random, heal.floatValue())));
 
@@ -97,7 +139,7 @@ public record Affix(
         };
 
         if (target != null) {
-          LootContext lootContext = ChampionsLootContextParamSets.postAttack(level, target, affixLevel, source, null, source.getEntity(), source.getDirectEntity());
+          LootContext lootContext = ChampionsUtil.createPostAttackContext(level, target, affixLevel, source, null, source.getEntity(), source.getDirectEntity());
 
           if (effect.match(lootContext)) {
             effect.effect().apply(level, affixLevel, victim, target, target.position());
@@ -119,7 +161,7 @@ public record Affix(
   }
 
   public void tickEffects(ServerLevel level, int affixLevel, Entity entity) {
-    LootContext context = ChampionsLootContextParamSets.tick(level, entity, affixLevel, null);
+    LootContext context = ChampionsUtil.createTickContext(level, entity, affixLevel, null);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TICK), context, effect -> effect.apply(level, affixLevel, entity, entity, entity.position()));
   }
 
@@ -134,7 +176,7 @@ public record Affix(
   }
 
   public void modifyDamageProtection(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat protection) {
-    LootContext context = ChampionsLootContextParamSets.damageProtection(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
+    LootContext context = ChampionsUtil.createDamageProtectionContext(level, victim, affixLevel, source, null, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE_PROTECTION), context, effect -> protection.setValue(effect.process(affixLevel, random, protection.floatValue())));
   }
@@ -153,5 +195,112 @@ public record Affix(
 
   public <T> List<T> getEffects(DataComponentType<List<T>> effectComponent) {
     return effects.getOrDefault(effectComponent, List.of());
+  }
+
+  public int getMaxLevel() {
+    return this.definition.maxLevel();
+  }
+
+  public record AffixDefinition(
+    Optional<HolderSet<EntityType<?>>> supportedEntityTypes,
+    int maxLevel,
+    int weight
+  ) {
+    public static final MapCodec<AffixDefinition> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+      RegistryCodecs.homogeneousList(Registries.ENTITY_TYPE).optionalFieldOf("supported_entity_types").forGetter(AffixDefinition::supportedEntityTypes),
+      Codec.intRange(1, 5).optionalFieldOf("max_level", 5).forGetter(AffixDefinition::maxLevel),
+      Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(AffixDefinition::weight)
+    ).apply(instance, AffixDefinition::new));
+  }
+
+
+  public static class Builder {
+    private final AffixDefinition definition;
+    private final DataComponentMap.Builder builder = DataComponentMap.builder();
+    private final Map<DataComponentType<?>, List<?>> effects = new HashMap<>();
+    private HolderSet<Affix> exclusiveSet = HolderSet.empty();
+    private UnaryOperator<MutableComponent> nameFactory = UnaryOperator.identity();
+
+    private Builder(AffixDefinition definition) {
+      this.definition = definition;
+    }
+
+    public Builder exclusiveWith(HolderSet<Affix> set) {
+      this.exclusiveSet = set;
+      return this;
+    }
+
+    public Builder withCustomName(UnaryOperator<MutableComponent> nameFactory) {
+      this.nameFactory = nameFactory;
+      return this;
+    }
+
+    public <E> Builder withSpecialEffect(DataComponentType<E> effectComponent, E effect) {
+      this.builder.set(effectComponent, effect);
+      return this;
+    }
+
+    public <E> Builder withEffects(Supplier<DataComponentType<List<E>>> effectComponent, E effect) {
+      return this.withEffects(effectComponent.get(), effect);
+    }
+
+    public <E> Builder withEffects(DataComponentType<List<E>> effectComponent, E effect) {
+      this.getEffects(effectComponent).add(effect);
+      return this;
+    }
+
+    public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect) {
+      return this.withTargetedConditionalEffects(effectComponent.get(), enchanted, affected, effect);
+    }
+
+    public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect) {
+      this.getEffects(effectComponent).add(TargetedConditionalEffect.create(enchanted, affected, effect));
+      return this;
+    }
+
+    public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
+      return this.withTargetedConditionalEffects(effectComponent.get(), enchanted, affected, effect, builder);
+    }
+
+    public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
+      this.getEffects(effectComponent).add(TargetedConditionalEffect.create(enchanted, affected, effect, builder));
+      return this;
+    }
+
+    public <E> Builder withConditionalEffects(Supplier<DataComponentType<List<ConditionalEffect<E>>>> effectComponent, E effect, LootItemCondition.Builder builder) {
+      return this.withConditionalEffects(effectComponent.get(), effect, builder);
+    }
+
+    public <E> Builder withConditionalEffects(DataComponentType<List<ConditionalEffect<E>>> effectComponent, E effect, LootItemCondition.Builder builder) {
+      this.getEffects(effectComponent).add(ConditionalEffect.create(effect, builder));
+      return this;
+    }
+
+    public <E> Builder withConditionalEffects(Supplier<DataComponentType<List<ConditionalEffect<E>>>> effectComponent, E effect) {
+      return this.withConditionalEffects(effectComponent.get(), effect);
+    }
+
+    public <E> Builder withConditionalEffects(DataComponentType<List<ConditionalEffect<E>>> effectComponent, E effect) {
+      this.getEffects(effectComponent).add(ConditionalEffect.create(effect));
+      return this;
+    }
+
+    public Affix build(ResourceLocation id) {
+      return new Affix(
+        this.nameFactory.apply(Component.translatable(Util.makeDescriptionId("affix", id))),
+        this.definition,
+        this.exclusiveSet,
+        this.builder.build()
+      );
+    }
+
+    private <E> List<E> getEffects(DataComponentType<List<E>> effectComponent) {
+      //noinspection unchecked
+      return (List<E>) this.effects.computeIfAbsent(effectComponent, type -> {
+        List<E> list = new ArrayList<>();
+        builder.set(effectComponent, list);
+        return list;
+      });
+    }
   }
 }

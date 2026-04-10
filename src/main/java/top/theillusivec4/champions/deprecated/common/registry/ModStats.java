@@ -7,14 +7,14 @@ import net.minecraft.stats.Stats;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ModStats {
 
-  private static final DeferredRegister<ResourceLocation> CHAMPIONS_STATS = DeferredRegister.create(BuiltInRegistries.CUSTOM_STAT, Champions.MODID);
+  private static final DeferredRegister<ResourceLocation> CHAMPIONS_STATS = DeferredRegister.create(BuiltInRegistries.CUSTOM_STAT, ChampionsMod.MOD_ID);
   private static final Map<ResourceLocation, StatFormatter> CUSTOM_STAT_FORMATTERS = new HashMap<>();
   public static final DeferredHolder<ResourceLocation, ResourceLocation> CHAMPION_MOBS_KILLED = makeCustomStat("champion_mobs_killed", StatFormatter.DEFAULT);
 

@@ -5,13 +5,13 @@ import net.minecraft.world.effect.MobEffect;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.common.potion.ParalysisEffect;
 import top.theillusivec4.champions.deprecated.common.potion.WoundEffect;
 
 public class ModMobEffects {
 
-  private static final DeferredRegister<MobEffect> MOB_EFFECT = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, Champions.MODID);
+  private static final DeferredRegister<MobEffect> MOB_EFFECT = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, ChampionsMod.MOD_ID);
 
   public static DeferredHolder<MobEffect, ParalysisEffect> PARALYSIS_EFFECT_TYPE;
   public static DeferredHolder<MobEffect, WoundEffect> WOUND_EFFECT_TYPE;

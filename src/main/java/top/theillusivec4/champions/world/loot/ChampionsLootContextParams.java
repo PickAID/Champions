@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.loot;
+package top.theillusivec4.champions.world.loot;
 
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import top.theillusivec4.champions.damage.Damage;

@@ -8,6 +8,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
@@ -20,7 +21,13 @@ public final class AllOf {
       codec.listOf().fieldOf("effects").forGetter(accessor)
     ).apply(instance, constructor));
   }
+  public static AffixEntityEffect entityEffects(AffixEntityEffect... effects) {
+    return new AllOf.EntityEffects(Arrays.stream(effects).toList());
+  }
 
+  public static AffixValueEffect valueEffects(AffixValueEffect... effects) {
+    return new AllOf.ValueEffects(Arrays.stream(effects).toList());
+  }
   public record ValueEffects(List<AffixValueEffect> effects) implements AffixValueEffect {
     public static final MapCodec<ValueEffects> MAP_CODEC = AllOf.codec(AffixValueEffect.CODEC, ValueEffects::new, ValueEffects::effects);
 

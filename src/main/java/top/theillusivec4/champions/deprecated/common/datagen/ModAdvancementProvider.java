@@ -16,7 +16,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.common.loot.ChampionPropertyCondition;
 
 import java.util.List;
@@ -59,7 +59,7 @@ public class ModAdvancementProvider extends AdvancementProvider {
             Optional.of(new ChampionPropertyCondition.AffixesPredicate(Set.of("hasty", "dampening", "enkindling"), MinMaxBounds.Ints.atLeast(1), MinMaxBounds.Ints.atLeast(1))))
           )))
         .requirements(AdvancementRequirements.allOf(List.of("kill_a_champion")))
-        .save(saver, Champions.getLocation("kill_a_champion"), existingFileHelper).value();
+        .save(saver, ChampionsMod.getLocation("kill_a_champion"), existingFileHelper).value();
     }
   }
 }

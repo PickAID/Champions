@@ -12,7 +12,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
-import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.deprecated.common.config.AffixesConfig.AffixConfig;
 import top.theillusivec4.champions.deprecated.common.config.ConfigEnums.LootSource;
 import top.theillusivec4.champions.deprecated.common.config.ConfigEnums.Permission;
@@ -37,7 +37,7 @@ public class ChampionsConfig {
   public static final Affixes AFFIXES;
   public static final ModConfigSpec ENTITIES_SPEC;
   public static final Entities ENTITIES;
-  private static final String CONFIG_PREFIX = "gui." + Champions.MODID + ".config.";
+  private static final String CONFIG_PREFIX = "gui." + ChampionsMod.MOD_ID + ".config.";
   public static List<RankConfig> ranks;
   public static List<AffixConfig> affixes;
   public static List<EntityConfig> entities;
@@ -244,7 +244,7 @@ public class ChampionsConfig {
       }
     } catch (IllegalArgumentException e) {
       plaguedEffect = new MobEffectInstance(MobEffects.POISON, 300, 0);
-      Champions.LOGGER.error("Error parsing plaguedEffect config value!");
+      ChampionsMod.LOGGER.error("Error parsing plaguedEffect config value!");
     }
 
     reflectiveLethal = SERVER.reflectiveLethal.get();

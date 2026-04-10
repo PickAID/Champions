@@ -27,6 +27,14 @@ public record ConditionalEffect<T>(T effect, Optional<LootItemCondition> require
       );
   }
 
+  public static <T> ConditionalEffect<T> create(T effect) {
+    return new ConditionalEffect<>(effect, Optional.empty());
+  }
+
+  public static <T> ConditionalEffect<T> create(T effect, LootItemCondition.Builder builder) {
+    return new ConditionalEffect<>(effect, Optional.of(builder.build()));
+  }
+
   public static <T> Codec<ConditionalEffect<T>> codec(Codec<T> effectCodec, LootContextParamSet params) {
     return RecordCodecBuilder.create(instance -> instance.group(
       effectCodec.fieldOf("effect").forGetter(ConditionalEffect::effect),
