@@ -1,10 +1,10 @@
-package top.theillusivec4.champions.world.loot;
+package top.theillusivec4.champions.world.loot.parameters;
 
 import com.google.common.collect.BiMap;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import top.theillusivec4.champions.extralootparam.ExtraLootParamHelper;
 import top.theillusivec4.champions.mixin.LootContextParamSetsAccessor;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
@@ -16,26 +16,26 @@ public final class ChampionsLootContextParamSets {
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
   );
   public static final LootContextParamSet LOCATION = register(
     "location",
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
   );
   public static final LootContextParamSet ATTRIBUTES = register("attribute",
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
   );
   public static final LootContextParamSet KNOCKBACK = register("knockback",
     builder -> builder.required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
-      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -44,8 +44,7 @@ public final class ChampionsLootContextParamSets {
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
-      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -53,16 +52,14 @@ public final class ChampionsLootContextParamSets {
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
-      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
   );
   public static final LootContextParamSet POST_ATTACK = register("post_attack",
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
-      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -72,8 +69,7 @@ public final class ChampionsLootContextParamSets {
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
-      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -82,8 +78,7 @@ public final class ChampionsLootContextParamSets {
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
-      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
@@ -91,8 +86,7 @@ public final class ChampionsLootContextParamSets {
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
-      .required(ChampionsLootContextParams.CHAMPION_LEVEL)
-      .optional(ChampionsLootContextParams.LATEST_DAMAGE)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
   );
 
   private ChampionsLootContextParamSets() {
@@ -102,6 +96,7 @@ public final class ChampionsLootContextParamSets {
     BiMap<ResourceLocation, LootContextParamSet> registry = LootContextParamSetsAccessor.getRegistry();
     LootContextParamSet.Builder builder = new LootContextParamSet.Builder();
     consumer.accept(builder);
+    ExtraLootParamHelper.addExtraParameters(builder);
     ResourceLocation id = ChampionsUtil.id(name);
     LootContextParamSet set = builder.build();
     LootContextParamSet set1 = registry.put(id, set);

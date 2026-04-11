@@ -1,6 +1,5 @@
 package top.theillusivec4.champions.champion;
 
-import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import top.theillusivec4.champions.affix.AffixContainer;
@@ -49,11 +48,11 @@ public abstract class ChampionsBossEvent {
     this.progress = Math.clamp(progress, 0.0f, 1.0f);
   }
 
-  public int getLevel() {
+  public int getTier() {
     return level;
   }
 
-  public void setLevel(int level) {
+  public void setTier(int level) {
     this.level = level;
   }
 

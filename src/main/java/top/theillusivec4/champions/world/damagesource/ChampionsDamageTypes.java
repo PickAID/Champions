@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.world.damage;
+package top.theillusivec4.champions.world.damagesource;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;

@@ -3,13 +3,13 @@ package top.theillusivec4.champions.affix;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
-import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 
 import java.util.function.Function;
 
 public interface LevelBasedValue {
   Codec<LevelBasedValue> CODEC = Codec.lazyInitialized(() -> {
-    Codec<LevelBasedValue> codec = ChampionsRegistries.LEVEL_BASED_VALUE_TYPE.byNameCodec().dispatch(LevelBasedValue::codec, Function.identity());
+    Codec<LevelBasedValue> codec = ChampionsBuiltInRegistries.LEVEL_BASED_VALUE_TYPE.byNameCodec().dispatch(LevelBasedValue::codec, Function.identity());
     return Codec.either(LevelBasedValues.Constant.DIRECT_CODEC, codec)
       .xmap(
         either -> either.map(Function.identity(), Function.identity()),

@@ -4,44 +4,32 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceKey;
-import net.neoforged.neoforge.registries.RegistryBuilder;
 import top.theillusivec4.champions.affix.Affix;
 import top.theillusivec4.champions.affix.LevelBasedValue;
 import top.theillusivec4.champions.affix.ProjectileTemplate;
 import top.theillusivec4.champions.affix.effects.AffixEntityEffect;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffect;
 import top.theillusivec4.champions.affix.effects.AffixValueEffect;
+import top.theillusivec4.champions.affix.provider.AffixProvider;
+import top.theillusivec4.champions.champion.Rank;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public final class ChampionsRegistries {
-  public static final Registry<MapCodec<? extends ProjectileTemplate>> PROJECTILE_TEMPLATE_TYPE = register(Keys.PROJECTILE_TEMPLATE_TYPE);
-  public static final Registry<MapCodec<? extends LevelBasedValue>> LEVEL_BASED_VALUE_TYPE = register(Keys.LEVEL_BASED_VALUE_TYPE);
-  public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = register(Keys.AFFIX_EFFECT_COMPONENT_TYPE);
-  public static final Registry<MapCodec<? extends AffixLocationBasedEffect>> AFFIX_LOCATION_BASED_EFFECT_TYPE = register(Keys.AFFIX_LOCATION_BASED_EFFECT_TYPE);
-  public static final Registry<MapCodec<? extends AffixEntityEffect>> AFFIX_ENTITY_EFFECT_TYPE = register(Keys.AFFIX_ENTITY_EFFECT_TYPE);
-  public static final Registry<MapCodec<? extends AffixValueEffect>> AFFIX_VALUE_EFFECT_TYPE = register(Keys.AFFIX_VALUE_EFFECT_TYPE);
+  public static final ResourceKey<Registry<AffixProvider>> AFFIX_PROVIDER = register("affix_provider");
+  public static final ResourceKey<Registry<MapCodec<? extends AffixProvider>>> AFFIX_PROVIDER_TYPE = register("affix_provider_type");
+  public static final ResourceKey<Registry<MapCodec<? extends ProjectileTemplate>>> PROJECTILE_TEMPLATE_TYPE = register("projectile_template_type");
+  public static final ResourceKey<Registry<Affix>> AFFIX = register("affix");
+  public static final ResourceKey<Registry<MapCodec<? extends LevelBasedValue>>> LEVEL_BASED_VALUE_TYPE = register("level_based_value_type");
+  public static final ResourceKey<Registry<DataComponentType<?>>> AFFIX_EFFECT_COMPONENT_TYPE = register("affix_effect_component_type");
+  public static final ResourceKey<Registry<MapCodec<? extends AffixLocationBasedEffect>>> AFFIX_LOCATION_BASED_EFFECT_TYPE = register("affix_location_based_effect_type");
+  public static final ResourceKey<Registry<MapCodec<? extends AffixEntityEffect>>> AFFIX_ENTITY_EFFECT_TYPE = register("affix_entity_effect_type");
+  public static final ResourceKey<Registry<MapCodec<? extends AffixValueEffect>>> AFFIX_VALUE_EFFECT_TYPE = register("affix_value_effect_type");
+  public static final ResourceKey<Registry<Rank>> RANK = register("rank");
 
   private ChampionsRegistries() {
   }
 
-  private static <T> Registry<T> register(ResourceKey<Registry<T>> registryKey) {
-    return new RegistryBuilder<>(registryKey).sync(true).create();
-  }
-
-  public static final class Keys {
-    public static final ResourceKey<Registry<MapCodec<? extends ProjectileTemplate>>> PROJECTILE_TEMPLATE_TYPE = register("projectile_template_type");
-    public static final ResourceKey<Registry<Affix>> AFFIX = register("affix");
-    public static final ResourceKey<Registry<MapCodec<? extends LevelBasedValue>>> LEVEL_BASED_VALUE_TYPE = register("level_based_value_type");
-    public static final ResourceKey<Registry<DataComponentType<?>>> AFFIX_EFFECT_COMPONENT_TYPE = register("affix_effect_component_type");
-    public static final ResourceKey<Registry<MapCodec<? extends AffixLocationBasedEffect>>> AFFIX_LOCATION_BASED_EFFECT_TYPE = register("affix_location_based_effect_type");
-    public static final ResourceKey<Registry<MapCodec<? extends AffixEntityEffect>>> AFFIX_ENTITY_EFFECT_TYPE = register("affix_entity_effect_type");
-    public static final ResourceKey<Registry<MapCodec<? extends AffixValueEffect>>> AFFIX_VALUE_EFFECT_TYPE = register("affix_value_effect_type");
-
-    private Keys() {
-    }
-
-    private static <T> ResourceKey<Registry<T>> register(String name) {
-      return ResourceKey.createRegistryKey(ChampionsUtil.id(name));
-    }
+  private static <T> ResourceKey<Registry<T>> register(String name) {
+    return ResourceKey.createRegistryKey(ChampionsUtil.id(name));
   }
 }

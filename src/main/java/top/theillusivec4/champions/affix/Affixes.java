@@ -35,8 +35,9 @@ import top.theillusivec4.champions.affix.effects.*;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tags.AffixTags;
 import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.damage.ChampionsDamageTypes;
+import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
+import top.theillusivec4.champions.world.loot.predicates.DamageCountCondition;
 
 public final class Affixes {
   public static final ResourceKey<Affix> ADAPTABLE = register("adaptable");
@@ -60,7 +61,7 @@ public final class Affixes {
   }
 
   private static ResourceKey<Affix> register(String name) {
-    return ResourceKey.create(ChampionsRegistries.Keys.AFFIX, ChampionsUtil.id(name));
+    return ResourceKey.create(ChampionsRegistries.AFFIX, ChampionsUtil.id(name));
   }
 
   private static void register(BootstrapContext<Affix> context, ResourceKey<Affix> key, Affix.Builder builder) {
@@ -68,7 +69,7 @@ public final class Affixes {
   }
 
   public static void bootstrap(BootstrapContext<Affix> context) {
-    HolderGetter<Affix> affixes = context.lookup(ChampionsRegistries.Keys.AFFIX);
+    HolderGetter<Affix> affixes = context.lookup(ChampionsRegistries.AFFIX);
     HolderGetter<DamageType> damages = context.lookup(Registries.DAMAGE_TYPE);
     /*
       适应
@@ -76,28 +77,28 @@ public final class Affixes {
 
       新：当伤害类型与上一次所受伤害类型相同时，每一级提供0.15伤害减免
      */
-//    register(
-//      context,
-//      ADAPTABLE,
-//      Affix.affix(
-//          Affix.definition(
-//            null,
-//            5,
-//            5
-//          )
-//        )
-//        .withConditionalEffects(
-//          AffixEffectComponents.DAMAGE_PROTECTION,
-//          AffixValueEffect.add(
-//            LevelBasedValue.linear(
-//              LevelBasedValue.constant(0.15f),
-//              LevelBasedValue.constant(0.15f)
-//            )
-//          ),
-//          LatestDamageCondition.builder()
-//        )
-//        .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE))
-//    );
+    register(
+      context,
+      ADAPTABLE,
+      Affix.affix(
+          Affix.definition(
+            null,
+            5,
+            5
+          )
+        )
+        .withConditionalEffects(
+          AffixEffectComponents.DAMAGE_PROTECTION,
+          AffixValueEffect.add(
+            LevelBasedValue.linear(
+              LevelBasedValue.constant(0.15f),
+              LevelBasedValue.constant(0.15f)
+            )
+          ),
+          DamageCountCondition.builder()
+        )
+        .exclusiveWith(affixes.getOrThrow(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE))
+    );
     /*
       严寒
         旧：每60刻发射一个会追踪目标的寒冰子弹

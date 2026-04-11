@@ -14,7 +14,7 @@ public final class AffixTags {
   public static final TagKey<Affix> CURSE = create("curse");
 
   private static TagKey<Affix> create(String name) {
-    return TagKey.create(ChampionsRegistries.Keys.AFFIX, ChampionsUtil.id(name));
+    return TagKey.create(ChampionsRegistries.AFFIX, ChampionsUtil.id(name));
   }
   private AffixTags() {
   }

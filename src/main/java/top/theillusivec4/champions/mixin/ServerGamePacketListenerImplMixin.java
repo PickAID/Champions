@@ -5,6 +5,7 @@
 //import net.minecraft.network.protocol.game.GameProtocols;
 //import net.minecraft.network.protocol.game.ServerGamePacketListener;
 //import net.minecraft.network.protocol.game.ServerboundPickItemFromEntityPacket;
+//import net.minecraft.network.protocol.game.ServerboundPickItemPacket;
 //import net.minecraft.server.MinecraftServer;
 //import net.minecraft.server.level.ServerLevel;
 //import net.minecraft.server.level.ServerPlayer;
@@ -37,8 +38,8 @@
 //	@Shadow
 //	protected abstract void tryPickItem(ItemStack stack);
 //
-//	@Inject(method = "handlePickItemFromEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;tryPickItem(Lnet/minecraft/world/item/ItemStack;)V"), cancellable = true)
-//	private void modifyItemStack(ServerboundPickItemFromEntityPacket packet, CallbackInfo ci) {
+//	@Inject(method = "handlePickItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;tryPickItem(Lnet/minecraft/world/item/ItemStack;)V"), cancellable = true)
+//	private void modifyItemStack(ServerboundPickItemPacket packet, CallbackInfo ci) {
 //		ServerLevel serverLevel = this.player.level();
 //		Entity entity = serverLevel.getEntity(packet.id());
 //		if (entity != null) {

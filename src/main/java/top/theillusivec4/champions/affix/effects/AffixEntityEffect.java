@@ -23,14 +23,14 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.affix.LevelBasedValue;
 import top.theillusivec4.champions.affix.ProjectileTemplate;
-import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Function;
 
 public interface AffixEntityEffect extends AffixLocationBasedEffect {
-  Codec<AffixEntityEffect> CODEC = Codec.lazyInitialized(() -> ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE.byNameCodec().dispatch(AffixEntityEffect::codec, Function.identity()));
+  Codec<AffixEntityEffect> CODEC = Codec.lazyInitialized(() -> ChampionsBuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE.byNameCodec().dispatch(AffixEntityEffect::codec, Function.identity()));
 
   static AffixLocationBasedEffect attribute(ResourceLocation id, Holder<Attribute> attribute, LevelBasedValue amount, AttributeModifier.Operation operation) {
     return new AffixAttributeEffect(id, attribute, amount, operation);

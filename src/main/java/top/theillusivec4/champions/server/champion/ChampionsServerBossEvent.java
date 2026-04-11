@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.server.boss;
+package top.theillusivec4.champions.server.champion;
 
 import com.google.common.collect.Sets;
 import com.mojang.serialization.Codec;
@@ -26,7 +26,7 @@ public class ChampionsServerBossEvent extends ChampionsBossEvent {
     UUIDUtil.CODEC.fieldOf("id").forGetter(ChampionsBossEvent::getId),
     ComponentSerialization.CODEC.fieldOf("name").forGetter(ChampionsBossEvent::getName),
     Codec.FLOAT.fieldOf("progress").forGetter(ChampionsBossEvent::getProgress),
-    Codec.INT.fieldOf("level").forGetter(ChampionsBossEvent::getLevel),
+    Codec.INT.fieldOf("level").forGetter(ChampionsBossEvent::getTier),
     TextColor.CODEC.fieldOf("color").forGetter(ChampionsBossEvent::getColor),
     AffixContainer.MAP_CODEC.codec().optionalFieldOf("affixes", AffixContainer.EMPTY).forGetter(ChampionsBossEvent::getAffixes)
   ).apply(instance, ChampionsServerBossEvent::new));
@@ -37,33 +37,32 @@ public class ChampionsServerBossEvent extends ChampionsBossEvent {
     super(id, name, progress, level, color, affixes);
   }
 
-  public Set<ServerPlayer> getPlayers() {
-    return unmodifiablePlayers;
-  }
-
   public ChampionsServerBossEvent(UUID id, Component name) {
     super(id, name);
   }
 
+  public Set<ServerPlayer> getPlayers() {
+    return unmodifiablePlayers;
+  }
+
   @Override
   public void setProgress(float progress) {
-    if (this != EMPTY) {
+    if (this != EMPTY && this.getProgress() != progress) {
       super.setProgress(progress);
       this.broadcast(ChampionsBossEventPayload::createUpdateProgress);
     }
   }
 
-  @Override
-  public void setLevel(int level) {
-    if (this != EMPTY) {
-      super.setLevel(level);
+  public void setTier(int tier) {
+    if (this != EMPTY && this.getTier() != tier) {
+      super.setTier(tier);
       this.broadcast(ChampionsBossEventPayload::createUpdateLevel);
     }
   }
 
   @Override
   public void setColor(TextColor color) {
-    if (this != EMPTY) {
+    if (this != EMPTY && !this.getColor().equals(color)) {
       super.setColor(color);
       this.broadcast(ChampionsBossEventPayload::createUpdateColor);
     }
@@ -71,7 +70,7 @@ public class ChampionsServerBossEvent extends ChampionsBossEvent {
 
   @Override
   public void setAffixes(AffixContainer affixes) {
-    if (this != EMPTY) {
+    if (this != EMPTY && !this.getAffixes().equals(affixes)) {
       super.setAffixes(affixes);
       this.broadcast(ChampionsBossEventPayload::createUpdateAffixes);
     }

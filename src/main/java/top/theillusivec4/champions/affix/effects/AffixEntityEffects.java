@@ -37,14 +37,14 @@ import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.affix.LevelBasedValue;
 import top.theillusivec4.champions.affix.ProjectileTemplate;
-import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 import top.theillusivec4.champions.util.ProjectileUtil;
 
 import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class AffixEntityEffects {
-  private static final DeferredRegister<MapCodec<? extends AffixEntityEffect>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<MapCodec<? extends AffixEntityEffect>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsBuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE, ChampionsMod.MOD_ID);
   public static final Supplier<MapCodec<DamageEntity>> DAMAGE_ENTITY = register("damage", () -> DamageEntity.MAP_CODEC);
   public static final Supplier<MapCodec<AllOf.EntityEffects>> ALL_OF = register("all_of", () -> AllOf.EntityEffects.MAP_CODEC);
   public static final Supplier<MapCodec<ApplyMobEffect>> APPLY_MOB_EFFECT = register("apply_mob_effect", () -> ApplyMobEffect.MAP_CODEC);

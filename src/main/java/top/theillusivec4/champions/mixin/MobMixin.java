@@ -7,12 +7,14 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.theillusivec4.champions.affix.AffixHelper;
+import top.theillusivec4.champions.spawnegg.SpawnEggHelper;
 
 @Mixin(value = Mob.class)
 public abstract class MobMixin extends LivingEntity {
@@ -24,6 +26,14 @@ public abstract class MobMixin extends LivingEntity {
   private void champions$doHurtTarget(Entity entity, CallbackInfoReturnable<Boolean> cir, @Local DamageSource damageSource) {
     if (this.level() instanceof ServerLevel level) {
       AffixHelper.doPostAttackEffects(level, entity, damageSource);
+    }
+  }
+
+  @Inject(method = "getPickResult", at = @At(value = "RETURN"))
+  private void champions$getPickResult(CallbackInfoReturnable<ItemStack> cir) {
+    ItemStack itemStack = cir.getReturnValue();
+    if (itemStack != null) {
+      SpawnEggHelper.modifyPickResult(itemStack, this);
     }
   }
 }

@@ -6,9 +6,9 @@
   "mixins": [
     "AbstractArrowMixin",
     "AbstractWindChargeMixin",
-    "AttachmentHolderMixin",
     "BeeMixin",
     "EnderDragonMixin",
+    "EntityTypeMixin",
     "EvokerFangsMixin",
     "HoglinBaseMixin",
     "IronGolemMixin",
@@ -22,6 +22,7 @@
     "ShulkerBulletMixin",
     "SlimeMixin",
     "SmallFireballMixin",
+    "WitherBossMixin",
     "WitherSkullMixin"
   ],
   "client": [

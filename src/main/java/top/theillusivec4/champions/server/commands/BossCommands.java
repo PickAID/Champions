@@ -45,7 +45,7 @@ public final class BossCommands {
   private static int set(CommandSourceStack source, Collection<? extends Entity> entities) throws CommandSyntaxException {
     int i = 0;
     for (Entity entity : entities) {
-      ChampionHelper.setBoss(entity);
+      ChampionHelper.setBoss(entity, true);
       i++;
     }
 
@@ -71,7 +71,7 @@ public final class BossCommands {
     TextColor color1 = TextColor.fromLegacyFormat(color);
     if (color1 != null) {
       for (Entity entity : entities) {
-        ChampionHelper.setNameColor(entity, color1);
+        ChampionHelper.setColor(entity, color1);
         i++;
       }
     }

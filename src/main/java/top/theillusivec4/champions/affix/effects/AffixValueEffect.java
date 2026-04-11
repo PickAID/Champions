@@ -4,13 +4,13 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.util.RandomSource;
 import top.theillusivec4.champions.affix.LevelBasedValue;
-import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 
 import java.util.Arrays;
 import java.util.function.Function;
 
 public interface AffixValueEffect {
-  Codec<AffixValueEffect> CODEC = Codec.lazyInitialized(() -> ChampionsRegistries.AFFIX_VALUE_EFFECT_TYPE.byNameCodec().dispatch(AffixValueEffect::codec, Function.identity()));
+  Codec<AffixValueEffect> CODEC = Codec.lazyInitialized(() -> ChampionsBuiltInRegistries.AFFIX_VALUE_EFFECT_TYPE.byNameCodec().dispatch(AffixValueEffect::codec, Function.identity()));
 
   static AffixValueEffect allOf(AffixValueEffect... effects) {
     return new AllOf.ValueEffects(Arrays.stream(effects).toList());

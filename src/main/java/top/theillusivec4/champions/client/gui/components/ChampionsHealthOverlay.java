@@ -49,8 +49,8 @@ public final class ChampionsHealthOverlay {
       if (entity != null) {
         if (entity instanceof LivingEntity livingEntity && !ChampionHelper.isBoss(entity)) {
           ChampionsClientBossEvent event = new ChampionsClientBossEvent(entity.getUUID(), ChampionHelper.getDisplayName(entity));
-          event.setLevel(ChampionHelper.getLevel(entity));
-          event.setColor(ChampionHelper.getNameColor(entity));
+          event.setTier(ChampionHelper.getTier(entity));
+          event.setColor(ChampionHelper.getColor(entity));
           event.setProgress(Math.clamp(livingEntity.getHealth() / livingEntity.getMaxHealth(), 0.0f, 1.0f));
           event.setAffixes(AffixHelper.get(entity));
           this.render(graphics, event);
@@ -96,14 +96,14 @@ public final class ChampionsHealthOverlay {
     int startX;
     int startY = y;
     // 显示等级
-    if (event.getLevel() <= 9) {
+    if (event.getTier() <= 9) {
       // 小于5的等级⭐⭐⭐⭐⭐
-      startX = guiGraphics.guiWidth() / 2 - 5 - 5 * (event.getLevel() - 1);
+      startX = guiGraphics.guiWidth() / 2 - 5 - 5 * (event.getTier() - 1);
       this.drawStar(guiGraphics, startX, startY, event);
     } else {
       // 处理过高的等级 ⭐x6
       startX = guiGraphics.guiWidth() / 2 - 5;
-      String msg = "x" + event.getLevel();
+      String msg = "x" + event.getTier();
       guiGraphics.blit(STAR_TEXTURES, startX - this.getClient().font.width(msg) / 2, startY, 0, 0, 9, 9, 9, 9, event.getColor().getValue());
       startX = startX + 10 - this.getClient().font.width(msg) / 2;
       guiGraphics.drawString(this.getClient().font, msg, startX, startY, -1, true);
@@ -148,7 +148,7 @@ public final class ChampionsHealthOverlay {
     float b = (float) FastColor.ARGB32.blue(color) / 255F;
     RenderSystem.setShaderColor(r, g, b, 1.0F);
     RenderSystem.enableBlend();
-    for (int i = 0; i < event.getLevel(); i++) {
+    for (int i = 0; i < event.getTier(); i++) {
 //      guiGraphics.blit(STAR, x, y, 0, 0, 9, 9, 9, 9, event.getColor().getValue());
       guiGraphics.blit(STAR_TEXTURES, x, y, 0, 0, 9, 9, 9, 9);
       x += 10;
@@ -202,7 +202,7 @@ public final class ChampionsHealthOverlay {
     public void updateLevel(UUID id, int level) {
       ChampionsClientBossEvent event = ChampionsHealthOverlay.this.events.get(id);
       if (event != null) {
-        event.setLevel(level);
+        event.setTier(level);
       }
     }
 

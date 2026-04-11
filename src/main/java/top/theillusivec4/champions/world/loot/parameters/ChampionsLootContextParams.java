@@ -1,12 +1,12 @@
-package top.theillusivec4.champions.world.loot;
+package top.theillusivec4.champions.world.loot.parameters;
 
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
-import top.theillusivec4.champions.damage.Damage;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public final class ChampionsLootContextParams {
-  public static final LootContextParam<Integer> CHAMPION_LEVEL = create("champion_level");
-  public static final LootContextParam<Damage> LATEST_DAMAGE = create("latest_damage");
+  public static final LootContextParam<Integer> AFFIX_LEVEL = create("affix_level");
+  public static final LootContextParam<Integer> CHAMPION_TIER = create("champion_tier");
+  public static final LootContextParam<Integer> DAMAGE_COUNT = create("damage_count");
 
   private ChampionsLootContextParams() {
   }

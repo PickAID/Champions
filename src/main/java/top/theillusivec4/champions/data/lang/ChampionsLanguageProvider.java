@@ -5,6 +5,7 @@ import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.affix.Affix;
+import top.theillusivec4.champions.champion.Rank;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public abstract class ChampionsLanguageProvider extends LanguageProvider {
@@ -20,7 +21,15 @@ public abstract class ChampionsLanguageProvider extends LanguageProvider {
     this.add(ChampionsUtil.makeDescriptionId("affix", key.location()), name);
   }
 
+  protected final void addRank(ResourceKey<Rank> key, String name) {
+    this.add(ChampionsUtil.makeDescriptionId("rank", key.location()), name);
+  }
+
   protected final void addAffixLevel(int level, String name) {
     this.add("champions.affix.level." + level, name);
+  }
+
+  protected final void addChampionTier(int tier, String name) {
+    this.add("champions.champion.tier." + tier, name);
   }
 }

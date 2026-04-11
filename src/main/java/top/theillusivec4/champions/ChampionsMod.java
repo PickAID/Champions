@@ -55,6 +55,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
+import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,9 +63,14 @@ import top.theillusivec4.champions.affix.*;
 import top.theillusivec4.champions.affix.effects.AffixEntityEffects;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffects;
 import top.theillusivec4.champions.affix.effects.AffixValueEffects;
+import top.theillusivec4.champions.affix.provider.AffixProvider;
+import top.theillusivec4.champions.affix.provider.AffixProviders;
 import top.theillusivec4.champions.attachments.ChampionsAttachments;
+import top.theillusivec4.champions.champion.Rank;
+import top.theillusivec4.champions.champion.Ranks;
 import top.theillusivec4.champions.client.network.ChampionsClientPayloadHandler;
 import top.theillusivec4.champions.component.ChampionsDataComponents;
+import top.theillusivec4.champions.data.ChampionsDataMapProvider;
 import top.theillusivec4.champions.data.lang.EnUs;
 import top.theillusivec4.champions.data.lang.ZhCn;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
@@ -90,10 +96,14 @@ import top.theillusivec4.champions.deprecated.server.command.ChampionSelectorOpt
 import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
 import top.theillusivec4.champions.particles.ChampionsParticleTypes;
+import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
+import top.theillusivec4.champions.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
-import top.theillusivec4.champions.world.damage.ChampionsDamageTypes;
+import top.theillusivec4.champions.server.ChampionsServerConfig;
+import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
+import top.theillusivec4.champions.world.loot.predicates.ChampionsLootItemConditions;
 
 import java.io.File;
 import java.io.IOException;
@@ -116,17 +126,20 @@ public class ChampionsMod {
   public ChampionsMod(IEventBus modEventBus, ModContainer modContainer) {
     // New
     modEventBus.register(this);
+    modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsServerConfig.SPEC);
     ChampionsAttachments.register(modEventBus);
     ChampionsDataComponents.register(modEventBus);
     ChampionsEntityTypes.register(modEventBus);
     ChampionsMobEffects.register(modEventBus);
     ChampionsParticleTypes.register(modEventBus);
+    ChampionsLootItemConditions.register(modEventBus);
     AffixEffectComponents.register(modEventBus);
     ProjectileTemplates.register(modEventBus);
     LevelBasedValues.register(modEventBus);
     AffixLocationBasedEffects.register(modEventBus);
     AffixEntityEffects.register(modEventBus);
     AffixValueEffects.register(modEventBus);
+    AffixProviders.register(modEventBus);
     // Old
 //    modEventBus.addListener(this::enqueueIMC);
 //    modEventBus.addListener(this::registerNetwork);
@@ -168,21 +181,25 @@ public class ChampionsMod {
 
   @SubscribeEvent
   private void registerRegistries(NewRegistryEvent event) {
-    event.register(ChampionsRegistries.PROJECTILE_TEMPLATE_TYPE);
-    event.register(ChampionsRegistries.LEVEL_BASED_VALUE_TYPE);
-    event.register(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE);
-    event.register(ChampionsRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
-    event.register(ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE);
-    event.register(ChampionsRegistries.AFFIX_VALUE_EFFECT_TYPE);
+    event.register(ChampionsBuiltInRegistries.AFFIX_PROVIDER_TYPE);
+    event.register(ChampionsBuiltInRegistries.PROJECTILE_TEMPLATE_TYPE);
+    event.register(ChampionsBuiltInRegistries.LEVEL_BASED_VALUE_TYPE);
+    event.register(ChampionsBuiltInRegistries.AFFIX_EFFECT_COMPONENT_TYPE);
+    event.register(ChampionsBuiltInRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
+    event.register(ChampionsBuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE);
+    event.register(ChampionsBuiltInRegistries.AFFIX_VALUE_EFFECT_TYPE);
   }
 
   @SubscribeEvent
   private void onModifyRegistries(ModifyRegistriesEvent event) {
+
   }
 
   @SubscribeEvent
   private void registerDataPackRegistries(DataPackRegistryEvent.NewRegistry event) {
-    event.dataPackRegistry(ChampionsRegistries.Keys.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.AFFIX_PROVIDER, AffixProvider.DIRECT_CODEC, AffixProvider.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
   }
 
   @SubscribeEvent
@@ -196,6 +213,11 @@ public class ChampionsMod {
   }
 
   @SubscribeEvent
+  public void registerDataMaps(RegisterDataMapTypesEvent event) {
+    event.register(ChampionsDataMaps.AFFIXABLE);
+  }
+
+  @SubscribeEvent
   public void generateData(GatherDataEvent event) {
     DataGenerator generator = event.getGenerator();
     ExistingFileHelper helper = event.getExistingFileHelper();
@@ -203,10 +225,12 @@ public class ChampionsMod {
     CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
     RegistrySetBuilder builder = new RegistrySetBuilder()
       .add(Registries.DAMAGE_TYPE, ChampionsDamageTypes::bootstrap)
-      .add(ChampionsRegistries.Keys.AFFIX, Affixes::bootstrap);
+      .add(ChampionsRegistries.AFFIX, Affixes::bootstrap)
+      .add(ChampionsRegistries.RANK, Ranks::bootstrap);
     var datapackRegistries = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(ChampionsMod.MOD_ID));
     lookup = datapackRegistries.getRegistryProvider();
 
+    generator.addProvider(event.includeServer(), new ChampionsDataMapProvider(output, lookup));
     generator.addProvider(event.includeServer(), datapackRegistries);
     generator.addProvider(event.includeClient(), new ZhCn(output));
     generator.addProvider(event.includeClient(), new EnUs(output));

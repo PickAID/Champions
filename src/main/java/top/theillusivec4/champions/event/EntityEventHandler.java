@@ -20,6 +20,7 @@ import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.affix.AffixHelper;
 import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.extralootparam.ExtraLootParamHelper;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 
 @EventBusSubscriber(modid = ChampionsMod.MOD_ID)
@@ -107,8 +108,7 @@ public final class EntityEventHandler {
         Entity attacker = source.getEntity();
         damage.setValue(
 //						ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, source, damage.floatValue())).orElse(damage.floatValue())
-          AffixHelper.modifyDamage(level, victim, source, damage.floatValue())
-        );
+          AffixHelper.modifyDamage(level, victim, source, damage.floatValue()));
       }
 
     /*
@@ -145,18 +145,8 @@ public final class EntityEventHandler {
     ServerLevel level = (ServerLevel) event.getEntity().level();
     Entity entity = event.getEntity();
     DamageSource source = event.getSource();
-    float origin = event.getOriginalDamage();
-//		ChampionUtil.getHandler(entity).ifPresent(handler -> {
-//			DamageSource damageSource = event.getSource();
-//			Holder<DamageType> damageType = damageSource.typeHolder();
-//			handler.updateLatestDamage(damageType, event.getOriginalDamage());
-//
-//			// BossBar
-//			handler.getBossEvent().ifPresent(bossEvent -> bossEvent.setProgress(handler.getHealth() / handler.getMaxHealth()));
-//		});
-//    AffixHelper.updateLatestDamage(entity, source, origin);
+    ExtraLootParamHelper.updateDamageParameter(entity, source);
     ChampionHelper.updateBossbarProgress(entity);
-
   }
 
 
@@ -182,7 +172,7 @@ public final class EntityEventHandler {
     Level level = event.getLevel();
     Entity entity = event.getEntity();
     if (!level.isClientSide()) {
-      ChampionHelper.removeBoss(entity);
+      ChampionHelper.removeBossBar(entity);
     }
   }
 
@@ -237,7 +227,7 @@ public final class EntityEventHandler {
       double z = event.getZ();
       DifficultyInstance instance = event.getDifficulty();
       MobSpawnType reason = event.getSpawnType();
-      AffixHelper.doFinalizeSpawn(level, mob, x, y, z, instance, reason);
+      ChampionHelper.doFinalizeSpawn(level, mob, x, y, z, instance, reason);
     }
   }
 

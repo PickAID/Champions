@@ -10,17 +10,17 @@ Ranks are extremely configurable through the use of the **champions-ranks.toml**
 
 ## Affixes
 
-Affixes are unique abilities or attributes that spawn with champion mobs. Players can see which affixes are attached to any champion by looking underneath the champion's health bar on the screen. These can be identified from a fair distance away, allowing players to sufficiently analyze each champion's threat level and available abilities.
+Affixes are unique abilities or attributes that spawn with championState mobs. Players can see which affixes are attached to any championState by looking underneath the championState's health bar on the screen. These can be identified from a fair distance away, allowing players to sufficiently analyze each championState's threat level and available abilities.
 
 Affixes, like ranks, can also be configured through the use of the **champions-affixes.toml** file generated in the **serverconfig** folder. Here, players can disable certain affixes, require certain ranks, blacklist entities, and make specific entities always spawn with certain affixes if possible. Unlike ranks, new affixes cannot be added in any way.
 
 Current available affixes:
 
-* **Adaptable** - Champion will take less and less damage from the same consecutive damage type
+* **Adaptable** - Champion will take less and less damageAmount from the same consecutive damageAmount type
 * **Arctic** - Continuously fires homing projectiles that will slow anyone they hit
-* **Dampening** - Reduces the damage of indirect attacks
+* **Dampening** - Reduces the damageAmount of indirect attacks
 * **Desecrating** - Periodically spawns a cloud of harming underneath its target
-* **Enkindling** - Continuously fires homing projectiles that will damage and burn anyone they hit.
+* **Enkindling** - Continuously fires homing projectiles that will damageAmount and burn anyone they hit.
 * **Hasty** - Drastically increases movement speed
 * **Infested** - Attacking and being attacked will spawn silverfish that will attack its target
 * **Knocking** - Increased knockback from attacks, which will also slow targets for a small period of time
@@ -29,11 +29,11 @@ Current available affixes:
 * **Magnetic** - Periodically pulls targets towards itself
 * **Paralyzing** - Small chance per attack to "jail" targets, making them unable to move positions for a few seconds
 * **Plagued** - Infects nearby creatures with a Poison effect
-* **Reflective** - A small portion of damage is reflected back at the attacker
-* **Shielding** - Periodically shields itself from all damage
-* **Wounding** - Attacks will have a moderate chance to inflict the Wound effect, which decreases healing and increases damage taken
+* **Reflective** - A small portion of damageAmount is reflected back at the attacker
+* **Shielding** - Periodically shields itself from all damageAmount
+* **Wounding** - Attacks will have a moderate chance to inflict the Wound effect, which decreases healing and increases damageAmount taken
 
 ## Game Stages
 
-Champions has support for Game Stages for staged champion mobs and staged rank tiers. More information about this can be found on the [GitHub Wiki](https://github.com/TheIllusiveC4/Champions/wiki/Game-Stages-Integration).
+Champions has support for Game Stages for staged championState mobs and staged rank tiers. More information about this can be found on the [GitHub Wiki](https://github.com/TheIllusiveC4/Champions/wiki/Game-Stages-Integration).
 

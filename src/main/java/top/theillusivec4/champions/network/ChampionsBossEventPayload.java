@@ -11,7 +11,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.StringRepresentable;
 import top.theillusivec4.champions.affix.AffixContainer;
-import top.theillusivec4.champions.server.boss.ChampionsServerBossEvent;
+import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
 import top.theillusivec4.champions.util.ChampionsStreamCodecs;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
@@ -31,7 +31,7 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
       new AddOperation(
         event.getName(),
         event.getProgress(),
-        event.getLevel(),
+        event.getTier(),
         event.getColor(),
         event.getAffixes()
       )
@@ -67,7 +67,7 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
     return new ChampionsBossEventPayload(
       event.getId(),
       new UpdateLevel(
-        event.getLevel()
+        event.getTier()
       )
     );
   }

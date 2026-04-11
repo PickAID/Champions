@@ -51,6 +51,12 @@ public class AffixContainer {
   }
 
   @Override
+  public int hashCode() {
+    int i = this.affixes.hashCode();
+    return 31 * i;
+  }
+
+  @Override
   public boolean equals(Object obj) {
     if (this == obj) {
       return true;

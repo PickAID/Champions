@@ -5,6 +5,7 @@ import top.theillusivec4.champions.util.ChampionsUtil;
 
 public final class ChampionsComponents {
   public static final ResourceLocation ENTITY_AFFIXES = register("entity_affixes");
+  public static final ResourceLocation ENTITY_CHAMPION = register("entity_champion");
 
   private ChampionsComponents() {
   }

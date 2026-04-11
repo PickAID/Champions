@@ -13,7 +13,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import top.theillusivec4.champions.affix.AffixHelper;
-import top.theillusivec4.champions.world.damage.ChampionsDamageTypes;
+import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
 
 public class EnkindlingBullet extends ShulkerBullet {
   public EnkindlingBullet(Level level, LivingEntity owner, Entity target, Direction.Axis invalidStartAxis) {

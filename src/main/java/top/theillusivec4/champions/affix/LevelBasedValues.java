@@ -11,7 +11,7 @@ import top.theillusivec4.champions.registries.ChampionsRegistries;
 import java.util.function.Supplier;
 
 public final class LevelBasedValues {
-  private static final DeferredRegister<MapCodec<? extends LevelBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.Keys.LEVEL_BASED_VALUE_TYPE, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<MapCodec<? extends LevelBasedValue>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.LEVEL_BASED_VALUE_TYPE, ChampionsMod.MOD_ID);
   public static final Supplier<MapCodec<Constant>> CONSTANT = register("constant", () -> Constant.MAP_CODEC);
   public static final Supplier<MapCodec<Exponent>> EXPONENT = register("exponent", () -> Exponent.MAP_CODEC);
   public static final Supplier<MapCodec<Fraction>> FRACTION = register("fraction", () -> Fraction.MAP_CODEC);

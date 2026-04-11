@@ -26,12 +26,12 @@ public final class AffixCommands {
       .then(Commands.literal("affix")
         .then(Commands.literal("add")
           .then(Commands.argument("entities", EntityArgument.entities())
-            .then(Commands.argument("affix", ResourceArgument.resource(buildContext, ChampionsRegistries.Keys.AFFIX))
+            .then(Commands.argument("affix", ResourceArgument.resource(buildContext, ChampionsRegistries.AFFIX))
               .then(Commands.argument("level", IntegerArgumentType.integer(1, 255))
                 .executes(context -> add(
                     context.getSource(),
                     EntityArgument.getEntities(context, "entities"),
-                    ResourceArgument.getResource(context, "affix", ChampionsRegistries.Keys.AFFIX),
+                    ResourceArgument.getResource(context, "affix", ChampionsRegistries.AFFIX),
                     IntegerArgumentType.getInteger(context, "level")
                   )
                 )
@@ -40,8 +40,8 @@ public final class AffixCommands {
           )
         )
         .then(Commands.literal("remove")
-          .then(Commands.argument("affix", ResourceArgument.resource(buildContext, ChampionsRegistries.Keys.AFFIX))
-            .executes(context -> remove(context.getSource(), EntityArgument.getEntities(context, "entities"), ResourceArgument.getResource(context, "affix", ChampionsRegistries.Keys.AFFIX)))
+          .then(Commands.argument("affix", ResourceArgument.resource(buildContext, ChampionsRegistries.AFFIX))
+            .executes(context -> remove(context.getSource(), EntityArgument.getEntities(context, "entities"), ResourceArgument.getResource(context, "affix", ChampionsRegistries.AFFIX)))
           )
         )
       )
