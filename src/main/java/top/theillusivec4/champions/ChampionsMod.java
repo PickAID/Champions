@@ -59,6 +59,7 @@ import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.champions.advancements.critereon.ChampionsEntitySubPredicates;
 import top.theillusivec4.champions.affix.*;
 import top.theillusivec4.champions.affix.effects.AffixEntityEffects;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffects;
@@ -138,6 +139,7 @@ public class ChampionsMod {
     ChampionsParticleTypes.register(modEventBus);
     ChampionsLootItemConditions.register(modEventBus);
     ChampionsCreativeModeTabs.register(modEventBus);
+    ChampionsEntitySubPredicates.register(modEventBus);
     AffixEffectComponents.register(modEventBus);
     ProjectileTemplates.register(modEventBus);
     LevelBasedValues.register(modEventBus);

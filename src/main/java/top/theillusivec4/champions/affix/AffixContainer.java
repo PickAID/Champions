@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -17,7 +18,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class AffixContainer {
-  public static final AffixContainer EMPTY = new AffixContainer(new Object2IntOpenHashMap<>());
+  public static final AffixContainer EMPTY = new AffixContainer(Object2IntMaps.emptyMap());
   public static final StreamCodec<RegistryFriendlyByteBuf, AffixContainer> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.map(Object2IntOpenHashMap::new, Affix.STREAM_CODEC, ByteBufCodecs.VAR_INT),
     container -> container.affixes,

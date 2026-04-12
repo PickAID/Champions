@@ -12,6 +12,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.affix.AffixContainer;
 import top.theillusivec4.champions.champion.ChampionProperty;
+import top.theillusivec4.champions.extralootparam.DamageTracker;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
 
 import java.util.function.Supplier;
@@ -23,6 +24,7 @@ public final class ChampionsAttachments {
   public static final Supplier<AttachmentType<ChampionProperty>> CHAMPION = register("champion", AttachmentType.builder(() -> ChampionProperty.EMPTY).serialize(ChampionProperty.MAP_CODEC.codec()).sync(ChampionProperty.STREAM_CODEC));
   public static final Supplier<AttachmentType<Integer>> DAMAGE_COUNT = register("damage_count", AttachmentType.builder(() -> 0).serialize(Codec.INT));
   public static final Supplier<AttachmentType<ResourceKey<DamageType>>> DAMAGE_TYPE = register("damage_type", AttachmentType.builder(() -> DamageTypes.GENERIC_KILL).serialize(ResourceKey.codec(Registries.DAMAGE_TYPE)));
+  public static final Supplier<AttachmentType<DamageTracker>> DAMAGE_TRACKER = register("damage_tracker", AttachmentType.builder(() -> DamageTracker.EMPTY).serialize(DamageTracker.MAP_CODEC.codec()));
 
   private ChampionsAttachments() {
   }
