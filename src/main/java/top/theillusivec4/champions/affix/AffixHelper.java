@@ -1,7 +1,6 @@
 package top.theillusivec4.champions.affix;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
@@ -13,8 +12,11 @@ import net.minecraft.util.random.WeightedRandom;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -107,7 +109,7 @@ public final class AffixHelper {
           break;
         }
 
-        if(list.isEmpty()){
+        if (list.isEmpty()) {
           break;
         }
 
@@ -183,8 +185,28 @@ public final class AffixHelper {
   }
 
   public static void setToEntity(Entity entity, AffixContainer container) {
-    if (!get(entity).equals(container)) {
+    if (!get(entity).equals(container) && entity.level() instanceof ServerLevel level) {
+      stopLocationChangedEffects(level, entity, entity.position());
+      if (entity instanceof LivingEntity livingEntity) {
+        forEachModifier(entity, ((attribute, modifier) -> {
+          AttributeMap map = livingEntity.getAttributes();
+          AttributeInstance instance = map.getInstance(attribute);
+          if (instance != null) {
+            instance.removeModifier(modifier);
+          }
+        }));
+      }
       entity.setData(ChampionsAttachments.AFFIXES, container);
+      if (entity instanceof LivingEntity livingEntity) {
+        forEachModifier(entity, ((attribute, modifier) -> {
+          AttributeMap map = livingEntity.getAttributes();
+          AttributeInstance instance = map.getInstance(attribute);
+          if (instance != null) {
+            instance.addTransientModifier(modifier);
+          }
+        }));
+      }
+      runLocationChangedEffects(level, entity, entity.position(), true);
     }
   }
 
@@ -220,13 +242,19 @@ public final class AffixHelper {
 
   public static float modifyKnockback(ServerLevel level, Entity victim, DamageSource source, float knockback) {
     MutableFloat mutableFloat = new MutableFloat(knockback);
-    runIteration(victim, (affix, affixLevel) -> affix.value().modifyKnockback(level, affixLevel, victim, source, mutableFloat));
+    Entity attacker = source.getEntity();
+    if (attacker != null) {
+      runIteration(attacker, (affix, affixLevel) -> affix.value().modifyKnockback(level, affixLevel, victim, source, mutableFloat));
+    }
     return mutableFloat.floatValue();
   }
 
   public static float modifyDamage(ServerLevel level, Entity victim, DamageSource source, float amount) {
     MutableFloat mutableFloat = new MutableFloat(amount);
-    runIteration(victim, (affix, affixLevel) -> affix.value().modifyDamage(level, affixLevel, victim, source, mutableFloat));
+    Entity attacker = source.getEntity();
+    if (attacker != null) {
+      runIteration(attacker, (affix, affixLevel) -> affix.value().modifyDamage(level, affixLevel, victim, source, mutableFloat));
+    }
     return mutableFloat.floatValue();
   }
 

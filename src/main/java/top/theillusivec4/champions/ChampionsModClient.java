@@ -8,6 +8,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
@@ -18,8 +19,10 @@ import top.theillusivec4.champions.client.config.ChampionsClientConfig;
 import top.theillusivec4.champions.client.gui.ChampionsGui;
 import top.theillusivec4.champions.client.gui.ChampionsGuiLayers;
 import top.theillusivec4.champions.client.particle.RankParticle;
+import top.theillusivec4.champions.client.renderer.ColorizedBulletRenderer;
 import top.theillusivec4.champions.particles.ChampionsParticleTypes;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
 import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
 
 @Mod(value = ChampionsMod.MOD_ID, dist = Dist.CLIENT)
@@ -66,4 +69,17 @@ public class ChampionsModClient {
       }
     }
   }
+
+  @SubscribeEvent
+  public void registerEntityRenderers(EntityRenderersEvent.RegisterRenderers event) {
+    event.registerEntityRenderer(
+      ChampionsEntityTypes.ARCTIC_BULLET.get(),
+      (renderManager) -> new ColorizedBulletRenderer(renderManager, 0x42F5E3)
+    );
+    event.registerEntityRenderer(
+      ChampionsEntityTypes.ENKINDLING_BULLET.get(),
+      (renderManager) -> new ColorizedBulletRenderer(renderManager, 0xFC5A03)
+    );
+  }
+
 }

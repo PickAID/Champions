@@ -105,10 +105,8 @@ public final class EntityEventHandler {
       伤害增幅
      */
       if (source.getEntity() != null) {
-        Entity attacker = source.getEntity();
         damage.setValue(
-//						ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, source, damage.floatValue())).orElse(damage.floatValue())
-          AffixHelper.modifyDamage(level, attacker, source, damage.floatValue()));
+          AffixHelper.modifyDamage(level, victim, source, damage.floatValue()));
       }
 
     /*

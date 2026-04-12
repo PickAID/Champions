@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.neoforged.neoforge.common.data.DataMapProvider;
 
 public record Affixable(int value) {
@@ -17,9 +18,11 @@ public record Affixable(int value) {
   });
 
   public static void bootstrap(DataMapProvider.Builder<Affixable, EntityType<?>> context) {
-    register(context, EntityType.ZOMBIE, 20);
-    register(context, EntityType.HUSK, 20);
-    register(context, EntityType.SKELETON, 20);
+    for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
+      if (entityType.getCategory() != MobCategory.MONSTER) {
+        register(context, entityType, 0);
+      }
+    }
   }
 
   private static void register(DataMapProvider.Builder<Affixable, EntityType<?>> context, EntityType<?> entityType, int value) {
