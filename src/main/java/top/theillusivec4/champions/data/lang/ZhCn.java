@@ -11,21 +11,28 @@ public class ZhCn extends ChampionsLanguageProvider {
 
   @Override
   protected void addTranslations() {
-    this.add("config.jade.plugin_champions.entity_affixes", "实体词缀");
-    this.add("config.jade.plugin_champions.entity_champion", "冠军属性");
-    this.add("commands.champions.affix.add.success.single", "已将词缀%s添加至%s");
-    this.add("commands.champions.affix.add.success.multiple", "已为%s个实体添加词缀%s");
-    this.add("champions.configuration.display_health_overlay", "显示生命值");
-    this.add("champions.configuration.difficulty_threshold", "难度阈值");
-    this.add("champions.configuration.default_affixable", "默认词缀亲和力");
-    this.add("champions.champion.color", "■");
-    this.add("champions.champion.boss.true", "是");
-    this.add("champions.champion.boss.false", "否");
-    this.add("item.champions.champion.tier", "等级: %s");
-    this.add("item.champions.champion.prefix", "前缀: %s");
-    this.add("item.champions.champion.color", "颜色: %s");
-    this.add("item.champions.champion.boss", "首领: %s");
-    this.add("item.champions.stored_affixes", "已有词缀: ");
+    add("config.jade.plugin_champions.entity_affixes", "实体词缀");
+    add("config.jade.plugin_champions.entity_champion_property", "冠军属性");
+    add("commands.champions.affix.add.success.single", "已将词缀%s添加至%s");
+    add("commands.champions.affix.add.success.multiple", "已为%s个实体添加词缀%s");
+    add("commands.champions.affix.remove.success.single", "已将词缀%s从%s移除");
+    add("commands.champions.affix.remove.success.multiple", "已将%s个实体的词缀%s移除");
+    add("champions.configuration.display_health_overlay_on_target", "准星指向时显示生命条");
+    add("champions.configuration.champion_spawn_difficulty_threshold", "冠军生物生成难度阈值");
+    add("champions.configuration.default_affixable", "默认词缀亲和力");
+    add("champions.configuration.affixable_factor", "词缀亲和力因子");
+    add("champions.configuration.random_variration_factor", "随机变化因子");
+    add("champions.configuration.min_affix_cost", "最小词缀代价");
+    add("champions.configuration.max_affix_cost", "最大词缀代价");
+    add("champions.champion.color", "■");
+    add("champions.champion.boss.true", "是");
+    add("champions.champion.boss.false", "否");
+    add("item.champions.champion.tier", "等级: %s");
+    add("item.champions.champion.prefix", "前缀: %s");
+    add("item.champions.champion.color", "颜色: %s");
+    add("item.champions.champion.boss", "首领: %s");
+    add("item.champions.stored_affixes", "已有词缀: ");
+    addItemGroup("冠军强敌：刷怪蛋");
     addRank(Ranks.COMMON, "普通");
     addRank(Ranks.SKILLED, "稀有");
     addRank(Ranks.ELITE, "精英");

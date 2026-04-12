@@ -68,6 +68,7 @@ import top.theillusivec4.champions.affix.provider.AffixProviders;
 import top.theillusivec4.champions.attachments.ChampionsAttachments;
 import top.theillusivec4.champions.champion.Rank;
 import top.theillusivec4.champions.champion.Ranks;
+import top.theillusivec4.champions.champion.provider.ChampionPropertyProviders;
 import top.theillusivec4.champions.client.network.ChampionsClientPayloadHandler;
 import top.theillusivec4.champions.component.ChampionsDataComponents;
 import top.theillusivec4.champions.data.ChampionsDataMapProvider;
@@ -100,9 +101,12 @@ import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 import top.theillusivec4.champions.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
+import top.theillusivec4.champions.spawnegg.SpawnEggTemplate;
+import top.theillusivec4.champions.spawnegg.SpawnEggTemplates;
 import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
+import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
 import top.theillusivec4.champions.world.loot.predicates.ChampionsLootItemConditions;
 
 import java.io.File;
@@ -133,6 +137,7 @@ public class ChampionsMod {
     ChampionsMobEffects.register(modEventBus);
     ChampionsParticleTypes.register(modEventBus);
     ChampionsLootItemConditions.register(modEventBus);
+    ChampionsCreativeModeTabs.register(modEventBus);
     AffixEffectComponents.register(modEventBus);
     ProjectileTemplates.register(modEventBus);
     LevelBasedValues.register(modEventBus);
@@ -140,6 +145,7 @@ public class ChampionsMod {
     AffixEntityEffects.register(modEventBus);
     AffixValueEffects.register(modEventBus);
     AffixProviders.register(modEventBus);
+    ChampionPropertyProviders.register(modEventBus);
     // Old
 //    modEventBus.addListener(this::enqueueIMC);
 //    modEventBus.addListener(this::registerNetwork);
@@ -181,13 +187,14 @@ public class ChampionsMod {
 
   @SubscribeEvent
   private void registerRegistries(NewRegistryEvent event) {
-    event.register(ChampionsBuiltInRegistries.AFFIX_PROVIDER_TYPE);
-    event.register(ChampionsBuiltInRegistries.PROJECTILE_TEMPLATE_TYPE);
-    event.register(ChampionsBuiltInRegistries.LEVEL_BASED_VALUE_TYPE);
     event.register(ChampionsBuiltInRegistries.AFFIX_EFFECT_COMPONENT_TYPE);
-    event.register(ChampionsBuiltInRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
-    event.register(ChampionsBuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE);
     event.register(ChampionsBuiltInRegistries.AFFIX_VALUE_EFFECT_TYPE);
+    event.register(ChampionsBuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE);
+    event.register(ChampionsBuiltInRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
+    event.register(ChampionsBuiltInRegistries.LEVEL_BASED_VALUE_TYPE);
+    event.register(ChampionsBuiltInRegistries.PROJECTILE_TEMPLATE_TYPE);
+    event.register(ChampionsBuiltInRegistries.AFFIX_PROVIDER_TYPE);
+    event.register(ChampionsBuiltInRegistries.CHAMPION_PROPERTY_PROVIDER_TYPE);
   }
 
   @SubscribeEvent
@@ -200,6 +207,7 @@ public class ChampionsMod {
     event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.AFFIX_PROVIDER, AffixProvider.DIRECT_CODEC, AffixProvider.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.CHAMPION_EGG, SpawnEggTemplate.DIRECT_CODEC, SpawnEggTemplate.DIRECT_CODEC);
   }
 
   @SubscribeEvent
@@ -226,7 +234,8 @@ public class ChampionsMod {
     RegistrySetBuilder builder = new RegistrySetBuilder()
       .add(Registries.DAMAGE_TYPE, ChampionsDamageTypes::bootstrap)
       .add(ChampionsRegistries.AFFIX, Affixes::bootstrap)
-      .add(ChampionsRegistries.RANK, Ranks::bootstrap);
+      .add(ChampionsRegistries.RANK, Ranks::bootstrap)
+      .add(ChampionsRegistries.CHAMPION_EGG, SpawnEggTemplates::bootstrap);
     var datapackRegistries = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(ChampionsMod.MOD_ID));
     lookup = datapackRegistries.getRegistryProvider();
 

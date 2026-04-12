@@ -3,6 +3,7 @@ package top.theillusivec4.champions.mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.hoglin.HoglinBase;
 import org.spongepowered.asm.mixin.Mixin;

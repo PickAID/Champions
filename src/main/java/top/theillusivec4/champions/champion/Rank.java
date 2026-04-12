@@ -58,8 +58,12 @@ public record Rank(
   }
 
   public Stream<AffixInstance> createAffixInstances(Entity entity, RandomSource random, DifficultyInstance difficulty) {
+    return createAffixInstances(entity.getType(), random, difficulty);
+  }
+
+  public Stream<AffixInstance> createAffixInstances(EntityType<?> entityType, RandomSource random, DifficultyInstance difficulty) {
     Stream.Builder<AffixInstance> builder = Stream.builder();
-    this.affixes.stream().forEach(provider -> provider.value().provide(entity, random, difficulty).forEach(builder::add));
+    this.affixes.stream().forEach(provider -> provider.value().get(entityType, random, difficulty).forEach(builder::add));
     return builder.build();
   }
 

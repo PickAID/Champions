@@ -87,7 +87,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.DAMAGE_PROTECTION,
           AffixValueEffect.add(
             LevelBasedValue.linear(
@@ -113,7 +113,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.TARGET,
           AffixEntityEffect.projection(
             ProjectileTemplate.arcticBullet(),
@@ -141,7 +141,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.DAMAGE_PROTECTION,
           AffixValueEffect.add(
             LevelBasedValue.linear(
@@ -172,7 +172,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.TARGET,
           AffixEntityEffect.projection(
             ProjectileTemplate.thrownLingeringPotion(),
@@ -198,7 +198,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.TARGET,
           AffixEntityEffect.projection(
             ProjectileTemplate.enkindlingBullet(),
@@ -226,7 +226,7 @@ public final class Affixes {
             5
           )
         )
-        .withEffects(
+        .withEffect(
           AffixEffectComponents.ATTRIBUTES,
           new AffixAttributeEffect(
             HASTY.location(),
@@ -237,7 +237,7 @@ public final class Affixes {
             ),
             AttributeModifier.Operation.ADD_VALUE
           )
-        ).withConditionalEffects(
+        ).withEffect(
           AffixEffectComponents.KNOCKBACK,
           AffixValueEffect.add(
             LevelBasedValue.linear(
@@ -260,7 +260,7 @@ public final class Affixes {
           5,
           5
         )
-      ).withTargetedConditionalEffects(
+      ).withEffect(
         AffixEffectComponents.POST_ATTACK,
         AffixTarget.VICTIM,
         AffixTarget.VICTIM,
@@ -285,7 +285,7 @@ public final class Affixes {
             5
           )
         )
-        .withTargetedConditionalEffects(
+        .withEffect(
           AffixEffectComponents.POST_ATTACK,
           AffixTarget.ATTACKER,
           AffixTarget.VICTIM,
@@ -309,7 +309,7 @@ public final class Affixes {
             )
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.KNOCKBACK,
           AffixValueEffect.add(
             LevelBasedValue.linear(
@@ -336,7 +336,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.TICK,
           AffixEntityEffect.applyMobEffect(
             HolderSet.direct(MobEffects.REGENERATION),
@@ -374,7 +374,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.TARGET,
           AffixEntityEffect.movement(0.05),
           LootItemEntityPropertyCondition.hasProperties(
@@ -400,7 +400,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.DAMAGE_IMMUNITY,
           DamageImmunity.INSTANCE,
 //          AffixLocationBasedEffect.applyMobEffect(
@@ -411,7 +411,7 @@ public final class Affixes {
 //          ),
           DamageSourceCondition.hasDamageSource(DamageSourcePredicate.Builder.damageType().tag(TagPredicate.is(DamageTypeTags.IS_FIRE)))
         )
-        .withTargetedConditionalEffects(
+        .withEffect(
           AffixEffectComponents.POST_ATTACK,
           AffixTarget.ATTACKER,
           AffixTarget.VICTIM,
@@ -455,7 +455,7 @@ public final class Affixes {
             5
           )
         )
-        .withTargetedConditionalEffects(
+        .withEffect(
           AffixEffectComponents.POST_ATTACK,
           AffixTarget.ATTACKER,
           AffixTarget.VICTIM,
@@ -503,7 +503,7 @@ public final class Affixes {
             5
           )
         )
-        .withTargetedConditionalEffects(
+        .withEffect(
           AffixEffectComponents.POST_ATTACK,
           AffixTarget.VICTIM,
           AffixTarget.ATTACKER,
@@ -527,7 +527,7 @@ public final class Affixes {
             )
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.TICK,
           AffixEntityEffect.allOf(
             AffixEntityEffect.spawnParticles(
@@ -575,7 +575,7 @@ public final class Affixes {
           5,
           5
         )
-      ).withTargetedConditionalEffects(
+      ).withEffect(
         AffixEffectComponents.POST_ATTACK,
         AffixTarget.VICTIM,
         AffixTarget.ATTACKER,
@@ -612,7 +612,7 @@ public final class Affixes {
             5
           )
         )
-        .withConditionalEffects(
+        .withEffect(
           AffixEffectComponents.TICK,
           AffixEntityEffect.applyMobEffect(
             HolderSet.direct(ChampionsMobEffects.SHIELD),
@@ -696,7 +696,7 @@ public final class Affixes {
 //              )
 //          )
 //        )
-        .withTargetedConditionalEffects(
+        .withEffect(
           AffixEffectComponents.POST_ATTACK,
           AffixTarget.VICTIM,
           AffixTarget.VICTIM,

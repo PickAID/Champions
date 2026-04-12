@@ -5,7 +5,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Level;
@@ -24,7 +23,7 @@ public class EnderDragonMixin extends Mob {
   }
 
   @Inject(method = "knockBack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-  private void champions$knockBack(ServerLevel level, List<Entity> entities, CallbackInfo ci, @Local LivingEntity livingTarget, @Local DamageSource damageSource) {
+  private void champions$knockBack(ServerLevel level, List<Entity> entities, CallbackInfo ci, @Local Entity livingTarget, @Local DamageSource damageSource) {
     AffixHelper.doPostAttackEffects(level, livingTarget, damageSource);
   }
 

@@ -5,8 +5,10 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import top.theillusivec4.champions.affix.AffixContainer;
 import top.theillusivec4.champions.affix.AffixHelper;
 import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.champion.ChampionProperty;
 
 import java.util.function.Consumer;
 
@@ -24,8 +26,12 @@ public final class SpawnEggHelper {
     ChampionHelper.setToEntity(entity, ChampionHelper.getStored(stack));
   }
 
-  public static void modifyPickResult(ItemStack itemStack, Entity entity) {
-    ChampionHelper.setToItem(itemStack, ChampionHelper.get(entity));
-    AffixHelper.setToItem(itemStack, AffixHelper.get(entity));
+  public static void modifyPickResult(ItemStack stack, Entity entity) {
+    modifyItem(stack, ChampionHelper.get(entity), AffixHelper.get(entity));
+  }
+
+  public static void modifyItem(ItemStack stack, ChampionProperty property, AffixContainer affixes) {
+    ChampionHelper.setToItem(stack, property);
+    AffixHelper.setToItem(stack, affixes);
   }
 }

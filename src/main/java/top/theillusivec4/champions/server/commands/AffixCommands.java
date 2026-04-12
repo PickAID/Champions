@@ -86,14 +86,14 @@ public final class AffixCommands {
     if (entities.size() == 1) {
       source.sendSuccess(() -> Component.translatable(
           "commands.champions.affix.remove.success.single",
-          entities.stream().findFirst().orElseThrow().getDisplayName(),
-          affix.value().description()
+          affix.value().description(),
+          entities.stream().findFirst().orElseThrow().getDisplayName()
         ),
         false
       );
     } else {
       source.sendSuccess(() -> Component.translatable(
-          "commands.champions.affix.remove.success.single",
+          "commands.champions.affix.remove.success.multiple",
           entities.size(),
           affix.value().description()
         ),

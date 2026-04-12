@@ -31,7 +31,7 @@ public final class AffixEffectComponents {
   public static final Supplier<DataComponentType<List<ConditionalEffect<AffixValueEffect>>>> HEAL = register("heal", builder -> builder.persistent(ConditionalEffect.codec(AffixValueEffect.CODEC, ChampionsLootContextParamSets.HEAL).listOf()));
   public static final Supplier<DataComponentType<List<TargetedConditionalEffect<AffixEntityEffect>>>> POST_ATTACK = register("post_attack", builder -> builder.persistent(TargetedConditionalEffect.codec(AffixEntityEffect.CODEC, ChampionsLootContextParamSets.POST_ATTACK).listOf()));
   public static final Supplier<DataComponentType<List<ConditionalEffect<AffixEntityEffect>>>> TICK = register("tick", builder -> builder.persistent(ConditionalEffect.codec(AffixEntityEffect.CODEC, ChampionsLootContextParamSets.TICK).listOf()));
-  public static final Supplier<DataComponentType<List<ConditionalEffect<AffixEntityEffect>>>> TARGET = register("target", builder -> builder.persistent(ConditionalEffect.codec(AffixEntityEffect.CODEC, ChampionsLootContextParamSets.TICK).listOf()));
+  public static final Supplier<DataComponentType<List<ConditionalEffect<AffixEntityEffect>>>> TARGET = register("target", builder -> builder.persistent(ConditionalEffect.codec(AffixEntityEffect.CODEC, ChampionsLootContextParamSets.TARGET).listOf()));
 
   private AffixEffectComponents() {
   }

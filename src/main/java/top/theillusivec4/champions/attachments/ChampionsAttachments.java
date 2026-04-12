@@ -11,7 +11,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.affix.AffixContainer;
-import top.theillusivec4.champions.champion.ChampionState;
+import top.theillusivec4.champions.champion.ChampionProperty;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
 
 import java.util.function.Supplier;
@@ -20,7 +20,7 @@ public final class ChampionsAttachments {
   private static final DeferredRegister<AttachmentType<?>> DEFERRED_REGISTER = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, ChampionsMod.MOD_ID);
   public static final Supplier<AttachmentType<AffixContainer>> AFFIXES = register("affix_container", AttachmentType.builder(() -> AffixContainer.EMPTY).serialize(AffixContainer.MAP_CODEC.codec()).sync(AffixContainer.STREAM_CODEC));
   public static final Supplier<AttachmentType<ChampionsServerBossEvent>> BOSS_EVENT = register("boss_event", AttachmentType.builder(() -> ChampionsServerBossEvent.EMPTY).serialize(ChampionsServerBossEvent.MAP_CODEC.codec()));
-  public static final Supplier<AttachmentType<ChampionState>> CHAMPION = register("champion", AttachmentType.builder(() -> ChampionState.EMPTY).serialize(ChampionState.MAP_CODEC.codec()).sync(ChampionState.STREAM_CODEC));
+  public static final Supplier<AttachmentType<ChampionProperty>> CHAMPION = register("champion", AttachmentType.builder(() -> ChampionProperty.EMPTY).serialize(ChampionProperty.MAP_CODEC.codec()).sync(ChampionProperty.STREAM_CODEC));
   public static final Supplier<AttachmentType<Integer>> DAMAGE_COUNT = register("damage_count", AttachmentType.builder(() -> 0).serialize(Codec.INT));
   public static final Supplier<AttachmentType<ResourceKey<DamageType>>> DAMAGE_TYPE = register("damage_type", AttachmentType.builder(() -> DamageTypes.GENERIC_KILL).serialize(ResourceKey.codec(Registries.DAMAGE_TYPE)));
 

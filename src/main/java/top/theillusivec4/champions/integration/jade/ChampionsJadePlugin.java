@@ -6,11 +6,11 @@ import snownee.jade.api.IWailaCommonRegistration;
 import snownee.jade.api.IWailaPlugin;
 import snownee.jade.api.WailaPlugin;
 import top.theillusivec4.champions.integration.jade.component.EntityAffixesComponent;
-import top.theillusivec4.champions.integration.jade.component.EntityChampionComponent;
+import top.theillusivec4.champions.integration.jade.component.EntityChampionPropertyComponent;
 
 @WailaPlugin
 public class ChampionsJadePlugin implements IWailaPlugin {
-  private final EntityChampionComponent entityChampion = new EntityChampionComponent();
+  private final EntityChampionPropertyComponent entityChampion = new EntityChampionPropertyComponent();
   private final EntityAffixesComponent entityAffixes = new EntityAffixesComponent();
 
   @Override

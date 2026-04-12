@@ -43,7 +43,7 @@ public final class ChampionsHealthOverlay {
 
   public void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
     // 准星处的实体。
-    if (ChampionsClientConfig.DISPLAY_HEALTH_OVERLAY.get()) {
+    if (ChampionsClientConfig.DISPLAY_HEALTH_OVERLAY_ON_TARGET.get()) {
 
       Entity entity = ChampionsClientUtil.getMouseEntity(deltaTracker.getGameTimeDeltaTicks());
       if (entity != null) {

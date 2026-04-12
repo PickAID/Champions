@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 public final class ChampionsLootItemConditions {
   private static final DeferredRegister<LootItemConditionType> DEFERRED_REGISTER = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, ChampionsMod.MOD_ID);
   public static final Supplier<LootItemConditionType> DAMAGE_COUNT = register("damage_count", DamageCountCondition.MAP_CODEC);
+  public static final Supplier<LootItemConditionType> TICK_CHECK = register("tick_check", TickCheck.MAP_CODEC);
 
   private ChampionsLootItemConditions() {
   }

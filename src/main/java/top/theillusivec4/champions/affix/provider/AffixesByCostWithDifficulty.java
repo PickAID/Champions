@@ -7,7 +7,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import top.theillusivec4.champions.affix.Affix;
 import top.theillusivec4.champions.affix.AffixHelper;
 import top.theillusivec4.champions.affix.AffixInstance;
@@ -22,7 +22,7 @@ public record AffixesByCostWithDifficulty(HolderSet<Affix> affixes, int minCost,
   ).apply(instance, AffixesByCostWithDifficulty::new));
 
   @Override
-  public Stream<AffixInstance> provide(Entity entity, RandomSource random, DifficultyInstance difficulty) {
+  public Stream<AffixInstance> get(EntityType<?> entity, RandomSource random, DifficultyInstance difficulty) {
     float f = difficulty.getSpecialMultiplier();
     int cost = Mth.randomBetweenInclusive(random, this.minCost, this.minCost + (int) (f * (float) this.maxCostSpan));
     AffixHelper.selectAffixByCost(random, entity, cost, this.affixes.stream());

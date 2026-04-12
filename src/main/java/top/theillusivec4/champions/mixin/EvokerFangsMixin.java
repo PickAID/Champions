@@ -22,7 +22,7 @@ public abstract class EvokerFangsMixin extends Entity {
   }
 
   @Inject(method = "dealDamageTo", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-  private void champion$dealDamageTo(LivingEntity entity, CallbackInfo ci, @Local ServerLevel serverLevel, @Local DamageSource damageSource) {
-    AffixHelper.doPostAttackEffects(serverLevel, entity, damageSource);
+  private void champion$dealDamageTo(LivingEntity target, CallbackInfo ci, @Local ServerLevel serverLevel, @Local DamageSource damageSource) {
+    AffixHelper.doPostAttackEffects(serverLevel, target, damageSource);
   }
 }

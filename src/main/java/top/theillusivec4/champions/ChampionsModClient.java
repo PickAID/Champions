@@ -1,5 +1,7 @@
 package top.theillusivec4.champions;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -11,11 +13,14 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import top.theillusivec4.champions.client.config.ChampionsClientConfig;
 import top.theillusivec4.champions.client.gui.ChampionsGui;
 import top.theillusivec4.champions.client.gui.ChampionsGuiLayers;
 import top.theillusivec4.champions.client.particle.RankParticle;
 import top.theillusivec4.champions.particles.ChampionsParticleTypes;
+import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
 
 @Mod(value = ChampionsMod.MOD_ID, dist = Dist.CLIENT)
 public class ChampionsModClient {
@@ -51,4 +56,14 @@ public class ChampionsModClient {
     event.registerSpriteSet(ChampionsParticleTypes.RANK.get(), RankParticle.Provider::new);
   }
 
+  @SubscribeEvent
+  public void modifyCreativeModeTabContents(BuildCreativeModeTabContentsEvent event) {
+    if (event.getTab() == ChampionsCreativeModeTabs.CHAMPION_EGG.get()) {
+      if (Minecraft.getInstance().level != null) {
+        RegistryAccess registry = Minecraft.getInstance().level.registryAccess();
+        registry.lookupOrThrow(ChampionsRegistries.CHAMPION_EGG).listElements()
+          .forEach(template -> event.accept(template.value().create()));
+      }
+    }
+  }
 }

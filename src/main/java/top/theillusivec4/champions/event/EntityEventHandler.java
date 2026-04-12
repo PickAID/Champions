@@ -108,7 +108,7 @@ public final class EntityEventHandler {
         Entity attacker = source.getEntity();
         damage.setValue(
 //						ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, source, damage.floatValue())).orElse(damage.floatValue())
-          AffixHelper.modifyDamage(level, victim, source, damage.floatValue()));
+          AffixHelper.modifyDamage(level, attacker, source, damage.floatValue()));
       }
 
     /*
@@ -118,10 +118,6 @@ public final class EntityEventHandler {
      */
 
       if (damage.floatValue() > 0.0f) {
-//				float protection = ChampionUtil.getHandler(victim).map(handler -> {
-//					float originProtection = handler.getDamageProtection(level, victim, event.getSource());
-//					return Math.clamp(originProtection, -1024.0f, Champions.getInstance().getCommonConfig().getMaxDamageProtection());
-//				}).orElse(0.0f);
         float protection = AffixHelper.getDamageProtection(level, victim, event.getSource());
         damage.setValue(damage.floatValue() * (1.0f - protection));
       }
@@ -142,7 +138,6 @@ public final class EntityEventHandler {
    */
   @SubscribeEvent
   private static void onLivingDamagePost(LivingDamageEvent.Post event) {
-    ServerLevel level = (ServerLevel) event.getEntity().level();
     Entity entity = event.getEntity();
     DamageSource source = event.getSource();
     ExtraLootParamHelper.updateDamageParameter(entity, source);
@@ -194,10 +189,9 @@ public final class EntityEventHandler {
    */
   @SubscribeEvent
   private static void onLivingConversionPost(LivingConversionEvent.Post event) {
-    ServerLevel level = (ServerLevel) event.getEntity().level();
     Entity from = event.getEntity();
     Entity to = event.getOutcome();
-//    AffixHelper.updateFromEntity(level, to, from);
+    AffixHelper.setToEntity(to, AffixHelper.get(from));
   }
 
   /**
@@ -207,10 +201,9 @@ public final class EntityEventHandler {
    */
   @SubscribeEvent
   private static void onMobSplit(MobSplitEvent event) {
-    ServerLevel level = (ServerLevel) event.getParent().level();
     Entity parent = event.getParent();
     for (Mob child : event.getChildren()) {
-//      AffixHelper.updateFromEntity(level, child, parent);
+      AffixHelper.setToEntity(child, AffixHelper.get(parent));
     }
   }
 

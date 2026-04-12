@@ -11,15 +11,17 @@ import top.theillusivec4.champions.affix.effects.AffixEntityEffect;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffect;
 import top.theillusivec4.champions.affix.effects.AffixValueEffect;
 import top.theillusivec4.champions.affix.provider.AffixProvider;
+import top.theillusivec4.champions.champion.provider.ChampionPropertyProvider;
 
 public final class ChampionsBuiltInRegistries {
-  public static final Registry<MapCodec<? extends AffixProvider>> AFFIX_PROVIDER_TYPE = register(ChampionsRegistries.AFFIX_PROVIDER_TYPE);
-  public static final Registry<MapCodec<? extends ProjectileTemplate>> PROJECTILE_TEMPLATE_TYPE = register(ChampionsRegistries.PROJECTILE_TEMPLATE_TYPE);
-  public static final Registry<MapCodec<? extends LevelBasedValue>> LEVEL_BASED_VALUE_TYPE = register(ChampionsRegistries.LEVEL_BASED_VALUE_TYPE);
   public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = register(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE);
-  public static final Registry<MapCodec<? extends AffixLocationBasedEffect>> AFFIX_LOCATION_BASED_EFFECT_TYPE = register(ChampionsRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
-  public static final Registry<MapCodec<? extends AffixEntityEffect>> AFFIX_ENTITY_EFFECT_TYPE = register(ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE);
   public static final Registry<MapCodec<? extends AffixValueEffect>> AFFIX_VALUE_EFFECT_TYPE = register(ChampionsRegistries.AFFIX_VALUE_EFFECT_TYPE);
+  public static final Registry<MapCodec<? extends AffixEntityEffect>> AFFIX_ENTITY_EFFECT_TYPE = register(ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE);
+  public static final Registry<MapCodec<? extends AffixLocationBasedEffect>> AFFIX_LOCATION_BASED_EFFECT_TYPE = register(ChampionsRegistries.AFFIX_LOCATION_BASED_EFFECT_TYPE);
+  public static final Registry<MapCodec<? extends LevelBasedValue>> LEVEL_BASED_VALUE_TYPE = register(ChampionsRegistries.LEVEL_BASED_VALUE_TYPE);
+  public static final Registry<MapCodec<? extends ProjectileTemplate>> PROJECTILE_TEMPLATE_TYPE = register(ChampionsRegistries.PROJECTILE_TEMPLATE_TYPE);
+  public static final Registry<MapCodec<? extends AffixProvider>> AFFIX_PROVIDER_TYPE = register(ChampionsRegistries.AFFIX_PROVIDER_TYPE);
+  public static final Registry<MapCodec<? extends ChampionPropertyProvider>> CHAMPION_PROPERTY_PROVIDER_TYPE = register(ChampionsRegistries.CHAMPION_PROPERTY_PROVIDER_TYPE);
 
   private ChampionsBuiltInRegistries() {
   }

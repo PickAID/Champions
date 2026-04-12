@@ -21,7 +21,7 @@ public abstract class SlimeMixin extends Mob {
   }
 
   @Inject(method = "dealDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-  private void champion$dealDamage(LivingEntity target, CallbackInfo ci, @Local ServerLevel level, @Local DamageSource damageSource) {
-    AffixHelper.doPostAttackEffects(level, target, damageSource);
+  private void champion$dealDamage(LivingEntity livingEntity, CallbackInfo ci, @Local ServerLevel level, @Local DamageSource damageSource) {
+    AffixHelper.doPostAttackEffects(level, livingEntity, damageSource);
   }
 }

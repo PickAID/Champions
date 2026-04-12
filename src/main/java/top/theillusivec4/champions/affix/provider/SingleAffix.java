@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.valueproviders.IntProvider;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import top.theillusivec4.champions.affix.Affix;
 import top.theillusivec4.champions.affix.AffixInstance;
 
@@ -19,7 +19,7 @@ public record SingleAffix(Holder<Affix> affix, IntProvider level) implements Aff
   ).apply(instance, SingleAffix::new));
 
   @Override
-  public Stream<AffixInstance> provide(Entity entity, RandomSource random, DifficultyInstance difficulty) {
+  public Stream<AffixInstance> get(EntityType<?> entity, RandomSource random, DifficultyInstance difficulty) {
     return Stream.of(new AffixInstance(this.affix, this.level.sample(random)));
   }
 

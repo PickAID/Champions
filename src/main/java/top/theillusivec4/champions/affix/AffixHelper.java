@@ -28,7 +28,6 @@ import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.component.ChampionsDataComponents;
 import top.theillusivec4.champions.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
-import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 import java.util.ArrayList;
@@ -60,9 +59,9 @@ public final class AffixHelper {
   }
 
   public static int levelToCost(RandomSource random, int level, int affixableValue) {
-    level += 1 + random.nextInt(affixableValue / 4 + 1) + random.nextInt(affixableValue / 4 + 1);
-    float f = (random.nextFloat() + random.nextFloat() - 1.0F) * 0.15F;
-    level = Mth.clamp(Math.round((float) level + (float) level * f), 1, Integer.MAX_VALUE);
+    level += 1 + random.nextInt((int) (affixableValue * ChampionsServerConfig.AFFIXABLE_FACTOR.get() + 1)) + random.nextInt(affixableValue / 4 + 1);
+    float f = (float) ((random.nextFloat() + random.nextFloat() - 1.0F) * ChampionsServerConfig.RANDOM_VARIATION_FACTOR.get());
+    level = Mth.clamp(Math.round((float) level + (float) level * f), ChampionsServerConfig.MIN_AFFIX_COST.get(), ChampionsServerConfig.MAX_AFFIX_COST.get());
     return level;
   }
 
@@ -74,18 +73,25 @@ public final class AffixHelper {
     }
   }
 
-  public static List<AffixInstance> selectAffixByLevel(RandomSource random, Entity entity, int level, Stream<? extends Holder<Affix>> possible) {
+  public static List<AffixInstance> selectAffixByLevel(RandomSource random, EntityType<?> entity, int level, Stream<? extends Holder<Affix>> possible) {
+    return selectAffixByLevel(random, entity, level, possible, List.of());
+  }
+
+  public static List<AffixInstance> selectAffixByLevel(RandomSource random, EntityType<?> entity, int level, Stream<? extends Holder<Affix>> possible, List<AffixInstance> prefix) {
     int value = getAffixableValue(entity);
     if (value > 0) {
-      return selectAffixByCost(random, entity, levelToCost(random, level, value), possible);
+      return selectAffixByCost(random, entity, levelToCost(random, level, value), possible, prefix);
     } else {
       return new ArrayList<>();
     }
   }
 
-  public static List<AffixInstance> selectAffixByCost(RandomSource random, Entity entity, int cost, Stream<? extends Holder<Affix>> possible) {
-    // 选择可用的词缀 词缀亲和力 需要DataMap
-    List<AffixInstance> list = new ArrayList<>();
+  public static List<AffixInstance> selectAffixByCost(RandomSource random, EntityType<?> entity, int cost, Stream<? extends Holder<Affix>> possible) {
+    return selectAffixByCost(random, entity, cost, possible, List.of());
+  }
+
+  public static List<AffixInstance> selectAffixByCost(RandomSource random, EntityType<?> entity, int cost, Stream<? extends Holder<Affix>> possible, List<AffixInstance> prefix) {
+    List<AffixInstance> list = new ArrayList<>(prefix);
     List<AffixInstance> list1 = getAvailableAffixResults(cost, entity, possible);
     if (!list1.isEmpty()) {
       WeightedRandom.getRandomItem(random, list1).ifPresent(list::add);
@@ -106,7 +112,7 @@ public final class AffixHelper {
     return list;
   }
 
-  public static List<AffixInstance> getAvailableAffixResults(int cost, Entity entity, Stream<? extends Holder<Affix>> possible) {
+  public static List<AffixInstance> getAvailableAffixResults(int cost, EntityType<?> entity, Stream<? extends Holder<Affix>> possible) {
     List<AffixInstance> list = Lists.newArrayList();
 
     possible.filter(affix -> affix.value().isSupported(entity)).forEach(affix -> {

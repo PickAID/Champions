@@ -173,12 +173,7 @@ public record Affix(
   }
 
   public void targetEffects(ServerLevel level, int affixLevel, Entity entity, Entity target) {
-    LootParams params = new LootParams.Builder(level)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, target.position())
-      .withParameter(ChampionsLootContextParams.CHAMPION_TIER, affixLevel)
-      .create(ChampionsLootContextParamSets.LOCATION);
-    LootContext context = new LootContext.Builder(params).create(Optional.empty());
+    LootContext context = LootContextFactory.target(level, entity, affixLevel);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TARGET), context, effect -> effect.apply(level, affixLevel, entity, target, entity.position()));
   }
 
@@ -295,47 +290,47 @@ public record Affix(
       return this;
     }
 
-    public <E> Builder withEffects(Supplier<DataComponentType<List<E>>> effectComponent, E effect) {
-      return this.withEffects(effectComponent.get(), effect);
+    public Builder withEffect(Supplier<DataComponentType<List<AffixAttributeEffect>>> effectComponent, AffixAttributeEffect effect) {
+      return this.withEffect(effectComponent.get(), effect);
     }
 
-    public <E> Builder withEffects(DataComponentType<List<E>> effectComponent, E effect) {
+    public Builder withEffect(DataComponentType<List<AffixAttributeEffect>> effectComponent, AffixAttributeEffect effect) {
       this.getEffects(effectComponent).add(effect);
       return this;
     }
 
-    public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect) {
-      return this.withTargetedConditionalEffects(effectComponent.get(), enchanted, affected, effect);
+    public <E> Builder withEffect(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect) {
+      return this.withEffect(effectComponent.get(), enchanted, affected, effect);
     }
 
-    public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect) {
+    public <E> Builder withEffect(DataComponentType<List<TargetedConditionalEffect<E>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect) {
       this.getEffects(effectComponent).add(TargetedConditionalEffect.create(enchanted, affected, effect));
       return this;
     }
 
-    public <E> Builder withTargetedConditionalEffects(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
-      return this.withTargetedConditionalEffects(effectComponent.get(), enchanted, affected, effect, builder);
+    public <E> Builder withEffect(Supplier<DataComponentType<List<TargetedConditionalEffect<E>>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
+      return this.withEffect(effectComponent.get(), enchanted, affected, effect, builder);
     }
 
-    public <E> Builder withTargetedConditionalEffects(DataComponentType<List<TargetedConditionalEffect<E>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
+    public <E> Builder withEffect(DataComponentType<List<TargetedConditionalEffect<E>>> effectComponent, AffixTarget enchanted, AffixTarget affected, E effect, LootItemCondition.Builder builder) {
       this.getEffects(effectComponent).add(TargetedConditionalEffect.create(enchanted, affected, effect, builder));
       return this;
     }
 
-    public <E> Builder withConditionalEffects(Supplier<DataComponentType<List<ConditionalEffect<E>>>> effectComponent, E effect, LootItemCondition.Builder builder) {
-      return this.withConditionalEffects(effectComponent.get(), effect, builder);
+    public <E> Builder withEffect(Supplier<DataComponentType<List<ConditionalEffect<E>>>> effectComponent, E effect, LootItemCondition.Builder builder) {
+      return this.withEffect(effectComponent.get(), effect, builder);
     }
 
-    public <E> Builder withConditionalEffects(DataComponentType<List<ConditionalEffect<E>>> effectComponent, E effect, LootItemCondition.Builder builder) {
+    public <E> Builder withEffect(DataComponentType<List<ConditionalEffect<E>>> effectComponent, E effect, LootItemCondition.Builder builder) {
       this.getEffects(effectComponent).add(ConditionalEffect.create(effect, builder));
       return this;
     }
 
-    public <E> Builder withConditionalEffects(Supplier<DataComponentType<List<ConditionalEffect<E>>>> effectComponent, E effect) {
-      return this.withConditionalEffects(effectComponent.get(), effect);
+    public <E> Builder withEffect(Supplier<DataComponentType<List<ConditionalEffect<E>>>> effectComponent, E effect) {
+      return this.withEffect(effectComponent.get(), effect);
     }
 
-    public <E> Builder withConditionalEffects(DataComponentType<List<ConditionalEffect<E>>> effectComponent, E effect) {
+    public <E> Builder withEffect(DataComponentType<List<ConditionalEffect<E>>> effectComponent, E effect) {
       this.getEffects(effectComponent).add(ConditionalEffect.create(effect));
       return this;
     }

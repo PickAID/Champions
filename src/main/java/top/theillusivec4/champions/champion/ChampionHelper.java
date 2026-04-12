@@ -12,10 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
@@ -46,14 +43,14 @@ public final class ChampionHelper {
     return get(entity).tier();
   }
 
-  public static void updateEntity(Entity entity, Consumer<ChampionState.Mutable> consumer) {
-    ChampionState.Mutable mutable = get(entity).mutable();
+  public static void updateEntity(Entity entity, Consumer<ChampionProperty.Mutable> consumer) {
+    ChampionProperty.Mutable mutable = get(entity).mutable();
     consumer.accept(mutable);
     setToEntity(entity, mutable.toImmutable());
   }
 
-  public static void updateItem(ItemStack item, Consumer<ChampionState.Mutable> consumer) {
-    ChampionState.Mutable mutable = getStored(item).mutable();
+  public static void updateItem(ItemStack item, Consumer<ChampionProperty.Mutable> consumer) {
+    ChampionProperty.Mutable mutable = getStored(item).mutable();
     consumer.accept(mutable);
     setToItem(item, mutable.toImmutable());
   }
@@ -136,8 +133,8 @@ public final class ChampionHelper {
   }
 
   public static void addToTooltip(ItemStack item, Item.TooltipContext context, Consumer<Component> tooltipAdder, TooltipFlag tooltipFlag) {
-    ChampionState state = getStored(item);
-    if (state != ChampionState.EMPTY) {
+    ChampionProperty state = getStored(item);
+    if (state != ChampionProperty.EMPTY) {
       tooltipAdder.accept(
         Component.translatable("item.champions.champion.tier", Component.translatable("champions.champion.tier." + state.tier()).withStyle(style -> style.withColor(state.color()))).withStyle(ChatFormatting.GRAY)
       );
@@ -189,20 +186,20 @@ public final class ChampionHelper {
     }
   }
 
-  public static ChampionState getStored(ItemStack itemStack) {
-    return itemStack.getOrDefault(ChampionsDataComponents.STORED_CHAMPION, ChampionState.EMPTY);
+  public static ChampionProperty getStored(ItemStack itemStack) {
+    return itemStack.getOrDefault(ChampionsDataComponents.STORED_CHAMPION_PROPERTY, ChampionProperty.EMPTY);
   }
 
-  public static ChampionState get(Entity entity) {
-    return entity.getExistingData(ChampionsAttachments.CHAMPION).orElse(ChampionState.EMPTY);
+  public static ChampionProperty get(Entity entity) {
+    return entity.getExistingData(ChampionsAttachments.CHAMPION).orElse(ChampionProperty.EMPTY);
   }
 
-  public static void setToItem(ItemStack item, ChampionState state) {
+  public static void setToItem(ItemStack item, ChampionProperty state) {
     if (!getStored(item).equals(state)) {
-      item.set(ChampionsDataComponents.STORED_CHAMPION, state);
+      item.set(ChampionsDataComponents.STORED_CHAMPION_PROPERTY, state);
 
       if (item.getItem() instanceof SpawnEggItem eggItem) {
-        ChampionState stored = getStored(item);
+        ChampionProperty stored = getStored(item);
         Component name = stored.prefix().copy()
           .append(CommonComponents.SPACE)
           .append(eggItem.getDefaultType().getDescription())
@@ -212,7 +209,7 @@ public final class ChampionHelper {
     }
   }
 
-  public static void setToEntity(Entity entity, ChampionState state) {
+  public static void setToEntity(Entity entity, ChampionProperty state) {
     if (!get(entity).equals(state)) {
       entity.setData(ChampionsAttachments.CHAMPION, state);
       refreshBossbar(entity);
@@ -227,6 +224,10 @@ public final class ChampionHelper {
   }
 
   public static Optional<Holder<Rank>> selectRank(RandomSource random, Entity entity, Stream<? extends Holder<Rank>> possible) {
+    return selectRank(random, entity.getType(), possible);
+  }
+
+  public static Optional<Holder<Rank>> selectRank(RandomSource random, EntityType<?> entity, Stream<? extends Holder<Rank>> possible) {
     return ChampionsUtil.getRandom(random,
       possible.filter(rank -> rank.value().isSupported(entity)).toList()
     );
@@ -236,11 +237,18 @@ public final class ChampionHelper {
     RandomSource random = level.getRandom();
     HolderLookup<Affix> affixes = level.registryAccess().lookupOrThrow(ChampionsRegistries.AFFIX);
     HolderLookup<Rank> ranks = level.registryAccess().lookupOrThrow(ChampionsRegistries.RANK);
-    if (difficulty.isHarderThan(ChampionsServerConfig.DIFFICULTY_THRESHOLD.get().floatValue())) {
+    if (difficulty.isHarderThan(ChampionsServerConfig.CHAMPION_SPAWN_DIFFICULTY_THRESHOLD.get().floatValue())) {
       selectRank(random, mob, ranks.listElements()).ifPresent(rank -> {
-        List<AffixInstance> list = AffixHelper.selectAffixByLevel(random, mob, rank.value().tier(), affixes.listElements());
-        rank.value().createAffixInstances(mob, random, difficulty).forEach(list::add);
-        AffixHelper.updateEntity(mob, mutable -> list.forEach(instance -> mutable.upgrade(instance.affix(), instance.level())));
+        List<AffixInstance> list = AffixHelper.selectAffixByLevel(
+          random,
+          mob.getType(),
+          rank.value().tier(),
+          affixes.listElements(),
+          rank.value().createAffixInstances(mob, random, difficulty).toList()
+        );
+        AffixHelper.updateEntity(mob,
+          mutable -> list.forEach(instance -> mutable.upgrade(instance.affix(), instance.level()))
+        );
         if (!list.isEmpty()) {
           applyRank(mob, rank);
         }

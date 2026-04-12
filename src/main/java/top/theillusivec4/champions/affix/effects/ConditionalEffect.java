@@ -16,13 +16,13 @@ public record ConditionalEffect<T>(T effect, Optional<LootItemCondition> require
   public static Codec<LootItemCondition> conditionCodec(LootContextParamSet params) {
     return LootItemCondition.DIRECT_CODEC
       .validate(
-        p_351949_ -> {
+        condition -> {
           ProblemReporter.Collector problemreporter$collector = new ProblemReporter.Collector();
           ValidationContext validationcontext = new ValidationContext(problemreporter$collector, params);
-          p_351949_.validate(validationcontext);
+          condition.validate(validationcontext);
           return problemreporter$collector.getReport()
             .map(msg -> DataResult.<LootItemCondition>error(() -> "Validation error in affix effect condition: " + msg))
-            .orElseGet(() -> DataResult.success(p_351949_));
+            .orElseGet(() -> DataResult.success(condition));
         }
       );
   }

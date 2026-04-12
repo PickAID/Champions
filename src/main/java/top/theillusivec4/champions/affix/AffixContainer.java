@@ -34,6 +34,10 @@ public class AffixContainer {
     this.affixes = affixes;
   }
 
+  public static AffixContainer.Builder builder() {
+    return new Builder();
+  }
+
   public AffixContainer.Mutable mutable() {
     return new Mutable(this);
   }
@@ -73,8 +77,11 @@ public class AffixContainer {
   public static class Mutable {
     private final Object2IntMap<Holder<Affix>> affixes = new Object2IntOpenHashMap<>();
 
-    public Mutable(AffixContainer container) {
+    private Mutable(AffixContainer container) {
       this.affixes.putAll(container.affixes);
+    }
+
+    public Mutable() {
     }
 
     public void upgrade(Holder<Affix> affix, int level) {
@@ -109,6 +116,25 @@ public class AffixContainer {
 
     public AffixContainer toImmutable() {
       return new AffixContainer(this.affixes);
+    }
+  }
+
+  public static class Builder {
+    private final Object2IntMap<Holder<Affix>> affixes = new Object2IntOpenHashMap<>();
+
+    private Builder() {
+    }
+
+    public Builder add(Holder<Affix> affix, int level) {
+      if (level <= 0 || level > 255) {
+        throw new IllegalArgumentException("affix level must greater than 0 and less than 255.");
+      }
+      this.affixes.put(affix, level);
+      return this;
+    }
+
+    public AffixContainer build() {
+      return new AffixContainer(new Object2IntOpenHashMap<>(this.affixes));
     }
   }
 }

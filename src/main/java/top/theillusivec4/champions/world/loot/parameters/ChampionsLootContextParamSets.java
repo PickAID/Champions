@@ -88,6 +88,12 @@ public final class ChampionsLootContextParamSets {
       .required(LootContextParams.ORIGIN)
       .required(ChampionsLootContextParams.AFFIX_LEVEL)
   );
+  public static final LootContextParamSet TARGET = register("target",
+    builder -> builder
+      .required(LootContextParams.THIS_ENTITY)
+      .required(LootContextParams.ORIGIN)
+      .required(ChampionsLootContextParams.AFFIX_LEVEL)
+  );
 
   private ChampionsLootContextParamSets() {
   }

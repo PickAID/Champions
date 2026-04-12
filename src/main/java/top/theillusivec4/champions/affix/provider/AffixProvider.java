@@ -8,7 +8,7 @@ import net.minecraft.core.RegistryCodecs;
 import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import top.theillusivec4.champions.affix.AffixContainer;
 import top.theillusivec4.champions.affix.AffixInstance;
 import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
@@ -22,11 +22,15 @@ public interface AffixProvider {
   Codec<Holder<AffixProvider>> REFERENCE_CODEC = RegistryFileCodec.create(ChampionsRegistries.AFFIX_PROVIDER, DIRECT_CODEC, false);
   Codec<HolderSet<AffixProvider>> LIST_CODEC = RegistryCodecs.homogeneousList(ChampionsRegistries.AFFIX_PROVIDER, DIRECT_CODEC);
 
-  Stream<AffixInstance> provide(Entity entity, RandomSource random, DifficultyInstance difficulty);
+  Stream<AffixInstance> get(EntityType<?> entity, RandomSource random, DifficultyInstance difficulty);
 
   MapCodec<? extends AffixProvider> codec();
 
-  default void affixTo(Entity entity, AffixContainer.Mutable mutable, RandomSource random, DifficultyInstance instance) {
-    this.provide(entity, random, instance).forEach(affixInstance -> mutable.upgrade(affixInstance.affix(), affixInstance.level()));
+  default AffixContainer toContainer() {
+    return AffixContainer.EMPTY;
+  }
+
+  default void affixTo(EntityType<?> entity, AffixContainer.Mutable mutable, RandomSource random, DifficultyInstance instance) {
+    this.get(entity, random, instance).forEach(affixInstance -> mutable.upgrade(affixInstance.affix(), affixInstance.level()));
   }
 }

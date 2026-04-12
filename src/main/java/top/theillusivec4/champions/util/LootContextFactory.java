@@ -1,10 +1,8 @@
 package top.theillusivec4.champions.util;
 
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -115,23 +113,33 @@ public final class LootContextFactory {
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
+  public static LootContext target(ServerLevel serverLevel, Entity entity, int affixLevel) {
+    LootParams.Builder builder = new LootParams.Builder(serverLevel)
+      .withParameter(LootContextParams.THIS_ENTITY, entity)
+      .withParameter(LootContextParams.ORIGIN, entity.position())
+      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
+    ExtraLootParamHelper.withParameters(entity, builder);
+    LootParams params = builder.create(ChampionsLootContextParamSets.TICK);
+    return new LootContext.Builder(params).create(Optional.empty());
+  }
+
   public static LootContext location(ServerLevel serverLevel, Entity entity, Vec3 origin, int affixLevel) {
     LootParams.Builder builder = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, origin)
-      .withParameter(ChampionsLootContextParams.CHAMPION_TIER, affixLevel);
+      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
     ExtraLootParamHelper.withParameters(entity, builder);
     LootParams params = builder.create(ChampionsLootContextParamSets.LOCATION);
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-  public static LootContext spawn(ServerLevel serverLevel, Entity entity, int affixLevel, @Nullable MobSpawnType spawnReason, Optional<ResourceLocation> randomSequenceKey) {
-    LootParams params = new LootParams.Builder(serverLevel)
+  public static LootContext spawn(ServerLevel serverLevel, Entity entity, int affixLevel) {
+    LootParams.Builder builder = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(ChampionsLootContextParams.CHAMPION_TIER, affixLevel)
-      .create(ChampionsLootContextParamSets.SPAWN);
-    return new LootContext.Builder(params).create(randomSequenceKey);
+      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
+    ExtraLootParamHelper.withParameters(entity, builder);
+    LootParams params = builder.create(ChampionsLootContextParamSets.SPAWN);
+    return new LootContext.Builder(params).create(Optional.empty());
   }
 }

@@ -29,8 +29,7 @@ public class EnkindlingBullet extends ShulkerBullet {
     this.setOwner(owner);
     Vec3 position = owner.getBoundingBox().getCenter();
     this.moveTo(position.x, position.y, position.z, this.getYRot(), this.getXRot());
-    Entity target = owner instanceof Mob mob ? mob.getTarget() : null;
-    this.finalTarget = target;
+    this.finalTarget = owner instanceof Mob mob ? mob.getTarget() : null;
     this.currentMoveDirection = Direction.UP;
     this.selectNextMoveDirection(owner.getDirection().getAxis());
   }
