@@ -1,11 +1,32 @@
 {
   "required": true,
   "priority": 1000,
-  "package": "top.theillusivec4.champions.common.mixin",
+  "package": "top.theillusivec4.champions.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AbstractArrowMixin",
+    "AbstractWindChargeMixin",
+    "BeeMixin",
+    "EnderDragonMixin",
+    "EntityTypeMixin",
+    "EvokerFangsMixin",
+    "HoglinBaseMixin",
+    "IronGolemMixin",
+    "LargeFireballMixin",
+    "LivingEntityMixin",
+    "LlamaSpitMixin",
+    "LootContextParamSetsAccessor",
+    "MobMixin",
+    "PlayerMixin",
+    "RamTargetMixin",
+    "ShulkerBulletMixin",
+    "SlimeMixin",
+    "SmallFireballMixin",
+    "WitherBossMixin",
+    "WitherSkullMixin"
   ],
   "client": [
+    "BossHealthOverlayAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

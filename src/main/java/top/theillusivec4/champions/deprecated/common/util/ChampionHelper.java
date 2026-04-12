@@ -1,0 +1,127 @@
+package top.theillusivec4.champions.deprecated.common.util;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Enemy;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BeaconBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import top.theillusivec4.champions.deprecated.api.IChampion;
+import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
+import top.theillusivec4.champions.deprecated.common.config.ConfigEnums.Permission;
+import top.theillusivec4.champions.deprecated.common.rank.Rank;
+
+import java.util.HashSet;
+import java.util.Set;
+
+public class ChampionHelper {
+
+  private static final Set<BlockPos> BEACON_POS = new HashSet<>();
+
+  private static MinecraftServer server = null;
+
+  /**
+   * check entity is LivingEntity & Enemy
+   */
+  public static boolean isValidChampion(final Entity entity) {
+    return entity instanceof LivingEntity && entity instanceof Enemy;
+  }
+
+  /**
+   * @param client champion to check
+   * @return True if champion is valid Champion(Has ranks and affixes), else false.
+   */
+  public static boolean isValidChampion(IChampion.Client client) {
+    var rank = client.getRank();
+    return rank.isPresent() && rank.map(Tuple::getA).orElse(0) > 0 && !client.getAffixes().isEmpty();
+  }
+  /**
+   * @param server champion to check
+   * @return True if champion is valid Champion(Has ranks and affixes), else false.
+   */
+  public static boolean isValidChampion(IChampion.Server server) {
+    var rank = server.getRank();
+    return rank.isPresent() && rank.map(Rank::getTier).orElse(-1) > 0 && !server.getAffixes().isEmpty();
+  }
+
+  public static boolean isPotential(final LivingEntity livingEntity) {
+    return !isValidEntity(livingEntity) ||
+      !isValidDimension(livingEntity.level().dimension().location()) ||
+      nearActiveBeacon(livingEntity);
+  }
+
+  public static void addBeacon(BlockPos pos) {
+
+    if (server != null) {
+      BEACON_POS.add(pos);
+    }
+  }
+
+  private static boolean isValidEntity(final LivingEntity livingEntity) {
+    ResourceLocation rl = BuiltInRegistries.ENTITY_TYPE.getKey(livingEntity.getType());
+
+    String entity = rl.toString();
+
+    if (ChampionsConfig.entitiesPermission == Permission.BLACKLIST) {
+      return !ChampionsConfig.entitiesList.contains(entity);
+    } else {
+      return ChampionsConfig.entitiesList.contains(entity);
+    }
+  }
+
+  private static boolean isValidDimension(final ResourceLocation resourceLocation) {
+    String dimension = resourceLocation.toString();
+
+    if (ChampionsConfig.dimensionPermission == Permission.BLACKLIST) {
+      return !ChampionsConfig.dimensionList.contains(dimension);
+    } else {
+      return ChampionsConfig.dimensionList.contains(dimension);
+    }
+  }
+
+  private static boolean nearActiveBeacon(final LivingEntity livingEntity) {
+    int range = ChampionsConfig.beaconProtectionRange;
+
+    if (range <= 0) {
+      return false;
+    }
+    Set<BlockPos> toRemove = new HashSet<>();
+
+    for (BlockPos pos : BEACON_POS) {
+      Level level = livingEntity.level();
+
+      if (!level.isLoaded(pos)) {
+        continue;
+      }
+      BlockEntity blockEntity = level.getBlockEntity(pos);
+
+      if (blockEntity instanceof BeaconBlockEntity beaconBlockEntity && !blockEntity.isRemoved()) {
+
+        if (Math.sqrt(livingEntity.distanceToSqr(pos.getX(), pos.getY(), pos.getZ())) <= range) {
+
+          if (beaconBlockEntity.levels > 0) {
+            return true;
+          }
+        }
+
+      } else {
+        toRemove.add(pos);
+      }
+    }
+    BEACON_POS.removeAll(toRemove);
+    return false;
+  }
+
+  public static void clearBeacons() {
+    BEACON_POS.clear();
+  }
+
+  public static void setServer(MinecraftServer serverIn) {
+    server = serverIn;
+  }
+}
