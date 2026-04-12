@@ -1,8 +1,8 @@
 package top.theillusivec4.champions.affix;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -59,8 +59,8 @@ public final class AffixHelper {
   }
 
   public static int levelToCost(RandomSource random, int level, int affixableValue) {
-    level += 1 + random.nextInt((int) (affixableValue * ChampionsServerConfig.AFFIXABLE_FACTOR.get() + 1)) + random.nextInt(affixableValue / 4 + 1);
-    float f = (float) ((random.nextFloat() + random.nextFloat() - 1.0F) * ChampionsServerConfig.RANDOM_VARIATION_FACTOR.get());
+    level += 1 + random.nextInt((int) (affixableValue * ChampionsServerConfig.AFFIXABLE_FACTOR.get() + 1)) + random.nextInt((int) (affixableValue * ChampionsServerConfig.AFFIXABLE_FACTOR.get() + 1));
+    float f = (float) ((random.nextFloat() + random.nextFloat() - 1.0F) * ChampionsServerConfig.RANDOM_FACTOR.get());
     level = Mth.clamp(Math.round((float) level + (float) level * f), ChampionsServerConfig.MIN_AFFIX_COST.get(), ChampionsServerConfig.MAX_AFFIX_COST.get());
     return level;
   }
@@ -80,9 +80,10 @@ public final class AffixHelper {
   public static List<AffixInstance> selectAffixByLevel(RandomSource random, EntityType<?> entity, int level, Stream<? extends Holder<Affix>> possible, List<AffixInstance> prefix) {
     int value = getAffixableValue(entity);
     if (value > 0) {
-      return selectAffixByCost(random, entity, levelToCost(random, level, value), possible, prefix);
+      int cost = levelToCost(random, level, value);
+      return selectAffixByCost(random, entity, cost, possible, prefix);
     } else {
-      return new ArrayList<>();
+      return List.of();
     }
   }
 
@@ -91,45 +92,61 @@ public final class AffixHelper {
   }
 
   public static List<AffixInstance> selectAffixByCost(RandomSource random, EntityType<?> entity, int cost, Stream<? extends Holder<Affix>> possible, List<AffixInstance> prefix) {
-    List<AffixInstance> list = new ArrayList<>(prefix);
-    List<AffixInstance> list1 = getAvailableAffixResults(cost, entity, possible);
-    if (!list1.isEmpty()) {
-      WeightedRandom.getRandomItem(random, list1).ifPresent(list::add);
+    ImmutableList.Builder<AffixInstance> builder = ImmutableList.builder();
+    builder.addAll(filterCompatibleAffixes(prefix));
+    List<AffixInstance> list = new ArrayList<>(getAvailableAffixResults(cost, entity, possible));
+    if (!list.isEmpty()) {
 
-      while (random.nextInt(50) <= cost) {
-        if (!list.isEmpty()) {
-          filterCompatibleAffixes(list1, Util.lastOf(list));
-        }
-
-        if (list1.isEmpty()) {
+      while (random.nextInt(10) <= cost) {
+        Optional<AffixInstance> optional = WeightedRandom.getRandomItem(random, list);
+        if (optional.isPresent()) {
+          AffixInstance instance = optional.get();
+          removeCompatibleAffixes(list, instance);
+          builder.add(instance);
+        } else {
           break;
         }
 
-        WeightedRandom.getRandomItem(random, list1).ifPresent(list::add);
+        if(list.isEmpty()){
+          break;
+        }
+
         cost /= 2;
       }
     }
-    return list;
+    return builder.build();
   }
 
   public static List<AffixInstance> getAvailableAffixResults(int cost, EntityType<?> entity, Stream<? extends Holder<Affix>> possible) {
-    List<AffixInstance> list = Lists.newArrayList();
+    ImmutableList.Builder<AffixInstance> builder = ImmutableList.builder();
 
     possible.filter(affix -> affix.value().isSupported(entity)).forEach(affix -> {
       Affix value = affix.value();
 
       for (int i = value.getMaxLevel(); i >= value.getMinLevel(); i--) {
         if (cost >= value.getMinCost(i) && cost <= value.getMaxCost(i)) {
-          list.add(new AffixInstance(affix, i));
+          builder.add(new AffixInstance(affix, i));
           break;
         }
       }
     });
-    return list;
+    return builder.build();
   }
 
-  public static void filterCompatibleAffixes(List<AffixInstance> affixes, AffixInstance target) {
+  public static void removeCompatibleAffixes(List<AffixInstance> affixes, AffixInstance target) {
     affixes.removeIf(instance -> !Affix.areCompatible(instance.affix(), target.affix()));
+  }
+
+  public static List<AffixInstance> filterCompatibleAffixes(List<AffixInstance> affixes) {
+    ImmutableList.Builder<AffixInstance> builder = ImmutableList.builder();
+    AffixInstance last = null;
+    for (AffixInstance affix : affixes) {
+      if (last == null || Affix.areCompatible(affix, last)) {
+        builder.add(affix);
+        last = affix;
+      }
+    }
+    return builder.build();
   }
 
   public static boolean isAffixCompatible(Collection<Holder<Affix>> currentAffixes, Holder<Affix> newAffix) {

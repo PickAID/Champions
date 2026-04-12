@@ -10,6 +10,7 @@ import top.theillusivec4.champions.affix.AffixHelper;
 import top.theillusivec4.champions.champion.ChampionHelper;
 import top.theillusivec4.champions.champion.ChampionProperty;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public final class SpawnEggHelper {
@@ -22,8 +23,15 @@ public final class SpawnEggHelper {
   }
 
   public static void applyEntityConfig(ItemStack stack, Entity entity) {
-    AffixHelper.setToEntity(entity, AffixHelper.getStored(stack));
-    ChampionHelper.setToEntity(entity, ChampionHelper.getStored(stack));
+    AffixContainer container = AffixHelper.getStored(stack);
+    ChampionProperty property = ChampionHelper.getStored(stack);
+
+    if (!Objects.equals(container, AffixContainer.EMPTY)) {
+      AffixHelper.setToEntity(entity, container);
+    }
+    if (!Objects.equals(property, ChampionProperty.EMPTY)) {
+      ChampionHelper.setToEntity(entity, property);
+    }
   }
 
   public static void modifyPickResult(ItemStack stack, Entity entity) {

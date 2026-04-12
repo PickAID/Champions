@@ -21,7 +21,7 @@ public class EnUs extends ChampionsLanguageProvider {
     add("champions.configuration.champion_spawn_difficulty_threshold", "Champion Spawn Difficulty Threshold");
     add("champions.configuration.default_affixable", "Default Affixable Value");
     add("champions.configuration.affixable_factor", "Affixable Factor");
-    add("champions.configuration.random_variration_factor", "Random Variation Factor");
+    add("champions.configuration.random_factor", "Random Factor");
     add("champions.configuration.min_affix_cost", "Minimum Affix Cost");
     add("champions.configuration.max_affix_cost", "Maximum Affix Cost");
     add("champions.champion.color", "■");

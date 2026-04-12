@@ -246,10 +246,10 @@ public final class ChampionHelper {
           affixes.listElements(),
           rank.value().createAffixInstances(mob, random, difficulty).toList()
         );
-        AffixHelper.updateEntity(mob,
-          mutable -> list.forEach(instance -> mutable.upgrade(instance.affix(), instance.level()))
-        );
         if (!list.isEmpty()) {
+          AffixHelper.updateEntity(mob,
+            mutable -> list.forEach(instance -> mutable.upgrade(instance.affix(), instance.level()))
+          );
           applyRank(mob, rank);
         }
       });

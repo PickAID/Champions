@@ -68,6 +68,10 @@ public record Affix(
     return !affix.value().equals(other.value()) && !affix.value().exclusiveSet.contains(other) && !other.value().exclusiveSet.contains(affix);
   }
 
+  public static boolean areCompatible(AffixInstance affix, AffixInstance other){
+    return areCompatible(affix.affix(), other.affix());
+  }
+
   public static Affix.Builder affix(AffixDefinition definition) {
     return new Builder(definition);
   }
