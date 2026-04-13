@@ -1,11 +1,11 @@
-package top.theillusivec4.champions.champion.provider;
+package top.theillusivec4.champions.championmob.property.provider;
 
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
-import top.theillusivec4.champions.champion.ChampionProperty;
-import top.theillusivec4.champions.champion.Rank;
+import top.theillusivec4.champions.championmob.Rank;
+import top.theillusivec4.champions.championmob.property.ChampionProperty;
 import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 
 import java.util.function.Function;
@@ -20,8 +20,12 @@ public interface ChampionPropertyProvider {
       );
   });
 
-  static ChampionPropertyProvider rank(Holder<Rank> rank) {
+  static ChampionPropertyProvider byRank(Holder<Rank> rank) {
     return new ChampionPropertyByRank(rank);
+  }
+
+  static ChampionPropertyProvider single(ChampionProperty.Builder builder) {
+    return new SingleChampionProperty(builder.build());
   }
 
   ChampionProperty get();

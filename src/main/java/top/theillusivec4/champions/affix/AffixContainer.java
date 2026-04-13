@@ -134,8 +134,13 @@ public class AffixContainer {
       return this;
     }
 
+    public Builder add(AffixInstance instance) {
+      return add(instance.affix(), instance.level());
+    }
+
     public AffixContainer build() {
       return new AffixContainer(new Object2IntOpenHashMap<>(this.affixes));
     }
   }
+
 }

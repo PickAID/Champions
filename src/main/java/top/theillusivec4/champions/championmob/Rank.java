@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion;
+package top.theillusivec4.champions.championmob;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

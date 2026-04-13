@@ -12,8 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.champion.ChampionHelper;
-import top.theillusivec4.champions.champion.ChampionProperty;
+import top.theillusivec4.champions.championmob.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.championmob.property.ChampionProperty;
 
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public record ChampionPropertyPredicate(Optional<MinMaxBounds.Ints> tier, Option
 
   @Override
   public boolean matches(Entity entity, ServerLevel level, @Nullable Vec3 position) {
-    ChampionProperty property = ChampionHelper.get(entity);
+    ChampionProperty property = ChampionPropertyHelper.get(entity);
     return this.matches(property);
   }
 }

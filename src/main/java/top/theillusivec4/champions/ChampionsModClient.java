@@ -64,7 +64,7 @@ public class ChampionsModClient {
     if (event.getTab() == ChampionsCreativeModeTabs.CHAMPION_EGG.get()) {
       if (Minecraft.getInstance().level != null) {
         RegistryAccess registry = Minecraft.getInstance().level.registryAccess();
-        registry.lookupOrThrow(ChampionsRegistries.CHAMPION_EGG).listElements()
+        registry.lookupOrThrow(ChampionsRegistries.CHAMPION_MOB_EGG).listElements()
           .forEach(template -> event.accept(template.value().create()));
       }
     }

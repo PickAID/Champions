@@ -26,7 +26,7 @@ import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.affix.effects.AffixTarget;
 import top.theillusivec4.champions.attachments.ChampionsAttachments;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.championmob.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.component.ChampionsDataComponents;
 import top.theillusivec4.champions.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
@@ -181,7 +181,7 @@ public final class AffixHelper {
     AffixContainer.Mutable mutable = get(entity).mutable();
     consumer.accept(mutable);
     setToEntity(entity, mutable.toImmutable());
-    ChampionHelper.getBossbar(entity).setAffixes(get(entity));
+    ChampionPropertyHelper.getBossbar(entity).setAffixes(get(entity));
   }
 
   public static void setToEntity(Entity entity, AffixContainer container) {

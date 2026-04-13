@@ -1,8 +1,6 @@
-package top.theillusivec4.champions.champion;
+package top.theillusivec4.champions.championmob.property;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.Holder;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -11,32 +9,23 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
-import top.theillusivec4.champions.affix.Affix;
 import top.theillusivec4.champions.affix.AffixHelper;
-import top.theillusivec4.champions.affix.AffixInstance;
 import top.theillusivec4.champions.attachments.ChampionsAttachments;
 import top.theillusivec4.champions.component.ChampionsDataComponents;
 import top.theillusivec4.champions.particles.ChampionsParticleTypes;
-import top.theillusivec4.champions.registries.ChampionsRegistries;
-import top.theillusivec4.champions.server.ChampionsServerConfig;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
-import top.theillusivec4.champions.util.ChampionsUtil;
 
-import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
-public final class ChampionHelper {
+public final class ChampionPropertyHelper {
 
-  private ChampionHelper() {
+  private ChampionPropertyHelper() {
   }
 
   public static int getTier(Entity entity) {
@@ -187,16 +176,16 @@ public final class ChampionHelper {
   }
 
   public static ChampionProperty getStored(ItemStack itemStack) {
-    return itemStack.getOrDefault(ChampionsDataComponents.STORED_CHAMPION_PROPERTY, ChampionProperty.EMPTY);
+    return itemStack.getOrDefault(ChampionsDataComponents.STORED_CHAMPION_MOB_PROPERTY, ChampionProperty.EMPTY);
   }
 
   public static ChampionProperty get(Entity entity) {
-    return entity.getExistingData(ChampionsAttachments.CHAMPION).orElse(ChampionProperty.EMPTY);
+    return entity.getExistingData(ChampionsAttachments.CHAMPION_MOB_PROPERTY).orElse(ChampionProperty.EMPTY);
   }
 
   public static void setToItem(ItemStack item, ChampionProperty state) {
     if (!getStored(item).equals(state)) {
-      item.set(ChampionsDataComponents.STORED_CHAMPION_PROPERTY, state);
+      item.set(ChampionsDataComponents.STORED_CHAMPION_MOB_PROPERTY, state);
 
       if (item.getItem() instanceof SpawnEggItem eggItem) {
         ChampionProperty stored = getStored(item);
@@ -211,7 +200,7 @@ public final class ChampionHelper {
 
   public static void setToEntity(Entity entity, ChampionProperty state) {
     if (!get(entity).equals(state)) {
-      entity.setData(ChampionsAttachments.CHAMPION, state);
+      entity.setData(ChampionsAttachments.CHAMPION_MOB_PROPERTY, state);
       refreshBossbar(entity);
     }
   }
@@ -223,46 +212,4 @@ public final class ChampionHelper {
     }
   }
 
-  public static Optional<Holder<Rank>> selectRank(RandomSource random, Entity entity, Stream<? extends Holder<Rank>> possible) {
-    return selectRank(random, entity.getType(), possible);
-  }
-
-  public static Optional<Holder<Rank>> selectRank(RandomSource random, EntityType<?> entity, Stream<? extends Holder<Rank>> possible) {
-    return ChampionsUtil.getRandom(random,
-      possible.filter(rank -> rank.value().isSupported(entity)).toList()
-    );
-  }
-
-  public static void doFinalizeSpawn(ServerLevel level, Mob mob, double x, double y, double z, DifficultyInstance difficulty, MobSpawnType reason) {
-    RandomSource random = level.getRandom();
-    HolderLookup<Affix> affixes = level.registryAccess().lookupOrThrow(ChampionsRegistries.AFFIX);
-    HolderLookup<Rank> ranks = level.registryAccess().lookupOrThrow(ChampionsRegistries.RANK);
-    if (difficulty.isHarderThan(ChampionsServerConfig.CHAMPION_SPAWN_DIFFICULTY_THRESHOLD.get().floatValue())) {
-      selectRank(random, mob, ranks.listElements()).ifPresent(rank -> {
-        List<AffixInstance> list = AffixHelper.selectAffixByLevel(
-          random,
-          mob.getType(),
-          rank.value().tier(),
-          affixes.listElements(),
-          rank.value().createAffixInstances(mob, random, difficulty).toList()
-        );
-        if (!list.isEmpty()) {
-          AffixHelper.updateEntity(mob,
-            mutable -> list.forEach(instance -> mutable.upgrade(instance.affix(), instance.level()))
-          );
-          applyRank(mob, rank);
-        }
-      });
-    }
-  }
-
-  public static void applyRank(Entity entity, Holder<Rank> rank) {
-    updateEntity(entity, mutable ->
-      mutable.setPrefix(rank.value().description())
-        .setTier(rank.value().tier())
-        .setColor(rank.value().color())
-        .setBoss(rank.value().boss())
-    );
-    refreshBossbar(entity);
-  }
 }

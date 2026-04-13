@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.champions.spawnegg.SpawnEggHelper;
+import top.theillusivec4.champions.championegg.ChampionMobEggHelper;
 
 import java.util.function.Consumer;
 
@@ -25,7 +25,7 @@ public abstract class EntityTypeMixin<T extends Entity> implements EntityTypeTes
   @Inject(method = "appendCustomEntityStackConfig", at = @At(value = "RETURN"), cancellable = true)
   private static <T extends Entity> void champions$appendCustomEntityStackConfig(Consumer<T> consumer, ServerLevel level, ItemStack stack, Player player, CallbackInfoReturnable<Consumer<T>> cir) {
     cir.setReturnValue(
-      cir.getReturnValue().andThen(entity -> SpawnEggHelper.applyEntityConfig(stack, entity))
+      cir.getReturnValue().andThen(entity -> ChampionMobEggHelper.applyEntityConfig(stack, entity))
     );
   }
 

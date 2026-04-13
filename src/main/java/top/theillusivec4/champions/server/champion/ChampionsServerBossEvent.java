@@ -12,7 +12,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import top.theillusivec4.champions.affix.AffixContainer;
-import top.theillusivec4.champions.champion.ChampionsBossEvent;
+import top.theillusivec4.champions.championmob.property.ChampionsBossEvent;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
 
 import java.util.Collections;

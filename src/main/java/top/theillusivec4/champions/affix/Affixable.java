@@ -3,6 +3,7 @@ package top.theillusivec4.champions.affix;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
@@ -17,7 +18,7 @@ public record Affixable(int value) {
     return Codec.withAlternative(directCodec, MAP_CODEC.codec());
   });
 
-  public static void bootstrap(DataMapProvider.Builder<Affixable, EntityType<?>> context) {
+  public static void bootstrap(HolderLookup.Provider provider, DataMapProvider.Builder<Affixable, EntityType<?>> context) {
     for (EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
       if (entityType.getCategory() != MobCategory.MONSTER) {
         register(context, entityType, 0);

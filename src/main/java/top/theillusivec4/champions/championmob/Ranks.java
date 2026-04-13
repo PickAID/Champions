@@ -1,6 +1,5 @@
-package top.theillusivec4.champions.champion;
+package top.theillusivec4.champions.championmob;
 
-import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;

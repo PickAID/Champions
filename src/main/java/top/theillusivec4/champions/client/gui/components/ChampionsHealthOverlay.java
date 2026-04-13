@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.affix.AffixContainer;
 import top.theillusivec4.champions.affix.AffixHelper;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.championmob.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.client.config.ChampionsClientConfig;
 import top.theillusivec4.champions.client.util.ChampionsClientUtil;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
@@ -47,10 +47,10 @@ public final class ChampionsHealthOverlay {
 
       Entity entity = ChampionsClientUtil.getMouseEntity(deltaTracker.getGameTimeDeltaTicks());
       if (entity != null) {
-        if (entity instanceof LivingEntity livingEntity && !ChampionHelper.isBoss(entity)) {
-          ChampionsClientBossEvent event = new ChampionsClientBossEvent(entity.getUUID(), ChampionHelper.getDisplayName(entity));
-          event.setTier(ChampionHelper.getTier(entity));
-          event.setColor(ChampionHelper.getColor(entity));
+        if (entity instanceof LivingEntity livingEntity && !ChampionPropertyHelper.isBoss(entity)) {
+          ChampionsClientBossEvent event = new ChampionsClientBossEvent(entity.getUUID(), ChampionPropertyHelper.getDisplayName(entity));
+          event.setTier(ChampionPropertyHelper.getTier(entity));
+          event.setColor(ChampionPropertyHelper.getColor(entity));
           event.setProgress(Math.clamp(livingEntity.getHealth() / livingEntity.getMaxHealth(), 0.0f, 1.0f));
           event.setAffixes(AffixHelper.get(entity));
           this.render(graphics, event);

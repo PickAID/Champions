@@ -7,7 +7,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
 import top.theillusivec4.champions.affix.Affix;
 import top.theillusivec4.champions.affix.AffixContainer;
-import top.theillusivec4.champions.champion.ChampionsBossEvent;
+import top.theillusivec4.champions.championmob.property.ChampionsBossEvent;
 
 import java.util.Iterator;
 import java.util.Map;

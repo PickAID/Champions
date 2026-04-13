@@ -25,12 +25,11 @@ public record AffixesByCostWithDifficulty(HolderSet<Affix> affixes, int minCost,
   public Stream<AffixInstance> get(EntityType<?> entity, RandomSource random, DifficultyInstance difficulty) {
     float f = difficulty.getSpecialMultiplier();
     int cost = Mth.randomBetweenInclusive(random, this.minCost, this.minCost + (int) (f * (float) this.maxCostSpan));
-    AffixHelper.selectAffixByCost(random, entity, cost, this.affixes.stream());
-    return Stream.empty();
+    return AffixHelper.selectAffixByCost(random, entity, cost, this.affixes.stream()).stream();
   }
 
   @Override
   public MapCodec<? extends AffixProvider> codec() {
-    return null;
+    return MAP_CODEC;
   }
 }

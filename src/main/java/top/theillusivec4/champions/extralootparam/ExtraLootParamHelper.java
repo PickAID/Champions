@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import top.theillusivec4.champions.attachments.ChampionsAttachments;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.championmob.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParams;
 
 import java.util.Objects;
@@ -28,7 +28,7 @@ public final class ExtraLootParamHelper {
 
   public static void withParameters(Entity entity, LootParams.Builder builder) {
     builder
-      .withParameter(ChampionsLootContextParams.CHAMPION_TIER, ChampionHelper.getTier(entity))
+      .withParameter(ChampionsLootContextParams.CHAMPION_TIER, ChampionPropertyHelper.getTier(entity))
       .withParameter(ChampionsLootContextParams.DAMAGE_COUNT, ExtraLootParamHelper.getDamageCount(entity));
   }
 

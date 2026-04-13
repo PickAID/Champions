@@ -20,7 +20,15 @@ public record SingleAffix(Holder<Affix> affix, IntProvider level) implements Aff
 
   @Override
   public Stream<AffixInstance> get(EntityType<?> entity, RandomSource random, DifficultyInstance difficulty) {
-    return Stream.of(new AffixInstance(this.affix, this.level.sample(random)));
+    return Stream.of(new AffixInstance(
+        this.affix,
+        Math.clamp(
+          this.level.sample(random),
+          this.affix.value().getMinLevel(),
+          this.affix.value().getMaxLevel()
+        )
+      )
+    );
   }
 
   @Override
