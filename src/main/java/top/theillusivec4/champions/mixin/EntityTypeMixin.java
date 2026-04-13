@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.champions.championegg.ChampionMobEggHelper;
+import top.theillusivec4.champions.world.item.champion.ChampionMobEggHelper;
 
 import java.util.function.Consumer;
 

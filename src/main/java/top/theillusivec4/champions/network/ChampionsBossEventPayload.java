@@ -10,7 +10,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.StringRepresentable;
-import top.theillusivec4.champions.affix.AffixContainer;
+import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
 import top.theillusivec4.champions.util.ChampionsStreamCodecs;
 import top.theillusivec4.champions.util.ChampionsUtil;
@@ -129,7 +129,7 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
   }
 
   public interface Handler {
-    void add(UUID id, Component name, float progress, int level, TextColor color, AffixContainer affixes);
+    void add(UUID id, Component name, float progress, int level, TextColor color, EntityAffixes affixes);
 
     void remove(UUID id);
 
@@ -141,7 +141,7 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
 
     void updateName(UUID id, Component name);
 
-    void updateAffixes(UUID id, AffixContainer affixes);
+    void updateAffixes(UUID id, EntityAffixes affixes);
   }
 
   public sealed interface Operation permits AddOperation, RemoveOperation, UpdateAffixes, UpdateColor, UpdateLevel, UpdateName, UpdateProgress {
@@ -157,14 +157,14 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
     float progress,
     int level,
     TextColor color,
-    AffixContainer affixes
+    EntityAffixes affixes
   ) implements Operation {
     public static final StreamCodec<RegistryFriendlyByteBuf, AddOperation> STREAM_CODEC = StreamCodec.composite(
       ComponentSerialization.STREAM_CODEC, AddOperation::name,
       ByteBufCodecs.FLOAT, AddOperation::progress,
       ByteBufCodecs.INT, AddOperation::level,
       ChampionsStreamCodecs.TEXT_COLOR, AddOperation::color,
-      AffixContainer.STREAM_CODEC, AddOperation::affixes,
+      EntityAffixes.STREAM_CODEC, AddOperation::affixes,
       AddOperation::new
     );
 
@@ -268,9 +268,9 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
 
   }
 
-  private record UpdateAffixes(AffixContainer affixes) implements Operation {
+  private record UpdateAffixes(EntityAffixes affixes) implements Operation {
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateAffixes> STREAM_CODEC = StreamCodec.composite(
-      AffixContainer.STREAM_CODEC, UpdateAffixes::affixes,
+      EntityAffixes.STREAM_CODEC, UpdateAffixes::affixes,
       UpdateAffixes::new
     );
 

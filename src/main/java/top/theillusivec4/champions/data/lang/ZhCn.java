@@ -1,8 +1,8 @@
 package top.theillusivec4.champions.data.lang;
 
 import net.minecraft.data.PackOutput;
-import top.theillusivec4.champions.affix.Affixes;
-import top.theillusivec4.champions.championmob.Ranks;
+import top.theillusivec4.champions.world.entity.affix.Affixes;
+import top.theillusivec4.champions.world.entity.champion.Ranks;
 
 public class ZhCn extends ChampionsLanguageProvider {
   public ZhCn(PackOutput output) {

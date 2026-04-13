@@ -11,10 +11,10 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import top.theillusivec4.champions.affix.AffixContainer;
-import top.theillusivec4.champions.affix.AffixHelper;
-import top.theillusivec4.champions.championmob.property.ChampionPropertyHelper;
-import top.theillusivec4.champions.client.config.ChampionsClientConfig;
+import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
+import top.theillusivec4.champions.world.entity.affix.AffixHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.client.ChampionsClientConfig;
 import top.theillusivec4.champions.client.util.ChampionsClientUtil;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
 import top.theillusivec4.champions.util.ChampionsUtil;
@@ -47,10 +47,10 @@ public final class ChampionsHealthOverlay {
 
       Entity entity = ChampionsClientUtil.getMouseEntity(deltaTracker.getGameTimeDeltaTicks());
       if (entity != null) {
-        if (entity instanceof LivingEntity livingEntity && !ChampionPropertyHelper.isBoss(entity)) {
-          ChampionsClientBossEvent event = new ChampionsClientBossEvent(entity.getUUID(), ChampionPropertyHelper.getDisplayName(entity));
-          event.setTier(ChampionPropertyHelper.getTier(entity));
-          event.setColor(ChampionPropertyHelper.getColor(entity));
+        if (entity instanceof LivingEntity livingEntity && !ChampionMobPropertyHelper.isBoss(entity)) {
+          ChampionsClientBossEvent event = new ChampionsClientBossEvent(entity.getUUID(), ChampionMobPropertyHelper.getDisplayName(entity));
+          event.setTier(ChampionMobPropertyHelper.getTier(entity));
+          event.setColor(ChampionMobPropertyHelper.getColor(entity));
           event.setProgress(Math.clamp(livingEntity.getHealth() / livingEntity.getMaxHealth(), 0.0f, 1.0f));
           event.setAffixes(AffixHelper.get(entity));
           this.render(graphics, event);
@@ -180,7 +180,7 @@ public final class ChampionsHealthOverlay {
   private class Handler implements ChampionsBossEventPayload.Handler {
 
     @Override
-    public void add(UUID id, Component name, float progress, int level, TextColor color, AffixContainer affixes) {
+    public void add(UUID id, Component name, float progress, int level, TextColor color, EntityAffixes affixes) {
       ChampionsClientBossEvent event = new ChampionsClientBossEvent(id, name, progress, level, color, affixes);
       ChampionsHealthOverlay.this.events.put(id, event);
     }
@@ -223,7 +223,7 @@ public final class ChampionsHealthOverlay {
     }
 
     @Override
-    public void updateAffixes(UUID id, AffixContainer affixes) {
+    public void updateAffixes(UUID id, EntityAffixes affixes) {
       ChampionsClientBossEvent event = ChampionsHealthOverlay.this.events.get(id);
       if (event != null) {
         event.setAffixes(affixes);

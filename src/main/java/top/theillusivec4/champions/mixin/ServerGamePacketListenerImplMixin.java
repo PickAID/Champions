@@ -20,7 +20,7 @@
 //import org.spongepowered.asm.mixin.injection.At;
 //import org.spongepowered.asm.mixin.injection.Inject;
 //import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-//import top.theillusivec4.champions.champion.ChampionHelper;
+//import top.theillusivec4.champions.world.item.champion.ChampionHelper;
 //
 ///**
 // * 实现使用鼠标中键点击实体时获取实体刷怪蛋的功能

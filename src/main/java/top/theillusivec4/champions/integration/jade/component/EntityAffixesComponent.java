@@ -6,8 +6,8 @@ import snownee.jade.api.EntityAccessor;
 import snownee.jade.api.IEntityComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.config.IPluginConfig;
-import top.theillusivec4.champions.affix.Affix;
-import top.theillusivec4.champions.affix.AffixHelper;
+import top.theillusivec4.champions.world.entity.affix.Affix;
+import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 
 import java.util.Map;
 

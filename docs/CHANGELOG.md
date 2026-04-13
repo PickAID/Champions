@@ -24,7 +24,7 @@ This project uses MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 - Added Game Stages integration through the new `champions-gamestages.toml` configuration file [#135](https://github.com/TheIllusiveC4/Champions/issues/135)
 ### Changed
 - Updated Russian `ru_ru` localization (thanks MiniRaptor!) [#127](https://github.com/TheIllusiveC4/Champions/pull/127)
-- Changed Reflective affix's reflected damageAmount to list the championProperty as the source rather than the player to avoid recursive [#133](https://github.com/TheIllusiveC4/Champions/issues/133)
+- Changed Reflective affix's reflected damageAmount to list the championMobProperty as the source rather than the player to avoid recursive [#133](https://github.com/TheIllusiveC4/Champions/issues/133)
 player effects
 ### Fixed
 - Fixed experience drop growth from champions stacking incorrectly with other mods [#134](https://github.com/TheIllusiveC4/Champions/issues/134)
@@ -35,7 +35,7 @@ player effects
 
 ## [1.18.2-2.1.5.6] - 2022.06.20
 ### Fixed
-- Fixed Global Loot Modifiers running twice when generating championProperty loot [#125](https://github.com/TheIllusiveC4/Champions/issues/125)
+- Fixed Global Loot Modifiers running twice when generating championMobProperty loot [#125](https://github.com/TheIllusiveC4/Champions/issues/125)
 
 ## [1.18.2-2.1.5.5] - 2022.06.13
 ### Fixed
@@ -69,7 +69,7 @@ player effects
 ### Changed
 - Updated `ko_kr` localization (thanks PixVoxel!) [#116](https://github.com/TheIllusiveC4/Champions/pull/116)
 ### Fixed
-- Fixed `champions:champion_properties` loot condition potentially applying to non-championProperty entities
+- Fixed `champions:champion_properties` loot condition potentially applying to non-championMobProperty entities
 - Fixed Shielding affix preventing Creative damageAmount
 
 ## [1.18.2-2.1.4.0] - 2022.04.17
@@ -78,11 +78,11 @@ player effects
 
 ## [1.18.2-2.1.3.0] - 2022.04.16
 ### Added
-- Added "Champion Hunter" advancement for killing any championProperty mob
+- Added "Champion Hunter" advancement for killing any championMobProperty mob
 - Added revamped loot condition, `champions:champion_properties`, that can be used with advancement triggers [#114](https://github.com/TheIllusiveC4/Champions/pull/114)
 - Added integration with TheOneProbe [#115](https://github.com/TheIllusiveC4/Champions/pull/115)
 ### Fixed
-- Fixed converted entities losing their championProperty abilities [#113](https://github.com/TheIllusiveC4/Champions/issues/113)
+- Fixed converted entities losing their championMobProperty abilities [#113](https://github.com/TheIllusiveC4/Champions/issues/113)
 
 ## [1.18.2-2.1.2.3] - 2022.04.09
 ### Changed

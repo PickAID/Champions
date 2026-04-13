@@ -12,7 +12,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.FastColor;
-import top.theillusivec4.champions.particles.ChampionsParticleTypes;
+import top.theillusivec4.champions.core.particles.ChampionsParticleTypes;
 
 import java.util.Random;
 

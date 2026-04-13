@@ -11,9 +11,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import top.theillusivec4.champions.ChampionsMod;
-import top.theillusivec4.champions.affix.Affix;
-import top.theillusivec4.champions.affix.AffixHelper;
-import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.world.entity.affix.Affix;
+import top.theillusivec4.champions.world.entity.affix.AffixHelper;
+import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 
 import java.util.Collection;
 
@@ -51,7 +51,7 @@ public final class AffixCommands {
   private static int add(CommandSourceStack source, Collection<? extends Entity> entities, Holder<Affix> affix, int level) {
     int i = 0;
     for (Entity entity : entities) {
-      AffixHelper.updateEntity(entity, affixes -> affixes.set(affix, level));
+      AffixHelper.update(entity, affixes -> affixes.set(affix, level));
       i++;
     }
 
@@ -79,7 +79,7 @@ public final class AffixCommands {
   private static int remove(CommandSourceStack source, Collection<? extends Entity> entities, Holder<Affix> affix) {
     int i = 0;
     for (Entity entity : entities) {
-      AffixHelper.updateEntity(entity, affixes -> affixes.remove(affix));
+      AffixHelper.update(entity, affixes -> affixes.remove(affix));
       i++;
     }
 

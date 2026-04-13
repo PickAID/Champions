@@ -7,6 +7,8 @@ import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.world.entity.projectile.ArcticBullet;
+import top.theillusivec4.champions.world.entity.projectile.EnkindlingBullet;
 
 import java.util.function.Supplier;
 

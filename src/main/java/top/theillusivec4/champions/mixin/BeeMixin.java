@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.champions.affix.AffixHelper;
+import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 
 @Mixin(value = Bee.class)
 public abstract class BeeMixin extends Animal {

@@ -5,9 +5,9 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextColor;
-import top.theillusivec4.champions.affix.Affix;
-import top.theillusivec4.champions.affix.AffixContainer;
-import top.theillusivec4.champions.championmob.property.ChampionsBossEvent;
+import top.theillusivec4.champions.world.entity.affix.Affix;
+import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionsBossEvent;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -18,7 +18,7 @@ public class ChampionsClientBossEvent extends ChampionsBossEvent {
     super(id, name);
   }
 
-  public ChampionsClientBossEvent(UUID id, Component name, float progress, int level, TextColor color, AffixContainer affixes) {
+  public ChampionsClientBossEvent(UUID id, Component name, float progress, int level, TextColor color, EntityAffixes affixes) {
     super(id, name, progress, level, color, affixes);
   }
 

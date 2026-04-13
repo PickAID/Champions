@@ -11,8 +11,8 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.extralootparam.DamageTracker;
-import top.theillusivec4.champions.extralootparam.ExtraLootParamHelper;
+import top.theillusivec4.champions.world.entity.damagetracker.DamageTracker;
+import top.theillusivec4.champions.world.entity.damagetracker.DamageTrackerHelper;
 
 import java.util.Map;
 import java.util.Optional;
@@ -25,9 +25,9 @@ public record DamageTrackerPredicate(Map<Holder<DamageType>, MinMaxBounds.Ints> 
 
   public boolean matches(DamageTracker tracker) {
     if (this.last.isPresent()) {
-      if (tracker.getLast().isEmpty()) {
+      if (tracker.getLast() == null) {
         return false;
-      } else if (this.last.get() != tracker.getLast().get()) {
+      } else if (this.last.get() != tracker.getLast()) {
         return false;
       }
     }
@@ -50,7 +50,7 @@ public record DamageTrackerPredicate(Map<Holder<DamageType>, MinMaxBounds.Ints> 
 
   @Override
   public boolean matches(Entity entity, ServerLevel level, @Nullable Vec3 position) {
-    DamageTracker tracker = ExtraLootParamHelper.getDamageTracker(entity);
+    DamageTracker tracker = DamageTrackerHelper.get(entity);
     return this.matches(tracker);
   }
 }
