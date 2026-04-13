@@ -15,13 +15,13 @@ import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import top.theillusivec4.champions.client.config.ChampionsClientConfig;
+import top.theillusivec4.champions.client.ChampionsClientConfig;
 import top.theillusivec4.champions.client.gui.ChampionsGui;
 import top.theillusivec4.champions.client.gui.ChampionsGuiLayers;
 import top.theillusivec4.champions.client.particle.RankParticle;
 import top.theillusivec4.champions.client.renderer.ColorizedBulletRenderer;
-import top.theillusivec4.champions.particles.ChampionsParticleTypes;
-import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.core.particles.ChampionsParticleTypes;
+import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
 import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
 

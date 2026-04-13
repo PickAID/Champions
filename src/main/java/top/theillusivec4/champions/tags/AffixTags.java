@@ -1,8 +1,8 @@
 package top.theillusivec4.champions.tags;
 
 import net.minecraft.tags.TagKey;
-import top.theillusivec4.champions.affix.Affix;
-import top.theillusivec4.champions.registries.ChampionsRegistries;
+import top.theillusivec4.champions.world.entity.affix.Affix;
+import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public final class AffixTags {

@@ -12,8 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.championmob.property.ChampionPropertyHelper;
-import top.theillusivec4.champions.championmob.property.ChampionProperty;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
 import java.util.Optional;
 
@@ -25,7 +25,7 @@ public record ChampionPropertyPredicate(Optional<MinMaxBounds.Ints> tier, Option
     Codec.BOOL.optionalFieldOf("boss").forGetter(ChampionPropertyPredicate::boss)
   ).apply(instance, ChampionPropertyPredicate::new));
 
-  public boolean matches(ChampionProperty property) {
+  public boolean matches(ChampionMobProperty property) {
     return (this.tier.isEmpty() || this.tier.get().matches(property.tier()))
       && (this.color.isEmpty() || this.color.get().equals(property.color()))
       && (this.prefix.isEmpty() || this.prefix.get().equals(property.prefix()))
@@ -39,7 +39,7 @@ public record ChampionPropertyPredicate(Optional<MinMaxBounds.Ints> tier, Option
 
   @Override
   public boolean matches(Entity entity, ServerLevel level, @Nullable Vec3 position) {
-    ChampionProperty property = ChampionPropertyHelper.get(entity);
+    ChampionMobProperty property = ChampionMobPropertyHelper.get(entity);
     return this.matches(property);
   }
 }

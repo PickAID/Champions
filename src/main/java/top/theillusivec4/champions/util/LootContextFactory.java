@@ -8,9 +8,9 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.extralootparam.ExtraLootParamHelper;
-import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParamSets;
-import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParams;
+import top.theillusivec4.champions.world.level.storage.loot.ExtraLootParamsHelper;
+import top.theillusivec4.champions.world.level.storage.loot.parameters.ChampionsLootContextParamSets;
+import top.theillusivec4.champions.world.level.storage.loot.parameters.ChampionsLootContextParams;
 
 import java.util.Optional;
 
@@ -26,7 +26,7 @@ public final class LootContextFactory {
       .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel)
       .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
       .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity);
-    ExtraLootParamHelper.withParameters(entity, builder);
+    ExtraLootParamsHelper.withParameters(entity, builder);
     LootParams params = builder.create(ChampionsLootContextParamSets.AFFIXED_DAMAGE);
     return new LootContext.Builder(params).create(Optional.empty());
   }
@@ -36,7 +36,7 @@ public final class LootContextFactory {
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
-    ExtraLootParamHelper.withParameters(entity, builder);
+    ExtraLootParamsHelper.withParameters(entity, builder);
     LootParams params = builder.create(ChampionsLootContextParamSets.AFFIXED_ENTITY);
     return new LootContext.Builder(params).create(Optional.empty());
   }
@@ -46,7 +46,7 @@ public final class LootContextFactory {
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, origin)
       .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
-    ExtraLootParamHelper.withParameters(entity, builder);
+    ExtraLootParamsHelper.withParameters(entity, builder);
     LootParams params = builder.create(ChampionsLootContextParamSets.AFFIXED_LOCATION);
     return new LootContext.Builder(params).create(Optional.empty());
   }

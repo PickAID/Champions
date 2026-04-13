@@ -4,21 +4,20 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.data.DataMapProvider;
-import top.theillusivec4.champions.affix.Affixable;
-import top.theillusivec4.champions.championmob.ChampionMobPreset;
-import top.theillusivec4.champions.registries.ChampionsDataMaps;
+import top.theillusivec4.champions.world.entity.affix.Affixable;
+import top.theillusivec4.champions.world.entity.champion.ChampionMobPreset;
+import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
 
 import java.util.concurrent.CompletableFuture;
 
 public class ChampionsDataMapProvider extends DataMapProvider {
-  /**
-   * Create a new provider.
-   *
-   * @param packOutput     the output location
-   * @param lookupProvider a {@linkplain CompletableFuture} supplying the registries
-   */
-  public ChampionsDataMapProvider(PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider) {
-    super(packOutput, lookupProvider);
+
+  public ChampionsDataMapProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+    super(output, registries);
+  }
+
+  public static ChampionsDataMapProvider create(PackOutput output, CompletableFuture<HolderLookup.Provider> registries){
+    return new ChampionsDataMapProvider(output, registries);
   }
 
   @Override

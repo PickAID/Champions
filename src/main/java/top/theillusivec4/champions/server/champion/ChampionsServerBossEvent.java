@@ -11,8 +11,8 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
-import top.theillusivec4.champions.affix.AffixContainer;
-import top.theillusivec4.champions.championmob.property.ChampionsBossEvent;
+import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionsBossEvent;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
 
 import java.util.Collections;
@@ -28,12 +28,12 @@ public class ChampionsServerBossEvent extends ChampionsBossEvent {
     Codec.FLOAT.fieldOf("progress").forGetter(ChampionsBossEvent::getProgress),
     Codec.INT.fieldOf("level").forGetter(ChampionsBossEvent::getTier),
     TextColor.CODEC.fieldOf("color").forGetter(ChampionsBossEvent::getColor),
-    AffixContainer.MAP_CODEC.codec().optionalFieldOf("affixes", AffixContainer.EMPTY).forGetter(ChampionsBossEvent::getAffixes)
+    EntityAffixes.MAP_CODEC.codec().optionalFieldOf("affixes", EntityAffixes.EMPTY).forGetter(ChampionsBossEvent::getAffixes)
   ).apply(instance, ChampionsServerBossEvent::new));
   private final Set<ServerPlayer> players = Sets.newHashSet();
   private final Set<ServerPlayer> unmodifiablePlayers = Collections.unmodifiableSet(this.players);
 
-  public ChampionsServerBossEvent(UUID id, Component name, float progress, int level, TextColor color, AffixContainer affixes) {
+  public ChampionsServerBossEvent(UUID id, Component name, float progress, int level, TextColor color, EntityAffixes affixes) {
     super(id, name, progress, level, color, affixes);
   }
 
@@ -69,7 +69,7 @@ public class ChampionsServerBossEvent extends ChampionsBossEvent {
   }
 
   @Override
-  public void setAffixes(AffixContainer affixes) {
+  public void setAffixes(EntityAffixes affixes) {
     if (this != EMPTY && !this.getAffixes().equals(affixes)) {
       super.setAffixes(affixes);
       this.broadcast(ChampionsBossEventPayload::createUpdateAffixes);
