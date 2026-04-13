@@ -18,30 +18,7 @@ public final class LootContextFactory {
   private LootContextFactory() {
   }
 
-  public static LootContext attributes(ServerLevel serverLevel, Entity entity, int affixLevel) {
-    LootParams.Builder builder = new LootParams.Builder(serverLevel)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
-    ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.ATTRIBUTES);
-    return new LootContext.Builder(params).create(Optional.empty());
-  }
-
-  public static LootContext knockback(ServerLevel serverLevel, Entity entity, DamageSource damageSource, int affixLevel, @Nullable Entity direct, @Nullable Entity attacking) {
-    LootParams.Builder builder = new LootParams.Builder(serverLevel)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel)
-      .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, direct)
-      .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attacking);
-    ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.KNOCKBACK);
-    return new LootContext.Builder(params).create(Optional.empty());
-  }
-
-  public static LootContext damage(ServerLevel serverLevel, Entity entity, DamageSource damageSource, int affixLevel, @Nullable Entity directAttackingEntity, @Nullable Entity attackingEntity) {
+  public static LootContext affixedDamage(ServerLevel serverLevel, Entity entity, DamageSource damageSource, int affixLevel, @Nullable Entity directAttackingEntity, @Nullable Entity attackingEntity) {
     LootParams.Builder builder = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
@@ -50,96 +27,28 @@ public final class LootContextFactory {
       .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
       .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity);
     ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.DAMAGE);
+    LootParams params = builder.create(ChampionsLootContextParamSets.AFFIXED_DAMAGE);
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext heal(ServerLevel serverLevel, Entity entity, int affixLevel) {
+  public static LootContext affixedEntity(ServerLevel serverLevel, Entity entity, int affixLevel) {
     LootParams.Builder builder = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, entity.position())
       .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
     ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.HEAL);
+    LootParams params = builder.create(ChampionsLootContextParamSets.AFFIXED_ENTITY);
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext postAttack(ServerLevel serverLevel, Entity entity, DamageSource damageSource, int affixLevel, @Nullable Entity directAttackingEntity, @Nullable Entity attackingEntity) {
-    LootParams.Builder builder = new LootParams.Builder(serverLevel)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel)
-      .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
-      .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity);
-    ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.POST_ATTACK);
-    return new LootContext.Builder(params).create(Optional.empty());
-  }
-
-  public static LootContext damageImmunity(ServerLevel serverLevel, Entity entity, DamageSource damageSource, int affixLevel, @Nullable Entity directAttackingEntity, @Nullable Entity attackingEntity) {
-    LootParams.Builder builder = new LootParams.Builder(serverLevel)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel)
-      .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
-      .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity);
-    ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.DAMAGE_IMMUNITY);
-    return new LootContext.Builder(params).create(Optional.empty());
-  }
-
-  public static LootContext damageProtection(ServerLevel serverLevel, Entity entity, int affixLevel, DamageSource damageSource, @Nullable Entity directAttackingEntity, @Nullable Entity attackingEntity) {
-    LootParams.Builder builder = new LootParams.Builder(serverLevel)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(LootContextParams.DAMAGE_SOURCE, damageSource)
-      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel)
-      .withOptionalParameter(LootContextParams.DIRECT_ATTACKING_ENTITY, directAttackingEntity)
-      .withOptionalParameter(LootContextParams.ATTACKING_ENTITY, attackingEntity);
-    ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.DAMAGE_PROTECTION);
-    return new LootContext.Builder(params).create(Optional.empty());
-  }
-
-  public static LootContext tick(ServerLevel serverLevel, Entity entity, int affixLevel) {
-    LootParams.Builder builder = new LootParams.Builder(serverLevel)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
-    ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.TICK);
-    return new LootContext.Builder(params).create(Optional.empty());
-  }
-
-  public static LootContext target(ServerLevel serverLevel, Entity entity, int affixLevel) {
-    LootParams.Builder builder = new LootParams.Builder(serverLevel)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
-    ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.TICK);
-    return new LootContext.Builder(params).create(Optional.empty());
-  }
-
-  public static LootContext location(ServerLevel serverLevel, Entity entity, Vec3 origin, int affixLevel) {
+  public static LootContext affixedLocation(ServerLevel serverLevel, Entity entity, Vec3 origin, int affixLevel) {
     LootParams.Builder builder = new LootParams.Builder(serverLevel)
       .withParameter(LootContextParams.THIS_ENTITY, entity)
       .withParameter(LootContextParams.ORIGIN, origin)
       .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
     ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.LOCATION);
+    LootParams params = builder.create(ChampionsLootContextParamSets.AFFIXED_LOCATION);
     return new LootContext.Builder(params).create(Optional.empty());
   }
 
-  public static LootContext spawn(ServerLevel serverLevel, Entity entity, int affixLevel) {
-    LootParams.Builder builder = new LootParams.Builder(serverLevel)
-      .withParameter(LootContextParams.THIS_ENTITY, entity)
-      .withParameter(LootContextParams.ORIGIN, entity.position())
-      .withParameter(ChampionsLootContextParams.AFFIX_LEVEL, affixLevel);
-    ExtraLootParamHelper.withParameters(entity, builder);
-    LootParams params = builder.create(ChampionsLootContextParamSets.SPAWN);
-    return new LootContext.Builder(params).create(Optional.empty());
-  }
 }

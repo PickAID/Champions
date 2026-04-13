@@ -11,35 +11,15 @@ import top.theillusivec4.champions.util.ChampionsUtil;
 import java.util.function.Consumer;
 
 public final class ChampionsLootContextParamSets {
-  public static final LootContextParamSet SPAWN = register(
-    "spawn",
+  public static final LootContextParamSet AFFIXED_LOCATION = register(
+    "affixed_location",
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
       .required(ChampionsLootContextParams.AFFIX_LEVEL)
   );
-  public static final LootContextParamSet LOCATION = register(
-    "location",
-    builder -> builder
-      .required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(ChampionsLootContextParams.AFFIX_LEVEL)
-  );
-  public static final LootContextParamSet ATTRIBUTES = register("attribute",
-    builder -> builder
-      .required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(ChampionsLootContextParams.AFFIX_LEVEL)
-  );
-  public static final LootContextParamSet KNOCKBACK = register("knockback",
-    builder -> builder.required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.AFFIX_LEVEL)
-      .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
-      .optional(LootContextParams.ATTACKING_ENTITY)
-  );
-  public static final LootContextParamSet DAMAGE = register("damage",
+  public static final LootContextParamSet AFFIXED_DAMAGE = register(
+    "affixed_damage",
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)
@@ -48,47 +28,7 @@ public final class ChampionsLootContextParamSets {
       .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
       .optional(LootContextParams.ATTACKING_ENTITY)
   );
-  public static final LootContextParamSet HEAL = register("heal",
-    builder -> builder
-      .required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(ChampionsLootContextParams.AFFIX_LEVEL)
-  );
-  public static final LootContextParamSet POST_ATTACK = register("post_attack",
-    builder -> builder
-      .required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.AFFIX_LEVEL)
-      .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
-      .optional(LootContextParams.ATTACKING_ENTITY)
-  );
-  public static final LootContextParamSet DAMAGE_IMMUNITY = register(
-    "damage_immunity",
-    builder -> builder
-      .required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.AFFIX_LEVEL)
-      .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
-      .optional(LootContextParams.ATTACKING_ENTITY)
-  );
-  public static final LootContextParamSet DAMAGE_PROTECTION = register("damage_protection",
-    builder -> builder
-      .required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(LootContextParams.DAMAGE_SOURCE)
-      .required(ChampionsLootContextParams.AFFIX_LEVEL)
-      .optional(LootContextParams.DIRECT_ATTACKING_ENTITY)
-      .optional(LootContextParams.ATTACKING_ENTITY)
-  );
-  public static final LootContextParamSet TICK = register("tick",
-    builder -> builder
-      .required(LootContextParams.THIS_ENTITY)
-      .required(LootContextParams.ORIGIN)
-      .required(ChampionsLootContextParams.AFFIX_LEVEL)
-  );
-  public static final LootContextParamSet TARGET = register("target",
+  public static final LootContextParamSet AFFIXED_ENTITY = register("affixed_entity",
     builder -> builder
       .required(LootContextParams.THIS_ENTITY)
       .required(LootContextParams.ORIGIN)

@@ -35,7 +35,7 @@ public abstract class LivingEntityMixin extends Entity {
   private void champion$getKnockback(Entity attacker, DamageSource damageSource, CallbackInfoReturnable<Float> cir) {
     if (this.level() instanceof ServerLevel level) {
       float knockback = (float) ((LivingEntity) (Object) this).getAttributeValue(Attributes.ATTACK_KNOCKBACK);
-      float value = AffixHelper.modifyDamage(level, attacker, damageSource, knockback) / 2.0f + cir.getReturnValue();
+      float value = AffixHelper.modifyKnockback(level, attacker, damageSource, knockback) / 2.0f + cir.getReturnValue();
       cir.setReturnValue(value);
     }
   }

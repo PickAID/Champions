@@ -11,7 +11,7 @@ import top.theillusivec4.champions.affix.effects.AffixEntityEffect;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffect;
 import top.theillusivec4.champions.affix.effects.AffixValueEffect;
 import top.theillusivec4.champions.affix.provider.AffixProvider;
-import top.theillusivec4.champions.champion.provider.ChampionPropertyProvider;
+import top.theillusivec4.champions.championmob.property.provider.ChampionPropertyProvider;
 
 public final class ChampionsBuiltInRegistries {
   public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = register(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE);

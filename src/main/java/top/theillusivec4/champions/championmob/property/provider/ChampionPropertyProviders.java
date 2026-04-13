@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.champion.provider;
+package top.theillusivec4.champions.championmob.property.provider;
 
 import com.mojang.serialization.MapCodec;
 import net.neoforged.bus.api.IEventBus;
@@ -11,6 +11,7 @@ import java.util.function.Supplier;
 public final class ChampionPropertyProviders {
   private static final DeferredRegister<MapCodec<? extends ChampionPropertyProvider>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.CHAMPION_PROPERTY_PROVIDER_TYPE, ChampionsMod.MOD_ID);
   public static final Supplier<MapCodec<ChampionPropertyByRank>> BY_RANK = register("by_rank", () -> ChampionPropertyByRank.MAP_CODEC);
+  public static final Supplier<MapCodec<SingleChampionProperty>> SINGLE = register("single", () -> SingleChampionProperty.MAP_CODEC);
 
   private ChampionPropertyProviders() {
   }

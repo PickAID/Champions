@@ -13,13 +13,16 @@ import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.EntityLeaveLevelEvent;
 import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.affix.AffixHelper;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.championegg.ChampionMobEggHelper;
+import top.theillusivec4.champions.championmob.ChampionMobHelper;
+import top.theillusivec4.champions.championmob.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.extralootparam.ExtraLootParamHelper;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 
@@ -48,7 +51,7 @@ public final class EntityEventHandler {
 
       float result = AffixHelper.modifyHeal(level, entity, heal.floatValue());
       event.setAmount(Math.max(result, 0.0f));
-      ChampionHelper.updateBossbarProgress(entity);
+      ChampionPropertyHelper.updateBossbarProgress(entity);
     }
 
   }
@@ -105,10 +108,8 @@ public final class EntityEventHandler {
       伤害增幅
      */
       if (source.getEntity() != null) {
-        Entity attacker = source.getEntity();
         damage.setValue(
-//						ChampionUtil.getHandler(attacker).map(handler -> handler.modifyDamage((ServerLevel) attacker.level(), victim, source, damage.floatValue())).orElse(damage.floatValue())
-          AffixHelper.modifyDamage(level, attacker, source, damage.floatValue()));
+          AffixHelper.modifyDamage(level, victim, source, damage.floatValue()));
       }
 
     /*
@@ -141,7 +142,7 @@ public final class EntityEventHandler {
     Entity entity = event.getEntity();
     DamageSource source = event.getSource();
     ExtraLootParamHelper.updateDamageParameter(entity, source);
-    ChampionHelper.updateBossbarProgress(entity);
+    ChampionPropertyHelper.updateBossbarProgress(entity);
   }
 
 
@@ -156,9 +157,7 @@ public final class EntityEventHandler {
     if (entity.level() instanceof ServerLevel level) {
       AffixHelper.tickEffects(level, entity);
       AffixHelper.targetEffects(level, entity);
-      ChampionHelper.updateBossbarPlayers(entity);
-    } else {
-      ChampionHelper.doParticlesEffects(entity);
+      ChampionPropertyHelper.updateBossbarPlayers(entity);
     }
   }
 
@@ -167,7 +166,7 @@ public final class EntityEventHandler {
     Level level = event.getLevel();
     Entity entity = event.getEntity();
     if (!level.isClientSide()) {
-      ChampionHelper.removeBossBar(entity);
+      ChampionPropertyHelper.removeBossBar(entity);
     }
   }
 
@@ -207,10 +206,6 @@ public final class EntityEventHandler {
     }
   }
 
-  /*
-   * 注入到Mob初始化过程。
-   * 对于刷怪蛋，如果刷怪蛋不附带实体数据，会触发FinalizeSpawnEvent事件，我不知道这是否合乎预期。
-   */
   @SubscribeEvent
   private static void onFinalizeSpawn(FinalizeSpawnEvent event) {
     if (event.getLevel() instanceof ServerLevel level) {
@@ -220,7 +215,15 @@ public final class EntityEventHandler {
       double z = event.getZ();
       DifficultyInstance instance = event.getDifficulty();
       MobSpawnType reason = event.getSpawnType();
-      ChampionHelper.doFinalizeSpawn(level, mob, x, y, z, instance, reason);
+      ChampionMobHelper.doFinalizeSpawn(level, mob, x, y, z, instance, reason);
+    }
+  }
+
+  @SubscribeEvent
+  private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
+    Entity entity = event.getEntity();
+    if (event.getLevel() instanceof ServerLevel level && !event.loadedFromDisk() && !ChampionMobEggHelper.isSpawnFor(entity)) {
+      ChampionMobHelper.doApplyPreset(level, entity, level.getCurrentDifficultyAt(entity.blockPosition()));
     }
   }
 

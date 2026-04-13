@@ -26,8 +26,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.enchantment.effects.DamageImmunity;
 import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
@@ -35,8 +33,6 @@ import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.affix.effects.*;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.LootContextFactory;
-import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParamSets;
-import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParams;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -66,6 +62,10 @@ public record Affix(
 
   public static boolean areCompatible(Holder<Affix> affix, Holder<Affix> other) {
     return !affix.value().equals(other.value()) && !affix.value().exclusiveSet.contains(other) && !other.value().exclusiveSet.contains(affix);
+  }
+
+  public static boolean areCompatible(AffixInstance affix, AffixInstance other){
+    return areCompatible(affix.affix(), other.affix());
   }
 
   public static Affix.Builder affix(AffixDefinition definition) {
@@ -115,13 +115,13 @@ public record Affix(
   }
 
   public void modifyKnockback(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat knockback) {
-    LootContext context = LootContextFactory.knockback(level, victim, source, affixLevel, source.getDirectEntity(), source.getEntity());
+    LootContext context = LootContextFactory.affixedDamage(level, victim, source, affixLevel, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.KNOCKBACK), context, effect -> knockback.setValue(effect.process(affixLevel, random, knockback.floatValue())));
   }
 
   public void modifyDamage(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat damage) {
-    LootContext context = LootContextFactory.damage(level, victim, source, affixLevel, source.getDirectEntity(), source.getEntity());
+    LootContext context = LootContextFactory.affixedDamage(level, victim, source, affixLevel, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE), context, effect -> damage.setValue(effect.process(affixLevel, random, damage.floatValue())));
   }
@@ -133,19 +133,19 @@ public record Affix(
   }
 
   public void runLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity, Vec3 origin, boolean becameActive) {
-    for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.INITIALIZE)) {
+    for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.LOCATION_CHANGED)) {
       effect.onChangedBlock(level, affixLevel, entity, origin, becameActive);
     }
   }
 
   public void stopLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity, Vec3 origin) {
-    for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.INITIALIZE)) {
+    for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.LOCATION_CHANGED)) {
       effect.onDeactivated(level, affixLevel, entity, origin);
     }
   }
 
   public void modifyHeal(ServerLevel level, int affixLevel, Entity victim, MutableFloat heal) {
-    LootContext lootContext = LootContextFactory.heal(level, victim, affixLevel);
+    LootContext lootContext = LootContextFactory.affixedEntity(level, victim, affixLevel);
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.HEAL), lootContext, effect -> heal.setValue(effect.process(affixLevel, random, heal.floatValue())));
 
@@ -161,7 +161,7 @@ public record Affix(
         };
 
         if (target != null) {
-          LootContext lootContext = LootContextFactory.postAttack(level, target, source, affixLevel, source.getEntity(), source.getDirectEntity());
+          LootContext lootContext = LootContextFactory.affixedDamage(level, target, source, affixLevel, source.getEntity(), source.getDirectEntity());
 
           if (effect.match(lootContext)) {
             effect.effect().apply(level, affixLevel, victim, target, target.position());
@@ -173,17 +173,17 @@ public record Affix(
   }
 
   public void targetEffects(ServerLevel level, int affixLevel, Entity entity, Entity target) {
-    LootContext context = LootContextFactory.target(level, entity, affixLevel);
+    LootContext context = LootContextFactory.affixedEntity(level, entity, affixLevel);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TARGET), context, effect -> effect.apply(level, affixLevel, entity, target, entity.position()));
   }
 
   public void tickEffects(ServerLevel level, int affixLevel, Entity entity) {
-    LootContext context = LootContextFactory.tick(level, entity, affixLevel);
+    LootContext context = LootContextFactory.affixedEntity(level, entity, affixLevel);
     applyConditionalEffects(this.getEffects(AffixEffectComponents.TICK), context, effect -> effect.apply(level, affixLevel, entity, entity, entity.position()));
   }
 
   public boolean isImmuneToDamage(ServerLevel level, int affixLevel, Entity entity, DamageSource source) {
-    LootContext context = LootContextFactory.damageImmunity(level, entity, source, affixLevel, null, null);
+    LootContext context = LootContextFactory.affixedDamage(level, entity, source, affixLevel, null, null);
     for (ConditionalEffect<DamageImmunity> effect : this.getEffects(AffixEffectComponents.DAMAGE_IMMUNITY)) {
       if (effect.matches(context)) {
         return true;
@@ -193,7 +193,7 @@ public record Affix(
   }
 
   public void modifyDamageProtection(ServerLevel level, int affixLevel, Entity victim, DamageSource source, MutableFloat protection) {
-    LootContext context = LootContextFactory.damageProtection(level, victim, affixLevel, source, source.getDirectEntity(), source.getEntity());
+    LootContext context = LootContextFactory.affixedDamage(level, victim, source, affixLevel, source.getDirectEntity(), source.getEntity());
     RandomSource random = level.getRandom();
     applyConditionalEffects(this.getEffects(AffixEffectComponents.DAMAGE_PROTECTION), context, effect -> protection.setValue(effect.process(affixLevel, random, protection.floatValue())));
   }
@@ -246,7 +246,7 @@ public record Affix(
       Codec.intRange(1, 5).optionalFieldOf("max_level", 5).forGetter(AffixDefinition::maxLevel),
       Codec.intRange(1, 1024).optionalFieldOf("weight", 5).forGetter(AffixDefinition::weight),
       Cost.CODEC.fieldOf("min_cost").forGetter(AffixDefinition::minCost),
-      Cost.CODEC.fieldOf("min_cost").forGetter(AffixDefinition::maxCost)
+      Cost.CODEC.fieldOf("max_cost").forGetter(AffixDefinition::maxCost)
     ).apply(instance, AffixDefinition::new));
   }
 

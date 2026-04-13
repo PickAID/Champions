@@ -2,7 +2,7 @@ package top.theillusivec4.champions.data.lang;
 
 import net.minecraft.data.PackOutput;
 import top.theillusivec4.champions.affix.Affixes;
-import top.theillusivec4.champions.champion.Ranks;
+import top.theillusivec4.champions.championmob.Ranks;
 
 public class ZhCn extends ChampionsLanguageProvider {
   public ZhCn(PackOutput output) {
@@ -21,9 +21,9 @@ public class ZhCn extends ChampionsLanguageProvider {
     add("champions.configuration.champion_spawn_difficulty_threshold", "冠军生物生成难度阈值");
     add("champions.configuration.default_affixable", "默认词缀亲和力");
     add("champions.configuration.affixable_factor", "词缀亲和力因子");
-    add("champions.configuration.random_variration_factor", "随机变化因子");
-    add("champions.configuration.min_affix_cost", "最小词缀代价");
-    add("champions.configuration.max_affix_cost", "最大词缀代价");
+    add("champions.configuration.random_factor", "随机因子");
+    add("champions.configuration.min_affix_cost", "最小修正等级");
+    add("champions.configuration.max_affix_cost", "最大修正等级");
     add("champions.champion.color", "■");
     add("champions.champion.boss.true", "是");
     add("champions.champion.boss.false", "否");

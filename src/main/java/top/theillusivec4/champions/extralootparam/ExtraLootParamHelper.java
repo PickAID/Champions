@@ -1,18 +1,20 @@
 package top.theillusivec4.champions.extralootparam;
 
 import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import top.theillusivec4.champions.attachments.ChampionsAttachments;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.championmob.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.world.loot.parameters.ChampionsLootContextParams;
+
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public final class ExtraLootParamHelper {
   private ExtraLootParamHelper() {
@@ -26,14 +28,26 @@ public final class ExtraLootParamHelper {
 
   public static void withParameters(Entity entity, LootParams.Builder builder) {
     builder
-      .withParameter(ChampionsLootContextParams.CHAMPION_TIER, ChampionHelper.getTier(entity))
+      .withParameter(ChampionsLootContextParams.CHAMPION_TIER, ChampionPropertyHelper.getTier(entity))
       .withParameter(ChampionsLootContextParams.DAMAGE_COUNT, ExtraLootParamHelper.getDamageCount(entity));
   }
 
-  public static Holder<DamageType> getLastDamageType(Entity entity) {
-    RegistryAccess registry = entity.registryAccess();
-    ResourceKey<DamageType> key = getKey(entity);
-    return registry.holderOrThrow(key);
+  public static DamageTracker getDamageTracker(Entity entity) {
+    return entity.getExistingData(ChampionsAttachments.DAMAGE_TRACKER).orElse(DamageTracker.EMPTY);
+  }
+
+  public static void updateDamageTracker(Entity entity, Consumer<DamageTracker.Mutable> consumer) {
+    DamageTracker tracker = getDamageTracker(entity);
+    DamageTracker.Mutable mutable = tracker.mutable();
+    consumer.accept(mutable);
+    DamageTracker tracker1 = mutable.toImmutable();
+    if (!Objects.equals(tracker, tracker1)) {
+      entity.setData(ChampionsAttachments.DAMAGE_TRACKER, tracker1);
+    }
+  }
+
+  public static Optional<Holder<DamageType>> getLastDamageType(Entity entity) {
+    return getDamageTracker(entity).getLast();
   }
 
   private static ResourceKey<DamageType> getKey(Entity entity) {

@@ -1,11 +1,11 @@
-package top.theillusivec4.champions.champion.provider;
+package top.theillusivec4.champions.championmob.property.provider;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import top.theillusivec4.champions.champion.ChampionProperty;
-import top.theillusivec4.champions.champion.Rank;
+import top.theillusivec4.champions.championmob.property.ChampionProperty;
+import top.theillusivec4.champions.championmob.Rank;
 
 public record ChampionPropertyByRank(Holder<Rank> rank) implements ChampionPropertyProvider {
   public static final MapCodec<ChampionPropertyByRank> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(

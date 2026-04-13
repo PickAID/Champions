@@ -59,6 +59,7 @@ import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.champions.advancements.critereon.ChampionsEntitySubPredicates;
 import top.theillusivec4.champions.affix.*;
 import top.theillusivec4.champions.affix.effects.AffixEntityEffects;
 import top.theillusivec4.champions.affix.effects.AffixLocationBasedEffects;
@@ -66,14 +67,15 @@ import top.theillusivec4.champions.affix.effects.AffixValueEffects;
 import top.theillusivec4.champions.affix.provider.AffixProvider;
 import top.theillusivec4.champions.affix.provider.AffixProviders;
 import top.theillusivec4.champions.attachments.ChampionsAttachments;
-import top.theillusivec4.champions.champion.Rank;
-import top.theillusivec4.champions.champion.Ranks;
-import top.theillusivec4.champions.champion.provider.ChampionPropertyProviders;
+import top.theillusivec4.champions.championmob.Rank;
+import top.theillusivec4.champions.championmob.Ranks;
+import top.theillusivec4.champions.championmob.property.provider.ChampionPropertyProviders;
 import top.theillusivec4.champions.client.network.ChampionsClientPayloadHandler;
 import top.theillusivec4.champions.component.ChampionsDataComponents;
 import top.theillusivec4.champions.data.ChampionsDataMapProvider;
 import top.theillusivec4.champions.data.lang.EnUs;
 import top.theillusivec4.champions.data.lang.ZhCn;
+import top.theillusivec4.champions.data.tag.AffixTagsProvider;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
 import top.theillusivec4.champions.deprecated.api.impl.ChampionsApiImpl;
 import top.theillusivec4.champions.deprecated.client.config.ClientChampionsConfig;
@@ -101,8 +103,8 @@ import top.theillusivec4.champions.registries.ChampionsBuiltInRegistries;
 import top.theillusivec4.champions.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.registries.ChampionsRegistries;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
-import top.theillusivec4.champions.spawnegg.SpawnEggTemplate;
-import top.theillusivec4.champions.spawnegg.SpawnEggTemplates;
+import top.theillusivec4.champions.championegg.ChampionMobEggTemplate;
+import top.theillusivec4.champions.championegg.ChampionMobEggTemplates;
 import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
@@ -119,12 +121,15 @@ import java.util.concurrent.CompletableFuture;
 
 @Mod(ChampionsMod.MOD_ID)
 public class ChampionsMod {
-  public static final String VERSION = "21.1.0.2.1.8.4";
+  public static final String VERSION = "21.1.0.53-beta-1";
   public static final String MOD_ID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
+  @Deprecated
   public static final IChampionsApi API = ChampionsApiImpl.getInstance();
 
+  @Deprecated
   public static boolean scalingHealthLoaded = false;
+  @Deprecated
   public static boolean gameStagesLoaded = false;
 
   public ChampionsMod(IEventBus modEventBus, ModContainer modContainer) {
@@ -138,6 +143,7 @@ public class ChampionsMod {
     ChampionsParticleTypes.register(modEventBus);
     ChampionsLootItemConditions.register(modEventBus);
     ChampionsCreativeModeTabs.register(modEventBus);
+    ChampionsEntitySubPredicates.register(modEventBus);
     AffixEffectComponents.register(modEventBus);
     ProjectileTemplates.register(modEventBus);
     LevelBasedValues.register(modEventBus);
@@ -207,7 +213,7 @@ public class ChampionsMod {
     event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.AFFIX_PROVIDER, AffixProvider.DIRECT_CODEC, AffixProvider.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
-    event.dataPackRegistry(ChampionsRegistries.CHAMPION_EGG, SpawnEggTemplate.DIRECT_CODEC, SpawnEggTemplate.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionMobEggTemplate.DIRECT_CODEC, ChampionMobEggTemplate.DIRECT_CODEC);
   }
 
   @SubscribeEvent
@@ -223,6 +229,7 @@ public class ChampionsMod {
   @SubscribeEvent
   public void registerDataMaps(RegisterDataMapTypesEvent event) {
     event.register(ChampionsDataMaps.AFFIXABLE);
+    event.register(ChampionsDataMaps.CHAMPION_MOB_PRESET);
   }
 
   @SubscribeEvent
@@ -230,17 +237,18 @@ public class ChampionsMod {
     DataGenerator generator = event.getGenerator();
     ExistingFileHelper helper = event.getExistingFileHelper();
     PackOutput output = generator.getPackOutput();
-    CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
+    CompletableFuture<HolderLookup.Provider> registries = event.getLookupProvider();
     RegistrySetBuilder builder = new RegistrySetBuilder()
       .add(Registries.DAMAGE_TYPE, ChampionsDamageTypes::bootstrap)
       .add(ChampionsRegistries.AFFIX, Affixes::bootstrap)
       .add(ChampionsRegistries.RANK, Ranks::bootstrap)
-      .add(ChampionsRegistries.CHAMPION_EGG, SpawnEggTemplates::bootstrap);
-    var datapackRegistries = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(ChampionsMod.MOD_ID));
-    lookup = datapackRegistries.getRegistryProvider();
+      .add(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionMobEggTemplates::bootstrap);
+    var datapackRegistries = new DatapackBuiltinEntriesProvider(output, registries, builder, Set.of(ChampionsMod.MOD_ID));
+    registries = datapackRegistries.getRegistryProvider();
 
-    generator.addProvider(event.includeServer(), new ChampionsDataMapProvider(output, lookup));
     generator.addProvider(event.includeServer(), datapackRegistries);
+    generator.addProvider(event.includeServer(), new AffixTagsProvider(output, registries, helper));
+    generator.addProvider(event.includeServer(), new ChampionsDataMapProvider(output, registries));
     generator.addProvider(event.includeClient(), new ZhCn(output));
     generator.addProvider(event.includeClient(), new EnUs(output));
   }

@@ -7,7 +7,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-import top.theillusivec4.champions.spawnegg.SpawnEggHelper;
+import top.theillusivec4.champions.championegg.ChampionMobEggHelper;
 
 import java.util.List;
 
@@ -22,6 +22,6 @@ public final class ItemEventHandler {
     Item.TooltipContext context = event.getContext();
     List<Component> list = event.getToolTip();
     TooltipFlag flags = event.getFlags();
-    SpawnEggHelper.addToTooltip(itemStack, context, list::add, flags);
+    ChampionMobEggHelper.addToTooltip(itemStack, context, list::add, flags);
   }
 }

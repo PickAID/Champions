@@ -109,7 +109,7 @@ public final class Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            5,
+            1,
             5
           )
         )
@@ -168,7 +168,7 @@ public final class Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            5,
+            1,
             5
           )
         )
@@ -194,7 +194,7 @@ public final class Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            5,
+            1,
             5
           )
         )
@@ -257,7 +257,7 @@ public final class Affixes {
       Affix.affix(
         Affix.definition(
           null,
-          5,
+          1,
           5
         )
       ).withEffect(
@@ -281,7 +281,7 @@ public final class Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            5,
+            1,
             5
           )
         )
@@ -370,7 +370,7 @@ public final class Affixes {
       Affix.affix(
           Affix.definition(
             null,
-            5,
+            1,
             5
           )
         )
