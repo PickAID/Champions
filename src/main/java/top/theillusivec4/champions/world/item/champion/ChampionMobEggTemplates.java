@@ -9,47 +9,47 @@ import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
 import top.theillusivec4.champions.world.entity.affix.Affixes;
 import top.theillusivec4.champions.world.entity.champion.Rank;
 import top.theillusivec4.champions.world.entity.champion.Ranks;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
+import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
-public final class ChampionEggTemplates {
-  public static final ResourceKey<ChampionEggTemplate> HUSK = register("husk");
-  public static final ResourceKey<ChampionEggTemplate> MAGNETIC_HUSK = register("magnetic_husk");
+public final class ChampionMobEggTemplates {
+  public static final ResourceKey<ChampionMobEggTemplate> HUSK = register("husk");
+  public static final ResourceKey<ChampionMobEggTemplate> MAGNETIC_HUSK = register("magnetic_husk");
 
-  private ChampionEggTemplates() {
+  private ChampionMobEggTemplates() {
   }
 
-  private static ResourceKey<ChampionEggTemplate> register(String name) {
+  private static ResourceKey<ChampionMobEggTemplate> register(String name) {
     return ResourceKey.create(ChampionsRegistries.CHAMPION_EGG, ChampionsUtil.id(name));
   }
 
-  public static void bootstrap(BootstrapContext<ChampionEggTemplate> context) {
+  public static void bootstrap(BootstrapContext<ChampionMobEggTemplate> context) {
     HolderGetter<Affix> affixes = context.lookup(ChampionsRegistries.AFFIX);
     HolderGetter<Rank> ranks = context.lookup(ChampionsRegistries.RANK);
     register(
       context,
       HUSK,
-      ChampionEggTemplate.builder(() -> (net.minecraft.world.item.SpawnEggItem) Items.HUSK_SPAWN_EGG)
+      ChampionMobEggTemplate.builder(() -> (net.minecraft.world.item.SpawnEggItem) Items.HUSK_SPAWN_EGG)
         .affixes(
           EntityAffixes.builder()
             .add(affixes.getOrThrow(Affixes.ADAPTABLE), 2)
         )
-        .property(ChampionPropertyProvider.byRank(ranks.getOrThrow(Ranks.SKILLED)))
+        .property(ChampionMobPropertyProvider.byRank(ranks.getOrThrow(Ranks.SKILLED)))
     );
     register(
       context,
       MAGNETIC_HUSK,
-      ChampionEggTemplate.builder(() -> (net.minecraft.world.item.SpawnEggItem) Items.HUSK_SPAWN_EGG)
+      ChampionMobEggTemplate.builder(() -> (net.minecraft.world.item.SpawnEggItem) Items.HUSK_SPAWN_EGG)
         .affixes(
           EntityAffixes.builder()
             .add(affixes.getOrThrow(Affixes.MAGNETIC), 2)
         )
-        .property(ChampionPropertyProvider.byRank(ranks.getOrThrow(Ranks.SKILLED)))
+        .property(ChampionMobPropertyProvider.byRank(ranks.getOrThrow(Ranks.SKILLED)))
     );
   }
 
-  private static void register(BootstrapContext<ChampionEggTemplate> context, ResourceKey<ChampionEggTemplate> key, ChampionEggTemplate.Builder builder) {
+  private static void register(BootstrapContext<ChampionMobEggTemplate> context, ResourceKey<ChampionMobEggTemplate> key, ChampionMobEggTemplate.Builder builder) {
     context.register(key, builder.build());
   }
 }

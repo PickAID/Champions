@@ -50,7 +50,6 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
-import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.datamaps.RegisterDataMapTypesEvent;
 import org.apache.commons.io.FileUtils;
@@ -106,9 +105,9 @@ import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffects;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProviders;
 import top.theillusivec4.champions.world.entity.champion.Rank;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProviders;
+import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProviders;
 import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
-import top.theillusivec4.champions.world.item.champion.ChampionEggTemplate;
+import top.theillusivec4.champions.world.item.champion.ChampionMobEggTemplate;
 import top.theillusivec4.champions.world.level.storage.loot.predicates.ChampionsLootItemConditions;
 
 import java.io.File;
@@ -120,7 +119,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Mod(ChampionsMod.MOD_ID)
 public class ChampionsMod {
-  public static final String VERSION = "21.1.0.53-beta-1";
+  public static final String VERSION = "21.1.0.53-beta-2";
   public static final String MOD_ID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
   @Deprecated
@@ -151,7 +150,7 @@ public class ChampionsMod {
     AffixEntityEffects.register(bus);
     AffixValueEffects.register(bus);
     AffixProviders.register(bus);
-    ChampionPropertyProviders.register(bus);
+    ChampionMobPropertyProviders.register(bus);
     // Old
 //    bus.addListener(this::enqueueIMC);
 //    bus.addListener(this::registerNetwork);
@@ -208,7 +207,7 @@ public class ChampionsMod {
     event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.AFFIX_PROVIDER, AffixProvider.DIRECT_CODEC, AffixProvider.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
-    event.dataPackRegistry(ChampionsRegistries.CHAMPION_EGG, ChampionEggTemplate.DIRECT_CODEC, ChampionEggTemplate.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.CHAMPION_EGG, ChampionMobEggTemplate.DIRECT_CODEC, ChampionMobEggTemplate.DIRECT_CODEC);
   }
 
   @SubscribeEvent

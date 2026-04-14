@@ -8,7 +8,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import top.theillusivec4.champions.integration.theoneprobe.elements.ElementColoredText;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
 public class DisplayNameOverride implements IEntityDisplayOverride {
   public static DisplayNameOverride create() {
@@ -17,10 +17,10 @@ public class DisplayNameOverride implements IEntityDisplayOverride {
 
   @Override
   public boolean overrideStandardInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, Entity entity, IProbeHitEntityData data) {
-    int tier = ChampionPropertyHelper.getTier(entity);
+    int tier = ChampionMobPropertyHelper.getTier(entity);
     if (tier > 0) {
       info.element(
-        ElementColoredText.create(ChampionPropertyHelper.getDisplayName(entity), ChampionPropertyHelper.getColor(entity))
+        ElementColoredText.create(ChampionMobPropertyHelper.getDisplayName(entity), ChampionMobPropertyHelper.getColor(entity))
       );
       return true;
     }

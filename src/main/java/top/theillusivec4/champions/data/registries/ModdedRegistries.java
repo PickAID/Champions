@@ -6,7 +6,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import top.theillusivec4.champions.ChampionsMod;
-import top.theillusivec4.champions.world.item.champion.ChampionEggTemplates;
+import top.theillusivec4.champions.world.item.champion.ChampionMobEggTemplates;
 import top.theillusivec4.champions.world.entity.champion.Ranks;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
@@ -20,7 +20,7 @@ public final class ModdedRegistries {
     .add(Registries.DAMAGE_TYPE, ChampionsDamageTypes::bootstrap)
     .add(ChampionsRegistries.AFFIX, Affixes::bootstrap)
     .add(ChampionsRegistries.RANK, Ranks::bootstrap)
-    .add(ChampionsRegistries.CHAMPION_EGG, ChampionEggTemplates::bootstrap);
+    .add(ChampionsRegistries.CHAMPION_EGG, ChampionMobEggTemplates::bootstrap);
 
   private ModdedRegistries() {
   }

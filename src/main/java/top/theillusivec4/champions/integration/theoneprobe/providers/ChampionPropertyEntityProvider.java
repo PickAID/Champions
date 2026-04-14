@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import top.theillusivec4.champions.integration.theoneprobe.ChampionsTheOneProbePlugin;
 import top.theillusivec4.champions.integration.theoneprobe.elements.ElementStar;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
 public class ChampionPropertyEntityProvider implements IProbeInfoEntityProvider {
   public static ChampionPropertyEntityProvider create() {
@@ -24,8 +24,8 @@ public class ChampionPropertyEntityProvider implements IProbeInfoEntityProvider 
 
   @Override
   public void addProbeEntityInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, Entity entity, IProbeHitEntityData data) {
-    TextColor color = ChampionPropertyHelper.getColor(entity);
-    int tier = ChampionPropertyHelper.getTier(entity);
+    TextColor color = ChampionMobPropertyHelper.getColor(entity);
+    int tier = ChampionMobPropertyHelper.getTier(entity);
     if (tier > 0) {
       info.element(ElementStar.create(tier, color));
     }
