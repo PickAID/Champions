@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.theillusivec4.champions.world.entity.affix.AffixHelper;
-import top.theillusivec4.champions.world.item.champion.ChampionEggHelper;
+import top.theillusivec4.champions.world.item.champion.ChampionMobEggHelper;
 
 @Mixin(value = Mob.class)
 public abstract class MobMixin extends LivingEntity {
@@ -33,7 +33,7 @@ public abstract class MobMixin extends LivingEntity {
   private void champions$getPickResult(CallbackInfoReturnable<ItemStack> cir) {
     ItemStack itemStack = cir.getReturnValue();
     if (itemStack != null) {
-      ChampionEggHelper.modifyPickResult(itemStack, this);
+      ChampionMobEggHelper.modifyPickResult(itemStack, this);
     }
   }
 }

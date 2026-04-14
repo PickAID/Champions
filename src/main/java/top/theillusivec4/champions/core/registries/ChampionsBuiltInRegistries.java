@@ -11,7 +11,7 @@ import top.theillusivec4.champions.world.entity.affix.effects.AffixEntityEffect;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixLocationBasedEffect;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffect;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
+import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
 
 public final class ChampionsBuiltInRegistries {
   public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = register(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE);
@@ -21,7 +21,7 @@ public final class ChampionsBuiltInRegistries {
   public static final Registry<MapCodec<? extends LevelBasedValue>> LEVEL_BASED_VALUE_TYPE = register(ChampionsRegistries.LEVEL_BASED_VALUE_TYPE);
   public static final Registry<MapCodec<? extends ProjectileTemplate>> PROJECTILE_TEMPLATE_TYPE = register(ChampionsRegistries.PROJECTILE_TEMPLATE_TYPE);
   public static final Registry<MapCodec<? extends AffixProvider>> AFFIX_PROVIDER_TYPE = register(ChampionsRegistries.AFFIX_PROVIDER_TYPE);
-  public static final Registry<MapCodec<? extends ChampionPropertyProvider>> CHAMPION_PROPERTY_PROVIDER_TYPE = register(ChampionsRegistries.CHAMPION_PROPERTY_PROVIDER_TYPE);
+  public static final Registry<MapCodec<? extends ChampionMobPropertyProvider>> CHAMPION_PROPERTY_PROVIDER_TYPE = register(ChampionsRegistries.CHAMPION_PROPERTY_PROVIDER_TYPE);
 
   private ChampionsBuiltInRegistries() {
   }

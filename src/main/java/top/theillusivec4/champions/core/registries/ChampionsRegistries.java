@@ -12,8 +12,8 @@ import top.theillusivec4.champions.world.entity.affix.effects.AffixLocationBased
 import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffect;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
 import top.theillusivec4.champions.world.entity.champion.Rank;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
-import top.theillusivec4.champions.world.item.champion.ChampionEggTemplate;
+import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
+import top.theillusivec4.champions.world.item.champion.ChampionMobEggTemplate;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public final class ChampionsRegistries {
@@ -23,13 +23,13 @@ public final class ChampionsRegistries {
   public static final ResourceKey<Registry<MapCodec<? extends AffixLocationBasedEffect>>> AFFIX_LOCATION_BASED_EFFECT_TYPE = register("affix_location_based_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixEntityEffect>>> AFFIX_ENTITY_EFFECT_TYPE = register("affix_entity_effect_type");
   public static final ResourceKey<Registry<MapCodec<? extends AffixValueEffect>>> AFFIX_VALUE_EFFECT_TYPE = register("affix_value_effect_type");
-  public static final ResourceKey<Registry<MapCodec<? extends ChampionPropertyProvider>>> CHAMPION_PROPERTY_PROVIDER_TYPE = register("champion_property_provider_type");
+  public static final ResourceKey<Registry<MapCodec<? extends ChampionMobPropertyProvider>>> CHAMPION_PROPERTY_PROVIDER_TYPE = register("champion_property_provider_type");
   public static final ResourceKey<Registry<Affix>> AFFIX = register("affix");
   public static final ResourceKey<Registry<AffixProvider>> AFFIX_PROVIDER = register("affix_provider");
   public static final ResourceKey<Registry<DataComponentType<?>>> AFFIX_EFFECT_COMPONENT_TYPE = register("affix_effect_component_type");
   public static final ResourceKey<Registry<Rank>> RANK = register("rank");
-  public static final ResourceKey<Registry<ChampionEggTemplate>> CHAMPION_EGG = register("champion_egg");
-  public static final ResourceKey<Registry<ChampionPropertyProvider>> CHAMPION_PROPERTY_PROVIDER = register("champion_property_provider");
+  public static final ResourceKey<Registry<ChampionMobEggTemplate>> CHAMPION_EGG = register("champion_egg");
+  public static final ResourceKey<Registry<ChampionMobPropertyProvider>> CHAMPION_PROPERTY_PROVIDER = register("champion_property_provider");
 
   private ChampionsRegistries() {
   }
