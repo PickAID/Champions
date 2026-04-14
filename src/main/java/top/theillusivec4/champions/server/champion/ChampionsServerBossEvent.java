@@ -1,0 +1,116 @@
+package top.theillusivec4.champions.server.champion;
+
+import com.google.common.collect.Sets;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.UUIDUtil;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.network.PacketDistributor;
+import top.theillusivec4.champions.network.ChampionsBossEventPayload;
+import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionsBossEvent;
+
+import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+
+public class ChampionsServerBossEvent extends ChampionsBossEvent {
+  public static final ChampionsServerBossEvent EMPTY = new ChampionsServerBossEvent(UUID.randomUUID(), CommonComponents.EMPTY);
+  public static final MapCodec<ChampionsServerBossEvent> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+    UUIDUtil.CODEC.fieldOf("id").forGetter(ChampionsBossEvent::getId),
+    ComponentSerialization.CODEC.fieldOf("name").forGetter(ChampionsBossEvent::getName),
+    Codec.FLOAT.fieldOf("progress").forGetter(ChampionsBossEvent::getProgress),
+    Codec.INT.fieldOf("level").forGetter(ChampionsBossEvent::getTier),
+    TextColor.CODEC.fieldOf("color").forGetter(ChampionsBossEvent::getColor),
+    EntityAffixes.MAP_CODEC.codec().optionalFieldOf("affixes", EntityAffixes.EMPTY).forGetter(ChampionsBossEvent::getAffixes)
+  ).apply(instance, ChampionsServerBossEvent::new));
+  private final Set<ServerPlayer> players = Sets.newHashSet();
+  private final Set<ServerPlayer> unmodifiablePlayers = Collections.unmodifiableSet(this.players);
+
+  public ChampionsServerBossEvent(UUID id, Component name, float progress, int level, TextColor color, EntityAffixes affixes) {
+    super(id, name, progress, level, color, affixes);
+  }
+
+  public ChampionsServerBossEvent(UUID id, Component name) {
+    super(id, name);
+  }
+
+  public Set<ServerPlayer> getPlayers() {
+    return unmodifiablePlayers;
+  }
+
+  @Override
+  public void setName(Component name) {
+    if (!Objects.equals(this.getName(), name)) {
+      super.setName(name);
+      this.broadcast(ChampionsBossEventPayload::createUpdateName);
+    }
+  }
+
+  @Override
+  public void setProgress(float progress) {
+    if (this != EMPTY && this.getProgress() != progress) {
+      super.setProgress(progress);
+      this.broadcast(ChampionsBossEventPayload::createUpdateProgress);
+    }
+  }
+
+  public void setTier(int tier) {
+    if (this != EMPTY && this.getTier() != tier) {
+      super.setTier(tier);
+      this.broadcast(ChampionsBossEventPayload::createUpdateLevel);
+    }
+  }
+
+  @Override
+  public void setColor(TextColor color) {
+    if (this != EMPTY && !this.getColor().equals(color)) {
+      super.setColor(color);
+      this.broadcast(ChampionsBossEventPayload::createUpdateColor);
+    }
+  }
+
+  @Override
+  public void setAffixes(EntityAffixes affixes) {
+    if (this != EMPTY && !this.getAffixes().equals(affixes)) {
+      super.setAffixes(affixes);
+      this.broadcast(ChampionsBossEventPayload::createUpdateAffixes);
+    }
+  }
+
+  public void addPlayer(ServerPlayer player) {
+    if (this != EMPTY) {
+      if (this.players.add(player)) {
+        PacketDistributor.sendToPlayer(player, ChampionsBossEventPayload.createAddPacket(this));
+      }
+    }
+  }
+
+  public void removePlayer(ServerPlayer player) {
+    if (this != EMPTY) {
+      if (this.players.remove(player)) {
+        PacketDistributor.sendToPlayer(player, ChampionsBossEventPayload.createRemovePacket(this));
+      }
+    }
+  }
+
+  public void removeAllPlayers() {
+    if (this != EMPTY) {
+      this.broadcast(ChampionsBossEventPayload::createRemovePacket);
+      this.players.clear();
+    }
+  }
+
+  private void broadcast(Function<ChampionsServerBossEvent, ChampionsBossEventPayload> factory) {
+    ChampionsBossEventPayload payload = factory.apply(this);
+    this.players.forEach(player -> PacketDistributor.sendToPlayer(player, payload));
+  }
+
+}

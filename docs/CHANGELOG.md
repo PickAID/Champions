@@ -106,12 +106,12 @@ player effects
 
 ## [1.18.2-2.1.1.0] - 2022.03.15
 ### Added
-- Added syncing to client-side behavior for affixContainer
+- Added syncing to client-side behavior for entityAffixes
 ### Changed
 - Small tweaks to increase performance
 ### Fixed
 - Fixed shadows missing from text on the Champions entity HUD
-- Fixed bullet rendering for Enkindling and Arctic affixContainer
+- Fixed bullet rendering for Enkindling and Arctic entityAffixes
 
 ## [1.18.2-2.1.0.1] - 2022.03.13
 ### Fixed

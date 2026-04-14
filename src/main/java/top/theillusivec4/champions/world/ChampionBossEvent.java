@@ -3,11 +3,12 @@ package top.theillusivec4.champions.world;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.ARGB;
-import top.theillusivec4.champions.champion.affix.Affix;
+import top.theillusivec4.champions.world.entity.affix.Affix;
 
 import java.util.List;
 import java.util.UUID;
 
+@Deprecated
 public abstract class ChampionBossEvent {
   protected final UUID id;
   private Component name;

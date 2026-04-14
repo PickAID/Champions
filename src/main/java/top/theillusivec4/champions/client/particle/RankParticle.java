@@ -15,7 +15,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.RandomSource;
-import top.theillusivec4.champions.particle.ParticleTypes;
+import top.theillusivec4.champions.core.particles.ChampionsParticleTypes;
 
 import java.util.Random;
 
@@ -93,7 +93,7 @@ public class RankParticle extends SingleQuadParticle {
 
     @Override
     public ParticleType<?> getType() {
-      return ParticleTypes.CHAMPION.get();
+      return ChampionsParticleTypes.CHAMPION.get();
     }
   }
 
