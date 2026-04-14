@@ -3,7 +3,7 @@ package top.theillusivec4.champions.world.level.storage.loot;
 import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.storage.loot.LootParams;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 import top.theillusivec4.champions.world.entity.damagetracker.DamageTrackerHelper;
 import top.theillusivec4.champions.world.level.storage.loot.parameters.ChampionsLootContextParams;
 
@@ -19,7 +19,7 @@ public final class ExtraLootParamsHelper {
 
 	public static void withParameters(Entity entity, LootParams.Builder builder) {
 		builder
-				.withParameter(ChampionsLootContextParams.CHAMPION_MOB_PROPERTY, ChampionPropertyHelper.get(entity))
+				.withParameter(ChampionsLootContextParams.CHAMPION_MOB_PROPERTY, ChampionMobPropertyHelper.get(entity))
 				.withParameter(ChampionsLootContextParams.DAMAGE_TRACKER, DamageTrackerHelper.get(entity));
 	}
 

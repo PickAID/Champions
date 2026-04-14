@@ -12,7 +12,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.Entity;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
 import java.util.Collection;
 
@@ -43,7 +43,7 @@ public final class BossCommands {
 	private static int set(CommandSourceStack source, Collection<? extends Entity> entities) throws CommandSyntaxException {
 		int i = 0;
 		for (Entity entity : entities) {
-			ChampionPropertyHelper.makeBoss(entity);
+			ChampionMobPropertyHelper.makeBoss(entity);
 			i++;
 		}
 
@@ -69,7 +69,7 @@ public final class BossCommands {
 		TextColor color1 = TextColor.fromLegacyFormat(color);
 		if (color1 != null) {
 			for (Entity entity : entities) {
-				ChampionPropertyHelper.setColor(entity, color1);
+				ChampionMobPropertyHelper.setColor(entity, color1);
 				i++;
 			}
 		}

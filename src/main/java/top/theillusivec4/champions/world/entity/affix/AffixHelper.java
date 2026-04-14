@@ -30,7 +30,7 @@ import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
 import top.theillusivec4.champions.util.ChampionsUtil;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixTarget;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +106,7 @@ public final class AffixHelper {
     EntityAffixes.Mutable mutable = get(entity).mutable();
     consumer.accept(mutable);
     set(entity, mutable.toImmutable());
-    ChampionPropertyHelper.getBossbar(entity).setAffixes(get(entity));
+    ChampionMobPropertyHelper.getBossbar(entity).setAffixes(get(entity));
   }
 
   public static int getAffixableValue(Entity entity) {

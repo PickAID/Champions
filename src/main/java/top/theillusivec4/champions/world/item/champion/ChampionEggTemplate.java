@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.SpawnEggItem;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionProperty;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -26,14 +26,14 @@ public final class ChampionEggTemplate {
   });
   public static final Codec<ChampionEggTemplate> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			SPAWN_EGG.fieldOf("item").forGetter(template -> template.item),
-		  ChampionPropertyProvider.DIRECT_CODEC.optionalFieldOf("property").forGetter(template -> template.property),
+		  ChampionMobPropertyProvider.DIRECT_CODEC.optionalFieldOf("property").forGetter(template -> template.property),
 		  EntityAffixes.MAP_CODEC.orElse(EntityAffixes.EMPTY).forGetter(template -> template.affixes)
   ).apply(instance, ChampionEggTemplate::new));
   private final ItemStackTemplate item;
-  private final Optional<ChampionPropertyProvider> property;
+  private final Optional<ChampionMobPropertyProvider> property;
   private final EntityAffixes affixes;
 
-  private ChampionEggTemplate(ItemStackTemplate item, Optional<ChampionPropertyProvider> property, EntityAffixes affixes) {
+  private ChampionEggTemplate(ItemStackTemplate item, Optional<ChampionMobPropertyProvider> property, EntityAffixes affixes) {
     this.item = item;
     this.property = property;
     this.affixes = affixes;
@@ -45,7 +45,7 @@ public final class ChampionEggTemplate {
 
   public ItemStack create() {
     ItemStack stack = this.item.create();
-    ChampionProperty property = this.property.map(ChampionPropertyProvider::get).orElse(ChampionProperty.EMPTY);
+    ChampionMobProperty property = this.property.map(ChampionMobPropertyProvider::get).orElse(ChampionMobProperty.EMPTY);
     ChampionEggHelper.modifyItem(stack, property, this.affixes);
     return stack;
   }
@@ -72,7 +72,7 @@ public final class ChampionEggTemplate {
     private final Supplier<SpawnEggItem> itemSupplier;
     private Function<SpawnEggItem, ItemStackTemplate> itemFactory = ItemStackTemplate::new;
     private EntityAffixes.Builder affixes = null;
-    private ChampionPropertyProvider property = null;
+    private ChampionMobPropertyProvider property = null;
 
     private Builder(Supplier<SpawnEggItem> itemSupplier) {
       this.itemSupplier = itemSupplier;
@@ -87,7 +87,7 @@ public final class ChampionEggTemplate {
       return this;
     }
 
-    public Builder property(ChampionPropertyProvider property) {
+    public Builder property(ChampionMobPropertyProvider property) {
       this.property = property;
       return this;
     }

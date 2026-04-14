@@ -34,7 +34,7 @@ import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.commands.ChampionsCommands;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.affix.AffixHelper;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 import top.theillusivec4.champions.world.entity.damagetracker.DamageTrackerHelper;
 import top.theillusivec4.champions.world.item.champion.ChampionEggHelper;
 
@@ -65,7 +65,7 @@ public final class EventListener {
 
 			float result = AffixHelper.modifyHeal(level, entity, heal.floatValue());
 			event.setAmount(Math.max(result, 0.0f));
-			ChampionPropertyHelper.updateBossbarProgress(entity);
+			ChampionMobPropertyHelper.updateBossbarProgress(entity);
 		}
 
 	}
@@ -157,7 +157,7 @@ public final class EventListener {
 		DamageSource source = event.getSource();
 		Holder<DamageType> type = source.typeHolder();
 		DamageTrackerHelper.record(entity, type);
-		ChampionPropertyHelper.updateBossbarProgress(entity);
+		ChampionMobPropertyHelper.updateBossbarProgress(entity);
 	}
 
 
@@ -172,7 +172,7 @@ public final class EventListener {
 		if (entity.level() instanceof ServerLevel level) {
 			AffixHelper.tickEffects(level, entity);
 			AffixHelper.targetEffects(level, entity);
-			ChampionPropertyHelper.updateBossbarPlayers(entity);
+			ChampionMobPropertyHelper.updateBossbarPlayers(entity);
 		}
 	}
 
@@ -181,7 +181,7 @@ public final class EventListener {
 		Level level = event.getLevel();
 		Entity entity = event.getEntity();
 		if (!level.isClientSide()) {
-			ChampionPropertyHelper.removeBossBar(entity);
+			ChampionMobPropertyHelper.removeBossBar(entity);
 		}
 	}
 
@@ -230,7 +230,7 @@ public final class EventListener {
 			double z = event.getZ();
 			DifficultyInstance instance = event.getDifficulty();
 			EntitySpawnReason reason = event.getSpawnType();
-			ChampionPropertyHelper.doFinalizeSpawn(level, mob, x, y, z, instance, reason);
+			ChampionMobPropertyHelper.doFinalizeSpawn(level, mob, x, y, z, instance, reason);
 		}
 	}
 
@@ -238,7 +238,7 @@ public final class EventListener {
 	private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
 		Entity entity = event.getEntity();
 		if (event.getLevel() instanceof ServerLevel level && !event.loadedFromDisk() && !ChampionEggHelper.isSpawnFor(entity)) {
-			ChampionPropertyHelper.doApplyPreset(level, entity, level.getCurrentDifficultyAt(entity.blockPosition()));
+			ChampionMobPropertyHelper.doApplyPreset(level, entity, level.getCurrentDifficultyAt(entity.blockPosition()));
 		}
 	}
 

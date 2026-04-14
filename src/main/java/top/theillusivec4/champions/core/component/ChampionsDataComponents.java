@@ -6,7 +6,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionProperty;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -14,7 +14,7 @@ import java.util.function.UnaryOperator;
 public class ChampionsDataComponents {
 	private static final DeferredRegister<DataComponentType<?>> DEFERRED_REGISTER = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, ChampionsMod.MOD_ID);
 	public static final Supplier<DataComponentType<EntityAffixes>> STORED_AFFIXES = register("stored_affixes", builder -> builder.persistent(EntityAffixes.MAP_CODEC.codec()).networkSynchronized(EntityAffixes.STREAM_CODEC));
-	public static final Supplier<DataComponentType<ChampionProperty>> STORED_CHAMPION_MOB_PROPERTY = register("stored_champion_mob_property", builder -> builder.persistent(ChampionProperty.MAP_CODEC.codec()).networkSynchronized(ChampionProperty.STREAM_CODEC));
+	public static final Supplier<DataComponentType<ChampionMobProperty>> STORED_CHAMPION_MOB_PROPERTY = register("stored_champion_mob_property", builder -> builder.persistent(ChampionMobProperty.MAP_CODEC.codec()).networkSynchronized(ChampionMobProperty.STREAM_CODEC));
 
 	private static <T> Supplier<DataComponentType<T>> register(String name, UnaryOperator<DataComponentType.Builder<T>> builder) {
 		return DEFERRED_REGISTER.register(name, () -> builder.apply(new DataComponentType.Builder<>()).build());

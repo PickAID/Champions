@@ -13,7 +13,7 @@ public final class ModdedRegistries {
 			.add(Registries.DAMAGE_TYPE, ChampionsDamageTypes::bootstrap)
 			.add(ChampionsRegistries.AFFIX, Affixes::bootstrap)
 			.add(ChampionsRegistries.RANK, Ranks::bootstrap)
-			.add(ChampionsRegistries.CHAMPION_EGG, ChampionEggTemplates::bootstrap);
+			.add(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionEggTemplates::bootstrap);
 
   private ModdedRegistries() {
   }
