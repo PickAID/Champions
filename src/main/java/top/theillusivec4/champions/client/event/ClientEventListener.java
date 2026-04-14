@@ -11,17 +11,15 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.RenderNameTagEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.joml.Matrix4f;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
 @EventBusSubscriber(modid = ChampionsMod.MOD_ID, value = Dist.CLIENT)
 public final class ClientEventListener {
@@ -35,7 +33,7 @@ public final class ClientEventListener {
 		Entity entity = event.getEntity();
 		Level level = event.getEntity().level();
 		if (level.isClientSide()) {
-			ChampionPropertyHelper.doParticlesEffects(entity);
+			ChampionMobPropertyHelper.doParticlesEffects(entity);
 		}
 	}
 

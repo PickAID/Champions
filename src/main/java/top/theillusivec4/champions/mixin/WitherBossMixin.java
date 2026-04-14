@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
 @Mixin(value = WitherBoss.class)
 public abstract class WitherBossMixin extends Monster implements RangedAttackMob {
@@ -21,8 +21,8 @@ public abstract class WitherBossMixin extends Monster implements RangedAttackMob
 
 	@Redirect(method = "readAdditionalSaveData", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerBossEvent;setName(Lnet/minecraft/network/chat/Component;)V"))
 	private void champions$readAdditionalSaveData(ServerBossEvent instance, Component name) {
-		if (ChampionPropertyHelper.isBoss(this)) {
-			ChampionPropertyHelper.getBossbar(this).setName(name);
+		if (ChampionMobPropertyHelper.isBoss(this)) {
+			ChampionMobPropertyHelper.getBossbar(this).setName(name);
 		} else {
 			instance.setName(name);
 		}
@@ -30,8 +30,8 @@ public abstract class WitherBossMixin extends Monster implements RangedAttackMob
 
 	@Redirect(method = "setCustomName", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerBossEvent;setName(Lnet/minecraft/network/chat/Component;)V"))
 	private void champions$setCustomName(ServerBossEvent instance, Component name) {
-		if (ChampionPropertyHelper.isBoss(this)) {
-			ChampionPropertyHelper.getBossbar(this).setName(name);
+		if (ChampionMobPropertyHelper.isBoss(this)) {
+			ChampionMobPropertyHelper.getBossbar(this).setName(name);
 		} else {
 			instance.setName(name);
 		}
@@ -39,8 +39,8 @@ public abstract class WitherBossMixin extends Monster implements RangedAttackMob
 
 	@Redirect(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerBossEvent;setProgress(F)V", ordinal = 0))
 	private void champions$customServerAiStep$0(ServerBossEvent instance, float progress) {
-		if (ChampionPropertyHelper.isBoss(this)) {
-			ChampionPropertyHelper.getBossbar(this).setProgress(progress);
+		if (ChampionMobPropertyHelper.isBoss(this)) {
+			ChampionMobPropertyHelper.getBossbar(this).setProgress(progress);
 		} else {
 			instance.setProgress(progress);
 		}
@@ -48,8 +48,8 @@ public abstract class WitherBossMixin extends Monster implements RangedAttackMob
 
 	@Redirect(method = "customServerAiStep", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerBossEvent;setProgress(F)V", ordinal = 1))
 	private void champions$customServerAiStep$1(ServerBossEvent instance, float progress) {
-		if (ChampionPropertyHelper.isBoss(this)) {
-			ChampionPropertyHelper.getBossbar(this).setProgress(progress);
+		if (ChampionMobPropertyHelper.isBoss(this)) {
+			ChampionMobPropertyHelper.getBossbar(this).setProgress(progress);
 		} else {
 			instance.setProgress(progress);
 		}
@@ -57,8 +57,8 @@ public abstract class WitherBossMixin extends Monster implements RangedAttackMob
 
 	@Redirect(method = "makeInvulnerable", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerBossEvent;setProgress(F)V"))
 	private void champions$makeInvulnerable(ServerBossEvent instance, float progress) {
-		if (ChampionPropertyHelper.isBoss(this)) {
-			ChampionPropertyHelper.getBossbar(this).setProgress(progress);
+		if (ChampionMobPropertyHelper.isBoss(this)) {
+			ChampionMobPropertyHelper.getBossbar(this).setProgress(progress);
 		} else {
 			instance.setProgress(progress);
 		}
@@ -66,8 +66,8 @@ public abstract class WitherBossMixin extends Monster implements RangedAttackMob
 
 	@Redirect(method = "startSeenByPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerBossEvent;addPlayer(Lnet/minecraft/server/level/ServerPlayer;)V"))
 	private void champions$startSeenByPlayer(ServerBossEvent instance, ServerPlayer player) {
-		if (ChampionPropertyHelper.isBoss(this)) {
-			ChampionPropertyHelper.getBossbar(this).addPlayer(player);
+		if (ChampionMobPropertyHelper.isBoss(this)) {
+			ChampionMobPropertyHelper.getBossbar(this).addPlayer(player);
 			instance.removePlayer(player);
 		} else {
 			instance.addPlayer(player);
@@ -76,8 +76,8 @@ public abstract class WitherBossMixin extends Monster implements RangedAttackMob
 
 	@Redirect(method = "stopSeenByPlayer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerBossEvent;removePlayer(Lnet/minecraft/server/level/ServerPlayer;)V"))
 	private void champions$stopSeenByPlayer(ServerBossEvent instance, ServerPlayer player) {
-		if (ChampionPropertyHelper.isBoss(this)) {
-			ChampionPropertyHelper.getBossbar(this).removePlayer(player);
+		if (ChampionMobPropertyHelper.isBoss(this)) {
+			ChampionMobPropertyHelper.getBossbar(this).removePlayer(player);
 		} else {
 			instance.removePlayer(player);
 		}

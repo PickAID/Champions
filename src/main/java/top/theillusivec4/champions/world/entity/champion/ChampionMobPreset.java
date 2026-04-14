@@ -25,14 +25,14 @@ import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 import top.theillusivec4.champions.world.entity.affix.Affixes;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionProperty;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
 
-public record ChampionMobPreset(HolderSet<AffixProvider> affixes, ChampionPropertyProvider property) {
+public record ChampionMobPreset(HolderSet<AffixProvider> affixes, ChampionMobPropertyProvider property) {
   public static final MapCodec<ChampionMobPreset> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
     AffixProvider.LIST_CODEC.optionalFieldOf("affixes", HolderSet.empty()).forGetter(ChampionMobPreset::affixes),
-    ChampionPropertyProvider.DIRECT_CODEC.fieldOf("property").forGetter(ChampionMobPreset::property)
+    ChampionMobPropertyProvider.DIRECT_CODEC.fieldOf("property").forGetter(ChampionMobPreset::property)
   ).apply(instance, ChampionMobPreset::new));
 
   public static void bootstrap(HolderLookup.Provider provider, DataMapProvider.Builder<ChampionMobPreset, EntityType<?>> context) {
@@ -44,7 +44,7 @@ public record ChampionMobPreset(HolderSet<AffixProvider> affixes, ChampionProper
       HolderSet.direct(
         Holder.direct(AffixProvider.single(affixes.getOrThrow(Affixes.ADAPTABLE), ConstantInt.of(1)))
       ),
-      ChampionPropertyProvider.byRank(ranks.getOrThrow(Ranks.ELITE))
+      ChampionMobPropertyProvider.byRank(ranks.getOrThrow(Ranks.ELITE))
     );
     register(
       context,
@@ -53,8 +53,8 @@ public record ChampionMobPreset(HolderSet<AffixProvider> affixes, ChampionProper
         Holder.direct(AffixProvider.single(affixes.getOrThrow(Affixes.ADAPTABLE), UniformInt.of(1, 3))),
         Holder.direct(AffixProvider.single(affixes.getOrThrow(Affixes.DAMPENING), UniformInt.of(1, 3)))
       ),
-      ChampionPropertyProvider.single(
-        ChampionProperty.builder()
+      ChampionMobPropertyProvider.single(
+        ChampionMobProperty.builder()
           .prefix(Component.literal("Test"))
           .tier(3)
           .color(TextColor.fromLegacyFormat(ChatFormatting.RED))
@@ -68,11 +68,11 @@ public record ChampionMobPreset(HolderSet<AffixProvider> affixes, ChampionProper
         Holder.direct(AffixProvider.byCost(affixes.getOrThrow(AffixTags.DAMAGE_PROTECTION_EXCLUSIVE), UniformInt.of(20, 60))),
         Holder.direct(AffixProvider.byCostWithDifficulty(affixes.getOrThrow(AffixTags.DAMAGE_EXCLUSIVE), 20, 80))
       ),
-      ChampionPropertyProvider.byRank(ranks.getOrThrow(Ranks.COMMON))
+      ChampionMobPropertyProvider.byRank(ranks.getOrThrow(Ranks.COMMON))
     );
   }
 
-  private static void register(DataMapProvider.Builder<ChampionMobPreset, EntityType<?>> context, EntityType<?> entityType, HolderSet<AffixProvider> affixes, ChampionPropertyProvider property) {
+  private static void register(DataMapProvider.Builder<ChampionMobPreset, EntityType<?>> context, EntityType<?> entityType, HolderSet<AffixProvider> affixes, ChampionMobPropertyProvider property) {
     context.add(
       BuiltInRegistries.ENTITY_TYPE.wrapAsHolder(entityType),
       new ChampionMobPreset(affixes, property),
@@ -88,8 +88,8 @@ public record ChampionMobPreset(HolderSet<AffixProvider> affixes, ChampionProper
       .flatMap(affixProviderHolder -> affixProviderHolder.value().get(entityType, random, difficulty))
       .forEach(builder::add);
     EntityAffixes container = builder.build();
-    ChampionProperty property = this.property.get();
+    ChampionMobProperty property = this.property.get();
     AffixHelper.set(entity, container);
-    ChampionPropertyHelper.set(entity, property);
+    ChampionMobPropertyHelper.set(entity, property);
   }
 }

@@ -11,7 +11,7 @@ import top.theillusivec4.champions.world.entity.affix.Affixes;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
 import top.theillusivec4.champions.world.entity.champion.Rank;
 import top.theillusivec4.champions.world.entity.champion.Ranks;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
+import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
 
 public final class ChampionEggTemplates {
   public static final ResourceKey<ChampionEggTemplate> HUSK = register("husk");
@@ -21,7 +21,7 @@ public final class ChampionEggTemplates {
   }
 
   private static ResourceKey<ChampionEggTemplate> register(String name) {
-    return ResourceKey.create(ChampionsRegistries.CHAMPION_EGG, ChampionsUtil.id(name));
+    return ResourceKey.create(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionsUtil.id(name));
   }
 
   public static void bootstrap(BootstrapContext<ChampionEggTemplate> context) {
@@ -35,7 +35,7 @@ public final class ChampionEggTemplates {
           EntityAffixes.builder()
             .add(affixes.getOrThrow(Affixes.ADAPTABLE), 2)
         )
-        .property(ChampionPropertyProvider.byRank(ranks.getOrThrow(Ranks.SKILLED)))
+        .property(ChampionMobPropertyProvider.byRank(ranks.getOrThrow(Ranks.SKILLED)))
     );
     register(
       context,
@@ -45,7 +45,7 @@ public final class ChampionEggTemplates {
           EntityAffixes.builder()
             .add(affixes.getOrThrow(Affixes.MAGNETIC), 2)
         )
-        .property(ChampionPropertyProvider.byRank(ranks.getOrThrow(Ranks.SKILLED)))
+        .property(ChampionMobPropertyProvider.byRank(ranks.getOrThrow(Ranks.SKILLED)))
     );
   }
 
