@@ -23,7 +23,7 @@ import top.theillusivec4.champions.world.entity.champion.property.ChampionProper
 
 @EventBusSubscriber(modid = ChampionsMod.MOD_ID, value = Dist.CLIENT)
 public final class ClientEventListener {
-  private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/staricon.png");
+  private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/star.png");
 
   private ClientEventListener() {
   }
@@ -53,7 +53,7 @@ public final class ClientEventListener {
 //    renderStarIcon(poseStack, entity, buffer, light, -0.5, color);
   }
 
-  private static void renderStarIcon(PoseStack poseStack, Entity entity, MultiBufferSource buffer, int light, double xzOffset, int color) {
+  private static void renderStar(PoseStack poseStack, Entity entity, MultiBufferSource buffer, int light, double xzOffset, int color) {
     // 保存当前矩阵状态
     poseStack.pushPose();
 

@@ -23,7 +23,6 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -58,15 +57,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.advancements.critereon.ChampionsEntitySubPredicates;
-import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
 import top.theillusivec4.champions.client.network.ChampionsClientPayloadHandler;
+import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
 import top.theillusivec4.champions.core.component.ChampionsDataComponents;
 import top.theillusivec4.champions.core.particles.ChampionsParticleTypes;
 import top.theillusivec4.champions.core.registries.ChampionsBuiltInRegistries;
 import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.data.ChampionsDataMapProvider;
 import top.theillusivec4.champions.data.lang.ChampionsLanguageProvider;
+import top.theillusivec4.champions.data.registries.ChampionsDataMapProvider;
 import top.theillusivec4.champions.data.registries.ModdedRegistries;
 import top.theillusivec4.champions.data.tags.AffixTagsProvider;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
@@ -205,11 +204,6 @@ public class ChampionsMod {
   }
 
   @SubscribeEvent
-  private void onModifyRegistries(ModifyRegistriesEvent event) {
-
-  }
-
-  @SubscribeEvent
   private void registerDataPackRegistries(DataPackRegistryEvent.NewRegistry event) {
     event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.AFFIX_PROVIDER, AffixProvider.DIRECT_CODEC, AffixProvider.DIRECT_CODEC);
@@ -235,17 +229,18 @@ public class ChampionsMod {
 
   @SubscribeEvent
   public void generateData(GatherDataEvent event) {
-    DataGenerator generator = event.getGenerator();
     ExistingFileHelper helper = event.getExistingFileHelper();
-    PackOutput output = generator.getPackOutput();
+    PackOutput output = event.getGenerator().getPackOutput();
     DatapackBuiltinEntriesProvider datapackRegistries = ModdedRegistries.create(output, event.getLookupProvider());
     CompletableFuture<HolderLookup.Provider> registries = datapackRegistries.getRegistryProvider();
 
-    generator.addProvider(event.includeServer(), datapackRegistries);
-    generator.addProvider(event.includeServer(), AffixTagsProvider.create(output, registries, helper));
-    generator.addProvider(event.includeServer(), ChampionsDataMapProvider.create(output, registries));
-    generator.addProvider(event.includeClient(), ChampionsLanguageProvider.zhCn(output));
-    generator.addProvider(event.includeClient(), ChampionsLanguageProvider.enUs(output));
+    if (event.includeServer()) {
+      event.addProvider(datapackRegistries);
+      event.addProvider(AffixTagsProvider.create(output, registries, helper));
+      event.addProvider(ChampionsDataMapProvider.create(output, registries));
+      event.addProvider(ChampionsLanguageProvider.zhCn(output));
+      event.addProvider(ChampionsLanguageProvider.enUs(output));
+    }
   }
 
   @SubscribeEvent

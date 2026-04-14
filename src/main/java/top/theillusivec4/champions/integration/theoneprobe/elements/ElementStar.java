@@ -19,7 +19,7 @@ public class ElementStar implements IElement {
     ByteBufCodecs.INT, element -> element.color,
     ElementStar::new
   );
-  private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/staricon.png");
+  private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/star.png");
   private final int tier;
   private final int color;
 

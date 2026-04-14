@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class HUDHelper {
 
   private static final ResourceLocation GUI_BAR_TEXTURES = ChampionsMod.getLocation("textures/gui/bars.png");
-  private static final ResourceLocation GUI_STAR = ChampionsMod.getLocation("textures/gui/staricon.png");
+  private static final ResourceLocation GUI_STAR = ChampionsMod.getLocation("textures/gui/star.png");
 
   public static boolean renderHealthBar(GuiGraphics guiGraphics, final LivingEntity livingEntity) {
     return ChampionAttachment.getAttachment(livingEntity).map(champion -> {

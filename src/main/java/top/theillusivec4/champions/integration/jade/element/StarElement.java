@@ -10,7 +10,7 @@ import snownee.jade.api.ui.Element;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public class StarElement extends Element {
-  private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/staricon.png");
+  private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/star.png");
   private static final Vec2 SIZE = new Vec2(9, 9);
   private final TextColor color;
 

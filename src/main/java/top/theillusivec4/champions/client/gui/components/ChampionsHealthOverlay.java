@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public final class ChampionsHealthOverlay {
   private static final ResourceLocation BAR_TEXTURES = ChampionsUtil.id("textures/gui/bars.png");
-  private static final ResourceLocation STAR_TEXTURES = ChampionsUtil.id("textures/gui/staricon.png");
+  private static final ResourceLocation STAR_TEXTURES = ChampionsUtil.id("textures/gui/star.png");
   private final Map<UUID, ChampionsClientBossEvent> events = new HashMap<>();
   private final Handler handler = new Handler();
   private int x;

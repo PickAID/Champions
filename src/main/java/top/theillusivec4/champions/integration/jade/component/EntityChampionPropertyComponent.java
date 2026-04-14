@@ -8,13 +8,17 @@ import snownee.jade.api.ITooltip;
 import snownee.jade.api.JadeIds;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElement;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.integration.jade.element.StarElement;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityChampionPropertyComponent implements IEntityComponentProvider {
+  public static EntityChampionPropertyComponent create() {
+    return new EntityChampionPropertyComponent();
+  }
+
   @Override
   public void appendTooltip(ITooltip tip, EntityAccessor accessor, IPluginConfig config) {
     Entity entity = accessor.getEntity();

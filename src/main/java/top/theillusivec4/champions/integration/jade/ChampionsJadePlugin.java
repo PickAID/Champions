@@ -10,8 +10,6 @@ import top.theillusivec4.champions.integration.jade.component.EntityChampionProp
 
 @WailaPlugin
 public class ChampionsJadePlugin implements IWailaPlugin {
-  private final EntityChampionPropertyComponent entityChampion = new EntityChampionPropertyComponent();
-  private final EntityAffixesComponent entityAffixes = new EntityAffixesComponent();
 
   @Override
   public void register(IWailaCommonRegistration registration) {
@@ -20,7 +18,7 @@ public class ChampionsJadePlugin implements IWailaPlugin {
 
   @Override
   public void registerClient(IWailaClientRegistration registration) {
-    registration.registerEntityComponent(this.entityChampion, Entity.class);
-    registration.registerEntityComponent(this.entityAffixes, Entity.class);
+    registration.registerEntityComponent(EntityChampionPropertyComponent.create(), Entity.class);
+    registration.registerEntityComponent(EntityAffixesComponent.create(), Entity.class);
   }
 }
