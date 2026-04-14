@@ -10,7 +10,7 @@ Ranks are extremely configurable through the use of the **champions-ranks.toml**
 
 ## Affixes
 
-Affixes are unique abilities or attributes that spawn with championMobProperty mobs. Players can see which affixes are attached to any championMobProperty by looking underneath the championMobProperty's health bar on the screen. These can be identified from a fair distance away, allowing players to sufficiently analyze each championMobProperty's threat level and available abilities.
+Affixes are unique abilities or attributes that spawn with championProperty mobs. Players can see which affixes are attached to any championProperty by looking underneath the championProperty's health bar on the screen. These can be identified from a fair distance away, allowing players to sufficiently analyze each championProperty's threat level and available abilities.
 
 Affixes, like ranks, can also be configured through the use of the **champions-affixes.toml** file generated in the **serverconfig** folder. Here, players can disable certain affixes, require certain ranks, blacklist entities, and make specific entities always spawn with certain affixes if possible. Unlike ranks, new affixes cannot be added in any way.
 
@@ -35,5 +35,5 @@ Current available affixes:
 
 ## Game Stages
 
-Champions has support for Game Stages for staged championMobProperty mobs and staged rank tiers. More information about this can be found on the [GitHub Wiki](https://github.com/TheIllusiveC4/Champions/wiki/Game-Stages-Integration).
+Champions has support for Game Stages for staged championProperty mobs and staged rank tiers. More information about this can be found on the [GitHub Wiki](https://github.com/TheIllusiveC4/Champions/wiki/Game-Stages-Integration).
 

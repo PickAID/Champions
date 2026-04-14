@@ -19,13 +19,13 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.joml.Matrix4f;
 import top.theillusivec4.champions.ChampionsMod;
 import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 
 @EventBusSubscriber(modid = ChampionsMod.MOD_ID, value = Dist.CLIENT)
-public final class ClientEntityEventHandler {
+public final class ClientEntityEventListener {
   private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/staricon.png");
 
-  private ClientEntityEventHandler() {
+  private ClientEntityEventListener() {
   }
 
   @SubscribeEvent
@@ -33,7 +33,7 @@ public final class ClientEntityEventHandler {
     Entity entity = event.getEntity();
     Level level = event.getEntity().level();
     if (level.isClientSide()) {
-      ChampionMobPropertyHelper.doParticlesEffects(entity);
+      ChampionPropertyHelper.doParticlesEffects(entity);
     }
   }
 

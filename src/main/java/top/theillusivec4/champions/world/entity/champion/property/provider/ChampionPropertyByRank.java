@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionProperty;
 import top.theillusivec4.champions.world.entity.champion.Rank;
 
 public record ChampionPropertyByRank(Holder<Rank> rank) implements ChampionPropertyProvider {
@@ -14,9 +14,9 @@ public record ChampionPropertyByRank(Holder<Rank> rank) implements ChampionPrope
   public static final Codec<ChampionPropertyByRank> DIRECT_CODEC = Rank.REFERENCE_CODEC.xmap(ChampionPropertyByRank::new, ChampionPropertyByRank::rank);
 
   @Override
-  public ChampionMobProperty get() {
+  public ChampionProperty get() {
     Rank value = this.rank.value();
-    return new ChampionMobProperty(value.tier(), value.color(), value.description(), value.boss());
+    return new ChampionProperty(value.tier(), value.color(), value.description(), value.boss());
   }
 
   @Override

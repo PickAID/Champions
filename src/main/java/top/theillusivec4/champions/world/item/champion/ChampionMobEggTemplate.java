@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionProperty;
 import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
 
 import java.util.Objects;
@@ -40,7 +40,7 @@ public final class ChampionMobEggTemplate {
 
   public ItemStack create() {
     ItemStack stack = this.item.copy();
-    ChampionMobProperty property = this.property.map(ChampionPropertyProvider::get).orElse(ChampionMobProperty.EMPTY);
+    ChampionProperty property = this.property.map(ChampionPropertyProvider::get).orElse(ChampionProperty.EMPTY);
     ChampionMobEggHelper.modifyItem(stack, property, this.affixes);
     return stack;
   }

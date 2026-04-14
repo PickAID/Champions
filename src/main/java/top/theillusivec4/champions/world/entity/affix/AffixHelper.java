@@ -24,13 +24,13 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableFloat;
-import top.theillusivec4.champions.attachment.ChampionsAttachments;
+import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
 import top.theillusivec4.champions.core.component.ChampionsDataComponents;
 import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
 import top.theillusivec4.champions.util.ChampionsUtil;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixTarget;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,7 +106,7 @@ public final class AffixHelper {
     EntityAffixes.Mutable mutable = get(entity).mutable();
     consumer.accept(mutable);
     set(entity, mutable.toImmutable());
-    ChampionMobPropertyHelper.getBossbar(entity).setAffixes(get(entity));
+    ChampionPropertyHelper.getBossbar(entity).setAffixes(get(entity));
   }
 
   public static int getAffixableValue(Entity entity) {

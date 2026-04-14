@@ -28,6 +28,21 @@ repositories {
     url = "https://maven.blamejared.com"
   }
   mavenLocal()
+  // KubeJS
+  maven {
+    url "https://maven.latvian.dev/releases"
+    content {
+      includeGroup "dev.latvian.mods"
+      includeGroup "dev.latvian.apps"
+    }
+  }
+
+  maven {
+    url 'https://jitpack.io'
+    content {
+      includeGroup "com.github.rtyley"
+    }
+  }
 }
 
 base {
@@ -153,6 +168,8 @@ dependencies {
 //  compileOnly "curse.maven:scalinghealth-248027:${cf_scalinghealth}"
   implementation "curse.maven:TOP-245211:${theoneprobe_version}"
   implementation "curse.maven:jade-324717:${jade_version}"
+  api("dev.latvian.mods:kubejs-neoforge:$kubejs_version")
+  interfaceInjectionData("dev.latvian.mods:kubejs-neoforge:$kubejs_version") // optional
 //  compileOnly "net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}"
 //  compileOnly "net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:${bookshelf_version}"
 

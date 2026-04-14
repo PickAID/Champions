@@ -20,8 +20,8 @@ import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.data.DataMapProvider;
 import top.theillusivec4.champions.world.entity.affix.*;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionProperty;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tags.AffixTags;
@@ -51,7 +51,7 @@ public record ChampionMobPreset(HolderSet<AffixProvider> affixes, ChampionProper
         Holder.direct(AffixProvider.single(affixes.getOrThrow(Affixes.DAMPENING), UniformInt.of(1, 3)))
       ),
       ChampionPropertyProvider.single(
-        ChampionMobProperty.builder()
+        ChampionProperty.builder()
           .prefix(Component.literal("Test"))
           .tier(3)
           .color(TextColor.fromLegacyFormat(ChatFormatting.RED))
@@ -85,8 +85,8 @@ public record ChampionMobPreset(HolderSet<AffixProvider> affixes, ChampionProper
       .flatMap(affixProviderHolder -> affixProviderHolder.value().get(entityType, random, difficulty))
       .forEach(builder::add);
     EntityAffixes container = builder.build();
-    ChampionMobProperty property = this.property.get();
+    ChampionProperty property = this.property.get();
     AffixHelper.set(entity, container);
-    ChampionMobPropertyHelper.set(entity, property);
+    ChampionPropertyHelper.set(entity, property);
   }
 }
