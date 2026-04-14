@@ -13,7 +13,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
 import top.theillusivec4.champions.world.entity.affix.AffixHelper;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.client.ChampionsClientConfig;
 import top.theillusivec4.champions.client.util.ChampionsClientUtil;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
@@ -25,7 +25,7 @@ import java.util.UUID;
 
 public final class ChampionsHealthOverlay {
   private static final ResourceLocation BAR_TEXTURES = ChampionsUtil.id("textures/gui/bars.png");
-  private static final ResourceLocation STAR_TEXTURES = ChampionsUtil.id("textures/gui/staricon.png");
+  private static final ResourceLocation STAR_TEXTURES = ChampionsUtil.id("textures/gui/star.png");
   private final Map<UUID, ChampionsClientBossEvent> events = new HashMap<>();
   private final Handler handler = new Handler();
   private int x;
@@ -47,10 +47,10 @@ public final class ChampionsHealthOverlay {
 
       Entity entity = ChampionsClientUtil.getMouseEntity(deltaTracker.getGameTimeDeltaTicks());
       if (entity != null) {
-        if (entity instanceof LivingEntity livingEntity && !ChampionMobPropertyHelper.isBoss(entity)) {
-          ChampionsClientBossEvent event = new ChampionsClientBossEvent(entity.getUUID(), ChampionMobPropertyHelper.getDisplayName(entity));
-          event.setTier(ChampionMobPropertyHelper.getTier(entity));
-          event.setColor(ChampionMobPropertyHelper.getColor(entity));
+        if (entity instanceof LivingEntity livingEntity && !ChampionPropertyHelper.isBoss(entity)) {
+          ChampionsClientBossEvent event = new ChampionsClientBossEvent(entity.getUUID(), ChampionPropertyHelper.getDisplayName(entity));
+          event.setTier(ChampionPropertyHelper.getTier(entity));
+          event.setColor(ChampionPropertyHelper.getColor(entity));
           event.setProgress(Math.clamp(livingEntity.getHealth() / livingEntity.getMaxHealth(), 0.0f, 1.0f));
           event.setAffixes(AffixHelper.get(entity));
           this.render(graphics, event);

@@ -30,11 +30,11 @@ public class ChampionsModClient {
   private static ChampionsModClient instance = null;
   private final ChampionsGui gui = new ChampionsGui();
 
-  public ChampionsModClient(IEventBus modEventBus, ModContainer modContainer) {
+  public ChampionsModClient(IEventBus bus, ModContainer container) {
     instance = this;
-    modEventBus.register(this);
-    modContainer.registerConfig(ModConfig.Type.CLIENT, ChampionsClientConfig.SPEC);
-    modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+    bus.register(this);
+    container.registerConfig(ModConfig.Type.CLIENT, ChampionsClientConfig.SPEC);
+    container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
   }
 
   public static ChampionsModClient getInstance() {
@@ -64,7 +64,7 @@ public class ChampionsModClient {
     if (event.getTab() == ChampionsCreativeModeTabs.CHAMPION_EGG.get()) {
       if (Minecraft.getInstance().level != null) {
         RegistryAccess registry = Minecraft.getInstance().level.registryAccess();
-        registry.lookupOrThrow(ChampionsRegistries.CHAMPION_MOB_EGG).listElements()
+        registry.lookupOrThrow(ChampionsRegistries.CHAMPION_EGG).listElements()
           .forEach(template -> event.accept(template.value().create()));
       }
     }

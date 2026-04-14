@@ -11,11 +11,12 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
+import top.theillusivec4.champions.network.ChampionsBossEventPayload;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
 import top.theillusivec4.champions.world.entity.champion.property.ChampionsBossEvent;
-import top.theillusivec4.champions.network.ChampionsBossEventPayload;
 
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
@@ -43,6 +44,14 @@ public class ChampionsServerBossEvent extends ChampionsBossEvent {
 
   public Set<ServerPlayer> getPlayers() {
     return unmodifiablePlayers;
+  }
+
+  @Override
+  public void setName(Component name) {
+    if (!Objects.equals(this.getName(), name)) {
+      super.setName(name);
+      this.broadcast(ChampionsBossEventPayload::createUpdateName);
+    }
   }
 
   @Override

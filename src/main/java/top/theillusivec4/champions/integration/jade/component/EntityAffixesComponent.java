@@ -12,6 +12,9 @@ import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 import java.util.Map;
 
 public class EntityAffixesComponent implements IEntityComponentProvider {
+  public static EntityAffixesComponent create() {
+    return new EntityAffixesComponent();
+  }
   @Override
   public void appendTooltip(ITooltip tip, EntityAccessor accessor, IPluginConfig config) {
     for (Map.Entry<Holder<Affix>, Integer> entry : AffixHelper.get(accessor.getEntity()).entrySet()) {

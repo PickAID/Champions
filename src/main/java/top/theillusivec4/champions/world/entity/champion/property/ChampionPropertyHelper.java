@@ -19,7 +19,7 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.attachment.ChampionsAttachments;
+import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
 import top.theillusivec4.champions.core.component.ChampionsDataComponents;
 import top.theillusivec4.champions.core.particles.ChampionsParticleTypes;
 import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
@@ -38,17 +38,17 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
-public final class ChampionMobPropertyHelper {
+public final class ChampionPropertyHelper {
 
-  private ChampionMobPropertyHelper() {
+  private ChampionPropertyHelper() {
   }
 
   public static int getTier(Entity entity) {
     return get(entity).tier();
   }
 
-  public static void update(Entity entity, Consumer<ChampionMobProperty.Mutable> consumer) {
-    ChampionMobProperty.Mutable mutable = get(entity).mutable();
+  public static void update(Entity entity, Consumer<ChampionProperty.Mutable> consumer) {
+    ChampionProperty.Mutable mutable = get(entity).mutable();
     consumer.accept(mutable);
     set(entity, mutable.toImmutable());
   }
@@ -94,8 +94,8 @@ public final class ChampionMobPropertyHelper {
   }
 
   public static void addToTooltip(ItemStack item, Item.TooltipContext context, Consumer<Component> tooltipAdder, TooltipFlag tooltipFlag) {
-    ChampionMobProperty state = get(item);
-    if (state != ChampionMobProperty.EMPTY) {
+    ChampionProperty state = get(item);
+    if (state != ChampionProperty.EMPTY) {
       tooltipAdder.accept(
         Component.translatable("item.champions.champion.tier", Component.translatable("champions.champion.tier." + state.tier()).withStyle(style -> style.withColor(state.color()))).withStyle(ChatFormatting.GRAY)
       );
@@ -128,20 +128,20 @@ public final class ChampionMobPropertyHelper {
     }
   }
 
-  public static ChampionMobProperty get(ItemStack itemStack) {
-    return itemStack.getOrDefault(ChampionsDataComponents.STORED_CHAMPION_MOB_PROPERTY, ChampionMobProperty.EMPTY);
+  public static ChampionProperty get(ItemStack itemStack) {
+    return itemStack.getOrDefault(ChampionsDataComponents.STORED_CHAMPION_MOB_PROPERTY, ChampionProperty.EMPTY);
   }
 
-  public static ChampionMobProperty get(Entity entity) {
-    return entity.getExistingData(ChampionsAttachments.CHAMPION_MOB_PROPERTY).orElse(ChampionMobProperty.EMPTY);
+  public static ChampionProperty get(Entity entity) {
+    return entity.getExistingData(ChampionsAttachments.CHAMPION_MOB_PROPERTY).orElse(ChampionProperty.EMPTY);
   }
 
-  public static void set(ItemStack item, ChampionMobProperty state) {
+  public static void set(ItemStack item, ChampionProperty state) {
     if (!get(item).equals(state)) {
       item.set(ChampionsDataComponents.STORED_CHAMPION_MOB_PROPERTY, state);
 
       if (item.getItem() instanceof SpawnEggItem eggItem) {
-        ChampionMobProperty stored = get(item);
+        ChampionProperty stored = get(item);
         Component name = stored.prefix().copy()
           .append(CommonComponents.SPACE)
           .append(eggItem.getDefaultType().getDescription())
@@ -151,7 +151,7 @@ public final class ChampionMobPropertyHelper {
     }
   }
 
-  public static void set(Entity entity, ChampionMobProperty state) {
+  public static void set(Entity entity, ChampionProperty state) {
     if (!get(entity).equals(state)) {
       entity.setData(ChampionsAttachments.CHAMPION_MOB_PROPERTY, state);
       refreshBossbar(entity);
@@ -222,7 +222,7 @@ public final class ChampionMobPropertyHelper {
   }
 
   public static void doParticlesEffects(Entity entity) {
-    if (get(entity) != ChampionMobProperty.EMPTY) {
+    if (get(entity) != ChampionProperty.EMPTY) {
       RandomSource randomSource = entity.getRandom();
       Vec3 position = entity.position();
       double x = position.x() + (randomSource.nextDouble() - 0.5) * entity.getBbWidth();

@@ -8,25 +8,28 @@ import snownee.jade.api.ITooltip;
 import snownee.jade.api.JadeIds;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElement;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 import top.theillusivec4.champions.integration.jade.element.StarElement;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class EntityChampionPropertyComponent implements IEntityComponentProvider {
+  public static EntityChampionPropertyComponent create() {
+    return new EntityChampionPropertyComponent();
+  }
+
   @Override
   public void appendTooltip(ITooltip tip, EntityAccessor accessor, IPluginConfig config) {
     Entity entity = accessor.getEntity();
-    int tier = ChampionMobPropertyHelper.getTier(entity);
+    int tier = ChampionPropertyHelper.getTier(entity);
     if (tier > 0) {
       List<IElement> list = new ArrayList<>();
       for (int i = 0; i < tier; i++) {
-        list.add(new StarElement(ChampionMobPropertyHelper.getColor(entity)));
+        list.add(new StarElement(ChampionPropertyHelper.getColor(entity)));
       }
       tip.add(list);
-      tip.replace(JadeIds.CORE_OBJECT_NAME, ChampionMobPropertyHelper.getDisplayName(entity));
-//      tip.add(IElementHelper.get().text(ChampionPropertyHelper.getDisplayName(entity)));
+      tip.replace(JadeIds.CORE_OBJECT_NAME, ChampionPropertyHelper.getDisplayName(entity));
     }
   }
 

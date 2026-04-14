@@ -20,7 +20,6 @@ public abstract class AbstractArrowMixin extends Projectile {
     super(type, level);
   }
 
-  // 这里在26.1是个Bug: 错误的调用modifyDamage
   @ModifyVariable(method = "doKnockback", at = @At(value = "STORE"), name = "d0")
   private double champions$doKnockback(double knockback, @Local(argsOnly = true) LivingEntity livingEntity, @Local(argsOnly = true) DamageSource damageSource) {
     if (this.level() instanceof ServerLevel level) {

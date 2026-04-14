@@ -23,7 +23,6 @@ import com.electronwill.nightconfig.core.CommentedConfig;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
@@ -58,18 +57,15 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.advancements.critereon.ChampionsEntitySubPredicates;
-import top.theillusivec4.champions.attachment.ChampionsAttachments;
-import top.theillusivec4.champions.world.item.champion.ChampionMobEggTemplate;
-import top.theillusivec4.champions.world.entity.champion.Rank;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProviders;
 import top.theillusivec4.champions.client.network.ChampionsClientPayloadHandler;
+import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
 import top.theillusivec4.champions.core.component.ChampionsDataComponents;
 import top.theillusivec4.champions.core.particles.ChampionsParticleTypes;
 import top.theillusivec4.champions.core.registries.ChampionsBuiltInRegistries;
 import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.data.ChampionsDataMapProvider;
 import top.theillusivec4.champions.data.lang.ChampionsLanguageProvider;
+import top.theillusivec4.champions.data.registries.ChampionsDataMapProvider;
 import top.theillusivec4.champions.data.registries.ModdedRegistries;
 import top.theillusivec4.champions.data.tags.AffixTagsProvider;
 import top.theillusivec4.champions.deprecated.api.IChampionsApi;
@@ -93,8 +89,11 @@ import top.theillusivec4.champions.deprecated.common.util.ChampionHelper;
 import top.theillusivec4.champions.deprecated.common.util.EntityManager;
 import top.theillusivec4.champions.deprecated.server.command.ChampionSelectorOptions;
 import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
+import top.theillusivec4.champions.integration.theoneprobe.ChampionsTheOneProbePlugin;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
+import top.theillusivec4.champions.network.ChampionsPayloads;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
+import top.theillusivec4.champions.stats.ChampionsStats;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
 import top.theillusivec4.champions.world.entity.affix.Affix;
@@ -106,7 +105,10 @@ import top.theillusivec4.champions.world.entity.affix.effects.AffixLocationBased
 import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffects;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProviders;
+import top.theillusivec4.champions.world.entity.champion.Rank;
+import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProviders;
 import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
+import top.theillusivec4.champions.world.item.champion.ChampionEggTemplate;
 import top.theillusivec4.champions.world.level.storage.loot.predicates.ChampionsLootItemConditions;
 
 import java.io.File;
@@ -129,44 +131,45 @@ public class ChampionsMod {
   @Deprecated
   public static boolean gameStagesLoaded = false;
 
-  public ChampionsMod(IEventBus modEventBus, ModContainer modContainer) {
+  public ChampionsMod(IEventBus bus, ModContainer container) {
     // New
-    modEventBus.register(this);
-    modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsServerConfig.SPEC);
-    ChampionsAttachments.register(modEventBus);
-    ChampionsDataComponents.register(modEventBus);
-    ChampionsEntityTypes.register(modEventBus);
-    ChampionsMobEffects.register(modEventBus);
-    ChampionsParticleTypes.register(modEventBus);
-    ChampionsLootItemConditions.register(modEventBus);
-    ChampionsCreativeModeTabs.register(modEventBus);
-    ChampionsEntitySubPredicates.register(modEventBus);
-    AffixEffectComponents.register(modEventBus);
-    ProjectileTemplates.register(modEventBus);
-    LevelBasedValues.register(modEventBus);
-    AffixLocationBasedEffects.register(modEventBus);
-    AffixEntityEffects.register(modEventBus);
-    AffixValueEffects.register(modEventBus);
-    AffixProviders.register(modEventBus);
-    ChampionPropertyProviders.register(modEventBus);
+    bus.register(this);
+    container.registerConfig(ModConfig.Type.SERVER, ChampionsServerConfig.SPEC);
+    ChampionsAttachments.register(bus);
+    ChampionsDataComponents.register(bus);
+    ChampionsEntityTypes.register(bus);
+    ChampionsMobEffects.register(bus);
+    ChampionsParticleTypes.register(bus);
+    ChampionsLootItemConditions.register(bus);
+    ChampionsCreativeModeTabs.register(bus);
+    ChampionsEntitySubPredicates.register(bus);
+    ChampionsStats.register(bus);
+    AffixEffectComponents.register(bus);
+    ProjectileTemplates.register(bus);
+    LevelBasedValues.register(bus);
+    AffixLocationBasedEffects.register(bus);
+    AffixEntityEffects.register(bus);
+    AffixValueEffects.register(bus);
+    AffixProviders.register(bus);
+    ChampionPropertyProviders.register(bus);
     // Old
-//    modEventBus.addListener(this::enqueueIMC);
-//    modEventBus.addListener(this::registerNetwork);
-//    modEventBus.addListener(this::onGatherData);
-//    modContainer.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
-//    modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
-//    modContainer.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
+//    bus.addListener(this::enqueueIMC);
+//    bus.addListener(this::registerNetwork);
+//    bus.addListener(this::onGatherData);
+//    container.registerConfig(ModConfig.Type.CLIENT, ClientChampionsConfig.CLIENT_SPEC);
+//    container.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.SERVER_SPEC);
+//    container.registerConfig(ModConfig.Type.COMMON, ChampionsConfig.COMMON_SPEC);
 //    createServerConfig(ChampionsConfig.RANKS_SPEC, "ranks");
 //    createServerConfig(ChampionsConfig.AFFIXES_SPEC, "affixes");
 //    createServerConfig(ChampionsConfig.ENTITIES_SPEC, "entities");
 //
 //    if (gameStagesLoaded) {
-//      modContainer.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
+//      container.registerConfig(ModConfig.Type.SERVER, ChampionsConfig.STAGE_SPEC, "champions-gamestages.toml");
 //    }
-//    modEventBus.addListener(this::config);
-//    modEventBus.addListener(this::setup);
+//    bus.addListener(this::config);
+//    bus.addListener(this::setup);
 //    NeoForge.EVENT_BUS.addListener(this::registerCommands);
-//    ChampionsRegistry.register(modEventBus);
+//    ChampionsRegistry.register(bus);
 //    scalingHealthLoaded = ModList.get().isLoaded("scalinghealth");
   }
 
@@ -201,23 +204,18 @@ public class ChampionsMod {
   }
 
   @SubscribeEvent
-  private void onModifyRegistries(ModifyRegistriesEvent event) {
-
-  }
-
-  @SubscribeEvent
   private void registerDataPackRegistries(DataPackRegistryEvent.NewRegistry event) {
     event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.AFFIX_PROVIDER, AffixProvider.DIRECT_CODEC, AffixProvider.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
-    event.dataPackRegistry(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionMobEggTemplate.DIRECT_CODEC, ChampionMobEggTemplate.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.CHAMPION_EGG, ChampionEggTemplate.DIRECT_CODEC, ChampionEggTemplate.DIRECT_CODEC);
   }
 
   @SubscribeEvent
   public void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
     PayloadRegistrar registrar = event.registrar(VERSION);
     registrar.playToClient(
-      ChampionsBossEventPayload.TYPE,
+      ChampionsPayloads.BOSS_EVENT,
       ChampionsBossEventPayload.STREAM_CODEC,
       ChampionsClientPayloadHandler::handleBossEvent
     );
@@ -231,17 +229,25 @@ public class ChampionsMod {
 
   @SubscribeEvent
   public void generateData(GatherDataEvent event) {
-    DataGenerator generator = event.getGenerator();
     ExistingFileHelper helper = event.getExistingFileHelper();
-    PackOutput output = generator.getPackOutput();
+    PackOutput output = event.getGenerator().getPackOutput();
     DatapackBuiltinEntriesProvider datapackRegistries = ModdedRegistries.create(output, event.getLookupProvider());
     CompletableFuture<HolderLookup.Provider> registries = datapackRegistries.getRegistryProvider();
 
-    generator.addProvider(event.includeServer(), datapackRegistries);
-    generator.addProvider(event.includeServer(), AffixTagsProvider.create(output, registries, helper));
-    generator.addProvider(event.includeServer(), ChampionsDataMapProvider.create(output, registries));
-    generator.addProvider(event.includeClient(), ChampionsLanguageProvider.ZhCn(output));
-    generator.addProvider(event.includeClient(), ChampionsLanguageProvider.EnUs(output));
+    if (event.includeServer()) {
+      event.addProvider(datapackRegistries);
+      event.addProvider(AffixTagsProvider.create(output, registries, helper));
+      event.addProvider(ChampionsDataMapProvider.create(output, registries));
+      event.addProvider(ChampionsLanguageProvider.zhCn(output));
+      event.addProvider(ChampionsLanguageProvider.enUs(output));
+    }
+  }
+
+  @SubscribeEvent
+  public void registerPlugins(InterModEnqueueEvent event) {
+    if (ModList.get().isLoaded("theoneprobe")) {
+      InterModComms.sendTo(MOD_ID, "theoneprobe", "getTheOneProbe", ChampionsTheOneProbePlugin::create);
+    }
   }
 
   private void setup(final FMLCommonSetupEvent evt) {

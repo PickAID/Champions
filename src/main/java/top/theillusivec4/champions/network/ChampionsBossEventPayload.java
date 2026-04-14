@@ -13,12 +13,10 @@ import net.minecraft.util.StringRepresentable;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
 import top.theillusivec4.champions.util.ChampionsStreamCodecs;
-import top.theillusivec4.champions.util.ChampionsUtil;
 
 import java.util.UUID;
 
 public record ChampionsBossEventPayload(UUID id, Operation operation) implements CustomPacketPayload {
-  public static final CustomPacketPayload.Type<ChampionsBossEventPayload> TYPE = ChampionsUtil.payload("champion_boss_event");
   public static final StreamCodec<RegistryFriendlyByteBuf, ChampionsBossEventPayload> STREAM_CODEC = StreamCodec.composite(
     UUIDUtil.STREAM_CODEC, ChampionsBossEventPayload::id,
     Operation.STREAM_CODEC, ChampionsBossEventPayload::operation,
@@ -96,7 +94,7 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
 
   @Override
   public Type<? extends CustomPacketPayload> type() {
-    return TYPE;
+    return ChampionsPayloads.BOSS_EVENT;
   }
 
   public enum OperationType implements StringRepresentable {

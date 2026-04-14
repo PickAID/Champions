@@ -10,7 +10,7 @@ import snownee.jade.api.ui.Element;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public class StarElement extends Element {
-  private static final ResourceLocation STAR_TEXTURES = ChampionsUtil.id("textures/gui/staricon.png");
+  private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/star.png");
   private static final Vec2 SIZE = new Vec2(9, 9);
   private final TextColor color;
 
@@ -30,7 +30,7 @@ public class StarElement extends Element {
     float g = (float) FastColor.ARGB32.green(value) / 255F;
     float b = (float) FastColor.ARGB32.blue(value) / 255F;
     RenderSystem.setShaderColor(r, g, b, 1.0F);
-    graphics.blit(STAR_TEXTURES, (int) x, (int) y, 0, 0, 9, 9, 9, 9);
+    graphics.blit(TEXTURE, (int) x, (int) y, 0, 0, 9, 9, 9, 9);
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
   }
 }

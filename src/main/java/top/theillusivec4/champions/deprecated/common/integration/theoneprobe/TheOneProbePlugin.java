@@ -40,7 +40,8 @@ public class TheOneProbePlugin implements IProbeInfoEntityProvider {
           Color rankColor = new Color(r, g, b);
           IProbeInfo horizontal;
           IProbeInfo vertical = probeInfo.vertical(
-            probeInfo.defaultLayoutStyle().borderColor(rankColor).spacing(3).padding(3));
+            probeInfo.defaultLayoutStyle().borderColor(rankColor).spacing(3).padding(3)
+          );
           vertical.mcText(
             Component.translatable("rank.champions.title." + rank.getTier()).append(
                 " (" + rank.getTier() + ")")

@@ -13,7 +13,7 @@ import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffect;
 import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
 import top.theillusivec4.champions.world.entity.champion.Rank;
 import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProvider;
-import top.theillusivec4.champions.world.item.champion.ChampionMobEggTemplate;
+import top.theillusivec4.champions.world.item.champion.ChampionEggTemplate;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public final class ChampionsRegistries {
@@ -28,8 +28,8 @@ public final class ChampionsRegistries {
   public static final ResourceKey<Registry<AffixProvider>> AFFIX_PROVIDER = register("affix_provider");
   public static final ResourceKey<Registry<DataComponentType<?>>> AFFIX_EFFECT_COMPONENT_TYPE = register("affix_effect_component_type");
   public static final ResourceKey<Registry<Rank>> RANK = register("rank");
-  public static final ResourceKey<Registry<ChampionMobEggTemplate>> CHAMPION_MOB_EGG = register("champion_mob_egg");
-  public static final ResourceKey<Registry<ChampionPropertyProvider>> CHAMPION_MOB_PROPERTY_PROVIDER = register("champion_mob_property_provider");
+  public static final ResourceKey<Registry<ChampionEggTemplate>> CHAMPION_EGG = register("champion_egg");
+  public static final ResourceKey<Registry<ChampionPropertyProvider>> CHAMPION_PROPERTY_PROVIDER = register("champion_property_provider");
 
   private ChampionsRegistries() {
   }

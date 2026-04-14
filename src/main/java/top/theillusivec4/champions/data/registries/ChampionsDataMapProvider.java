@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.data;
+package top.theillusivec4.champions.data.registries;
 
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

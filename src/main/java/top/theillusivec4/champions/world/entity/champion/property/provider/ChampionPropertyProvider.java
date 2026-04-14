@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Holder;
 import top.theillusivec4.champions.world.entity.champion.Rank;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.world.entity.champion.property.ChampionProperty;
 import top.theillusivec4.champions.core.registries.ChampionsBuiltInRegistries;
 
 import java.util.function.Function;
@@ -24,11 +24,11 @@ public interface ChampionPropertyProvider {
     return new ChampionPropertyByRank(rank);
   }
 
-  static ChampionPropertyProvider single(ChampionMobProperty.Builder builder) {
+  static ChampionPropertyProvider single(ChampionProperty.Builder builder) {
     return new SingleChampionProperty(builder.build());
   }
 
-  ChampionMobProperty get();
+  ChampionProperty get();
 
   MapCodec<? extends ChampionPropertyProvider> codec();
 }

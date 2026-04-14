@@ -13,24 +13,24 @@ import top.theillusivec4.champions.world.entity.champion.property.provider.Champ
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
-public final class ChampionMobEggTemplates {
-  public static final ResourceKey<ChampionMobEggTemplate> HUSK = register("husk");
-  public static final ResourceKey<ChampionMobEggTemplate> MAGNETIC_HUSK = register("magnetic_husk");
+public final class ChampionEggTemplates {
+  public static final ResourceKey<ChampionEggTemplate> HUSK = register("husk");
+  public static final ResourceKey<ChampionEggTemplate> MAGNETIC_HUSK = register("magnetic_husk");
 
-  private ChampionMobEggTemplates() {
+  private ChampionEggTemplates() {
   }
 
-  private static ResourceKey<ChampionMobEggTemplate> register(String name) {
-    return ResourceKey.create(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionsUtil.id(name));
+  private static ResourceKey<ChampionEggTemplate> register(String name) {
+    return ResourceKey.create(ChampionsRegistries.CHAMPION_EGG, ChampionsUtil.id(name));
   }
 
-  public static void bootstrap(BootstrapContext<ChampionMobEggTemplate> context) {
+  public static void bootstrap(BootstrapContext<ChampionEggTemplate> context) {
     HolderGetter<Affix> affixes = context.lookup(ChampionsRegistries.AFFIX);
     HolderGetter<Rank> ranks = context.lookup(ChampionsRegistries.RANK);
     register(
       context,
       HUSK,
-      ChampionMobEggTemplate.builder(() -> (net.minecraft.world.item.SpawnEggItem) Items.HUSK_SPAWN_EGG)
+      ChampionEggTemplate.builder(() -> (net.minecraft.world.item.SpawnEggItem) Items.HUSK_SPAWN_EGG)
         .affixes(
           EntityAffixes.builder()
             .add(affixes.getOrThrow(Affixes.ADAPTABLE), 2)
@@ -40,7 +40,7 @@ public final class ChampionMobEggTemplates {
     register(
       context,
       MAGNETIC_HUSK,
-      ChampionMobEggTemplate.builder(() -> (net.minecraft.world.item.SpawnEggItem) Items.HUSK_SPAWN_EGG)
+      ChampionEggTemplate.builder(() -> (net.minecraft.world.item.SpawnEggItem) Items.HUSK_SPAWN_EGG)
         .affixes(
           EntityAffixes.builder()
             .add(affixes.getOrThrow(Affixes.MAGNETIC), 2)
@@ -49,7 +49,7 @@ public final class ChampionMobEggTemplates {
     );
   }
 
-  private static void register(BootstrapContext<ChampionMobEggTemplate> context, ResourceKey<ChampionMobEggTemplate> key, ChampionMobEggTemplate.Builder builder) {
+  private static void register(BootstrapContext<ChampionEggTemplate> context, ResourceKey<ChampionEggTemplate> key, ChampionEggTemplate.Builder builder) {
     context.register(key, builder.build());
   }
 }

@@ -17,11 +17,11 @@ public abstract class ChampionsLanguageProvider extends LanguageProvider {
     super(output, ChampionsMod.MOD_ID, locale);
   }
 
-  public static LanguageProvider ZhCn(PackOutput output) {
+  public static LanguageProvider zhCn(PackOutput output) {
     return new ZhCn(output);
   }
 
-  public static LanguageProvider EnUs(PackOutput output) {
+  public static LanguageProvider enUs(PackOutput output) {
     return new EnUs(output);
   }
 
