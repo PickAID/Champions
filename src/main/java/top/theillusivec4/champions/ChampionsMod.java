@@ -92,6 +92,7 @@ import top.theillusivec4.champions.deprecated.server.command.ChampionSelectorOpt
 import top.theillusivec4.champions.deprecated.server.command.ChampionsCommand;
 import top.theillusivec4.champions.integration.theoneprobe.ChampionsTheOneProbePlugin;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
+import top.theillusivec4.champions.network.ChampionsPayloads;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
 import top.theillusivec4.champions.stats.ChampionsStats;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
@@ -108,7 +109,7 @@ import top.theillusivec4.champions.world.entity.affix.provider.AffixProviders;
 import top.theillusivec4.champions.world.entity.champion.Rank;
 import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionPropertyProviders;
 import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
-import top.theillusivec4.champions.world.item.champion.ChampionMobEggTemplate;
+import top.theillusivec4.champions.world.item.champion.ChampionEggTemplate;
 import top.theillusivec4.champions.world.level.storage.loot.predicates.ChampionsLootItemConditions;
 
 import java.io.File;
@@ -213,14 +214,14 @@ public class ChampionsMod {
     event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.AFFIX_PROVIDER, AffixProvider.DIRECT_CODEC, AffixProvider.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
-    event.dataPackRegistry(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionMobEggTemplate.DIRECT_CODEC, ChampionMobEggTemplate.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.CHAMPION_EGG, ChampionEggTemplate.DIRECT_CODEC, ChampionEggTemplate.DIRECT_CODEC);
   }
 
   @SubscribeEvent
   public void registerPayloadHandlers(RegisterPayloadHandlersEvent event) {
     PayloadRegistrar registrar = event.registrar(VERSION);
     registrar.playToClient(
-      ChampionsBossEventPayload.TYPE,
+      ChampionsPayloads.BOSS_EVENT,
       ChampionsBossEventPayload.STREAM_CODEC,
       ChampionsClientPayloadHandler::handleBossEvent
     );
@@ -243,8 +244,8 @@ public class ChampionsMod {
     generator.addProvider(event.includeServer(), datapackRegistries);
     generator.addProvider(event.includeServer(), AffixTagsProvider.create(output, registries, helper));
     generator.addProvider(event.includeServer(), ChampionsDataMapProvider.create(output, registries));
-    generator.addProvider(event.includeClient(), ChampionsLanguageProvider.ZhCn(output));
-    generator.addProvider(event.includeClient(), ChampionsLanguageProvider.EnUs(output));
+    generator.addProvider(event.includeClient(), ChampionsLanguageProvider.zhCn(output));
+    generator.addProvider(event.includeClient(), ChampionsLanguageProvider.enUs(output));
   }
 
   @SubscribeEvent

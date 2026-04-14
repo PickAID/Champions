@@ -15,7 +15,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-public final class ChampionMobEggTemplate {
+public final class ChampionEggTemplate {
   private static final Codec<ItemStack> SPAWN_EGG = ItemStack.CODEC.validate(itemStack -> {
     if (itemStack.getItem() instanceof SpawnEggItem) {
       return DataResult.success(itemStack);
@@ -23,25 +23,25 @@ public final class ChampionMobEggTemplate {
       return DataResult.error(() -> "SpawnEggTemplate item must be spawn egg.");
     }
   });
-  public static final Codec<ChampionMobEggTemplate> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(SPAWN_EGG.fieldOf("item").forGetter(template -> template.item), ChampionPropertyProvider.DIRECT_CODEC.optionalFieldOf("property").forGetter(template -> template.property), EntityAffixes.MAP_CODEC.orElse(EntityAffixes.EMPTY).forGetter(template -> template.affixes)).apply(instance, ChampionMobEggTemplate::new));
+  public static final Codec<ChampionEggTemplate> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(SPAWN_EGG.fieldOf("item").forGetter(template -> template.item), ChampionPropertyProvider.DIRECT_CODEC.optionalFieldOf("property").forGetter(template -> template.property), EntityAffixes.MAP_CODEC.orElse(EntityAffixes.EMPTY).forGetter(template -> template.affixes)).apply(instance, ChampionEggTemplate::new));
   private final ItemStack item;
   private final Optional<ChampionPropertyProvider> property;
   private final EntityAffixes affixes;
 
-  private ChampionMobEggTemplate(ItemStack item, Optional<ChampionPropertyProvider> property, EntityAffixes affixes) {
+  private ChampionEggTemplate(ItemStack item, Optional<ChampionPropertyProvider> property, EntityAffixes affixes) {
     this.item = item;
     this.property = property;
     this.affixes = affixes;
   }
 
-  public static ChampionMobEggTemplate.Builder builder(Supplier<SpawnEggItem> supplier) {
+  public static ChampionEggTemplate.Builder builder(Supplier<SpawnEggItem> supplier) {
     return new Builder(supplier);
   }
 
   public ItemStack create() {
     ItemStack stack = this.item.copy();
     ChampionProperty property = this.property.map(ChampionPropertyProvider::get).orElse(ChampionProperty.EMPTY);
-    ChampionMobEggHelper.modifyItem(stack, property, this.affixes);
+    ChampionEggHelper.modifyItem(stack, property, this.affixes);
     return stack;
   }
 
@@ -54,7 +54,7 @@ public final class ChampionMobEggTemplate {
   public boolean equals(Object obj) {
     if (obj == this) return true;
     if (obj == null || obj.getClass() != this.getClass()) return false;
-    var that = (ChampionMobEggTemplate) obj;
+    var that = (ChampionEggTemplate) obj;
     return Objects.equals(this.item, that.item) && Objects.equals(this.property, that.property) && Objects.equals(this.affixes, that.affixes);
   }
 
@@ -87,8 +87,8 @@ public final class ChampionMobEggTemplate {
       return this;
     }
 
-    public ChampionMobEggTemplate build() {
-      return new ChampionMobEggTemplate(
+    public ChampionEggTemplate build() {
+      return new ChampionEggTemplate(
         this.itemFactory.apply(this.itemSupplier.get()),
         Optional.ofNullable(this.property),
         Optional.ofNullable(this.affixes).map(EntityAffixes.Builder::build).orElse(EntityAffixes.EMPTY)

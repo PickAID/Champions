@@ -1,7 +1,6 @@
 package top.theillusivec4.champions.util;
 
 import net.minecraft.core.Holder;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.random.Weight;
@@ -19,10 +18,6 @@ public final class ChampionsUtil {
 
   public static <T extends WeightedEntry> Optional<Holder<T>> getRandom(RandomSource random, List<? extends Holder<T>> entries) {
     return WeightedRandom.getRandomItem(random, entries.stream().map(HolderWithWeight::new).toList()).map(HolderWithWeight::holder);
-  }
-
-  public static <T extends CustomPacketPayload> CustomPacketPayload.Type<T> payload(String name) {
-    return new CustomPacketPayload.Type<>(id(name));
   }
 
   public static ResourceLocation id(String name) {

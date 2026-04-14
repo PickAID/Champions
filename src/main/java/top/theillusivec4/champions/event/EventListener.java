@@ -30,7 +30,7 @@ import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 import top.theillusivec4.champions.world.entity.damagetracker.DamageTrackerHelper;
-import top.theillusivec4.champions.world.item.champion.ChampionMobEggHelper;
+import top.theillusivec4.champions.world.item.champion.ChampionEggHelper;
 
 import java.util.List;
 
@@ -231,7 +231,7 @@ public final class EventListener {
   @SubscribeEvent
   private static void onEntityJoinLevel(EntityJoinLevelEvent event) {
     Entity entity = event.getEntity();
-    if (event.getLevel() instanceof ServerLevel level && !event.loadedFromDisk() && !ChampionMobEggHelper.isSpawnFor(entity)) {
+    if (event.getLevel() instanceof ServerLevel level && !event.loadedFromDisk() && !ChampionEggHelper.isSpawnFor(entity)) {
       ChampionPropertyHelper.doApplyPreset(level, entity, level.getCurrentDifficultyAt(entity.blockPosition()));
     }
   }
@@ -242,6 +242,6 @@ public final class EventListener {
     Item.TooltipContext context = event.getContext();
     List<Component> list = event.getToolTip();
     TooltipFlag flags = event.getFlags();
-    ChampionMobEggHelper.addToTooltip(itemStack, context, list::add, flags);
+    ChampionEggHelper.addToTooltip(itemStack, context, list::add, flags);
   }
 }

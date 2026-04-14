@@ -22,10 +22,10 @@ import top.theillusivec4.champions.util.ChampionsUtil;
 import top.theillusivec4.champions.world.entity.champion.property.ChampionPropertyHelper;
 
 @EventBusSubscriber(modid = ChampionsMod.MOD_ID, value = Dist.CLIENT)
-public final class ClientEntityEventListener {
+public final class ClientEventListener {
   private static final ResourceLocation TEXTURE = ChampionsUtil.id("textures/gui/staricon.png");
 
-  private ClientEntityEventListener() {
+  private ClientEventListener() {
   }
 
   @SubscribeEvent

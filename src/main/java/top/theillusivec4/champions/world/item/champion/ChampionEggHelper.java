@@ -14,8 +14,8 @@ import top.theillusivec4.champions.world.entity.champion.property.ChampionProper
 import java.util.Objects;
 import java.util.function.Consumer;
 
-public final class ChampionMobEggHelper {
-  private ChampionMobEggHelper() {
+public final class ChampionEggHelper {
+  private ChampionEggHelper() {
   }
 
   public static void addToTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> adder, TooltipFlag flags) {
@@ -37,12 +37,12 @@ public final class ChampionMobEggHelper {
       flag = true;
     }
     if (flag) {
-      entity.setData(ChampionsAttachments.CHAMPION_MOB_EGG_SPAWNED, true);
+      entity.setData(ChampionsAttachments.CHAMPION_EGG_SPAWNED, true);
     }
   }
 
   public static boolean isSpawnFor(Entity entity) {
-    return entity.getExistingData(ChampionsAttachments.CHAMPION_MOB_EGG_SPAWNED).orElse(false);
+    return entity.getExistingData(ChampionsAttachments.CHAMPION_EGG_SPAWNED).orElse(false);
   }
 
   public static void modifyPickResult(ItemStack stack, Entity entity) {
