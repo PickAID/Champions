@@ -27,3 +27,6 @@ eclipse
 run
 /runs/
 /src/generated/resources/
+
+# updatelogs
+/updatelogs/
