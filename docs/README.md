@@ -6,15 +6,15 @@ Champions is a mod that adds elite mobs of different rarities, with enhanced sta
 
 Champion mobs are defined by their ranks. Every time a valid mob is spawned into the world, it's assigned a rank. Most mobs will be common and exhibit no special characteristics. Some mobs will spawn as champions. Players can recognize them by the special colored particles they emit as well as the special health bar that appears on your screen when you look at them. Champions have ranks which are randomly assigned with higher ranks being progressively rarer. With each rank, champions gain stronger stats, more abilities, and more loot to drop.
 
-Ranks are extremely configurable through the use of the **champions-ranks.toml** file generated in the **serverconfig** folder. Players can edit rank attributes such as default color, number of affixContainer, growth factor, and chance to spawn. New ranks can even be added, infinitely.
+Ranks are extremely configurable through the use of the **champions-ranks.toml** file generated in the **serverconfig** folder. Players can edit rank attributes such as default color, number of entityAffixes, growth factor, and chance to spawn. New ranks can even be added, infinitely.
 
 ## Affixes
 
-Affixes are unique abilities or attributes that spawn with champion mobs. Players can see which affixContainer are attached to any champion by looking underneath the champion's health bar on the screen. These can be identified from a fair distance away, allowing players to sufficiently analyze each champion's threat level and available abilities.
+Affixes are unique abilities or attributes that spawn with champion mobs. Players can see which entityAffixes are attached to any champion by looking underneath the champion's health bar on the screen. These can be identified from a fair distance away, allowing players to sufficiently analyze each champion's threat level and available abilities.
 
-Affixes, like ranks, can also be configured through the use of the **champions-affixContainer.toml** file generated in the **serverconfig** folder. Here, players can disable certain affixContainer, require certain ranks, blacklist entities, and make specific entities always spawn with certain affixContainer if possible. Unlike ranks, new affixContainer cannot be added in any way.
+Affixes, like ranks, can also be configured through the use of the **champions-entityAffixes.toml** file generated in the **serverconfig** folder. Here, players can disable certain entityAffixes, require certain ranks, blacklist entities, and make specific entities always spawn with certain entityAffixes if possible. Unlike ranks, new entityAffixes cannot be added in any way.
 
-Current available affixContainer:
+Current available entityAffixes:
 
 * **Adaptable** - Champion will take less and less damage from the same consecutive damage type
 * **Arctic** - Continuously fires homing projectiles that will slow anyone they hit

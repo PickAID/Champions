@@ -11,26 +11,19 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 
 @Mixin(value = AbstractArrow.class)
 public abstract class AbstractArrowMixin extends Projectile {
-//	@Shadow
-//	private @Nullable ItemStack firedFromWeapon;
 
 	protected AbstractArrowMixin(EntityType<? extends Projectile> type, Level level) {
 		super(type, level);
 	}
 
-	@ModifyVariable(method = "doKnockback", at = @At(value = "STORE"))
-	private double champion$doKnockback(double knockback, @Local(argsOnly = true) LivingEntity mob, @Local(argsOnly = true) DamageSource damageSource) {
-//		if (this.firedFromWeapon != null && this.level() instanceof ServerLevel serverLevel) {
-//      return ChampionUtil.getHandler(this)
-//        .map(handler -> (double) (handler.modifyKnockback(serverLevel, mob, damageSource, (float) knockback)))
-//        .orElse(knockback);
-//		}
+	@ModifyVariable(method = "doKnockback", at = @At(value = "STORE"), name = "knockback")
+	private double champions$doKnockback(double knockback, @Local(argsOnly = true) LivingEntity livingEntity, @Local(argsOnly = true) DamageSource damageSource) {
 		if (this.level() instanceof ServerLevel level) {
-			return ChampionHelper.modifyDamage(level, mob, damageSource, (float) knockback);
+			return AffixHelper.modifyKnockback(level, livingEntity, damageSource, (float) knockback);
 		}
 		return knockback;
 	}

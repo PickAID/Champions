@@ -10,14 +10,12 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 
 @Mixin(value = RamTarget.class)
 public abstract class RamTargetMixin {
-  @Inject(method = "tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/animal/goat/Goat;J)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-  private void champion$tick(ServerLevel level, Goat body, long timestamp, CallbackInfo ci, @Local DamageSource damageSource, @Local LivingEntity ramTarget) {
-//    ChampionUtil.getHandler(ramTarget).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.VICTIM, ramTarget, damageSource));
-//    ChampionUtil.getHandler(body).ifPresent(handler -> handler.doPostAttackEffects(level, AffixTarget.ATTACKER, ramTarget, damageSource));
-	  ChampionHelper.doPostAttackEffects(level, ramTarget, damageSource);
-  }
+	@Inject(method = "tick(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/animal/goat/Goat;J)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
+	private void champion$tick(ServerLevel level, Goat body, long timestamp, CallbackInfo ci, @Local(name = "damageSource") DamageSource damageSource, @Local(name = "ramTarget") LivingEntity ramTarget) {
+		AffixHelper.doPostAttackEffects(level, ramTarget, damageSource);
+	}
 }

@@ -4,13 +4,13 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import top.theillusivec4.champions.util.Util;
+import top.theillusivec4.champions.util.ChampionsUtil;
 
 public class ParalysisEffect extends MobEffect {
 
   public ParalysisEffect() {
     super(MobEffectCategory.HARMFUL, 0xff5733);
     this.addAttributeModifier(Attributes.KNOCKBACK_RESISTANCE,
-      Util.id("paralysis_modifier"), 1, AttributeModifier.Operation.ADD_VALUE);
+      ChampionsUtil.id("paralysis_modifier"), 1, AttributeModifier.Operation.ADD_VALUE);
   }
 }

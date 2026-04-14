@@ -1,5 +1,6 @@
 package top.theillusivec4.champions.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.network.Connection;
 import net.minecraft.network.TickablePacketListener;
 import net.minecraft.network.protocol.game.GameProtocols;
@@ -19,7 +20,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.world.item.champion.ChampionEggHelper;
 
 /**
  * 实现使用鼠标中键点击实体时获取实体刷怪蛋的功能
@@ -37,42 +38,12 @@ public abstract class ServerGamePacketListenerImplMixin extends ServerCommonPack
 	@Shadow
 	protected abstract void tryPickItem(ItemStack stack);
 
-	@Inject(method = "handlePickItemFromEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;tryPickItem(Lnet/minecraft/world/item/ItemStack;)V"), cancellable = true)
-	private void modifyItemStack(ServerboundPickItemFromEntityPacket packet, CallbackInfo ci) {
+	@Inject(method = "handlePickItemFromEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerGamePacketListenerImpl;tryPickItem(Lnet/minecraft/world/item/ItemStack;)V"))
+	private void modifyItemStack(ServerboundPickItemFromEntityPacket packet, CallbackInfo ci, @Local(name = "itemStack") ItemStack itemStack) {
 		ServerLevel serverLevel = this.player.level();
 		Entity entity = serverLevel.getEntity(packet.id());
 		if (entity != null) {
-			ItemStack itemStack = ChampionHelper.getSpawnEgg(entity);
-			if (!itemStack.isEmpty()) {
-				this.tryPickItem(itemStack);
-				ci.cancel();
-			}
-//      ChampionUtil.getHandler(entity).ifPresent(handler -> {
-//        ItemStack itemStack = handler.getSpawnEgg();
-//        if (!itemStack.isEmpty()) {
-//          this.tryPickItem(itemStack);
-//          ci.cancel();
-//        }
-//      });
+			ChampionEggHelper.modifyPickResult(itemStack, entity);
 		}
-//    var serverLevel = this.player.level();
-//    var pickedEntity = serverLevel.getEntity(packet.id());
-//    if (pickedEntity != null && this.player != null) {
-//      var championOptional = ChampionAttachment.getAttachment(pickedEntity);
-//      if (championOptional.isPresent()) {
-//        var champion = championOptional.get();
-//        var serverChampion = champion.getServer();
-//
-//        if (ChampionHelper.isValidChampion(serverChampion)) {
-//          var type = champion.getLivingEntity().getType();
-//          var tier = serverChampion.getRank().map(Rank::getTier).orElseThrow();
-//          var affixes = serverChampion.getAffixes();
-//          var createdEgg = ChampionsCommand.createEgg(type, tier, affixes);
-//          // overwrite original tryPickItem invoke
-//          this.tryPickItem(createdEgg);
-//          ci.cancel();
-//        }
-//      }
-//    }
 	}
 }

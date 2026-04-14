@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.theillusivec4.champions.champion.ChampionHelper;
+import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 
 @Mixin(value = AbstractWindCharge.class)
 public abstract class AbstractWindChargeMixin extends AbstractHurtingProjectile {
@@ -22,14 +22,8 @@ public abstract class AbstractWindChargeMixin extends AbstractHurtingProjectile 
 	}
 
 	@Inject(method = "onHitEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/enchantment/EnchantmentHelper;doPostAttackEffects(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;)V", shift = At.Shift.AFTER))
-	private void champion$onHitEntity(EntityHitResult hitResult, CallbackInfo ci, @Local ServerLevel serverLevel, @Local DamageSource source) {
+	private void champions$onHitEntity(EntityHitResult hitResult, CallbackInfo ci, @Local(name = "serverLevel") ServerLevel serverLevel, @Local(name = "source") DamageSource source) {
 		Entity victim = hitResult.getEntity();
-//    ChampionUtil.getHandler(victim).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.VICTIM, victim, source));
-//    Entity attacker = this.getOwner();
-//    if (attacker != null) {
-//      ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.ATTACKER, victim, source));
-//    }
-//    ChampionUtil.getHandler(this).ifPresent(handler -> handler.doPostAttackEffects(serverLevel, AffixTarget.DAMAGING_ENTITY, victim, source));
-		ChampionHelper.doPostAttackEffects(serverLevel, victim, source);
+		AffixHelper.doPostAttackEffects(serverLevel, victim, source);
 	}
 }

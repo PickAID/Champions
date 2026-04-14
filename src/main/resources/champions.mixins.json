@@ -13,7 +13,6 @@
     "EvokerFangsMixin",
     "HoglinBaseMixin",
     "IronGolemMixin",
-    "ItemStackMixin",
     "LargeFireballMixin",
     "LivingEntityMixin",
     "LlamaSpitMixin",
