@@ -17,6 +17,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
@@ -32,6 +34,7 @@ import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 import top.theillusivec4.champions.world.entity.affix.AffixInstance;
 import top.theillusivec4.champions.world.entity.champion.ChampionMobPreset;
 import top.theillusivec4.champions.world.entity.champion.Rank;
+import top.theillusivec4.champions.world.level.storage.loot.parameters.ChampionsLootContextParams;
 
 import java.util.List;
 import java.util.Optional;
@@ -272,4 +275,5 @@ public final class ChampionMobPropertyHelper {
   public static void makeBoss(Entity entity) {
     addBossbar(entity);
   }
+
 }
