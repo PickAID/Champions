@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.util.ChampionsUtil;
 import top.theillusivec4.champions.world.entity.affix.Affix;
 import top.theillusivec4.champions.world.entity.affix.AffixEffectComponents;
@@ -50,43 +49,74 @@ public class AffixBuilder extends BuilderBase<Affix> {
     return this;
   }
 
-  public AffixBuilder damageProtection(AffixValueEffect effect, @Nullable LootItemCondition.Builder condition) {
+  public AffixBuilder damageProtection(AffixValueEffect effect) {
+    getEffects(AffixEffectComponents.DAMAGE_PROTECTION.get()).add(ConditionalEffect.create(effect));
+    return this;
+  }
+
+  public AffixBuilder damageProtection(AffixValueEffect effect, LootItemCondition.Builder condition) {
     getEffects(AffixEffectComponents.DAMAGE_PROTECTION.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
 
-  public AffixBuilder knockback(AffixValueEffect effect, @Nullable LootItemCondition.Builder condition) {
-    Objects.requireNonNull(condition);
+  public AffixBuilder knockback(AffixValueEffect effect) {
+    getEffects(AffixEffectComponents.KNOCKBACK.get()).add(ConditionalEffect.create(effect));
+    return this;
+  }
+
+  public AffixBuilder knockback(AffixValueEffect effect, LootItemCondition.Builder condition) {
     getEffects(AffixEffectComponents.KNOCKBACK.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
 
-  public AffixBuilder damage(AffixValueEffect effect, @Nullable LootItemCondition.Builder condition) {
+  public AffixBuilder damage(AffixValueEffect effect) {
+    getEffects(AffixEffectComponents.DAMAGE.get()).add(ConditionalEffect.create(effect));
+    return this;
+  }
+
+
+  public AffixBuilder damage(AffixValueEffect effect, LootItemCondition.Builder condition) {
     Objects.requireNonNull(condition);
     getEffects(AffixEffectComponents.DAMAGE.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
 
-  public AffixBuilder heal(AffixValueEffect effect, @Nullable LootItemCondition.Builder condition) {
-    Objects.requireNonNull(condition);
+  public AffixBuilder heal(AffixValueEffect effect) {
+    getEffects(AffixEffectComponents.HEAL.get()).add(ConditionalEffect.create(effect));
+    return this;
+  }
+
+  public AffixBuilder heal(AffixValueEffect effect, LootItemCondition.Builder condition) {
     getEffects(AffixEffectComponents.HEAL.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
 
-  public AffixBuilder postAttack(AffixEntityEffect effect, AffixTarget enchanted, AffixTarget affected, @Nullable LootItemCondition.Builder condition) {
-    Objects.requireNonNull(condition);
+  public AffixBuilder postAttack(AffixEntityEffect effect, AffixTarget enchanted, AffixTarget affected) {
+    getEffects(AffixEffectComponents.POST_ATTACK.get()).add(TargetedConditionalEffect.create(enchanted, affected, effect));
+    return this;
+  }
+
+  public AffixBuilder postAttack(AffixEntityEffect effect, AffixTarget enchanted, AffixTarget affected, LootItemCondition.Builder condition) {
     getEffects(AffixEffectComponents.POST_ATTACK.get()).add(TargetedConditionalEffect.create(enchanted, affected, effect, condition));
     return this;
   }
 
-  public AffixBuilder tick(AffixEntityEffect effect, @Nullable LootItemCondition.Builder condition) {
-    Objects.requireNonNull(condition);
+  public AffixBuilder tick(AffixEntityEffect effect) {
+    getEffects(AffixEffectComponents.TICK.get()).add(ConditionalEffect.create(effect));
+    return this;
+  }
+
+  public AffixBuilder tick(AffixEntityEffect effect, LootItemCondition.Builder condition) {
     getEffects(AffixEffectComponents.TICK.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
 
-  public AffixBuilder target(AffixEntityEffect effect, @Nullable LootItemCondition.Builder condition) {
-    Objects.requireNonNull(condition);
+  public AffixBuilder target(AffixEntityEffect effect) {
+    getEffects(AffixEffectComponents.TARGET.get()).add(ConditionalEffect.create(effect));
+    return this;
+  }
+
+  public AffixBuilder target(AffixEntityEffect effect, LootItemCondition.Builder condition) {
     getEffects(AffixEffectComponents.TARGET.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
@@ -103,11 +133,6 @@ public class AffixBuilder extends BuilderBase<Affix> {
 
   @Override
   public Affix createObject() {
-    return new Affix(
-      nameFactory.apply(Component.translatable(ChampionsUtil.makeDescriptionId("affix", this.id))),
-      definitionFactory.apply(Affix.AffixDefinition.builder()).build(),
-      exclusiveSet,
-      builder.build()
-    );
+    return new Affix(nameFactory.apply(Component.translatable(ChampionsUtil.makeDescriptionId("affix", this.id))), definitionFactory.apply(Affix.AffixDefinition.builder()).build(), exclusiveSet, builder.build());
   }
 }

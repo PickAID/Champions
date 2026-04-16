@@ -119,7 +119,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Mod(ChampionsMod.MOD_ID)
 public class ChampionsMod {
-  public static final String VERSION = "21.1.0.53-beta-2";
+  public static final String VERSION = "21.1.0.53-beta-3";
   public static final String MOD_ID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
   @Deprecated
