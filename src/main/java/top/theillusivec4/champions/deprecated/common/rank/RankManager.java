@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffect;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
 import top.theillusivec4.champions.deprecated.common.config.RanksConfig.RankConfig;
@@ -59,9 +59,9 @@ public class RankManager {
         Rank newRank = getRankFromConfig(rank);
         RANKS.put(newRank.getTier(), newRank);
       } catch (NullPointerException e) {
-        ChampionsMod.LOGGER.error("Null rank found with tier {} while building rank, skipping...", rank.tier);
+        Champions.LOGGER.error("Null rank found with tier {} while building rank, skipping...", rank.tier);
       } catch (IllegalArgumentException e) {
-        ChampionsMod.LOGGER.error("Invalid attribute found while building rank, skipping...");
+        Champions.LOGGER.error("Invalid attribute found while building rank, skipping...");
       }
     });
   }
@@ -115,7 +115,7 @@ public class RankManager {
           try {
             amplifier = Integer.parseInt(parsed[1]);
           } catch (NumberFormatException e) {
-            ChampionsMod.LOGGER
+            Champions.LOGGER
               .error("Found invalid amplifier value for effect, setting to default 1");
           }
         }
@@ -125,7 +125,7 @@ public class RankManager {
 
     List<IAffix> presetAffixes = new ArrayList<>();
     rank.presetAffixes
-      .forEach(affix -> ChampionsMod.API.getAffix(affix).ifPresent(presetAffixes::add));
+      .forEach(affix -> Champions.API.getAffix(affix).ifPresent(presetAffixes::add));
     return new Rank(tier, numAffixes, growthFactor, (float) chance, defaultColor, effects,
       presetAffixes);
   }

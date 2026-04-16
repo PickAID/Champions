@@ -8,7 +8,7 @@ import snownee.jade.api.IEntityComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.JadeIds;
 import snownee.jade.api.config.IPluginConfig;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.capability.ChampionAttachment;
 
@@ -25,13 +25,13 @@ public enum ChampionComponentProvider implements IEntityComponentProvider {
       champion -> {
         champion.getClient().getRank().ifPresent(rank -> iTooltip.replace(JadeIds.CORE_OBJECT_NAME, getChampionName(rank, champion)));
         champion.getClient().getAffixes().forEach(
-          affix -> iTooltip.add(Component.translatable("affix." + ChampionsMod.MOD_ID + "." + affix.getIdentifier()))
+          affix -> iTooltip.add(Component.translatable("affix." + Champions.MOD_ID + "." + affix.getIdentifier()))
         );
       });
   }
 
   @Override
   public ResourceLocation getUid() {
-    return ChampionsMod.getLocation("enable_affix_compact");
+    return Champions.getLocation("enable_affix_compact");
   }
 }

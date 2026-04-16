@@ -3,11 +3,11 @@ package top.theillusivec4.champions.commands;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.server.commands.AffixCommands;
 import top.theillusivec4.champions.server.commands.BossCommands;
 
-@EventBusSubscriber(modid = ChampionsMod.MOD_ID)
+@EventBusSubscriber(modid = Champions.MOD_ID)
 public final class ChampionsCommands {
   private ChampionsCommands() {
   }

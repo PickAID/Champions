@@ -8,7 +8,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.AffixCategory;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.api.IChampion;
@@ -24,11 +24,11 @@ import java.util.*;
 public class ChampionBuilder {
 
   private static final RandomSource RAND = RandomSource.createNewThreadLocalInstance();
-  private static final ResourceLocation MAX_HEALTH_MODIFIER = ChampionsMod.getLocation("max_health_modifier");
-  private static final ResourceLocation ATTACK_DAMAGE_MODIFIER = ChampionsMod.getLocation("attack_damage_modifier");
-  private static final ResourceLocation ARMOR_MODIFIER = ChampionsMod.getLocation("armor_modifier");
-  private static final ResourceLocation ARMOR_TOUGHNESS_MODIFIER = ChampionsMod.getLocation("armor_toughness_modifier");
-  private static final ResourceLocation KNOCKBACK_RESISTANCE_MODIFIER = ChampionsMod.getLocation("knock_back_resistance_modifier");
+  private static final ResourceLocation MAX_HEALTH_MODIFIER = Champions.getLocation("max_health_modifier");
+  private static final ResourceLocation ATTACK_DAMAGE_MODIFIER = Champions.getLocation("attack_damage_modifier");
+  private static final ResourceLocation ARMOR_MODIFIER = Champions.getLocation("armor_modifier");
+  private static final ResourceLocation ARMOR_TOUGHNESS_MODIFIER = Champions.getLocation("armor_toughness_modifier");
+  private static final ResourceLocation KNOCKBACK_RESISTANCE_MODIFIER = Champions.getLocation("knock_back_resistance_modifier");
 
   public static void spawn(final IChampion champion) {
 
@@ -74,10 +74,10 @@ public class ChampionBuilder {
         }
       });
     }
-    Map<AffixCategory, List<IAffix>> allAffixes = ChampionsMod.API.getCategoryMap();
+    Map<AffixCategory, List<IAffix>> allAffixes = Champions.API.getCategoryMap();
     Map<AffixCategory, List<IAffix>> validAffixes = new HashMap<>();
 
-    for (AffixCategory category : ChampionsMod.API.getCategories()) {
+    for (AffixCategory category : Champions.API.getCategories()) {
       validAffixes.put(category, new ArrayList<>());
     }
     allAffixes.forEach((k, v) -> validAffixes.get(k).addAll(v.stream().filter(affix -> {
@@ -112,7 +112,7 @@ public class ChampionBuilder {
     ImmutableSortedMap<Integer, Rank> ranks = RankManager.getRanks();
 
     if (ranks.isEmpty()) {
-      ChampionsMod.LOGGER.error(
+      Champions.LOGGER.error(
         "No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
       return RankManager.getLowestRank();
     }
@@ -127,7 +127,7 @@ public class ChampionBuilder {
     Rank result = ranks.get(firstTier);
 
     if (result == null) {
-      ChampionsMod.LOGGER.error("Tier {} cannot be found in {}! Assigning lowest available rank to {}",
+      Champions.LOGGER.error("Tier {} cannot be found in {}! Assigning lowest available rank to {}",
         firstTier, ranks, livingEntity);
       return RankManager.getLowestRank();
     }

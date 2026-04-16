@@ -5,14 +5,14 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.RandomSource;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.world.entity.affix.LevelBasedValue;
 import top.theillusivec4.champions.core.registries.ChampionsBuiltInRegistries;
 
 import java.util.function.Supplier;
 
 public final class AffixValueEffects {
-  private static final DeferredRegister<MapCodec<? extends AffixValueEffect>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsBuiltInRegistries.AFFIX_VALUE_EFFECT_TYPE, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<MapCodec<? extends AffixValueEffect>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsBuiltInRegistries.AFFIX_VALUE_EFFECT_TYPE, Champions.MOD_ID);
   public static final Supplier<MapCodec<AddValue>> ADD = register("add", () -> AddValue.MAP_CODEC);
   public static final Supplier<MapCodec<AllOf.ValueEffects>> ALL_OF = register("all_of", () -> AllOf.ValueEffects.MAP_CODEC);
   public static final Supplier<MapCodec<MultiplyValue>> MULTIPLY = register("multiply", () -> MultiplyValue.MAP_CODEC);

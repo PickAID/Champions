@@ -40,7 +40,7 @@ public interface AffixProvider {
 
   MapCodec<? extends AffixProvider> codec();
 
-  default void affixTo(EntityType<?> entity, EntityAffixes.Mutable mutable, RandomSource random, DifficultyInstance instance) {
+  default void affixation(EntityType<?> entity, EntityAffixes.Mutable mutable, RandomSource random, DifficultyInstance instance) {
     this.get(entity, random, instance).forEach(affixInstance -> mutable.upgrade(affixInstance.affix(), affixInstance.level()));
   }
 }

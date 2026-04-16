@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.goal.RestrictSunGoal;
 import net.minecraft.world.entity.ai.goal.WrappedGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.level.pathfinder.PathType;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.AffixCategory;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.affix.core.BasicAffix;
@@ -53,7 +53,7 @@ public class MoltenAffix extends BasicAffix {
           }
         }
       } catch (Exception e) {
-        ChampionsMod.LOGGER.error("Error accessing goals!");
+        Champions.LOGGER.error("Error accessing goals!");
       }
 
       if (mobEntity.getNavigation() instanceof GroundPathNavigation) {

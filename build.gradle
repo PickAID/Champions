@@ -62,7 +62,7 @@ neoForge {
   }
 
   // This line is optional. Access Transformers are automatically detected
-   accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
+  accessTransformers = project.files('src/main/resources/META-INF/accesstransformer.cfg')
 
   // Default run configurations.
   // These can be tweaked, removed, or duplicated as needed.
@@ -170,6 +170,7 @@ dependencies {
   implementation "curse.maven:jade-324717:${jade_version}"
   api("dev.latvian.mods:kubejs-neoforge:$kubejs_version")
   interfaceInjectionData("dev.latvian.mods:kubejs-neoforge:$kubejs_version") // optional
+  implementation "curse.maven:probejs-585406:${probejs_version}"
 //  compileOnly "net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}"
 //  compileOnly "net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:${bookshelf_version}"
 

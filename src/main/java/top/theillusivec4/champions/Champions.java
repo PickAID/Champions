@@ -20,6 +20,9 @@
 package top.theillusivec4.champions;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
+import mcjty.theoneprobe.TheOneProbe;
+import moe.wolfgirl.probejs.ProbeJS;
+import moe.wolfgirl.probejs.plugin.ProbeJSPlugin;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
@@ -117,9 +120,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-@Mod(ChampionsMod.MOD_ID)
-public class ChampionsMod {
-  public static final String VERSION = "21.1.0.53-beta-2";
+@Mod(Champions.MOD_ID)
+public class Champions {
+  public static final String VERSION = "21.1.0.53-beta-3";
   public static final String MOD_ID = "champions";
   public static final Logger LOGGER = LogManager.getLogger();
   @Deprecated
@@ -130,7 +133,7 @@ public class ChampionsMod {
   @Deprecated
   public static boolean gameStagesLoaded = false;
 
-  public ChampionsMod(IEventBus bus, ModContainer container) {
+  public Champions(IEventBus bus, ModContainer container) {
     // New
     bus.register(this);
     container.registerConfig(ModConfig.Type.SERVER, ChampionsServerConfig.SPEC);
@@ -179,7 +182,7 @@ public class ChampionsMod {
 
     if (!defaults.exists()) {
       try {
-        FileUtils.copyInputStreamToFile(Objects.requireNonNull(ChampionsMod.class.getClassLoader().getResourceAsStream(fileName)), defaults);
+        FileUtils.copyInputStreamToFile(Objects.requireNonNull(Champions.class.getClassLoader().getResourceAsStream(fileName)), defaults);
       } catch (IOException e) {
         LOGGER.error("Error creating default config for " + fileName);
       }
@@ -207,7 +210,7 @@ public class ChampionsMod {
     event.dataPackRegistry(ChampionsRegistries.AFFIX, Affix.DIRECT_CODEC, Affix.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.AFFIX_PROVIDER, AffixProvider.DIRECT_CODEC, AffixProvider.DIRECT_CODEC);
     event.dataPackRegistry(ChampionsRegistries.RANK, Rank.DIRECT_CODEC, Rank.DIRECT_CODEC);
-    event.dataPackRegistry(ChampionsRegistries.CHAMPION_EGG, ChampionMobEggTemplate.DIRECT_CODEC, ChampionMobEggTemplate.DIRECT_CODEC);
+    event.dataPackRegistry(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionMobEggTemplate.DIRECT_CODEC, ChampionMobEggTemplate.DIRECT_CODEC);
   }
 
   @SubscribeEvent
@@ -244,7 +247,7 @@ public class ChampionsMod {
 
   @SubscribeEvent
   public void registerPlugins(InterModEnqueueEvent event) {
-    if (ModList.get().isLoaded("theoneprobe")) {
+    if (ModList.get().isLoaded(TheOneProbe.MODID)) {
       InterModComms.sendTo(MOD_ID, "theoneprobe", "getTheOneProbe", ChampionsTheOneProbePlugin::create);
     }
   }
@@ -300,7 +303,7 @@ public class ChampionsMod {
         } else if (spec == ChampionsConfig.ENTITIES_SPEC) {
           ChampionsConfig.transformEntities(commentedConfig);
           EntityManager.buildEntitySettings();
-        } else if (spec == ChampionsConfig.STAGE_SPEC && ChampionsMod.gameStagesLoaded) {
+        } else if (spec == ChampionsConfig.STAGE_SPEC && Champions.gameStagesLoaded) {
           ChampionsConfig.entityStages = ChampionsConfig.STAGE.entityStages.get();
           ChampionsConfig.tierStages = ChampionsConfig.STAGE.tierStages.get();
         }
@@ -315,7 +318,7 @@ public class ChampionsMod {
   private void enqueueIMC(final InterModEnqueueEvent event) {
     // register TheOneProbe integration
     if (ModList.get().isLoaded("theoneprobe")) {
-      ChampionsMod.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
+      Champions.LOGGER.info("Champions detected TheOneProbe, registering plugin now");
       InterModComms.sendTo(MOD_ID, "theoneprobe", "getTheOneProbe", TheOneProbePlugin.GetTheOneProbe::new);
     }
   }

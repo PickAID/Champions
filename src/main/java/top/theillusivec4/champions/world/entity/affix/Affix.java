@@ -30,9 +30,9 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.world.entity.affix.effects.*;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.LootContextFactory;
+import top.theillusivec4.champions.world.entity.affix.effects.*;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -64,7 +64,7 @@ public record Affix(
     return !affix.value().equals(other.value()) && !affix.value().exclusiveSet.contains(other) && !other.value().exclusiveSet.contains(affix);
   }
 
-  public static boolean areCompatible(AffixInstance affix, AffixInstance other){
+  public static boolean areCompatible(AffixInstance affix, AffixInstance other) {
     return areCompatible(affix.affix(), other.affix());
   }
 
@@ -248,6 +248,51 @@ public record Affix(
       Cost.CODEC.fieldOf("min_cost").forGetter(AffixDefinition::minCost),
       Cost.CODEC.fieldOf("max_cost").forGetter(AffixDefinition::maxCost)
     ).apply(instance, AffixDefinition::new));
+
+    public static AffixDefinition.Builder builder() {
+      return new Builder();
+    }
+
+    public static class Builder {
+      private @Nullable HolderSet<EntityType<?>> supportedEntityTypes = null;
+      private int maxLevel = 1;
+      private int weight = 5;
+      private Cost minCost = dynamicCost(3, 5);
+      private Cost maxCost = dynamicCost(5, 5);
+
+      private Builder() {
+      }
+
+      public void supportedEntityTypes(@Nullable HolderSet<EntityType<?>> supportedEntityTypes) {
+        this.supportedEntityTypes = supportedEntityTypes;
+      }
+
+      public void maxLevel(int maxLevel) {
+        this.maxLevel = maxLevel;
+      }
+
+      public void weight(int weight) {
+        this.weight = weight;
+      }
+
+      public void minCost(Cost minCost) {
+        this.minCost = minCost;
+      }
+
+      public void maxCost(Cost maxCost) {
+        this.maxCost = maxCost;
+      }
+
+      public AffixDefinition build() {
+        return new AffixDefinition(
+          Optional.ofNullable(supportedEntityTypes),
+          maxLevel,
+          weight,
+          minCost,
+          maxCost
+        );
+      }
+    }
   }
 
   public record Cost(int base, int perLevelAboveFirst) {

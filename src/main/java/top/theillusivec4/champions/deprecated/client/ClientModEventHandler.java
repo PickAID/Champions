@@ -1,14 +1,12 @@
 package top.theillusivec4.champions.deprecated.client;
 
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.client.renderer.ColorizedBulletRenderer;
 import top.theillusivec4.champions.deprecated.common.item.ChampionEggItem;
 import top.theillusivec4.champions.deprecated.common.particle.RankParticle;
@@ -25,7 +23,7 @@ public class ClientModEventHandler {
 
   @SubscribeEvent
   public static void registerGuiOverlayEvent(final RegisterGuiLayersEvent evt) {
-    evt.registerBelow(VanillaGuiLayers.BOSS_OVERLAY, ChampionsMod.getLocation("health_overlay"), new ChampionsOverlay());
+    evt.registerBelow(VanillaGuiLayers.BOSS_OVERLAY, Champions.getLocation("health_overlay"), new ChampionsOverlay());
   }
 
   @SubscribeEvent

@@ -6,7 +6,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.AffixCategory;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.api.IChampion;
@@ -67,7 +67,7 @@ public class ChampionData {
         }
 
         for (String id : ids) {
-          ChampionsMod.API.getAffix(id).ifPresent(affixes::add);
+          Champions.API.getAffix(id).ifPresent(affixes::add);
         }
         int totalAffixes = count == null ? rank.getNumAffixes() : count;
         int toAdd = totalAffixes - affixes.size();
@@ -86,12 +86,12 @@ public class ChampionData {
 
   private static void createAffixes(final List<IAffix> affixes, final IChampion champion,
                                     int total) {
-    Map<AffixCategory, List<IAffix>> allAffixes = ChampionsMod.API.getCategoryMap();
+    Map<AffixCategory, List<IAffix>> allAffixes = Champions.API.getCategoryMap();
     Map<AffixCategory, List<IAffix>> validAffixes = new HashMap<>();
     Optional<EntityManager.EntitySettings> entitySettings = EntityManager
       .getSettings(champion.getLivingEntity().getType());
 
-    for (AffixCategory category : ChampionsMod.API.getCategories()) {
+    for (AffixCategory category : Champions.API.getCategories()) {
       validAffixes.put(category, new ArrayList<>());
     }
     allAffixes.forEach((k, v) -> validAffixes.get(k).addAll(v.stream().filter(affix -> {
@@ -126,7 +126,7 @@ public class ChampionData {
     ImmutableSortedMap<Integer, Rank> ranks = RankManager.getRanks();
 
     if (ranks.isEmpty()) {
-      ChampionsMod.LOGGER.error(
+      Champions.LOGGER.error(
         "No rank configuration found! Please check the 'champions-ranks.toml' file in the 'serverconfigs'.");
       return RankManager.getLowestRank();
     }
@@ -137,7 +137,7 @@ public class ChampionData {
     Rank result = ranks.get(firstTier);
 
     if (result == null) {
-      ChampionsMod.LOGGER.error("Tier {} cannot be found in {}! Assigning lowest available rank to {}",
+      Champions.LOGGER.error("Tier {} cannot be found in {}! Assigning lowest available rank to {}",
         firstTier, ranks, livingEntity);
       return RankManager.getLowestRank();
     }

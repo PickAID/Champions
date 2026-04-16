@@ -21,7 +21,7 @@ public final class ChampionMobEggTemplates {
   }
 
   private static ResourceKey<ChampionMobEggTemplate> register(String name) {
-    return ResourceKey.create(ChampionsRegistries.CHAMPION_EGG, ChampionsUtil.id(name));
+    return ResourceKey.create(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionsUtil.id(name));
   }
 
   public static void bootstrap(BootstrapContext<ChampionMobEggTemplate> context) {

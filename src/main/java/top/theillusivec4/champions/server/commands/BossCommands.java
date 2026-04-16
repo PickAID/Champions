@@ -12,7 +12,7 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.world.entity.Entity;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
 import java.util.Collection;
@@ -24,7 +24,7 @@ public final class BossCommands {
   }
 
   public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
-    dispatcher.register(Commands.literal(ChampionsMod.MOD_ID)
+    dispatcher.register(Commands.literal(Champions.MOD_ID)
       .then(Commands.literal("boss")
         .then(Commands.literal("set")
           .then(Commands.argument("entities", EntityArgument.entities())
