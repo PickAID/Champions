@@ -2,14 +2,14 @@ package top.theillusivec4.champions.util;
 
 import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 
 public final class ChampionsUtil {
 	private ChampionsUtil() {
 	}
 
 	public static Identifier id(final String path) {
-		return Identifier.fromNamespaceAndPath(ChampionsMod.MOD_ID, path);
+		return Identifier.fromNamespaceAndPath(Champions.MOD_ID, path);
 	}
 
 	public static String makeDescriptionId(String prefix, Identifier id) {

@@ -3,7 +3,7 @@ package top.theillusivec4.champions.data.tags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.KeyTagProvider;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.world.entity.affix.Affix;
 import top.theillusivec4.champions.world.entity.affix.Affixes;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
@@ -17,7 +17,7 @@ public class AffixTagsProvider extends KeyTagProvider<Affix> {
   }
 
 	public static KeyTagProvider<Affix> create(PackOutput output, CompletableFuture<HolderLookup.Provider> registries){
-		return new AffixTagsProvider(output, registries, ChampionsMod.MOD_ID);
+		return new AffixTagsProvider(output, registries, Champions.MOD_ID);
 	}
 
   @Override

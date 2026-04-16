@@ -8,14 +8,14 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 public final class ChampionsStats {
-  private static final DeferredRegister<Identifier> DEFERRED_REGISTER = DeferredRegister.create(BuiltInRegistries.CUSTOM_STAT, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<Identifier> DEFERRED_REGISTER = DeferredRegister.create(BuiltInRegistries.CUSTOM_STAT, Champions.MOD_ID);
   private static @Nullable Map<Identifier, StatFormatter> customs = new HashMap<>();
   public static final DeferredHolder<Identifier, Identifier> CHAMPION_MOBS_KILLED = register("champion_mobs_killed", StatFormatter.DEFAULT);
 

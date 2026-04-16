@@ -69,13 +69,13 @@ import top.theillusivec4.champions.world.level.storage.loot.predicates.Champions
 
 import java.util.concurrent.CompletableFuture;
 
-@Mod(ChampionsMod.MOD_ID)
-public class ChampionsMod {
+@Mod(Champions.MOD_ID)
+public class Champions {
 	public static final String MOD_ID = "champions";
 	public static final Logger LOGGER = LogManager.getLogger();
 	public static final String VERSION = "26.1.0.1-beta-1";
 
-	public ChampionsMod(IEventBus bus, ModContainer container) {
+	public Champions(IEventBus bus, ModContainer container) {
 		bus.register(this);
 		container.registerConfig(ModConfig.Type.SERVER, ChampionsServerConfig.SPEC);
 		ChampionsAttachments.register(bus);

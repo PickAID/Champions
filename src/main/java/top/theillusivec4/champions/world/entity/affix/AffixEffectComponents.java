@@ -5,7 +5,7 @@ import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.component.DataComponentType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.world.entity.affix.effects.*;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixEntityEffect;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffect;
@@ -19,7 +19,7 @@ import java.util.function.UnaryOperator;
 
 public final class AffixEffectComponents {
   public static final Codec<DataComponentMap> CODEC = DataComponentMap.makeCodec(Codec.lazyInitialized(ChampionsBuiltInRegistries.AFFIX_EFFECT_COMPONENT_TYPE::byNameCodec));
-  private static final DeferredRegister<DataComponentType<?>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<DataComponentType<?>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE, Champions.MOD_ID);
   public static final Supplier<DataComponentType<List<AffixLocationBasedEffect>>> INITIALIZE = register("initialize", builder -> builder.persistent(AffixLocationBasedEffect.CODEC.listOf()));
   public static final Supplier<DataComponentType<List<AffixAttributeEffect>>> ATTRIBUTES = register("attributes", builder -> builder.persistent(AffixAttributeEffect.CODEC.listOf()));
   public static final Supplier<DataComponentType<List<ConditionalEffect<AffixValueEffect>>>> DAMAGE_PROTECTION = register("damage_protection", builder -> builder.persistent(ConditionalEffect.validatedListCodec(AffixValueEffect.CODEC, ChampionsLootContextParamSets.AFFIXED_DAMAGE)));
