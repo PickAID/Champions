@@ -3,7 +3,7 @@ package top.theillusivec4.champions.data.lang;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.data.LanguageProvider;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.util.ChampionsUtil;
 import top.theillusivec4.champions.world.entity.affix.Affix;
 import top.theillusivec4.champions.world.entity.champion.Rank;
@@ -14,7 +14,7 @@ public abstract class ChampionsLanguageProvider extends LanguageProvider {
   }
 
   public ChampionsLanguageProvider(PackOutput output, String locale) {
-    super(output, ChampionsMod.MOD_ID, locale);
+    super(output, Champions.MOD_ID, locale);
   }
 
   public static LanguageProvider zhCn(PackOutput output) {

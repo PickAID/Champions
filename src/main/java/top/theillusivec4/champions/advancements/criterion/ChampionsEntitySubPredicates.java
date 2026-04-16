@@ -5,12 +5,12 @@ import net.minecraft.advancements.criterion.EntitySubPredicate;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 
 import java.util.function.Supplier;
 
 public final class ChampionsEntitySubPredicates {
-	private static final DeferredRegister<MapCodec<? extends net.minecraft.advancements.criterion.EntitySubPredicate>> DEFERRED_REGISTER = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, ChampionsMod.MOD_ID);
+	private static final DeferredRegister<MapCodec<? extends net.minecraft.advancements.criterion.EntitySubPredicate>> DEFERRED_REGISTER = DeferredRegister.create(Registries.ENTITY_SUB_PREDICATE_TYPE, Champions.MOD_ID);
 	public static final Supplier<MapCodec<ChampionPropertyPredicate>> CHAMPION_PROPERTY = register("champion_property", () -> ChampionPropertyPredicate.MAP_CODEC);
 
 	private ChampionsEntitySubPredicates() {

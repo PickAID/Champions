@@ -5,7 +5,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
 import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
 import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
@@ -15,7 +15,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public final class ChampionsAttachments {
-	private static final DeferredRegister<AttachmentType<?>> DEFERRED_REGISTER = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, ChampionsMod.MOD_ID);
+	private static final DeferredRegister<AttachmentType<?>> DEFERRED_REGISTER = DeferredRegister.create(NeoForgeRegistries.ATTACHMENT_TYPES, Champions.MOD_ID);
 	public static final Supplier<AttachmentType<EntityAffixes>> ENTITY_AFFIXES = register("entity_affixes", EntityAffixes.EMPTY, builder -> builder.serialize(EntityAffixes.MAP_CODEC).sync(EntityAffixes.STREAM_CODEC));
 	public static final Supplier<AttachmentType<ChampionsServerBossEvent>> BOSS_EVENT = register("boss_event", ChampionsServerBossEvent.EMPTY, builder -> builder.serialize(ChampionsServerBossEvent.MAP_CODEC));
 	public static final Supplier<AttachmentType<ChampionMobProperty>> CHAMPION_MOB_PROPERTY = register("champion_mob_property", ChampionMobProperty.EMPTY, builder -> builder.serialize(ChampionMobProperty.MAP_CODEC).sync(ChampionMobProperty.STREAM_CODEC));

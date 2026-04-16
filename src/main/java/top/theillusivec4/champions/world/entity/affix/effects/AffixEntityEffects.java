@@ -39,7 +39,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.world.entity.affix.ProjectileTemplate;
 import top.theillusivec4.champions.world.entity.affix.LevelBasedValue;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
@@ -49,7 +49,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 public final class AffixEntityEffects {
-	private static final DeferredRegister<MapCodec<? extends AffixEntityEffect>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE, ChampionsMod.MOD_ID);
+	private static final DeferredRegister<MapCodec<? extends AffixEntityEffect>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.AFFIX_ENTITY_EFFECT_TYPE, Champions.MOD_ID);
 	public static final Supplier<MapCodec<DamageEntityEffect>> DAMAGE_ENTITY = register("damage_entity", DamageEntityEffect.MAP_CODEC);
 	public static final Supplier<MapCodec<AllOf.EntityEffects>> ALL_OF = register("all_of", AllOf.EntityEffects.MAP_CODEC);
 	public static final Supplier<MapCodec<ApplyMobEffect>> APPLY_MOB_EFFECT = register("apply_mob_effect", ApplyMobEffect.MAP_CODEC);

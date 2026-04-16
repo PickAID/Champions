@@ -17,11 +17,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.joml.Matrix4f;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.util.ChampionsUtil;
 import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
 
-@EventBusSubscriber(modid = ChampionsMod.MOD_ID, value = Dist.CLIENT)
+@EventBusSubscriber(modid = Champions.MOD_ID, value = Dist.CLIENT)
 public final class ClientEventListener {
 	private static final Identifier TEXTURE = ChampionsUtil.id("textures/gui/star.png");
 

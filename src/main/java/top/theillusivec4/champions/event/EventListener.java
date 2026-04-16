@@ -30,7 +30,7 @@ import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.apache.commons.lang3.mutable.MutableFloat;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.commands.ChampionsCommands;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.affix.AffixHelper;
@@ -40,7 +40,7 @@ import top.theillusivec4.champions.world.item.champion.ChampionEggHelper;
 
 import java.util.List;
 
-@EventBusSubscriber(modid = ChampionsMod.MOD_ID)
+@EventBusSubscriber(modid = Champions.MOD_ID)
 public final class EventListener {
 
 	private EventListener() {
@@ -255,7 +255,7 @@ public final class EventListener {
 	private static void registerCommands(RegisterCommandsEvent event) {
 		CommandBuildContext buildContext = event.getBuildContext();
 		CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
-		LiteralArgumentBuilder<CommandSourceStack> builder = net.minecraft.commands.Commands.literal(ChampionsMod.MOD_ID).requires(net.minecraft.commands.Commands.hasPermission(net.minecraft.commands.Commands.LEVEL_ADMINS));
+		LiteralArgumentBuilder<CommandSourceStack> builder = net.minecraft.commands.Commands.literal(Champions.MOD_ID).requires(net.minecraft.commands.Commands.hasPermission(net.minecraft.commands.Commands.LEVEL_ADMINS));
 		ChampionsCommands.register(builder, buildContext);
 
 		dispatcher.register(builder);

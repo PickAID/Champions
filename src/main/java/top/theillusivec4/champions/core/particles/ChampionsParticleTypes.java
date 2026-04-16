@@ -10,11 +10,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jspecify.annotations.NonNull;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.client.particle.RankParticle;
 
 public class ChampionsParticleTypes {
-  private static final DeferredRegister<ParticleType<?>> DEFERRED_REGISTER = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<ParticleType<?>> DEFERRED_REGISTER = DeferredRegister.create(BuiltInRegistries.PARTICLE_TYPE, Champions.MOD_ID);
   public static final DeferredHolder<ParticleType<?>, ParticleType<RankParticle.Options>> CHAMPION = register("champion", false, RankParticle.Options.MAP_CODEC, RankParticle.Options.STREAM_CODEC);
 
   public static ParticleOptions champion(int color) {

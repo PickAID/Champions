@@ -7,14 +7,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 public final class ChampionsCreativeModeTabs {
-	private static final DeferredRegister<CreativeModeTab> DEFERRED_REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, ChampionsMod.MOD_ID);
+	private static final DeferredRegister<CreativeModeTab> DEFERRED_REGISTER = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Champions.MOD_ID);
 	public static final Supplier<CreativeModeTab> CHAMPION_EGG = register("champion_egg", builder -> builder.icon(() -> new ItemStack(Items.HUSK_SPAWN_EGG)));
 
 	private ChampionsCreativeModeTabs() {

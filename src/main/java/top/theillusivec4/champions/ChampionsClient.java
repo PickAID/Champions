@@ -30,20 +30,20 @@ import top.theillusivec4.champions.network.ChampionsPayloads;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
 import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
 
-@Mod(value = ChampionsMod.MOD_ID, dist = Dist.CLIENT)
-public class ChampionsModClient {
+@Mod(value = Champions.MOD_ID, dist = Dist.CLIENT)
+public class ChampionsClient {
 	private static final Logger LOGGER = LogManager.getLogger();
-	private static ChampionsModClient instance;
+	private static ChampionsClient instance;
 	private final ChampionsGui gui = new ChampionsGui();
 
-	public ChampionsModClient(IEventBus bus, @SuppressWarnings("unused") ModContainer container) {
+	public ChampionsClient(IEventBus bus, @SuppressWarnings("unused") ModContainer container) {
 		instance = this;
 		bus.register(this);
 		container.registerConfig(ModConfig.Type.CLIENT, ChampionsClientConfig.SPEC);
 		container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 	}
 
-	public static ChampionsModClient getInstance() {
+	public static ChampionsClient getInstance() {
 		return instance;
 	}
 
@@ -61,7 +61,7 @@ public class ChampionsModClient {
 		event.registerBelow(
 				VanillaGuiLayers.BOSS_OVERLAY,
 				ChampionsGuiLayers.HEALTH_OVERLAY,
-				ChampionsModClient.getInstance().getGui()::renderChampionHealthOverlay
+				ChampionsClient.getInstance().getGui()::renderChampionHealthOverlay
 		);
 	}
 
