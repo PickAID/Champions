@@ -2,7 +2,7 @@ package top.theillusivec4.champions.deprecated.common.affix.core;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.LivingEntity;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 
 import java.lang.reflect.InvocationTargetException;
@@ -50,7 +50,7 @@ public abstract class AffixData {
       data = clazz.getDeclaredConstructor().newInstance();
       data.readData(champion, id);
     } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
-      ChampionsMod.LOGGER.error("Error reading data from class " + clazz);
+      Champions.LOGGER.error("Error reading data from class " + clazz);
     }
     return data;
   }

@@ -6,12 +6,12 @@ import net.minecraft.stats.StatFormatter;
 import net.minecraft.stats.Stats;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 
 import java.util.function.Supplier;
 
 public final class ChampionsStats {
-  private static final DeferredRegister<ResourceLocation> DEFERRED_REGISTER = DeferredRegister.create(Registries.CUSTOM_STAT, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<ResourceLocation> DEFERRED_REGISTER = DeferredRegister.create(Registries.CUSTOM_STAT, Champions.MOD_ID);
 
   private ChampionsStats() {
   }

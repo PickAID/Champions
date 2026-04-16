@@ -6,12 +6,12 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 
 import java.util.function.Supplier;
 
 public final class ChampionsLootItemConditions {
-  private static final DeferredRegister<LootItemConditionType> DEFERRED_REGISTER = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<LootItemConditionType> DEFERRED_REGISTER = DeferredRegister.create(Registries.LOOT_CONDITION_TYPE, Champions.MOD_ID);
   public static final Supplier<LootItemConditionType> DAMAGE_COUNT = register("damage_count", DamageCountCondition.MAP_CODEC);
   public static final Supplier<LootItemConditionType> TICK_CHECK = register("tick_check", TickCheck.MAP_CODEC);
 

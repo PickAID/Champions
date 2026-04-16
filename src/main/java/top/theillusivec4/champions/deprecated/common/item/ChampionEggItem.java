@@ -30,7 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.common.capability.ChampionAttachment;
@@ -89,7 +89,7 @@ public class ChampionEggItem extends EggItem {
       int tier = entityTag.getInt(TIER_TAG);
       ListTag affixTag = entityTag.getList(AFFIX_TAG, CompoundTag.TAG_STRING);
       List<IAffix> affixes = new ArrayList<>();
-      affixTag.forEach(affix -> ChampionsMod.API.getAffix(affix.getAsString()).ifPresent(affixes::add));
+      affixTag.forEach(affix -> Champions.API.getAffix(affix.getAsString()).ifPresent(affixes::add));
       ChampionBuilder.spawnPreset(champion, tier, affixes);
     });
   }
@@ -144,7 +144,7 @@ public class ChampionEggItem extends EggItem {
         hasAffix = true;
       }
 
-      affixTag.forEach(affix -> ChampionsMod.API.getAffix(affix.getAsString()).ifPresent(
+      affixTag.forEach(affix -> Champions.API.getAffix(affix.getAsString()).ifPresent(
         affix1 -> {
           final MutableComponent component =
             Component.translatable("affix.champions." + affix1.getIdentifier());

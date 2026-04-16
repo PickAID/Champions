@@ -3,7 +3,7 @@ package top.theillusivec4.champions.deprecated.common.util;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.common.config.ChampionsConfig;
 import top.theillusivec4.champions.deprecated.common.config.ConfigEnums.Permission;
@@ -31,13 +31,13 @@ public class EntityManager {
     configs.forEach(entityConfig -> {
 
       if (entityConfig.entity == null) {
-        ChampionsMod.LOGGER.error("Missing identifier while building entity settings, skipping...");
+        Champions.LOGGER.error("Missing identifier while building entity settings, skipping...");
         return;
       }
       var type = BuiltInRegistries.ENTITY_TYPE.getOptional(ResourceLocation.parse(entityConfig.entity));
 
       if (type.isEmpty()) {
-        ChampionsMod.LOGGER.error("Invalid identifier while building entity settings, skipping...");
+        Champions.LOGGER.error("Invalid identifier while building entity settings, skipping...");
         return;
       }
       EntitySettings settings = new EntitySettings(type.get(), entityConfig.minTier, entityConfig.maxTier,
@@ -68,7 +68,7 @@ public class EntityManager {
       if (presetAffixes != null) {
 
         for (String s : presetAffixes) {
-          ChampionsMod.API.getAffix(s).ifPresent(this.presetAffixes::add);
+          Champions.API.getAffix(s).ifPresent(this.presetAffixes::add);
         }
       }
       this.affixList = new ArrayList<>();
@@ -76,7 +76,7 @@ public class EntityManager {
       if (affixList != null) {
 
         for (String s : affixList) {
-          ChampionsMod.API.getAffix(s).ifPresent(this.affixList::add);
+          Champions.API.getAffix(s).ifPresent(this.affixList::add);
         }
       }
       Permission permission = Permission.BLACKLIST;
@@ -84,7 +84,7 @@ public class EntityManager {
       try {
         permission = Permission.valueOf(affixPermission);
       } catch (IllegalArgumentException e) {
-        ChampionsMod.LOGGER.error("Invalid permission value {}", affixPermission);
+        Champions.LOGGER.error("Invalid permission value {}", affixPermission);
       }
       this.affixPermission = permission;
     }

@@ -25,19 +25,19 @@ import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
 import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
 
-@Mod(value = ChampionsMod.MOD_ID, dist = Dist.CLIENT)
-public class ChampionsModClient {
-  private static ChampionsModClient instance = null;
+@Mod(value = Champions.MOD_ID, dist = Dist.CLIENT)
+public class ChampionsClient {
+  private static ChampionsClient instance = null;
   private final ChampionsGui gui = new ChampionsGui();
 
-  public ChampionsModClient(IEventBus bus, ModContainer container) {
+  public ChampionsClient(IEventBus bus, ModContainer container) {
     instance = this;
     bus.register(this);
     container.registerConfig(ModConfig.Type.CLIENT, ChampionsClientConfig.SPEC);
     container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
   }
 
-  public static ChampionsModClient getInstance() {
+  public static ChampionsClient getInstance() {
     return instance;
   }
 

@@ -5,12 +5,12 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 
 import java.util.function.Supplier;
 
 public class ChampionsMobEffects {
-  private static final DeferredRegister<MobEffect> DEFERRED_REGISTER = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<MobEffect> DEFERRED_REGISTER = DeferredRegister.create(BuiltInRegistries.MOB_EFFECT, Champions.MOD_ID);
   public static Holder<MobEffect> PARALYSIS = register("paralysis", ParalysisEffect::new);
   public static Holder<MobEffect> WOUND = register("wound", WoundEffect::new);
   public static Holder<MobEffect> SHIELD = register("shield", ShieldEffect::new);

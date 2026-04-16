@@ -7,7 +7,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.LivingEntity;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.api.IAffix;
 import top.theillusivec4.champions.deprecated.api.IChampion;
 import top.theillusivec4.champions.deprecated.client.ChampionsOverlay;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 
 public class HUDHelper {
 
-  private static final ResourceLocation GUI_BAR_TEXTURES = ChampionsMod.getLocation("textures/gui/bars.png");
-  private static final ResourceLocation GUI_STAR = ChampionsMod.getLocation("textures/gui/star.png");
+  private static final ResourceLocation GUI_BAR_TEXTURES = Champions.getLocation("textures/gui/bars.png");
+  private static final ResourceLocation GUI_STAR = Champions.getLocation("textures/gui/star.png");
 
   public static boolean renderHealthBar(GuiGraphics guiGraphics, final LivingEntity livingEntity) {
     return ChampionAttachment.getAttachment(livingEntity).map(champion -> {
@@ -95,7 +95,7 @@ public class HUDHelper {
 
           for (String affix : affixSet) {
             builder.append(
-              Component.translatable("affix." + ChampionsMod.MOD_ID + "." + affix).getString());
+              Component.translatable("affix." + Champions.MOD_ID + "." + affix).getString());
             builder.append(" ");
           }
           String affixes = builder.toString().trim();

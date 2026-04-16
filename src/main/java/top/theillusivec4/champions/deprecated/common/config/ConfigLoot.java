@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,21 +62,21 @@ public class ConfigLoot {
         int weight = 1;
 
         if (parsed.length < 2) {
-          ChampionsMod.LOGGER.error("{} needs at least a tier and an item name", s);
+          Champions.LOGGER.error("{} needs at least a tier and an item name", s);
           continue;
         }
 
         try {
           tier = Integer.parseInt(parsed[0]);
         } catch (NumberFormatException e) {
-          ChampionsMod.LOGGER.error("{} is not a valid tier", parsed[0]);
+          Champions.LOGGER.error("{} is not a valid tier", parsed[0]);
           continue;
         }
 
         Item item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(parsed[1]));
 
         if (item == null) {
-          ChampionsMod.LOGGER.error("Item not found! {}", parsed[1]);
+          Champions.LOGGER.error("Item not found! {}", parsed[1]);
           continue;
         }
 
@@ -85,7 +85,7 @@ public class ConfigLoot {
           try {
             amount = Integer.parseInt(parsed[2]);
           } catch (NumberFormatException e) {
-            ChampionsMod.LOGGER.error("{} is not a valid stack amount", parsed[2]);
+            Champions.LOGGER.error("{} is not a valid stack amount", parsed[2]);
           }
 
           if (parsed.length > 3) {
@@ -98,7 +98,7 @@ public class ConfigLoot {
               try {
                 weight = Integer.parseInt(parsed[4]);
               } catch (NumberFormatException e) {
-                ChampionsMod.LOGGER.error("{} is not a valid weight", parsed[4]);
+                Champions.LOGGER.error("{} is not a valid weight", parsed[4]);
               }
             }
           }

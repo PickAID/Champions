@@ -5,7 +5,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tags.AffixTags;
 import top.theillusivec4.champions.world.entity.affix.Affix;
@@ -19,7 +19,7 @@ public class AffixTagsProvider extends TagsProvider<Affix> {
   }
 
   public static AffixTagsProvider create(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
-    return new AffixTagsProvider(output, lookupProvider, ChampionsMod.MOD_ID, existingFileHelper);
+    return new AffixTagsProvider(output, lookupProvider, Champions.MOD_ID, existingFileHelper);
   }
 
   @Override

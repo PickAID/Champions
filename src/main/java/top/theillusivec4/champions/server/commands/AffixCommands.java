@@ -10,7 +10,7 @@ import net.minecraft.commands.arguments.ResourceArgument;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.world.entity.affix.Affix;
 import top.theillusivec4.champions.world.entity.affix.AffixHelper;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
@@ -22,7 +22,7 @@ public final class AffixCommands {
   }
 
   public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext buildContext) {
-    dispatcher.register(Commands.literal(ChampionsMod.MOD_ID)
+    dispatcher.register(Commands.literal(Champions.MOD_ID)
       .then(Commands.literal("affix")
         .then(Commands.literal("add")
           .then(Commands.argument("entities", EntityArgument.entities())

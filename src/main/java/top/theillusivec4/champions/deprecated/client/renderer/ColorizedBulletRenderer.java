@@ -14,14 +14,14 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.deprecated.common.entity.BaseBulletEntity;
 
 import javax.annotation.Nonnull;
 
 public class ColorizedBulletRenderer extends EntityRenderer<BaseBulletEntity> {
 
-  private static final ResourceLocation GENERIC_SPARK_TEXTURE = ChampionsMod.getLocation("textures/entity/generic_spark.png");
+  private static final ResourceLocation GENERIC_SPARK_TEXTURE = Champions.getLocation("textures/entity/generic_spark.png");
   private static final RenderType RENDER_TYPE = RenderType.entityTranslucent(GENERIC_SPARK_TEXTURE);
   private final ShulkerBulletModel<BaseBulletEntity> model;
 

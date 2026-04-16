@@ -9,13 +9,13 @@ import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.checkerframework.checker.nullness.qual.NonNull;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.client.particle.RankParticle;
 
 import java.util.function.Supplier;
 
 public final class ChampionsParticleTypes {
-  private static final DeferredRegister<ParticleType<?>> DEFERRED_REGISTER = DeferredRegister.create(Registries.PARTICLE_TYPE, ChampionsMod.MOD_ID);
+  private static final DeferredRegister<ParticleType<?>> DEFERRED_REGISTER = DeferredRegister.create(Registries.PARTICLE_TYPE, Champions.MOD_ID);
   public static Supplier<ParticleType<RankParticle.Options>> RANK = register("rank", true, RankParticle.Options.MAP_CODEC, RankParticle.Options.STREAM_CODEC);
 
   private ChampionsParticleTypes() {

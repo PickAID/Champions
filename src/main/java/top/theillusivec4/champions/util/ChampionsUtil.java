@@ -7,7 +7,7 @@ import net.minecraft.util.random.Weight;
 import net.minecraft.util.random.WeightedEntry;
 import net.minecraft.util.random.WeightedRandom;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.ChampionsMod;
+import top.theillusivec4.champions.Champions;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +21,7 @@ public final class ChampionsUtil {
   }
 
   public static ResourceLocation id(String name) {
-    return ResourceLocation.fromNamespaceAndPath(ChampionsMod.MOD_ID, name);
+    return ResourceLocation.fromNamespaceAndPath(Champions.MOD_ID, name);
   }
 
   public static String makeDescriptionId(String prefix, ResourceLocation id) {
