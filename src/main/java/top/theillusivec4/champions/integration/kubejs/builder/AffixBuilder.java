@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.integration.kubejs.affix;
+package top.theillusivec4.champions.integration.kubejs.builder;
 
 import dev.latvian.mods.kubejs.registry.BuilderBase;
 import dev.latvian.mods.rhino.util.HideFromJS;

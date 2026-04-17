@@ -69,7 +69,7 @@ public final class ChampionMobEggTemplate {
   public static class Builder {
     private final Supplier<SpawnEggItem> itemSupplier;
     private Function<SpawnEggItem, ItemStack> itemFactory = ItemStack::new;
-    private EntityAffixes affixes = null;
+    private EntityAffixes.Builder affixes = null;
     private ChampionMobPropertyProvider property = null;
 
     public Builder(Supplier<SpawnEggItem> itemSupplier) {
@@ -84,7 +84,7 @@ public final class ChampionMobEggTemplate {
       this.itemFactory = itemFactory;
     }
 
-    public Builder affixes(EntityAffixes affixes) {
+    public Builder affixes(EntityAffixes.Builder affixes) {
       this.affixes = affixes;
       return this;
     }
@@ -98,7 +98,7 @@ public final class ChampionMobEggTemplate {
       return new ChampionMobEggTemplate(
         this.itemFactory.apply(this.itemSupplier.get()),
         Optional.ofNullable(this.property),
-        Optional.ofNullable(this.affixes).orElse(EntityAffixes.EMPTY)
+        Optional.ofNullable(this.affixes).map(EntityAffixes.Builder::build).orElse(EntityAffixes.EMPTY)
       );
     }
   }

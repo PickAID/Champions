@@ -16,6 +16,8 @@ public final class ChampionsUtil {
   private ChampionsUtil() {
   }
 
+
+
   public static <T extends WeightedEntry> Optional<Holder<T>> getRandom(RandomSource random, List<? extends Holder<T>> entries) {
     return WeightedRandom.getRandomItem(random, entries.stream().map(HolderWithWeight::new).toList()).map(HolderWithWeight::holder);
   }
