@@ -11,7 +11,7 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 
 @Mixin(value = WitherBoss.class)
 public abstract class WitherBossMixin extends Monster implements RangedAttackMob {

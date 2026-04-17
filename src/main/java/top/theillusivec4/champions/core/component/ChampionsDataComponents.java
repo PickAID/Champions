@@ -5,8 +5,8 @@ import net.minecraft.core.registries.Registries;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.api.affix.EntityAffixes;
+import top.theillusivec4.champions.api.championmob.ChampionMobProperty;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;

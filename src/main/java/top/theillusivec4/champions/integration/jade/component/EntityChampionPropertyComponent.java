@@ -9,7 +9,7 @@ import snownee.jade.api.JadeIds;
 import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.IElement;
 import top.theillusivec4.champions.integration.jade.element.StarElement;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 
 import java.util.ArrayList;
 import java.util.List;

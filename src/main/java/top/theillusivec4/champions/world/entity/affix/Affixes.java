@@ -31,12 +31,21 @@ import net.minecraft.world.level.storage.loot.IntRange;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.*;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import top.theillusivec4.champions.world.entity.affix.effects.*;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.AffixEffectComponents;
+import top.theillusivec4.champions.api.affix.LevelBasedValue;
+import top.theillusivec4.champions.api.affix.ProjectileTemplate;
+import top.theillusivec4.champions.api.affix.effect.AffixEntityEffect;
+import top.theillusivec4.champions.api.affix.effect.AffixTarget;
+import top.theillusivec4.champions.api.affix.effect.AffixValueEffect;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tags.AffixTags;
 import top.theillusivec4.champions.util.ChampionsUtil;
 import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
+import top.theillusivec4.champions.world.entity.affix.effects.AffixAttributeEffect;
+import top.theillusivec4.champions.world.entity.affix.effects.AffixEntityEffects;
+import top.theillusivec4.champions.world.entity.affix.effects.AllOf;
 import top.theillusivec4.champions.world.level.storage.loot.predicates.DamageCountCondition;
 
 public final class Affixes {
@@ -357,7 +366,7 @@ public final class Affixes {
               LevelBasedValue.constant(1)
             )
           ),
-          new TimeCheck.Builder( IntRange.exact(0)).setPeriod(60)
+          new TimeCheck.Builder(IntRange.exact(0)).setPeriod(60)
         )
     );
     /*

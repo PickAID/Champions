@@ -12,8 +12,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.api.championmob.ChampionMobProperty;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 
 import java.util.Optional;
 

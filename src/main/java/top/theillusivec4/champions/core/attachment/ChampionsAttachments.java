@@ -7,8 +7,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
-import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.api.affix.EntityAffixes;
+import top.theillusivec4.champions.api.championmob.ChampionMobProperty;
 import top.theillusivec4.champions.world.entity.damagetracker.DamageTracker;
 
 import java.util.function.Supplier;

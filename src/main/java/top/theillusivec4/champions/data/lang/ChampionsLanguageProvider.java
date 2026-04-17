@@ -4,9 +4,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.world.entity.champion.Rank;
+import top.theillusivec4.champions.api.championmob.Rank;
 import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.affix.Affix;
+import top.theillusivec4.champions.api.affix.Affix;
 
 public abstract class ChampionsLanguageProvider extends LanguageProvider {
   public ChampionsLanguageProvider(PackOutput output, String modid, String locale) {

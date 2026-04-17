@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tags.AffixTags;
-import top.theillusivec4.champions.world.entity.affix.Affix;
+import top.theillusivec4.champions.api.affix.Affix;
 import top.theillusivec4.champions.world.entity.affix.Affixes;
 
 import java.util.concurrent.CompletableFuture;

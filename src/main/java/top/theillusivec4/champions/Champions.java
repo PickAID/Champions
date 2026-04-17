@@ -20,9 +20,6 @@
 package top.theillusivec4.champions;
 
 import com.electronwill.nightconfig.core.CommentedConfig;
-import mcjty.theoneprobe.TheOneProbe;
-import moe.wolfgirl.probejs.ProbeJS;
-import moe.wolfgirl.probejs.plugin.ProbeJSPlugin;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
@@ -59,6 +56,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.advancements.critereon.ChampionsEntitySubPredicates;
+import top.theillusivec4.champions.api.affix.provider.AffixProvider;
 import top.theillusivec4.champions.client.network.ChampionsClientPayloadHandler;
 import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
 import top.theillusivec4.champions.core.component.ChampionsDataComponents;
@@ -98,19 +96,18 @@ import top.theillusivec4.champions.server.ChampionsServerConfig;
 import top.theillusivec4.champions.stats.ChampionsStats;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.ChampionsEntityTypes;
-import top.theillusivec4.champions.world.entity.affix.Affix;
-import top.theillusivec4.champions.world.entity.affix.AffixEffectComponents;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.AffixEffectComponents;
 import top.theillusivec4.champions.world.entity.affix.LevelBasedValues;
 import top.theillusivec4.champions.world.entity.affix.ProjectileTemplates;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixEntityEffects;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixLocationBasedEffects;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffects;
-import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
-import top.theillusivec4.champions.world.entity.affix.provider.AffixProviders;
-import top.theillusivec4.champions.world.entity.champion.Rank;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProviders;
+import top.theillusivec4.champions.world.entity.affix.providers.AffixProviders;
+import top.theillusivec4.champions.api.championmob.Rank;
+import top.theillusivec4.champions.world.entity.championmob.providers.ChampionMobPropertyProviders;
 import top.theillusivec4.champions.world.item.ChampionsCreativeModeTabs;
-import top.theillusivec4.champions.world.item.champion.ChampionMobEggTemplate;
+import top.theillusivec4.champions.api.championmob.ChampionMobEggTemplate;
 import top.theillusivec4.champions.world.level.storage.loot.predicates.ChampionsLootItemConditions;
 
 import java.io.File;
@@ -247,7 +244,7 @@ public class Champions {
 
   @SubscribeEvent
   public void registerPlugins(InterModEnqueueEvent event) {
-    if (ModList.get().isLoaded(TheOneProbe.MODID)) {
+    if (ModList.get().isLoaded("theoneprobe")) {
       InterModComms.sendTo(MOD_ID, "theoneprobe", "getTheOneProbe", ChampionsTheOneProbePlugin::create);
     }
   }

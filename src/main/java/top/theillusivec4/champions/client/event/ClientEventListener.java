@@ -19,7 +19,7 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.joml.Matrix4f;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 
 @EventBusSubscriber(modid = Champions.MOD_ID, value = Dist.CLIENT)
 public final class ClientEventListener {

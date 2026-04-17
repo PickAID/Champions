@@ -9,8 +9,8 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import top.theillusivec4.champions.integration.theoneprobe.ChampionsTheOneProbePlugin;
-import top.theillusivec4.champions.world.entity.affix.Affix;
-import top.theillusivec4.champions.world.entity.affix.AffixHelper;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.AffixHelper;
 
 import java.util.Map;
 

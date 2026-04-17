@@ -13,7 +13,8 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeMap;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.phys.Vec3;
-import top.theillusivec4.champions.world.entity.affix.LevelBasedValue;
+import top.theillusivec4.champions.api.affix.effect.AffixLocationBasedEffect;
+import top.theillusivec4.champions.api.affix.LevelBasedValue;
 
 public record AffixAttributeEffect(
   ResourceLocation id,

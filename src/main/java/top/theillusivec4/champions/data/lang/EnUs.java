@@ -2,7 +2,7 @@ package top.theillusivec4.champions.data.lang;
 
 import net.minecraft.data.PackOutput;
 import top.theillusivec4.champions.world.entity.affix.Affixes;
-import top.theillusivec4.champions.world.entity.champion.Ranks;
+import top.theillusivec4.champions.world.entity.championmob.Ranks;
 
 public class EnUs extends ChampionsLanguageProvider {
   public EnUs(PackOutput output) {

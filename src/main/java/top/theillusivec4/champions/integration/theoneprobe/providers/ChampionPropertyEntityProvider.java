@@ -10,7 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import top.theillusivec4.champions.integration.theoneprobe.ChampionsTheOneProbePlugin;
 import top.theillusivec4.champions.integration.theoneprobe.elements.ElementStar;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 
 public class ChampionPropertyEntityProvider implements IProbeInfoEntityProvider {
   public static ChampionPropertyEntityProvider create() {
