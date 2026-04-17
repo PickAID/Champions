@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import top.theillusivec4.champions.world.entity.affix.AffixHelper;
+import top.theillusivec4.champions.api.affix.AffixHelper;
 
 @Mixin(value = net.minecraft.world.entity.projectile.windcharge.AbstractWindCharge.class)
 public abstract class AbstractWindChargeMixin extends AbstractHurtingProjectile {

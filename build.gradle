@@ -166,14 +166,14 @@ dependencies {
 
 //  compileOnly "curse.maven:silent-lib-242998:${silentlib_version}"
 //  compileOnly "curse.maven:scalinghealth-248027:${cf_scalinghealth}"
-  implementation "curse.maven:TOP-245211:${theoneprobe_version}"
-  implementation "curse.maven:jade-324717:${jade_version}"
-  api("dev.latvian.mods:kubejs-neoforge:$kubejs_version")
-  interfaceInjectionData("dev.latvian.mods:kubejs-neoforge:$kubejs_version") // optional
-  implementation "curse.maven:probejs-585406:${probejs_version}"
+  implementation("curse.maven:TOP-245211:${theoneprobe_version}")
+  implementation("curse.maven:jade-324717:${jade_version}")
+  implementation("dev.latvian.mods:rhino:${rhino_version}")
+  api("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")
+//  interfaceInjectionData("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")// optional
+  implementation("curse.maven:probejs-585406:${probejs_version}")
 //  compileOnly "net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}"
 //  compileOnly "net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:${bookshelf_version}"
-
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.

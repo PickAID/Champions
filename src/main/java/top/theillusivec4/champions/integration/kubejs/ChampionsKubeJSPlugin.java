@@ -5,9 +5,9 @@ import dev.latvian.mods.kubejs.registry.BuilderTypeRegistry;
 import dev.latvian.mods.kubejs.registry.ServerRegistryRegistry;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.integration.kubejs.affix.AffixBuilder;
-import top.theillusivec4.champions.world.entity.affix.Affix;
-import top.theillusivec4.champions.world.entity.champion.Rank;
-import top.theillusivec4.champions.world.item.champion.ChampionMobEggTemplate;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.championmob.Rank;
+import top.theillusivec4.champions.api.championmob.ChampionMobEggTemplate;
 
 public class ChampionsKubeJSPlugin implements KubeJSPlugin {
 

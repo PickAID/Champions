@@ -9,11 +9,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import top.theillusivec4.champions.api.affix.effect.*;
 import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.affix.Affix;
-import top.theillusivec4.champions.world.entity.affix.AffixEffectComponents;
-import top.theillusivec4.champions.world.entity.affix.TargetedConditionalEffect;
-import top.theillusivec4.champions.world.entity.affix.effects.*;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.AffixEffectComponents;
+import top.theillusivec4.champions.world.entity.affix.effects.AffixAttributeEffect;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
@@ -133,6 +133,11 @@ public class AffixBuilder extends BuilderBase<Affix> {
 
   @Override
   public Affix createObject() {
-    return new Affix(nameFactory.apply(Component.translatable(ChampionsUtil.makeDescriptionId("affix", this.id))), definitionFactory.apply(Affix.AffixDefinition.builder()).build(), exclusiveSet, builder.build());
+    return new Affix(
+      nameFactory.apply(Component.translatable(ChampionsUtil.makeDescriptionId("affix", this.id))),
+      definitionFactory.apply(Affix.AffixDefinition.Builder.create()).build(),
+      exclusiveSet,
+      builder.build()
+    );
   }
 }

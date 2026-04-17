@@ -2,7 +2,7 @@ package top.theillusivec4.champions.world.level.storage.loot.parameters;
 
 import net.minecraft.world.level.storage.loot.parameters.LootContextParam;
 import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.api.championmob.ChampionMobProperty;
 import top.theillusivec4.champions.world.entity.damagetracker.DamageTracker;
 
 public final class ChampionsLootContextParams {

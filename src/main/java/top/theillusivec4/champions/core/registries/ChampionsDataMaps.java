@@ -3,8 +3,8 @@ package top.theillusivec4.champions.core.registries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.registries.datamaps.DataMapType;
-import top.theillusivec4.champions.world.entity.affix.Affixable;
-import top.theillusivec4.champions.world.entity.champion.ChampionMobPreset;
+import top.theillusivec4.champions.api.affix.Affixable;
+import top.theillusivec4.champions.api.championmob.ChampionMobPreset;
 import top.theillusivec4.champions.util.ChampionsUtil;
 
 public final class ChampionsDataMaps {
@@ -13,4 +13,5 @@ public final class ChampionsDataMaps {
 
   private ChampionsDataMaps() {
   }
+
 }

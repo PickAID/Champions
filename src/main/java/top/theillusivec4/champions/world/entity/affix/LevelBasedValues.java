@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.affix.LevelBasedValue;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 
 import java.util.function.Supplier;

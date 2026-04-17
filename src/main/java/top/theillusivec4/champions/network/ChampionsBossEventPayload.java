@@ -10,7 +10,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.StringRepresentable;
-import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
+import top.theillusivec4.champions.api.affix.EntityAffixes;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
 import top.theillusivec4.champions.util.ChampionsStreamCodecs;
 

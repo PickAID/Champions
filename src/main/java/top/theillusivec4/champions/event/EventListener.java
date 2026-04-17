@@ -27,10 +27,10 @@ import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
-import top.theillusivec4.champions.world.entity.affix.AffixHelper;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.api.affix.AffixHelper;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 import top.theillusivec4.champions.world.entity.damagetracker.DamageTrackerHelper;
-import top.theillusivec4.champions.world.item.champion.ChampionMobEggHelper;
+import top.theillusivec4.champions.api.championmob.ChampionMobEggHelper;
 
 import java.util.List;
 

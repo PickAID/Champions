@@ -35,8 +35,9 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.world.entity.affix.LevelBasedValue;
-import top.theillusivec4.champions.world.entity.affix.ProjectileTemplate;
+import top.theillusivec4.champions.api.affix.effect.AffixEntityEffect;
+import top.theillusivec4.champions.api.affix.LevelBasedValue;
+import top.theillusivec4.champions.api.affix.ProjectileTemplate;
 import top.theillusivec4.champions.core.registries.ChampionsBuiltInRegistries;
 import top.theillusivec4.champions.util.ProjectileUtil;
 
