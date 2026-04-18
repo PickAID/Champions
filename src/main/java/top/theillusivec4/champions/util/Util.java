@@ -4,8 +4,8 @@ import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
 
-public final class ChampionsUtil {
-	private ChampionsUtil() {
+public final class Util {
+	private Util() {
 	}
 
 	public static Identifier id(final String path) {
