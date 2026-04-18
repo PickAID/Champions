@@ -3,8 +3,8 @@ package top.theillusivec4.champions.data.registries;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.world.entity.affix.Affixes;
-import top.theillusivec4.champions.world.entity.champion.Ranks;
+import top.theillusivec4.champions.api.affix.Affixes;
+import top.theillusivec4.champions.world.entity.championmob.Ranks;
 import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
 import top.theillusivec4.champions.world.item.champion.ChampionEggTemplates;
 

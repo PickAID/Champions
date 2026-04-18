@@ -5,8 +5,8 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.neoforge.common.data.DataMapProvider;
 import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
-import top.theillusivec4.champions.world.entity.affix.Affixable;
-import top.theillusivec4.champions.world.entity.champion.ChampionMobPreset;
+import top.theillusivec4.champions.api.affix.Affixable;
+import top.theillusivec4.champions.api.championmob.ChampionMobPreset;
 
 import java.util.concurrent.CompletableFuture;
 

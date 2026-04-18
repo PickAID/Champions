@@ -7,6 +7,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
+import top.theillusivec4.champions.api.affix.effect.AffixEntityEffect;
+import top.theillusivec4.champions.api.affix.effect.AffixValueEffect;
 
 import java.util.Arrays;
 import java.util.List;

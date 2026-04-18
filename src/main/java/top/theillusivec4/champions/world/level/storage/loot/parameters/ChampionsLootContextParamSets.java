@@ -4,8 +4,8 @@ import com.google.common.collect.BiMap;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.context.ContextKeySet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import top.theillusivec4.champions.mixin.LootContextParamSetsAccessor;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.mixins.LootContextParamSetsAccessor;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.world.level.storage.loot.ExtraLootParamsHelper;
 
 import java.util.function.Consumer;
@@ -43,7 +43,7 @@ public final class ChampionsLootContextParamSets {
 		ContextKeySet.Builder builder = new ContextKeySet.Builder();
 		consumer.accept(builder);
 		ExtraLootParamsHelper.addParameters(builder);
-		Identifier id = ChampionsUtil.id(name);
+		Identifier id = Util.id(name);
 		ContextKeySet set = builder.build();
 		ContextKeySet set1 = registry.put(id, set);
 		if (set1 != null) {

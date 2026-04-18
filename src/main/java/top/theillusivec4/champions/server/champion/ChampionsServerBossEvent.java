@@ -12,8 +12,8 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
-import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionsBossEvent;
+import top.theillusivec4.champions.api.affix.EntityAffixes;
+import top.theillusivec4.champions.api.championmob.ChampionsBossEvent;
 
 import java.util.Collections;
 import java.util.Objects;

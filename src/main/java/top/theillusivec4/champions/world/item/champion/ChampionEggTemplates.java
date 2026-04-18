@@ -5,13 +5,13 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.affix.Affix;
-import top.theillusivec4.champions.world.entity.affix.Affixes;
-import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.Rank;
-import top.theillusivec4.champions.world.entity.champion.Ranks;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
+import top.theillusivec4.champions.util.Util;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.Affixes;
+import top.theillusivec4.champions.api.affix.EntityAffixes;
+import top.theillusivec4.champions.api.championmob.Rank;
+import top.theillusivec4.champions.world.entity.championmob.Ranks;
+import top.theillusivec4.champions.api.championmob.provider.ChampionMobPropertyProvider;
 
 public final class ChampionEggTemplates {
   public static final ResourceKey<ChampionEggTemplate> HUSK = register("husk");
@@ -21,7 +21,7 @@ public final class ChampionEggTemplates {
   }
 
   private static ResourceKey<ChampionEggTemplate> register(String name) {
-    return ResourceKey.create(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionsUtil.id(name));
+    return ResourceKey.create(ChampionsRegistries.CHAMPION_MOB_EGG, Util.id(name));
   }
 
   public static void bootstrap(BootstrapContext<ChampionEggTemplate> context) {

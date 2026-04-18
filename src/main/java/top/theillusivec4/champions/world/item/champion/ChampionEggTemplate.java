@@ -6,9 +6,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.SpawnEggItem;
-import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
+import top.theillusivec4.champions.api.affix.EntityAffixes;
+import top.theillusivec4.champions.api.championmob.ChampionMobProperty;
+import top.theillusivec4.champions.api.championmob.provider.ChampionMobPropertyProvider;
 
 import java.util.Objects;
 import java.util.Optional;

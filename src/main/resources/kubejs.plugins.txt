@@ -1,1 +1,1 @@
-top.theillusivec4.champions.integration.kubejs.ChampionsKubeJSPlugin champions
+top.theillusivec4.champions.integrations.kubejs.ChampionsKubeJSPlugin champions

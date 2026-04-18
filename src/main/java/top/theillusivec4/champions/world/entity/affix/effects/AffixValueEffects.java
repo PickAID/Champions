@@ -6,7 +6,8 @@ import net.minecraft.util.RandomSource;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.world.entity.affix.LevelBasedValue;
+import top.theillusivec4.champions.api.affix.LevelBasedValue;
+import top.theillusivec4.champions.api.affix.effect.AffixValueEffect;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 
 import java.util.function.Supplier;
