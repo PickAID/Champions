@@ -18,8 +18,6 @@ public final class AffixValueEffects {
   public static final Supplier<MapCodec<AllOf.ValueEffects>> ALL_OF = register("all_of", () -> AllOf.ValueEffects.MAP_CODEC);
   public static final Supplier<MapCodec<MultiplyValue>> MULTIPLY = register("multiply", () -> MultiplyValue.MAP_CODEC);
   public static final Supplier<MapCodec<RemoveBinomial>> REMOVE_BINOMIAL = register("remove_binomial", () -> RemoveBinomial.MAP_CODEC);
-  public static final Supplier<MapCodec<ScaleExponentially>> EXPONENTIALLY = register("exponential", () -> ScaleExponentially.MAP_CODEC);
-  public static final Supplier<MapCodec<SubtractValue>> SUBTRACT = register("subtract", () -> SubtractValue.MAP_CODEC);
   public static final Supplier<MapCodec<SetValue>> SET = register("set", () -> SetValue.MAP_CODEC);
 
   private AffixValueEffects() {
@@ -50,14 +48,14 @@ public final class AffixValueEffects {
 
   }
 
-  public record MultiplyValue(LevelBasedValue value) implements AffixValueEffect {
+  public record MultiplyValue(LevelBasedValue factor) implements AffixValueEffect {
     public static final MapCodec<MultiplyValue> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-      LevelBasedValue.CODEC.fieldOf("value").forGetter(MultiplyValue::value)
+      LevelBasedValue.CODEC.fieldOf("factor").forGetter(MultiplyValue::factor)
     ).apply(instance, MultiplyValue::new));
 
     @Override
     public float process(int affixLevel, RandomSource random, float inputValue) {
-      return inputValue * value.calculate(affixLevel);
+      return inputValue * factor.calculate(affixLevel);
     }
 
     @Override
@@ -96,40 +94,6 @@ public final class AffixValueEffects {
     public MapCodec<? extends AffixValueEffect> codec() {
       return MAP_CODEC;
     }
-  }
-
-  public record ScaleExponentially(LevelBasedValue base, LevelBasedValue exponent) implements AffixValueEffect {
-    public static final MapCodec<ScaleExponentially> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-      LevelBasedValue.CODEC.fieldOf("base").forGetter(ScaleExponentially::base),
-      LevelBasedValue.CODEC.fieldOf("exponent").forGetter(ScaleExponentially::exponent)
-    ).apply(instance, ScaleExponentially::new));
-
-    @Override
-    public float process(int affixLevel, RandomSource random, float inputValue) {
-      return (float) (inputValue * Math.pow(this.base.calculate(affixLevel), this.exponent.calculate(affixLevel)));
-    }
-
-    @Override
-    public MapCodec<? extends AffixValueEffect> codec() {
-      return MAP_CODEC;
-    }
-  }
-
-  public record SubtractValue(LevelBasedValue value) implements AffixValueEffect {
-    public static final MapCodec<SubtractValue> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-      LevelBasedValue.CODEC.fieldOf("value").forGetter(SubtractValue::value)
-    ).apply(instance, SubtractValue::new));
-
-    @Override
-    public float process(int affixLevel, RandomSource random, float inputValue) {
-      return value.calculate(affixLevel);
-    }
-
-    @Override
-    public MapCodec<? extends AffixValueEffect> codec() {
-      return MAP_CODEC;
-    }
-
   }
 
   public record SetValue(LevelBasedValue value) implements AffixValueEffect {

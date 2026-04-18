@@ -6,10 +6,12 @@ import dev.latvian.mods.kubejs.registry.ServerRegistryRegistry;
 import dev.latvian.mods.kubejs.script.TypeWrapperRegistry;
 import top.theillusivec4.champions.api.affix.Affix;
 import top.theillusivec4.champions.api.affix.LevelBasedValue;
+import top.theillusivec4.champions.api.affix.effect.AffixValueEffect;
 import top.theillusivec4.champions.api.championmob.ChampionMobEggTemplate;
 import top.theillusivec4.champions.api.championmob.Rank;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.integration.kubejs.builder.AffixBuilder;
+import top.theillusivec4.champions.integration.kubejs.wrapper.AffixValueEffectWrapper;
 import top.theillusivec4.champions.integration.kubejs.wrapper.LevelBasedValueWrapper;
 
 public class ChampionsKubeJSPlugin implements KubeJSPlugin {
@@ -29,5 +31,6 @@ public class ChampionsKubeJSPlugin implements KubeJSPlugin {
   @Override
   public void registerTypeWrappers(TypeWrapperRegistry registry) {
     registry.register(LevelBasedValue.class, LevelBasedValueWrapper::wrap);
+    registry.register(AffixValueEffect.class, AffixValueEffectWrapper::wrap);
   }
 }
