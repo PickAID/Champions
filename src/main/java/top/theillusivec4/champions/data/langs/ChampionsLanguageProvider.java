@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.data.languages;
+package top.theillusivec4.champions.data.langs;
 
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceKey;

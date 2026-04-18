@@ -1,4 +1,4 @@
-package top.theillusivec4.champions.data.languages;
+package top.theillusivec4.champions.data.langs;
 
 import net.minecraft.data.PackOutput;
 import top.theillusivec4.champions.api.affix.Affixes;

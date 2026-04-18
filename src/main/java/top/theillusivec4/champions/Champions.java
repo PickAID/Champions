@@ -42,7 +42,7 @@ import top.theillusivec4.champions.core.particles.ChampionsParticleTypes;
 import top.theillusivec4.champions.core.registries.ChampionsBuiltInRegistries;
 import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.data.languages.ChampionsLanguageProvider;
+import top.theillusivec4.champions.data.langs.ChampionsLanguageProvider;
 import top.theillusivec4.champions.data.registries.ChampionsDataMapProvider;
 import top.theillusivec4.champions.data.registries.ModdedRegistries;
 import top.theillusivec4.champions.data.tags.AffixTagsProvider;
