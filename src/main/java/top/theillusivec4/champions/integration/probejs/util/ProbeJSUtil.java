@@ -4,9 +4,9 @@ import moe.wolfgirl.probejs.lang.typescript.ScriptDump;
 
 import java.util.function.Consumer;
 
-public final class DocUtil {
+public final class ProbeJSUtil {
 
-  private DocUtil() {
+  private ProbeJSUtil() {
   }
 
   public static void assignType(ScriptDump scriptDump, Class<?> aClass, Consumer<TypeAssigner.Builder> context) {

@@ -3,7 +3,7 @@ package top.theillusivec4.champions.integration.probejs.docs;
 import moe.wolfgirl.probejs.lang.typescript.ScriptDump;
 import moe.wolfgirl.probejs.lang.typescript.code.type.Types;
 import top.theillusivec4.champions.api.affix.LevelBasedValue;
-import top.theillusivec4.champions.integration.probejs.util.DocUtil;
+import top.theillusivec4.champions.integration.probejs.util.ProbeJSUtil;
 
 public final class LevelBasedValueDocs {
 
@@ -11,7 +11,7 @@ public final class LevelBasedValueDocs {
   }
 
   public static void assignType(ScriptDump scriptDump) {
-    DocUtil.assignType(scriptDump, LevelBasedValue.class, context -> {
+    ProbeJSUtil.assignType(scriptDump, LevelBasedValue.class, context -> {
       context.direct(Types.typeOf(LevelBasedValue.class));
       context.direct(Types.NUMBER);
       context.dispatch("constant", builder -> builder.member("value", Types.NUMBER));
