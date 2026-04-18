@@ -1,5 +1,6 @@
 package top.theillusivec4.champions.util;
 
+import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -10,13 +11,19 @@ import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.Champions;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public final class ChampionsUtil {
   private ChampionsUtil() {
   }
 
-
+  public static <K, V> Map<K, V> map(Consumer<ImmutableMap.Builder<K, V>> consumer) {
+    ImmutableMap.Builder<K, V> builder = ImmutableMap.builder();
+    consumer.accept(builder);
+    return builder.build();
+  }
 
   public static <T extends WeightedEntry> Optional<Holder<T>> getRandom(RandomSource random, List<? extends Holder<T>> entries) {
     return WeightedRandom.getRandomItem(random, entries.stream().map(HolderWithWeight::new).toList()).map(HolderWithWeight::holder);

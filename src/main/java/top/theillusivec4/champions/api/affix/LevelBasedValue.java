@@ -6,6 +6,7 @@ import com.mojang.serialization.MapCodec;
 import top.theillusivec4.champions.core.registries.ChampionsBuiltInRegistries;
 import top.theillusivec4.champions.world.entity.affix.LevelBasedValues;
 
+import java.util.List;
 import java.util.function.Function;
 
 public interface LevelBasedValue {
@@ -23,24 +24,24 @@ public interface LevelBasedValue {
     return new LevelBasedValues.Constant(value);
   }
 
-  static LevelBasedValue exponent(LevelBasedValue base, LevelBasedValue power) {
-    return new LevelBasedValues.Exponent(base, power);
+  static LevelBasedValue clamped(LevelBasedValue value, float min, float max) {
+    return new LevelBasedValues.Clamped(value, min, max);
   }
 
   static LevelBasedValue fraction(LevelBasedValue numerator, LevelBasedValue denominator) {
     return new LevelBasedValues.Fraction(numerator, denominator);
   }
 
-  static LevelBasedValue summation(LevelBasedValue base, LevelBasedValue addend) {
-    return new LevelBasedValues.Summation(base, addend);
+  static LevelBasedValue levelsSquared(float added) {
+    return new LevelBasedValues.LevelsSquared(added);
   }
 
-  static LevelBasedValue product(LevelBasedValue multiplicand, LevelBasedValue multiplier) {
-    return new LevelBasedValues.Product(multiplicand, multiplier);
-  }
-
-  static LevelBasedValues.Linear linear(LevelBasedValue base, LevelBasedValue perLevelAboveFirst) {
+  static LevelBasedValue linear(LevelBasedValue base, LevelBasedValue perLevelAboveFirst) {
     return new LevelBasedValues.Linear(base, perLevelAboveFirst);
+  }
+
+  static LevelBasedValue lookup(List<Float> values, LevelBasedValue fallback) {
+    return new LevelBasedValues.Lookup(values, fallback);
   }
 
   float calculate(int level);
