@@ -1,0 +1,34 @@
+package top.theillusivec4.champions.integrations.theoneprobe.providers;
+
+import mcjty.theoneprobe.api.IProbeHitEntityData;
+import mcjty.theoneprobe.api.IProbeInfo;
+import mcjty.theoneprobe.api.IProbeInfoEntityProvider;
+import mcjty.theoneprobe.api.ProbeMode;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import top.theillusivec4.champions.integrations.theoneprobe.ChampionsTheOneProbePlugin;
+import top.theillusivec4.champions.integrations.theoneprobe.elements.ElementStar;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
+
+public class ChampionPropertyEntityProvider implements IProbeInfoEntityProvider {
+  public static ChampionPropertyEntityProvider create() {
+    return new ChampionPropertyEntityProvider();
+  }
+
+  @Override
+  public String getID() {
+    return ChampionsTheOneProbePlugin.PROVIDER_CHAMPION_PROPERTY.toString();
+  }
+
+  @Override
+  public void addProbeEntityInfo(ProbeMode mode, IProbeInfo info, Player player, Level level, Entity entity, IProbeHitEntityData data) {
+    TextColor color = ChampionMobPropertyHelper.getColor(entity);
+    int tier = ChampionMobPropertyHelper.getTier(entity);
+    if (tier > 0) {
+      info.element(ElementStar.create(tier, color));
+    }
+  }
+
+}

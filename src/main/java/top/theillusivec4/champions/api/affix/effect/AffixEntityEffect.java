@@ -6,7 +6,6 @@ import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.valueproviders.FloatProvider;
@@ -14,8 +13,6 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -24,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.api.affix.LevelBasedValue;
 import top.theillusivec4.champions.api.affix.ProjectileTemplate;
 import top.theillusivec4.champions.core.registries.ChampionsBuiltInRegistries;
-import top.theillusivec4.champions.world.entity.affix.effects.AffixAttributeEffect;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixEntityEffects;
 import top.theillusivec4.champions.world.entity.affix.effects.AllOf;
 
@@ -35,16 +31,12 @@ import java.util.function.Function;
 public interface AffixEntityEffect extends AffixLocationBasedEffect {
   Codec<AffixEntityEffect> CODEC = Codec.lazyInitialized(() -> ChampionsBuiltInRegistries.AFFIX_ENTITY_EFFECT_TYPE.byNameCodec().dispatch(AffixEntityEffect::codec, Function.identity()));
 
-  static AffixLocationBasedEffect attribute(ResourceLocation id, Holder<Attribute> attribute, LevelBasedValue amount, AttributeModifier.Operation operation) {
-    return new AffixAttributeEffect(id, attribute, amount, operation);
-  }
-
   static AffixEntityEffect allOf(AffixEntityEffect... effects) {
     return new AllOf.EntityEffects(Arrays.stream(effects).toList());
   }
 
-  static AffixEntityEffect applyMobEffect(HolderSet<MobEffect> mobEffect, LevelBasedValue minDuration, LevelBasedValue maxDuration, LevelBasedValue minAmplifier, LevelBasedValue maxAmplifier) {
-    return new AffixEntityEffects.ApplyMobEffect(mobEffect, minDuration, maxDuration, minAmplifier, maxAmplifier);
+  static AffixEntityEffect applyMobEffect(HolderSet<MobEffect> toApply, LevelBasedValue minDuration, LevelBasedValue maxDuration, LevelBasedValue minAmplifier, LevelBasedValue maxAmplifier) {
+    return new AffixEntityEffects.ApplyMobEffect(toApply, minDuration, maxDuration, minAmplifier, maxAmplifier);
   }
 
   static AffixEntityEffect ignite(LevelBasedValue duration) {
@@ -80,7 +72,7 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
   }
 
   static AffixEntityEffect playSound(Holder<SoundEvent> sound, FloatProvider volume, FloatProvider pitch) {
-    return new AffixEntityEffects.PlaySoundEffect(sound, volume, pitch);
+    return new AffixEntityEffects.PlaySound(sound, volume, pitch);
   }
 
   static AffixEntityEffect projection(ProjectileTemplate projectile, ItemStack projectileItem, LevelBasedValue power, LevelBasedValue uncertainty, Holder<SoundEvent> sound) {
@@ -88,7 +80,7 @@ public interface AffixEntityEffect extends AffixLocationBasedEffect {
   }
 
   static AffixEntityEffect summonEntity(HolderSet<EntityType<?>> entityTypes) {
-    return new AffixEntityEffects.SummonEntityEffect(entityTypes);
+    return new AffixEntityEffects.SummonEntity(entityTypes);
   }
 
   static AffixEntityEffect movement(double speed) {

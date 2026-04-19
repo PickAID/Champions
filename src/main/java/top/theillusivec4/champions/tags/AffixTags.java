@@ -3,7 +3,7 @@ package top.theillusivec4.champions.tags;
 import net.minecraft.tags.TagKey;
 import top.theillusivec4.champions.api.affix.Affix;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 public final class AffixTags {
   public static final TagKey<Affix> DAMAGE_PROTECTION_EXCLUSIVE = create("exclusive_set/damage_protection");
@@ -14,7 +14,7 @@ public final class AffixTags {
   public static final TagKey<Affix> CURSE = create("curse");
 
   private static TagKey<Affix> create(String name) {
-    return TagKey.create(ChampionsRegistries.AFFIX, ChampionsUtil.id(name));
+    return TagKey.create(ChampionsRegistries.AFFIX, Util.id(name));
   }
   private AffixTags() {
   }

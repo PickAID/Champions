@@ -3,7 +3,7 @@ package top.theillusivec4.champions.tags;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EntityType;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 public final class ChampionsEntityTypeTags {
   public static final TagKey<EntityType<?>> IS_ENDER = create("is_ender");
@@ -13,6 +13,6 @@ public final class ChampionsEntityTypeTags {
   }
 
   private static TagKey<EntityType<?>> create(String name) {
-    return TagKey.create(Registries.ENTITY_TYPE, ChampionsUtil.id(name));
+    return TagKey.create(Registries.ENTITY_TYPE, Util.id(name));
   }
 }

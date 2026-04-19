@@ -40,7 +40,7 @@ import top.theillusivec4.champions.api.affix.effect.AffixTarget;
 import top.theillusivec4.champions.api.affix.effect.AffixValueEffect;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tags.AffixTags;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.world.damagesource.ChampionsDamageTypes;
 import top.theillusivec4.champions.world.effect.ChampionsMobEffects;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixAttributeEffect;
@@ -70,7 +70,7 @@ public final class Affixes {
   }
 
   private static ResourceKey<Affix> register(String name) {
-    return ResourceKey.create(ChampionsRegistries.AFFIX, ChampionsUtil.id(name));
+    return ResourceKey.create(ChampionsRegistries.AFFIX, Util.id(name));
   }
 
   private static void register(BootstrapContext<Affix> context, ResourceKey<Affix> key, Affix.Builder builder) {

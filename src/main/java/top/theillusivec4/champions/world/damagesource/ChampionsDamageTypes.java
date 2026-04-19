@@ -6,7 +6,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.damagesource.DamageEffects;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 public final class ChampionsDamageTypes {
   public static final ResourceKey<DamageType> REFLECTION_DAMAGE = register("reflection");
@@ -21,6 +21,6 @@ public final class ChampionsDamageTypes {
   }
 
   private static ResourceKey<DamageType> register(String name) {
-    return ResourceKey.create(Registries.DAMAGE_TYPE, ChampionsUtil.id(name));
+    return ResourceKey.create(Registries.DAMAGE_TYPE, Util.id(name));
   }
 }

@@ -3,7 +3,7 @@ package top.theillusivec4.champions.world.entity.damagetracker;
 import net.minecraft.core.Holder;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
-import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
+import top.theillusivec4.champions.core.attachments.ChampionsAttachments;
 
 import java.util.Objects;
 import java.util.function.Consumer;

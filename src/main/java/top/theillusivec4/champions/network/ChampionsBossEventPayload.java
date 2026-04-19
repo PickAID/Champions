@@ -12,7 +12,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.StringRepresentable;
 import top.theillusivec4.champions.api.affix.EntityAffixes;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
-import top.theillusivec4.champions.util.ChampionsStreamCodecs;
+import top.theillusivec4.champions.util.StreamCodecs;
 
 import java.util.UUID;
 
@@ -161,7 +161,7 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
       ComponentSerialization.STREAM_CODEC, AddOperation::name,
       ByteBufCodecs.FLOAT, AddOperation::progress,
       ByteBufCodecs.INT, AddOperation::level,
-      ChampionsStreamCodecs.TEXT_COLOR, AddOperation::color,
+      StreamCodecs.TEXT_COLOR, AddOperation::color,
       EntityAffixes.STREAM_CODEC, AddOperation::affixes,
       AddOperation::new
     );
@@ -232,7 +232,7 @@ public record ChampionsBossEventPayload(UUID id, Operation operation) implements
 
   private record UpdateColor(TextColor color) implements Operation {
     public static final StreamCodec<RegistryFriendlyByteBuf, UpdateColor> STREAM_CODEC = StreamCodec.composite(
-      ChampionsStreamCodecs.TEXT_COLOR, UpdateColor::color,
+      StreamCodecs.TEXT_COLOR, UpdateColor::color,
       UpdateColor::new
     );
 

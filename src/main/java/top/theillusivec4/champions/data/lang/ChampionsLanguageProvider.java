@@ -5,7 +5,7 @@ import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import top.theillusivec4.champions.Champions;
 import top.theillusivec4.champions.api.championmob.Rank;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.api.affix.Affix;
 
 public abstract class ChampionsLanguageProvider extends LanguageProvider {
@@ -26,11 +26,11 @@ public abstract class ChampionsLanguageProvider extends LanguageProvider {
   }
 
   protected final void addAffix(ResourceKey<Affix> key, String name) {
-    this.add(ChampionsUtil.makeDescriptionId("affix", key.location()), name);
+    this.add(Util.makeDescriptionId("affix", key.location()), name);
   }
 
   protected final void addRank(ResourceKey<Rank> key, String name) {
-    this.add(ChampionsUtil.makeDescriptionId("rank", key.location()), name);
+    this.add(Util.makeDescriptionId("rank", key.location()), name);
   }
 
   protected final void addAffixLevel(int level, String name) {

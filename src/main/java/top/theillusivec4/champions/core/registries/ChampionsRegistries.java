@@ -14,7 +14,7 @@ import top.theillusivec4.champions.api.affix.provider.AffixProvider;
 import top.theillusivec4.champions.api.championmob.Rank;
 import top.theillusivec4.champions.api.championmob.provider.ChampionMobPropertyProvider;
 import top.theillusivec4.champions.api.championmob.ChampionMobEggTemplate;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 public final class ChampionsRegistries {
   public static final ResourceKey<Registry<MapCodec<? extends AffixProvider>>> AFFIX_PROVIDER_TYPE = register("affix_provider_type");
@@ -35,6 +35,6 @@ public final class ChampionsRegistries {
   }
 
   private static <T> ResourceKey<Registry<T>> register(String name) {
-    return ResourceKey.createRegistryKey(ChampionsUtil.id(name));
+    return ResourceKey.createRegistryKey(Util.id(name));
   }
 }
