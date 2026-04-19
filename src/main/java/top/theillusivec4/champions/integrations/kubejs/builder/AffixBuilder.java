@@ -9,15 +9,16 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import top.theillusivec4.champions.api.affix.effect.*;
-import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.api.affix.Affix;
 import top.theillusivec4.champions.api.affix.AffixEffectComponents;
+import top.theillusivec4.champions.api.affix.effect.*;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixAttributeEffect;
 
 import java.util.*;
 import java.util.function.UnaryOperator;
 
+@SuppressWarnings("unused")
 public class AffixBuilder extends BuilderBase<Affix> {
   private final UnaryOperator<Affix.AffixDefinition.Builder> definitionFactory = UnaryOperator.identity();
   private final DataComponentMap.Builder builder = DataComponentMap.builder();
@@ -96,12 +97,12 @@ public class AffixBuilder extends BuilderBase<Affix> {
     return this;
   }
 
-  public AffixBuilder postAttack(AffixEntityEffect effect, AffixTarget enchanted, AffixTarget affected) {
+  public AffixBuilder postAttack(AffixTarget enchanted, AffixTarget affected, AffixEntityEffect effect) {
     getEffects(AffixEffectComponents.POST_ATTACK.get()).add(TargetedConditionalEffect.create(enchanted, affected, effect));
     return this;
   }
 
-  public AffixBuilder postAttack(AffixEntityEffect effect, AffixTarget enchanted, AffixTarget affected, LootItemCondition condition) {
+  public AffixBuilder postAttack(AffixTarget enchanted, AffixTarget affected, AffixEntityEffect effect, LootItemCondition condition) {
     getEffects(AffixEffectComponents.POST_ATTACK.get()).add(TargetedConditionalEffect.create(enchanted, affected, effect, condition));
     return this;
   }
