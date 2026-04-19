@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 public record ConditionalEffect<T>(T effect, Optional<LootItemCondition> requirements) implements Validatable {
 
+
 	public static <T> Codec<ConditionalEffect<T>> codec(Codec<T> effectCodec) {
 		return RecordCodecBuilder.create(instance -> instance.group(
 				effectCodec.fieldOf("effect").forGetter(ConditionalEffect::effect),

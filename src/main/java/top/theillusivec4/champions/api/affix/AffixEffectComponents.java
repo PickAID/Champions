@@ -18,7 +18,7 @@ import java.util.function.UnaryOperator;
 public final class AffixEffectComponents {
   public static final Codec<DataComponentMap> CODEC = DataComponentMap.makeCodec(Codec.lazyInitialized(ChampionsBuiltInRegistries.AFFIX_EFFECT_COMPONENT_TYPE::byNameCodec));
   private static final DeferredRegister<DataComponentType<?>> DEFERRED_REGISTER = DeferredRegister.create(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE, Champions.MOD_ID);
-  public static final Supplier<DataComponentType<List<AffixLocationBasedEffect>>> INITIALIZE = register("initialize", builder -> builder.persistent(AffixLocationBasedEffect.CODEC.listOf()));
+  public static final Supplier<DataComponentType<List<ConditionalEffect<AffixLocationBasedEffect>>>> LOCATION_CHANGED = register("initialize", builder -> builder.persistent(ConditionalEffect.codec(AffixLocationBasedEffect.CODEC, ChampionsLootContextParamSets.AFFIXED_DAMAGE).listOf()));
   public static final Supplier<DataComponentType<List<AffixAttributeEffect>>> ATTRIBUTES = register("attributes", builder -> builder.persistent(AffixAttributeEffect.CODEC.listOf()));
   public static final Supplier<DataComponentType<List<ConditionalEffect<AffixValueEffect>>>> DAMAGE_PROTECTION = register("damage_protection", builder -> builder.persistent(ConditionalEffect.validatedListCodec(AffixValueEffect.CODEC, ChampionsLootContextParamSets.AFFIXED_DAMAGE)));
   public static final Supplier<DataComponentType<List<ConditionalEffect<DamageImmunity>>>> DAMAGE_IMMUNITY = register("damage_immunity", builder -> builder.persistent(ConditionalEffect.validatedListCodec(DamageImmunity.CODEC, ChampionsLootContextParamSets.AFFIXED_DAMAGE)));
