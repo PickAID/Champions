@@ -4,8 +4,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.KeyTagProvider;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.world.entity.affix.Affix;
-import top.theillusivec4.champions.world.entity.affix.Affixes;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.Affixes;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.tags.AffixTags;
 

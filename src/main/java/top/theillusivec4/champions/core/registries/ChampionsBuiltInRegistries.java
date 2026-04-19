@@ -5,13 +5,13 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.neoforge.registries.RegistryBuilder;
-import top.theillusivec4.champions.world.entity.affix.LevelBasedValue;
-import top.theillusivec4.champions.world.entity.affix.ProjectileTemplate;
-import top.theillusivec4.champions.world.entity.affix.effects.AffixEntityEffect;
-import top.theillusivec4.champions.world.entity.affix.effects.AffixLocationBasedEffect;
-import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffect;
-import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
+import top.theillusivec4.champions.api.affix.LevelBasedValue;
+import top.theillusivec4.champions.api.affix.ProjectileTemplate;
+import top.theillusivec4.champions.api.affix.effect.AffixEntityEffect;
+import top.theillusivec4.champions.api.affix.effect.AffixLocationBasedEffect;
+import top.theillusivec4.champions.api.affix.effect.AffixValueEffect;
+import top.theillusivec4.champions.api.affix.provider.AffixProvider;
+import top.theillusivec4.champions.api.championmob.provider.ChampionMobPropertyProvider;
 
 public final class ChampionsBuiltInRegistries {
 	public static final Registry<DataComponentType<?>> AFFIX_EFFECT_COMPONENT_TYPE = register(ChampionsRegistries.AFFIX_EFFECT_COMPONENT_TYPE);

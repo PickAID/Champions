@@ -5,6 +5,8 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.affix.effect.AffixAttributeEffect;
+import top.theillusivec4.champions.api.affix.effect.AffixLocationBasedEffect;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 
 import java.util.function.Supplier;

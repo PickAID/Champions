@@ -8,7 +8,7 @@ import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -23,7 +23,7 @@ public final class ChampionsCreativeModeTabs {
 	private static Supplier<CreativeModeTab> register(String name, UnaryOperator<CreativeModeTab.Builder> operator) {
 		return DEFERRED_REGISTER.register(name, (id) -> operator.apply(
 						CreativeModeTab.builder()
-								.title(Component.translatable(ChampionsUtil.makeDescriptionId("itemGroup", id))))
+								.title(Component.translatable(Util.makeDescriptionId("itemGroup", id))))
 				.build()
 		);
 	}

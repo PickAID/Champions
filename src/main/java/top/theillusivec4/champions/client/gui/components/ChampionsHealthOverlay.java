@@ -13,18 +13,18 @@ import net.minecraft.world.entity.LivingEntity;
 import top.theillusivec4.champions.client.ChampionsClientConfig;
 import top.theillusivec4.champions.client.util.ClientUtil;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
-import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.affix.AffixHelper;
-import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.util.Util;
+import top.theillusivec4.champions.api.affix.AffixHelper;
+import top.theillusivec4.champions.api.affix.EntityAffixes;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public final class ChampionsHealthOverlay {
-	private static final Identifier BAR = ChampionsUtil.id("textures/gui/bars.png");
-	private static final Identifier STAR = ChampionsUtil.id("textures/gui/star.png");
+	private static final Identifier BAR = Util.id("textures/gui/bars.png");
+	private static final Identifier STAR = Util.id("textures/gui/star.png");
 	private final Map<UUID, ChampionsClientBossEvent> events = new HashMap<>();
 	private final Handler handler = new Handler();
 	private int x;

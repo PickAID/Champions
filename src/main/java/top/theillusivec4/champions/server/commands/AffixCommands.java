@@ -11,8 +11,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.world.entity.affix.Affix;
-import top.theillusivec4.champions.world.entity.affix.AffixHelper;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.AffixHelper;
 
 import java.util.Collection;
 

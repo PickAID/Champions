@@ -19,6 +19,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import top.theillusivec4.champions.Champions;
+import top.theillusivec4.champions.api.affix.ProjectileTemplate;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.world.entity.projectile.ArcticBullet;
 import top.theillusivec4.champions.world.entity.projectile.EnkindlingBullet;

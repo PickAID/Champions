@@ -6,7 +6,7 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.champions.client.gui.components.ChampionsHealthOverlay;
-import top.theillusivec4.champions.mixin.BossHealthOverlayAccessor;
+import top.theillusivec4.champions.mixins.BossHealthOverlayAccessor;
 
 import java.util.Objects;
 

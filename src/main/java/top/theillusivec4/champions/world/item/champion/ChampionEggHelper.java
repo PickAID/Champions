@@ -5,11 +5,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
-import top.theillusivec4.champions.world.entity.affix.AffixHelper;
-import top.theillusivec4.champions.world.entity.affix.EntityAffixes;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobPropertyHelper;
+import top.theillusivec4.champions.core.attachments.ChampionsAttachments;
+import top.theillusivec4.champions.api.affix.AffixHelper;
+import top.theillusivec4.champions.api.affix.EntityAffixes;
+import top.theillusivec4.champions.api.championmob.ChampionMobProperty;
+import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 
 import java.util.Objects;
 import java.util.function.Consumer;

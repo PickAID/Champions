@@ -4,16 +4,16 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.resources.ResourceKey;
-import top.theillusivec4.champions.world.entity.affix.Affix;
-import top.theillusivec4.champions.world.entity.affix.ProjectileTemplate;
-import top.theillusivec4.champions.world.entity.affix.effects.AffixEntityEffect;
-import top.theillusivec4.champions.world.entity.affix.effects.AffixLocationBasedEffect;
-import top.theillusivec4.champions.world.entity.affix.effects.AffixValueEffect;
-import top.theillusivec4.champions.world.entity.affix.provider.AffixProvider;
-import top.theillusivec4.champions.world.entity.champion.Rank;
-import top.theillusivec4.champions.world.entity.affix.LevelBasedValue;
-import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.champion.property.provider.ChampionMobPropertyProvider;
+import top.theillusivec4.champions.api.affix.Affix;
+import top.theillusivec4.champions.api.affix.ProjectileTemplate;
+import top.theillusivec4.champions.api.affix.effect.AffixEntityEffect;
+import top.theillusivec4.champions.api.affix.effect.AffixLocationBasedEffect;
+import top.theillusivec4.champions.api.affix.effect.AffixValueEffect;
+import top.theillusivec4.champions.api.affix.provider.AffixProvider;
+import top.theillusivec4.champions.api.championmob.Rank;
+import top.theillusivec4.champions.api.affix.LevelBasedValue;
+import top.theillusivec4.champions.util.Util;
+import top.theillusivec4.champions.api.championmob.provider.ChampionMobPropertyProvider;
 import top.theillusivec4.champions.world.item.champion.ChampionEggTemplate;
 
 public final class ChampionsRegistries {
@@ -35,6 +35,6 @@ public final class ChampionsRegistries {
 	}
 
 	private static <T> ResourceKey<Registry<T>> register(String name) {
-		return ResourceKey.createRegistryKey(ChampionsUtil.id(name));
+		return ResourceKey.createRegistryKey(Util.id(name));
 	}
 }

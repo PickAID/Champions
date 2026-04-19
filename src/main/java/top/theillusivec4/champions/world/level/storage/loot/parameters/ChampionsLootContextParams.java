@@ -1,8 +1,8 @@
 package top.theillusivec4.champions.world.level.storage.loot.parameters;
 
 import net.minecraft.util.context.ContextKey;
-import top.theillusivec4.champions.util.ChampionsUtil;
-import top.theillusivec4.champions.world.entity.champion.property.ChampionMobProperty;
+import top.theillusivec4.champions.util.Util;
+import top.theillusivec4.champions.api.championmob.ChampionMobProperty;
 import top.theillusivec4.champions.world.entity.damagetracker.DamageTracker;
 
 public final class ChampionsLootContextParams {
@@ -13,7 +13,7 @@ public final class ChampionsLootContextParams {
 
 
   private static <T> ContextKey<T> create(String name) {
-    return new ContextKey<>(ChampionsUtil.id(name));
+    return new ContextKey<>(Util.id(name));
   }
 
   private ChampionsLootContextParams() {
