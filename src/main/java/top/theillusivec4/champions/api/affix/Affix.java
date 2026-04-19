@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
@@ -163,7 +164,7 @@ public record Affix(
 	}
 
 	public void runLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity) {
-		Reference2ObjectMap<Affix, ObjectArraySet<AffixLocationBasedEffect>> map = entity.getData(ChampionsAttachments.ACTIVE_LOCATION_DEPENDENTS_EFFECTS);
+		Reference2ObjectArrayMap<Affix, ObjectArraySet<AffixLocationBasedEffect>> map = entity.getData(ChampionsAttachments.ACTIVE_LOCATION_DEPENDENTS_EFFECTS);
 		ObjectArraySet<AffixLocationBasedEffect> set = map.get(this);
 
 		for (ConditionalEffect<AffixLocationBasedEffect> effect : this.getEffects(AffixEffectComponents.LOCATION_CHANGED)) {

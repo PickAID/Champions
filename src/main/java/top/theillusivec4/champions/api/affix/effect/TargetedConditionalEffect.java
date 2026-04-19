@@ -8,7 +8,6 @@ import net.minecraft.world.level.storage.loot.Validatable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
-import java.util.List;
 import java.util.Optional;
 
 public record TargetedConditionalEffect<T>(AffixTarget enchanted, AffixTarget affected, T effect, Optional<LootItemCondition> requirements) implements Validatable {
@@ -36,13 +35,13 @@ public record TargetedConditionalEffect<T>(AffixTarget enchanted, AffixTarget af
    * @param <T>         效果组件类型
    * @return 带目标和谓词的效果组件编解码器
    */
-  public static <T> Codec<TargetedConditionalEffect<T>> codec(Codec<T> effectCodec) {
-    return RecordCodecBuilder.create(instance -> instance.group(
+  public static <T> Codec<TargetedConditionalEffect<T>> codec(Codec<T> effectCodec, ContextKeySet set) {
+    return RecordCodecBuilder.<TargetedConditionalEffect<T>>create(instance -> instance.group(
       AffixTarget.CODEC.fieldOf("enchanted").forGetter(TargetedConditionalEffect::enchanted),
       AffixTarget.CODEC.fieldOf("affected").forGetter(TargetedConditionalEffect::affected),
       effectCodec.fieldOf("effect").forGetter(TargetedConditionalEffect::effect),
       LootItemCondition.DIRECT_CODEC.optionalFieldOf("requirements").forGetter(TargetedConditionalEffect::requirements)
-    ).apply(instance, TargetedConditionalEffect::new));
+    ).apply(instance, TargetedConditionalEffect::new)).validate(Validatable.validatorForContext(set));
   }
 
   public static <T> TargetedConditionalEffect<T> create(AffixTarget enchanted, T effect) {
@@ -57,15 +56,7 @@ public record TargetedConditionalEffect<T>(AffixTarget enchanted, AffixTarget af
     return new TargetedConditionalEffect<>(enchanted, affected, effect, Optional.of(builder.build()));
   }
 
-  public static <T> Codec<TargetedConditionalEffect<T>> validatedCodec(Codec<T> effectCodec, ContextKeySet contextKeySet) {
-    return codec(effectCodec).validate(Validatable.validatorForContext(contextKeySet));
-  }
-
-  public static <T> Codec<List<TargetedConditionalEffect<T>>> validatedListCodec(Codec<T> effectCodec, ContextKeySet contextKeySet) {
-    return validatedCodec(effectCodec, contextKeySet).listOf();
-  }
-
-  @Override
+	@Override
   public void validate(ValidationContext context) {
     Validatable.validate(context, "requirements", this.requirements);
   }

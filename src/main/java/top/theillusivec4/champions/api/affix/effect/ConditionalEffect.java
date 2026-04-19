@@ -8,26 +8,16 @@ import net.minecraft.world.level.storage.loot.Validatable;
 import net.minecraft.world.level.storage.loot.ValidationContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 public record ConditionalEffect<T>(T effect, Optional<LootItemCondition> requirements) implements Validatable {
 
-
-	public static <T> Codec<ConditionalEffect<T>> codec(Codec<T> effectCodec) {
-		return RecordCodecBuilder.create(instance -> instance.group(
+	public static <T> Codec<ConditionalEffect<T>> codec(Codec<T> effectCodec, ContextKeySet set) {
+		return RecordCodecBuilder.<ConditionalEffect<T>>create(instance -> instance.group(
 				effectCodec.fieldOf("effect").forGetter(ConditionalEffect::effect),
 				LootItemCondition.DIRECT_CODEC.optionalFieldOf("requirements").forGetter(ConditionalEffect::requirements)
-		).apply(instance, ConditionalEffect::new));
-	}
-
-	public static <T> Codec<ConditionalEffect<T>> validatedCodec(Codec<T> effectCodec, ContextKeySet paramSet) {
-		return codec(effectCodec).validate(Validatable.validatorForContext(paramSet));
-	}
-
-	public static <T> Codec<List<ConditionalEffect<T>>> validatedListCodec(Codec<T> effectCodec, ContextKeySet paramSet) {
-		return validatedCodec(effectCodec, paramSet).listOf();
+		).apply(instance, ConditionalEffect::new)).validate(Validatable.validatorForContext(set));
 	}
 
 	public static <T> ConditionalEffect<T> create(T effect) {
