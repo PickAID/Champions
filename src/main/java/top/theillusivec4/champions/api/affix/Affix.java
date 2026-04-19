@@ -30,7 +30,6 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.api.affix.effect.*;
@@ -209,8 +208,8 @@ public record Affix(
 
 	public void doPostAttack(ServerLevel level, int affixLevel, AffixTarget targetType, Entity victim, DamageSource source) {
 		for (TargetedConditionalEffect<AffixEntityEffect> effect : this.getEffects(AffixEffectComponents.POST_ATTACK)) {
-			if (targetType == effect.enchanted()) {
-				Entity target = switch (effect.affected()) {
+			if (targetType == effect.trigger()) {
+				Entity target = switch (effect.target()) {
 					case ATTACKER -> source.getEntity();
 					case DAMAGING_ENTITY -> source.getDirectEntity();
 					case VICTIM -> victim;

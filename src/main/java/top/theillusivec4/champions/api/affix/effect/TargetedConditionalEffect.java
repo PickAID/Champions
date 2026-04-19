@@ -10,7 +10,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 
 import java.util.Optional;
 
-public record TargetedConditionalEffect<T>(AffixTarget enchanted, AffixTarget affected, T effect, Optional<LootItemCondition> requirements) implements Validatable {
+public record TargetedConditionalEffect<T>(AffixTarget trigger, AffixTarget target, T effect, Optional<LootItemCondition> requirements) implements Validatable {
   /**
    * 创建带目标和谓词的效果组件编解码器
    * <p>
@@ -20,14 +20,14 @@ public record TargetedConditionalEffect<T>(AffixTarget enchanted, AffixTarget af
    * </p>
    * <pre>
    *   {
-   *     "enchanted":"",
-   *     "affected":"",
+   *     "trigger":"",
+   *     "target":"",
    *     "effect":{},
    *     "requirements":{}
    *   }
    * </pre>
-   * <li><code>enchanted</code>效果触发目标</li>
-   * <li><code>affected</code>效果作用目标</li>
+   * <li><code>trigger</code>效果触发目标</li>
+   * <li><code>target</code>效果作用目标</li>
    * <li><code>effect</code>效果</li>
    * <li><code>requirements</code>条件</li>
    *
@@ -37,8 +37,8 @@ public record TargetedConditionalEffect<T>(AffixTarget enchanted, AffixTarget af
    */
   public static <T> Codec<TargetedConditionalEffect<T>> codec(Codec<T> effectCodec, ContextKeySet set) {
     return RecordCodecBuilder.<TargetedConditionalEffect<T>>create(instance -> instance.group(
-      AffixTarget.CODEC.fieldOf("enchanted").forGetter(TargetedConditionalEffect::enchanted),
-      AffixTarget.CODEC.fieldOf("affected").forGetter(TargetedConditionalEffect::affected),
+      AffixTarget.CODEC.fieldOf("trigger").forGetter(TargetedConditionalEffect::trigger),
+      AffixTarget.CODEC.fieldOf("target").forGetter(TargetedConditionalEffect::target),
       effectCodec.fieldOf("effect").forGetter(TargetedConditionalEffect::effect),
       LootItemCondition.DIRECT_CODEC.optionalFieldOf("requirements").forGetter(TargetedConditionalEffect::requirements)
     ).apply(instance, TargetedConditionalEffect::new)).validate(Validatable.validatorForContext(set));
