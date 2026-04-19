@@ -65,6 +65,7 @@ public final class Affixes {
   public static final ResourceKey<Affix> REFLECTIVE = register("reflective");
   public static final ResourceKey<Affix> SHIELDING = register("shielding");
   public static final ResourceKey<Affix> WOUNDING = register("wounding");
+  public static final ResourceKey<Affix> TEST = register("test");
 
   private Affixes() {
   }
@@ -80,6 +81,28 @@ public final class Affixes {
   public static void bootstrap(BootstrapContext<Affix> context) {
     HolderGetter<Affix> affixes = context.lookup(ChampionsRegistries.AFFIX);
     HolderGetter<DamageType> damages = context.lookup(Registries.DAMAGE_TYPE);
+//    register(
+//      context,
+//      TEST,
+//      Affix.affix(
+//        Affix.definition(
+//          null,
+//          5,
+//          5,
+//          Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+//          Affix.AffixDefinition.Builder.dynamicCost(5, 5)
+//        )
+//      ).withEffect(
+//        AffixEffectComponents.POST_ATTACK,
+//        AffixTarget.ATTACKER,
+//        AffixTarget.ATTACKER,
+//        AffixEntityEffect.playSound(
+//          SoundEvents.SOUL_ESCAPE,
+//          ConstantFloat.of(10.0f),
+//          ConstantFloat.of(2.0f)
+//        )
+//      )
+//    );
     /*
       适应
       旧：当伤害类型与上一次所受伤害类型相同时，伤害减免 = 0.15*所受同一伤害类型的伤害次数
@@ -93,7 +116,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -119,7 +144,9 @@ public final class Affixes {
           Affix.definition(
             null,
             1,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -147,7 +174,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -171,6 +200,7 @@ public final class Affixes {
 
       新：60tick向目标实体投掷具有上述效果的滞留型药水瓶
      */
+    //noinspection deprecation
     register(
       context,
       DESECRATING,
@@ -178,7 +208,9 @@ public final class Affixes {
           Affix.definition(
             null,
             1,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -204,7 +236,9 @@ public final class Affixes {
           Affix.definition(
             null,
             1,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -232,7 +266,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -267,7 +303,9 @@ public final class Affixes {
         Affix.definition(
           null,
           1,
-          5
+          5,
+          Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+          Affix.AffixDefinition.Builder.dynamicCost(5, 5)
         )
       ).withEffect(
         AffixEffectComponents.POST_ATTACK,
@@ -291,7 +329,9 @@ public final class Affixes {
           Affix.definition(
             null,
             1,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -342,7 +382,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -380,7 +422,9 @@ public final class Affixes {
           Affix.definition(
             null,
             1,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -406,7 +450,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -461,7 +507,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -509,7 +557,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -582,7 +632,9 @@ public final class Affixes {
         Affix.definition(
           null,
           5,
-          5
+          5,
+          Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+          Affix.AffixDefinition.Builder.dynamicCost(5, 5)
         )
       ).withEffect(
         AffixEffectComponents.POST_ATTACK,
@@ -618,7 +670,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
         .withEffect(
@@ -678,7 +732,9 @@ public final class Affixes {
           Affix.definition(
             null,
             5,
-            5
+            5,
+            Affix.AffixDefinition.Builder.dynamicCost(3, 3),
+            Affix.AffixDefinition.Builder.dynamicCost(5, 5)
           )
         )
 //        .withConditionalEffects(

@@ -81,27 +81,18 @@ public record Affix(
     return component;
   }
 
-  public static Builder affix(AffixDefinition.Builder definition) {
+  public static Builder affix(AffixDefinition definition) {
     return new Builder(definition);
   }
 
-  public static AffixDefinition.Builder definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, int maxLevel, int weight) {
-    return definition(
-      supportedEntityTypes,
+  public static AffixDefinition definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, int maxLevel, int weight, Cost minCost, Cost maxCost) {
+    return new AffixDefinition(
+      Optional.ofNullable(supportedEntityTypes),
       maxLevel,
       weight,
-      AffixDefinition.Builder.dynamicCost(3, 3),
-      AffixDefinition.Builder.dynamicCost(5, 5)
+      minCost,
+      maxCost
     );
-  }
-
-  public static AffixDefinition.Builder definition(@Nullable HolderSet<EntityType<?>> supportedEntityTypes, int maxLevel, int weight, Cost minCost, Cost maxCost) {
-    return AffixDefinition.Builder.create()
-      .supportedEntityTypes(supportedEntityTypes)
-      .maxLevel(maxLevel)
-      .weight(weight)
-      .minCost(minCost)
-      .maxCost(maxCost);
   }
 
   public int getMinLevel() {
@@ -172,8 +163,8 @@ public record Affix(
 
   public void doPostAttack(ServerLevel level, int affixLevel, AffixTarget targetType, Entity victim, DamageSource source) {
     for (TargetedConditionalEffect<AffixEntityEffect> effect : this.getEffects(AffixEffectComponents.POST_ATTACK)) {
-      if (targetType == effect.enchanted()) {
-        Entity target = switch (effect.affected()) {
+      if (targetType == effect.trigger()) {
+        Entity target = switch (effect.target()) {
           case ATTACKER -> source.getEntity();
           case DAMAGING_ENTITY -> source.getDirectEntity();
           case VICTIM -> victim;
@@ -341,11 +332,11 @@ public record Affix(
   public static class Builder {
     private final DataComponentMap.Builder builder = DataComponentMap.builder();
     private final Map<DataComponentType<?>, List<?>> effects = new HashMap<>();
-    private final AffixDefinition.Builder definition;
+    private final AffixDefinition definition;
     private HolderSet<Affix> exclusiveSet = HolderSet.empty();
     private UnaryOperator<MutableComponent> nameFactory = UnaryOperator.identity();
 
-    public Builder(AffixDefinition.Builder definition) {
+    public Builder(AffixDefinition definition) {
       this.definition = definition;
     }
 
@@ -412,7 +403,7 @@ public record Affix(
     public Affix build(ResourceLocation id) {
       return new Affix(
         this.nameFactory.apply(Component.translatable(Util.makeDescriptionId("affix", id))),
-        this.definition.build(),
+        this.definition,
         this.exclusiveSet,
         this.builder.build()
       );
