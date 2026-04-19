@@ -159,9 +159,10 @@ public record Affix(
 		}
 	}
 
-	public void runLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity, Vec3 origin, boolean becameActive) {
+	public void runLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity, boolean becameActive) {
+
 		for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.INITIALIZE)) {
-			effect.onChangedBlock(level, affixLevel, entity, origin, becameActive);
+			effect.onChangedBlock(level, affixLevel, entity, entity.position(), becameActive);
 		}
 	}
 

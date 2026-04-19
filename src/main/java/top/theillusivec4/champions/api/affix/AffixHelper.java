@@ -98,7 +98,7 @@ public final class AffixHelper {
           }
         }));
       }
-      runLocationChangedEffects(level, entity, entity.position(), true);
+      runLocationChangedEffects(level, entity, true);
     }
   }
 
@@ -204,8 +204,8 @@ public final class AffixHelper {
     get(entity).entrySet().forEach(entry -> visitor.accept(entry.getKey(), entry.getValue()));
   }
 
-  public static void runLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin, boolean becameActive) {
-    runIteration(entity, (affix, affixLevel) -> affix.value().runLocationChangedEffects(level, affixLevel, entity, origin, becameActive));
+  public static void runLocationChangedEffects(ServerLevel level, Entity entity, boolean becameActive) {
+    runIteration(entity, (affix, affixLevel) -> affix.value().runLocationChangedEffects(level, affixLevel, entity, becameActive));
   }
 
   public static void stopLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin) {
