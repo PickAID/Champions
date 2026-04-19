@@ -53,9 +53,9 @@ public final class AffixEntityEffects {
   public static final Supplier<MapCodec<SpawnParticlesEffect>> SPAWN_PARTICLES = register("spawn_particles", () -> SpawnParticlesEffect.MAP_CODEC);
   public static final Supplier<MapCodec<IterationEntity>> ITERATION_ENTITY = register("iteration_entity", () -> IterationEntity.MAP_CODEC);
   public static final Supplier<MapCodec<ExplodeEffect>> EXPLODE = register("explode", () -> ExplodeEffect.MAP_CODEC);
-  public static final Supplier<MapCodec<PlaySoundEffect>> PLAY_SOUND = register("play_sound", () -> PlaySoundEffect.MAP_CODEC);
+  public static final Supplier<MapCodec<PlaySound>> PLAY_SOUND = register("play_sound", () -> PlaySound.MAP_CODEC);
   public static final Supplier<MapCodec<ProjectionEffect>> PROJECTION = register("projection", () -> ProjectionEffect.MAP_CODEC);
-  public static final Supplier<MapCodec<SummonEntityEffect>> SUMMON_ENTITY = register("summon_entity", () -> SummonEntityEffect.MAP_CODEC);
+  public static final Supplier<MapCodec<SummonEntity>> SUMMON_ENTITY = register("summon_entity", () -> SummonEntity.MAP_CODEC);
   public static final Supplier<MapCodec<MovementEffect>> MOVEMENT = register("movement", () -> MovementEffect.MAP_CODEC);
 
   private AffixEntityEffects() {
@@ -378,14 +378,14 @@ public final class AffixEntityEffects {
     }
   }
 
-  public record PlaySoundEffect(Holder<SoundEvent> sound, FloatProvider volume, FloatProvider pitch) implements AffixEntityEffect {
-    public static final MapCodec<PlaySoundEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(
+  public record PlaySound(Holder<SoundEvent> sound, FloatProvider volume, FloatProvider pitch) implements AffixEntityEffect {
+    public static final MapCodec<PlaySound> MAP_CODEC = RecordCodecBuilder.mapCodec(
       i -> i.group(
-          SoundEvent.CODEC.fieldOf("sound").forGetter(PlaySoundEffect::sound),
-          FloatProvider.codec(1.0E-5F, 10.0F).fieldOf("volume").forGetter(PlaySoundEffect::volume),
-          FloatProvider.codec(1.0E-5F, 2.0F).fieldOf("pitch").forGetter(PlaySoundEffect::pitch)
+          SoundEvent.CODEC.fieldOf("sound").forGetter(PlaySound::sound),
+          FloatProvider.codec(1.0E-5F, 10.0F).fieldOf("volume").forGetter(PlaySound::volume),
+          FloatProvider.codec(1.0E-5F, 2.0F).fieldOf("pitch").forGetter(PlaySound::pitch)
         )
-        .apply(i, PlaySoundEffect::new)
+        .apply(i, PlaySound::new)
     );
 
     @Override
@@ -462,16 +462,16 @@ public final class AffixEntityEffects {
 
   }
 
-  public record SummonEntityEffect(HolderSet<EntityType<?>> entityTypes) implements AffixEntityEffect {
-    public static final MapCodec<SummonEntityEffect> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-      RegistryCodecs.homogeneousList(net.minecraft.core.registries.Registries.ENTITY_TYPE).fieldOf("entity").forGetter(SummonEntityEffect::entityTypes)
-    ).apply(instance, SummonEntityEffect::new));
+  public record SummonEntity(HolderSet<EntityType<?>> entity) implements AffixEntityEffect {
+    public static final MapCodec<SummonEntity> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
+      RegistryCodecs.homogeneousList(net.minecraft.core.registries.Registries.ENTITY_TYPE).fieldOf("entity").forGetter(SummonEntity::entity)
+    ).apply(instance, SummonEntity::new));
 
     @Override
     public void apply(ServerLevel level, int affixLevel, Entity source, Entity target, Vec3 position) {
       BlockPos blockPos = BlockPos.containing(position);
       if (Level.isInSpawnableBounds(blockPos)) {
-        Optional<Holder<EntityType<?>>> entityType = this.entityTypes().getRandomElement(level.getRandom());
+        Optional<Holder<EntityType<?>>> entityType = this.entity().getRandomElement(level.getRandom());
         if (entityType.isPresent()) {
           Entity spawned = entityType.get().value().spawn(level, blockPos, MobSpawnType.TRIGGERED);
           if (spawned != null) {

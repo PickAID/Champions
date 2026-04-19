@@ -19,14 +19,14 @@ import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
-import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
-import top.theillusivec4.champions.core.component.ChampionsDataComponents;
+import top.theillusivec4.champions.core.attachments.ChampionsAttachments;
+import top.theillusivec4.champions.core.components.ChampionsDataComponents;
 import top.theillusivec4.champions.core.particles.ChampionsParticleTypes;
 import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
 import top.theillusivec4.champions.server.champion.ChampionsServerBossEvent;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.api.affix.Affix;
 import top.theillusivec4.champions.api.affix.AffixHelper;
 import top.theillusivec4.champions.api.affix.AffixInstance;
@@ -168,7 +168,7 @@ public final class ChampionMobPropertyHelper {
   }
 
   private static Optional<Holder<Rank>> selectRank(RandomSource random, EntityType<?> entity, Stream<? extends Holder<Rank>> possible) {
-    return ChampionsUtil.getRandom(random,
+    return Util.getRandom(random,
       possible.filter(rank -> rank.value().isSupported(entity)).toList()
     );
   }

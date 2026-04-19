@@ -7,7 +7,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import top.theillusivec4.champions.api.affix.EntityAffixes;
 import top.theillusivec4.champions.api.affix.AffixHelper;
-import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
+import top.theillusivec4.champions.core.attachments.ChampionsAttachments;
 
 import java.util.Objects;
 import java.util.function.Consumer;

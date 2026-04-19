@@ -25,7 +25,7 @@ import net.minecraft.world.entity.EntityType;
 import top.theillusivec4.champions.api.affix.AffixInstance;
 import top.theillusivec4.champions.api.affix.provider.AffixProvider;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.Optional;
 import java.util.function.UnaryOperator;
@@ -129,7 +129,7 @@ public record Rank(
 
     public Rank build(ResourceLocation id) {
       return new Rank(
-        this.nameFactory.apply(Component.translatable(ChampionsUtil.makeDescriptionId("rank", id))),
+        this.nameFactory.apply(Component.translatable(Util.makeDescriptionId("rank", id))),
         this.tier,
         this.color,
         this.weight,

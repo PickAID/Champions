@@ -5,7 +5,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceKey;
 import top.theillusivec4.champions.api.championmob.Rank;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 public final class Ranks {
   public static final ResourceKey<Rank> COMMON = register("common");
@@ -18,7 +18,7 @@ public final class Ranks {
   }
 
   private static ResourceKey<Rank> register(String name) {
-    return ResourceKey.create(ChampionsRegistries.RANK, ChampionsUtil.id(name));
+    return ResourceKey.create(ChampionsRegistries.RANK, Util.id(name));
   }
 
   public static void bootstrap(BootstrapContext<Rank> context) {

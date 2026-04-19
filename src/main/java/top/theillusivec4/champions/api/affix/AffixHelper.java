@@ -21,15 +21,14 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.api.affix.effect.AffixTarget;
-import top.theillusivec4.champions.core.attachment.ChampionsAttachments;
-import top.theillusivec4.champions.core.component.ChampionsDataComponents;
+import top.theillusivec4.champions.core.attachments.ChampionsAttachments;
+import top.theillusivec4.champions.core.components.ChampionsDataComponents;
 import top.theillusivec4.champions.core.registries.ChampionsDataMaps;
 import top.theillusivec4.champions.server.ChampionsServerConfig;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 
 import java.util.ArrayList;
@@ -41,7 +40,7 @@ import java.util.stream.Stream;
 
 public final class AffixHelper {
   private static final Component TITLE = Component.translatable(
-    ChampionsUtil.makeDescriptionId("item", ChampionsUtil.id("stored_affixes"))
+    Util.makeDescriptionId("item", Util.id("stored_affixes"))
   ).withStyle(ChatFormatting.GRAY);
 
   private AffixHelper() {
@@ -70,7 +69,7 @@ public final class AffixHelper {
 
   public static void set(Entity entity, EntityAffixes container) {
     if (!get(entity).equals(container) && entity.level() instanceof ServerLevel level) {
-      stopLocationChangedEffects(level, entity, entity.position());
+      stopLocationChangedEffects(level, entity);
       if (entity instanceof LivingEntity livingEntity) {
         forEachModifier(entity, ((attribute, modifier) -> {
           AttributeMap map = livingEntity.getAttributes();
@@ -90,7 +89,7 @@ public final class AffixHelper {
           }
         }));
       }
-      runLocationChangedEffects(level, entity, entity.position(), true);
+      runLocationChangedEffects(level, entity);
       ChampionMobPropertyHelper.getBossbar(entity).setAffixes(get(entity));
     }
   }
@@ -204,12 +203,12 @@ public final class AffixHelper {
     get(entity).entrySet().forEach(entry -> visitor.accept(entry.getKey(), entry.getValue()));
   }
 
-  public static void runLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin, boolean becameActive) {
-    runIteration(entity, (affix, affixLevel) -> affix.value().runLocationChangedEffects(level, affixLevel, entity, origin, becameActive));
+  public static void runLocationChangedEffects(ServerLevel level, Entity entity) {
+    runIteration(entity, (affix, affixLevel) -> affix.value().runLocationChangedEffects(level, affixLevel, entity));
   }
 
-  public static void stopLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin) {
-    runIteration(entity, (affix, affixLevel) -> affix.value().stopLocationChangedEffects(level, affixLevel, entity, origin));
+  public static void stopLocationChangedEffects(ServerLevel level, Entity entity) {
+    runIteration(entity, (affix, affixLevel) -> affix.value().stopLocationChangedEffects(level, affixLevel, entity));
   }
 
   public static void forEachModifier(Entity entity, BiConsumer<Holder<Attribute>, AttributeModifier> action) {

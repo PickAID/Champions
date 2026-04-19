@@ -5,8 +5,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import top.theillusivec4.champions.world.level.storage.loot.ExtraLootParamsHelper;
-import top.theillusivec4.champions.mixin.LootContextParamSetsAccessor;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.mixins.LootContextParamSetsAccessor;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.function.Consumer;
 
@@ -43,7 +43,7 @@ public final class ChampionsLootContextParamSets {
     LootContextParamSet.Builder builder = new LootContextParamSet.Builder();
     consumer.accept(builder);
     ExtraLootParamsHelper.addParameters(builder);
-    ResourceLocation id = ChampionsUtil.id(name);
+    ResourceLocation id = Util.id(name);
     LootContextParamSet set = builder.build();
     LootContextParamSet set1 = registry.put(id, set);
     if (set1 != null) {

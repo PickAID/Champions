@@ -4,7 +4,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import top.theillusivec4.champions.client.gui.components.ChampionsHealthOverlay;
-import top.theillusivec4.champions.mixin.BossHealthOverlayAccessor;
+import top.theillusivec4.champions.mixins.BossHealthOverlayAccessor;
 
 public class ChampionsGui {
   private final ChampionsHealthOverlay healthOverlay = new ChampionsHealthOverlay();

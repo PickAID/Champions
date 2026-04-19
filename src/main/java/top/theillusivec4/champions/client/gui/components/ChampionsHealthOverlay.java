@@ -17,15 +17,15 @@ import top.theillusivec4.champions.api.championmob.ChampionMobPropertyHelper;
 import top.theillusivec4.champions.client.ChampionsClientConfig;
 import top.theillusivec4.champions.client.util.ChampionsClientUtil;
 import top.theillusivec4.champions.network.ChampionsBossEventPayload;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public final class ChampionsHealthOverlay {
-  private static final ResourceLocation BAR_TEXTURES = ChampionsUtil.id("textures/gui/bars.png");
-  private static final ResourceLocation STAR_TEXTURES = ChampionsUtil.id("textures/gui/star.png");
+  private static final ResourceLocation BAR_TEXTURES = Util.id("textures/gui/bars.png");
+  private static final ResourceLocation STAR_TEXTURES = Util.id("textures/gui/star.png");
   private final Map<UUID, ChampionsClientBossEvent> events = new HashMap<>();
   private final Handler handler = new Handler();
   private int x;

@@ -15,10 +15,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.projectile.ShulkerBullet;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 public class ColorizedBulletRenderer extends EntityRenderer<ShulkerBullet> {
-  private static final ResourceLocation GENERIC_SPARK_TEXTURE = ChampionsUtil.id("textures/entity/generic_spark.png");
+  private static final ResourceLocation GENERIC_SPARK_TEXTURE = Util.id("textures/entity/generic_spark.png");
   private static final RenderType RENDER_TYPE = RenderType.entityTranslucent(GENERIC_SPARK_TEXTURE);
   private final ShulkerBulletModel<ShulkerBullet> model;
   private final int color;

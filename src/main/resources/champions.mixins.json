@@ -1,7 +1,7 @@
 {
   "required": true,
   "priority": 1000,
-  "package": "top.theillusivec4.champions.mixin",
+  "package": "top.theillusivec4.champions.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "AbstractArrowMixin",
@@ -19,6 +19,7 @@
     "MobMixin",
     "PlayerMixin",
     "RamTargetMixin",
+    "ServerPlayerMixin",
     "ShulkerBulletMixin",
     "SlimeMixin",
     "SmallFireballMixin",

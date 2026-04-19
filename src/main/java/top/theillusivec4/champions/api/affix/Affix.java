@@ -3,6 +3,8 @@ package top.theillusivec4.champions.api.affix;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.objects.ObjectArraySet;
+import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
@@ -27,10 +29,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.enchantment.effects.DamageImmunity;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import org.jetbrains.annotations.Nullable;
 import top.theillusivec4.champions.api.affix.effect.*;
+import top.theillusivec4.champions.core.attachments.ChampionsAttachments;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
 import top.theillusivec4.champions.util.LootContextFactory;
 import top.theillusivec4.champions.world.entity.affix.effects.AffixAttributeEffect;
@@ -124,15 +126,40 @@ public record Affix(
     }
   }
 
-  public void runLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity, Vec3 origin, boolean becameActive) {
-    for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.LOCATION_CHANGED)) {
-      effect.onChangedBlock(level, affixLevel, entity, origin, becameActive);
+  public void runLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity) {
+    Reference2ObjectMap<Affix, ObjectArraySet<AffixLocationBasedEffect>> map = entity.getData(ChampionsAttachments.ACTIVE_LOCATION_DEPENDENTS_EFFECTS);
+    ObjectArraySet<AffixLocationBasedEffect> set = map.get(this);
+
+    for (ConditionalEffect<AffixLocationBasedEffect> effect : this.getEffects(AffixEffectComponents.LOCATION_CHANGED)) {
+      AffixLocationBasedEffect locationBasedEffect = effect.effect();
+      boolean flag = set != null && set.contains(locationBasedEffect);
+      if (effect.matches(LootContextFactory.affixedEntity(level, entity, affixLevel))) {
+        if (!flag) {
+          if (set == null) {
+            set = new ObjectArraySet<>();
+            map.put(this, set);
+          }
+
+          set.add(locationBasedEffect);
+        }
+        locationBasedEffect.onChangedBlock(level, affixLevel, entity, entity.position(), !flag);
+      } else if (set != null && set.remove(locationBasedEffect)) {
+        locationBasedEffect.onDeactivated(level, affixLevel, entity, entity.position());
+      }
+    }
+
+    if (set != null && set.isEmpty()) {
+      map.remove(this);
     }
   }
 
-  public void stopLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity, Vec3 origin) {
-    for (AffixLocationBasedEffect effect : this.getEffects(AffixEffectComponents.LOCATION_CHANGED)) {
-      effect.onDeactivated(level, affixLevel, entity, origin);
+  public void stopLocationChangedEffects(ServerLevel level, int affixLevel, Entity entity) {
+    Reference2ObjectMap<Affix, ObjectArraySet<AffixLocationBasedEffect>> map = entity.getData(ChampionsAttachments.ACTIVE_LOCATION_DEPENDENTS_EFFECTS);
+    ObjectArraySet<AffixLocationBasedEffect> set = map.get(this);
+    if (set != null) {
+      for (AffixLocationBasedEffect effect : set) {
+        effect.onDeactivated(level, affixLevel, entity, entity.position());
+      }
     }
   }
 

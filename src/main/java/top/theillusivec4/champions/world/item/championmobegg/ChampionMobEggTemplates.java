@@ -12,7 +12,7 @@ import top.theillusivec4.champions.api.championmob.Rank;
 import top.theillusivec4.champions.world.entity.championmob.Ranks;
 import top.theillusivec4.champions.api.championmob.provider.ChampionMobPropertyProvider;
 import top.theillusivec4.champions.core.registries.ChampionsRegistries;
-import top.theillusivec4.champions.util.ChampionsUtil;
+import top.theillusivec4.champions.util.Util;
 
 public final class ChampionMobEggTemplates {
   public static final ResourceKey<ChampionMobEggTemplate> HUSK = register("husk");
@@ -22,7 +22,7 @@ public final class ChampionMobEggTemplates {
   }
 
   private static ResourceKey<ChampionMobEggTemplate> register(String name) {
-    return ResourceKey.create(ChampionsRegistries.CHAMPION_MOB_EGG, ChampionsUtil.id(name));
+    return ResourceKey.create(ChampionsRegistries.CHAMPION_MOB_EGG, Util.id(name));
   }
 
   public static void bootstrap(BootstrapContext<ChampionMobEggTemplate> context) {

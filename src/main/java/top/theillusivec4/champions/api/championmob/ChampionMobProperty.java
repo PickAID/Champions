@@ -11,7 +11,7 @@ import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import top.theillusivec4.champions.util.ChampionsStreamCodecs;
+import top.theillusivec4.champions.util.StreamCodecs;
 
 public record ChampionMobProperty(int tier, TextColor color, Component prefix, boolean boss) {
   public static final ChampionMobProperty EMPTY = new ChampionMobProperty(0, TextColor.fromLegacyFormat(ChatFormatting.WHITE), Component.empty(), false);
@@ -23,7 +23,7 @@ public record ChampionMobProperty(int tier, TextColor color, Component prefix, b
   ).apply(instance, ChampionMobProperty::new));
   public static final StreamCodec<RegistryFriendlyByteBuf, ChampionMobProperty> STREAM_CODEC = StreamCodec.composite(
     ByteBufCodecs.INT, ChampionMobProperty::tier,
-    ChampionsStreamCodecs.TEXT_COLOR, ChampionMobProperty::color,
+    StreamCodecs.TEXT_COLOR, ChampionMobProperty::color,
     ComponentSerialization.STREAM_CODEC, ChampionMobProperty::prefix,
     ByteBufCodecs.BOOL, ChampionMobProperty::boss,
     ChampionMobProperty::new
