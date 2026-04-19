@@ -5,7 +5,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -51,8 +50,12 @@ public record TargetedConditionalEffect<T>(AffixTarget enchanted, AffixTarget af
     return new TargetedConditionalEffect<>(enchanted, affected, effect, Optional.empty());
   }
 
-  public static <T> TargetedConditionalEffect<T> create(AffixTarget enchanted, AffixTarget affected, T effect, @Nullable LootItemCondition.Builder builder) {
-    return new TargetedConditionalEffect<>(enchanted, affected, effect, builder != null ? Optional.of(builder.build()) : Optional.empty());
+  public static <T> TargetedConditionalEffect<T> create(AffixTarget enchanted, AffixTarget affected, T effect, LootItemCondition.Builder builder) {
+    return new TargetedConditionalEffect<>(enchanted, affected, effect, Optional.of(builder.build()));
+  }
+
+  public static <T> TargetedConditionalEffect<T> create(AffixTarget enchanted, AffixTarget affected, T effect, LootItemCondition condition) {
+    return new TargetedConditionalEffect<>(enchanted, affected, effect, Optional.of(condition));
   }
 
   public boolean match(LootContext context) {

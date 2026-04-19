@@ -45,7 +45,12 @@ public class AffixBuilder extends BuilderBase<Affix> {
   }
 
   public AffixBuilder locationChanged(AffixLocationBasedEffect effect) {
-    getEffects(AffixEffectComponents.LOCATION_CHANGED.get()).add(effect);
+    getEffects(AffixEffectComponents.LOCATION_CHANGED.get()).add(ConditionalEffect.create(effect));
+    return this;
+  }
+
+  public AffixBuilder locationChanged(AffixLocationBasedEffect effect, LootItemCondition condition) {
+    getEffects(AffixEffectComponents.LOCATION_CHANGED.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
 
@@ -54,7 +59,7 @@ public class AffixBuilder extends BuilderBase<Affix> {
     return this;
   }
 
-  public AffixBuilder damageProtection(AffixValueEffect effect, LootItemCondition.Builder condition) {
+  public AffixBuilder damageProtection(AffixValueEffect effect, LootItemCondition condition) {
     getEffects(AffixEffectComponents.DAMAGE_PROTECTION.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
@@ -64,7 +69,7 @@ public class AffixBuilder extends BuilderBase<Affix> {
     return this;
   }
 
-  public AffixBuilder knockback(AffixValueEffect effect, LootItemCondition.Builder condition) {
+  public AffixBuilder knockback(AffixValueEffect effect, LootItemCondition condition) {
     getEffects(AffixEffectComponents.KNOCKBACK.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
@@ -75,7 +80,7 @@ public class AffixBuilder extends BuilderBase<Affix> {
   }
 
 
-  public AffixBuilder damage(AffixValueEffect effect, LootItemCondition.Builder condition) {
+  public AffixBuilder damage(AffixValueEffect effect, LootItemCondition condition) {
     Objects.requireNonNull(condition);
     getEffects(AffixEffectComponents.DAMAGE.get()).add(ConditionalEffect.create(effect, condition));
     return this;
@@ -86,7 +91,7 @@ public class AffixBuilder extends BuilderBase<Affix> {
     return this;
   }
 
-  public AffixBuilder heal(AffixValueEffect effect, LootItemCondition.Builder condition) {
+  public AffixBuilder heal(AffixValueEffect effect, LootItemCondition condition) {
     getEffects(AffixEffectComponents.HEAL.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
@@ -96,7 +101,7 @@ public class AffixBuilder extends BuilderBase<Affix> {
     return this;
   }
 
-  public AffixBuilder postAttack(AffixEntityEffect effect, AffixTarget enchanted, AffixTarget affected, LootItemCondition.Builder condition) {
+  public AffixBuilder postAttack(AffixEntityEffect effect, AffixTarget enchanted, AffixTarget affected, LootItemCondition condition) {
     getEffects(AffixEffectComponents.POST_ATTACK.get()).add(TargetedConditionalEffect.create(enchanted, affected, effect, condition));
     return this;
   }
@@ -106,7 +111,7 @@ public class AffixBuilder extends BuilderBase<Affix> {
     return this;
   }
 
-  public AffixBuilder tick(AffixEntityEffect effect, LootItemCondition.Builder condition) {
+  public AffixBuilder tick(AffixEntityEffect effect, LootItemCondition condition) {
     getEffects(AffixEffectComponents.TICK.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
@@ -116,7 +121,7 @@ public class AffixBuilder extends BuilderBase<Affix> {
     return this;
   }
 
-  public AffixBuilder target(AffixEntityEffect effect, LootItemCondition.Builder condition) {
+  public AffixBuilder target(AffixEntityEffect effect, LootItemCondition condition) {
     getEffects(AffixEffectComponents.TARGET.get()).add(ConditionalEffect.create(effect, condition));
     return this;
   }
