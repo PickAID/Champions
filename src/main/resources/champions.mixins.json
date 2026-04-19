@@ -21,6 +21,7 @@
     "PlayerMixin",
     "RamTargetMixin",
     "ServerGamePacketListenerImplMixin",
+    "ServerPlayerMixin",
     "ShulkerBulletMixin",
     "SlimeMixin",
     "SmallFireballMixin",

@@ -21,7 +21,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.phys.Vec3;
 import org.apache.commons.lang3.mutable.MutableBoolean;
 import org.apache.commons.lang3.mutable.MutableFloat;
 import top.theillusivec4.champions.core.attachments.ChampionsAttachments;
@@ -78,7 +77,7 @@ public final class AffixHelper {
 
   public static void set(Entity entity, EntityAffixes container) {
     if (!get(entity).equals(container) && entity.level() instanceof ServerLevel level) {
-      stopLocationChangedEffects(level, entity, entity.position());
+      stopLocationChangedEffects(level, entity);
       if (entity instanceof LivingEntity livingEntity) {
         forEachModifier(entity, ((attribute, modifier) -> {
           AttributeMap map = livingEntity.getAttributes();
@@ -98,7 +97,7 @@ public final class AffixHelper {
           }
         }));
       }
-      runLocationChangedEffects(level, entity, true);
+      runLocationChangedEffects(level, entity);
     }
   }
 
@@ -204,12 +203,12 @@ public final class AffixHelper {
     get(entity).entrySet().forEach(entry -> visitor.accept(entry.getKey(), entry.getValue()));
   }
 
-  public static void runLocationChangedEffects(ServerLevel level, Entity entity, boolean becameActive) {
-    runIteration(entity, (affix, affixLevel) -> affix.value().runLocationChangedEffects(level, affixLevel, entity, becameActive));
+  public static void runLocationChangedEffects(ServerLevel level, Entity entity) {
+    runIteration(entity, (affix, affixLevel) -> affix.value().runLocationChangedEffects(level, affixLevel, entity));
   }
 
-  public static void stopLocationChangedEffects(ServerLevel level, Entity entity, Vec3 origin) {
-    runIteration(entity, (affix, affixLevel) -> affix.value().stopLocationChangedEffects(level, affixLevel, entity, origin));
+  public static void stopLocationChangedEffects(ServerLevel level, Entity entity) {
+    runIteration(entity, (affix, affixLevel) -> affix.value().stopLocationChangedEffects(level, affixLevel, entity));
   }
 
   public static void forEachModifier(Entity entity, BiConsumer<Holder<Attribute>, AttributeModifier> action) {

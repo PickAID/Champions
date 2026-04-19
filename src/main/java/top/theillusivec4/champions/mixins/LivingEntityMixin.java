@@ -1,6 +1,7 @@
 package top.theillusivec4.champions.mixins;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import top.theillusivec4.champions.api.affix.AffixHelper;
 
@@ -19,6 +21,11 @@ import top.theillusivec4.champions.api.affix.AffixHelper;
 public abstract class LivingEntityMixin extends Entity {
 	public LivingEntityMixin(EntityType<?> type, Level level) {
 		super(type, level);
+	}
+
+	@Inject(method = "onChangedBlock", at = @At(value = "RETURN"))
+	private void champions$onChangedBlock(ServerLevel level, BlockPos pos, CallbackInfo ci) {
+		AffixHelper.runLocationChangedEffects(level, this);
 	}
 
 	@Inject(method = "isInvulnerableTo", at = @At(value = "RETURN"), cancellable = true)
