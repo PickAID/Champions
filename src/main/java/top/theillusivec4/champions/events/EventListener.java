@@ -98,7 +98,8 @@ public final class EventListener {
   @SubscribeEvent
   private static void onLivingDamagePre(LivingDamageEvent.Pre event) {
     Entity victim = event.getEntity();
-    MutableFloat damage = new MutableFloat(event.getOriginalDamage());
+    // 应该始终复制新值
+    MutableFloat damage = new MutableFloat(event.getNewDamage());
     DamageSource source = event.getSource();
 
     if (victim.level() instanceof ServerLevel level) {
@@ -136,7 +137,6 @@ public final class EventListener {
      */
       event.setNewDamage(Math.max(damage.floatValue(), 0.0f));
     }
-
   }
 
   /**

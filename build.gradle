@@ -166,12 +166,23 @@ dependencies {
 
 //  compileOnly "curse.maven:silent-lib-242998:${silentlib_version}"
 //  compileOnly "curse.maven:scalinghealth-248027:${cf_scalinghealth}"
-  implementation("curse.maven:TOP-245211:${theoneprobe_version}")
-  implementation("curse.maven:jade-324717:${jade_version}")
-  implementation("dev.latvian.mods:rhino:${rhino_version}")
-  api("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")
+  implementation "curse.maven:TOP-245211:${theoneprobe_version}"
+  implementation "curse.maven:jade-324717:${jade_version}"
+  implementation "dev.latvian.mods:rhino:${rhino_version}"
+  api "dev.latvian.mods:kubejs-neoforge:${kubejs_version}"
 //  interfaceInjectionData("dev.latvian.mods:kubejs-neoforge:${kubejs_version}")// optional
-  implementation("curse.maven:probejs-585406:${probejs_version}")
+  implementation "curse.maven:probejs-585406:${probejs_version}"
+
+  // Test
+//  implementation "curse.maven:curios-309927:${curios_version}"
+//  implementation "curse.maven:l2library-620203:${l2library_version}"
+//  implementation "curse.maven:l2-artifacts-659547:${l2_artifacts_version}"
+//  implementation "curse.maven:bookshelf-228525:${bookshelf_version}"
+//  implementation "curse.maven:prickle-1023259:${prickle_version}"
+//  implementation "curse.maven:attributefix-280510:${attributefix_version}"
+//  implementation "curse.maven:max-health-fix-492246:${max_health_fix_version}"
+//  implementation "curse.maven:powerful-dummy-1276893:${powerful_dummy_version}"
+
 //  compileOnly "net.darkhax.gamestages:GameStages-Forge-${minecraft_version}:${gamestages_version}"
 //  compileOnly "net.darkhax.bookshelf:Bookshelf-Forge-${minecraft_version}:${bookshelf_version}"
 }
