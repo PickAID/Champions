@@ -140,8 +140,8 @@ public final class EventListener {
     /*
     防止造成负伤害，预期外的行为
      */
-			float damageModifierValue = Math.max(damage.floatValue() - event.getOriginalDamage(), 0.0f);
-			event.setNewDamage(damageModifierValue + event.getNewDamage());
+			float damageModifierValue = damage.floatValue() - event.getOriginalDamage();
+			event.setNewDamage(Math.max(event.getNewDamage() + damageModifierValue, 0.0f));
 		}
 
 	}
