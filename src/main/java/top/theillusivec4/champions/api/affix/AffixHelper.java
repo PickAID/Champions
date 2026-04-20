@@ -261,7 +261,7 @@ public final class AffixHelper {
     }
     Entity attacker = source.getEntity();
     if (attacker != null) {
-      runIteration(attacker, (affix, affixLevel) -> affix.value().doPostAttack(level, affixLevel, AffixTarget.DAMAGING_ENTITY, victim, source));
+      runIteration(attacker, (affix, affixLevel) -> affix.value().doPostAttack(level, affixLevel, AffixTarget.ATTACKER, victim, source));
     }
   }
 
