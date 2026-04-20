@@ -104,7 +104,7 @@ public final class EventListener {
 	@SubscribeEvent
 	private static void onLivingDamagePre(LivingDamageEvent.Pre event) {
 		Entity victim = event.getEntity();
-		MutableFloat damage = new MutableFloat(event.getOriginalDamage());
+		MutableFloat damage = new MutableFloat(event.getNewDamage());
 		DamageSource source = event.getSource();
 
 		if (victim.level() instanceof ServerLevel level) {
