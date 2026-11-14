@@ -4,6 +4,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.loading.FMLConfig;
 import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.commons.io.FileUtils;
 import top.theillusivec4.champions.Champions;
@@ -77,7 +78,9 @@ public class Utils {
 	public static void createServerConfig(ForgeConfigSpec spec, String suffix) {
 		String fileName = "champions-" + suffix + ".toml";
 		Champions.getInstance().modContext.registerConfig(ModConfig.Type.SERVER, spec, fileName);
-		File defaults = FMLPaths.GAMEDIR.get().resolve("defaultconfigs").resolve(fileName).toFile();
+		// Forge's default config folder is set by defaultConfigPath in config/fml.toml ("defaultconfigs" unless a
+		// pack changes it); writing to a hard-coded "defaultconfigs" put a second copy where Forge never reads it
+		File defaults = FMLPaths.GAMEDIR.get().resolve(FMLConfig.defaultConfigPath()).resolve(fileName).toFile();
 
 		if (!defaults.exists()) {
 			try {
