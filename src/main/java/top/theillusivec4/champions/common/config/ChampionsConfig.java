@@ -277,14 +277,9 @@ public class ChampionsConfig {
     }
 
     private static boolean validateEntityName(final Object obj) {
-        boolean valid = false;
-        if (obj instanceof List<?> entityNameList) {
-            for (var entityName : entityNameList) {
-                ResourceLocation location = ResourceLocation.parse((String) entityName);
-                valid = ForgeRegistries.ENTITY_TYPES.containsKey(location);
-            }
-        }
-        return valid;
+        // defineListAllowEmpty calls this once for each entry, so obj is a single entry, not the list.
+        // Only the id format is checked: an id from a mod that isn't installed just never matches.
+        return obj instanceof String entityName && ResourceLocation.tryParse(entityName) != null;
     }
 
     public static class StageConfig {
